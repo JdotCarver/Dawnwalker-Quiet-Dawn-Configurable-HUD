@@ -10,7 +10,26 @@ local panelSizes = {}
 for value=25,200,5 do panelSizes[#panelSizes+1]=value end
 local cueSizes = {}
 for value=10,200,10 do cueSizes[#cueSizes+1]=value end
+-- Panel modes: 0 = Vanilla, 1 = Quiet Dawn, 2 = Fixed opacity.
 return {
+    {key="mode_HumanStats", default=1, values={0,1,2}},
+    {key="mode_VampireStats", default=1, values={0,1,2}},
+    {key="mode_WBP_Compass", default=1, values={0,1,2}},
+    {key="mode_WBP_HUD_QuestInfo", default=1, values={0,1,2}},
+    {key="mode_WBP_HUD_Quickslots", default=1, values={0,1,2}},
+    {key="mode_Crosshair", default=1, values={0,1,2}},
+    {key="mode_WBP_AA_Quickslots", default=1, values={0,1,2}},
+    {key="mode_WBP_OpenFocusPrompt", default=1, values={0,1,2}},
+    {key="mode_WBP_HUD_Quickslots_ChangePrompt", default=1, values={0,1,2}},
+    {key="mode_WBP_ControlsLegend", default=1, values={0,1,2}},
+    {key="mode_WBP_BuffContainer", default=1, values={0,1,2}},
+    {key="mode_WBP_HUD_AbilityCooldownsContainer", default=1, values={0,1,2}},
+    {key="mode_CombatFocusPanel", default=1, values={0,1,2}},
+    {key="mode_WBP_HUD_FocusCharge_Bar", default=1, values={0,1,2}},
+    {key="mode_WBP_HUD_SpecialAttackCooldown", default=1, values={0,1,2}},
+    {key="mode_XPBar", default=1, values={0,1,2}},
+    {key="mode_WBP_HudTimer", default=1, values={0,1,2}},
+
     {key="scale_HumanStats", default=100, values=panelSizes},
     {key="scale_VampireStats", default=100, values=panelSizes},
     {key="scale_WBP_Compass", default=100, values=panelSizes},

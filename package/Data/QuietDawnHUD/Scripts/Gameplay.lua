@@ -77,9 +77,14 @@ end
 local statNames = {}
 local dynamicPanels = config.dynamicPanels or {HumanStats=true, VampireStats=true}
 local panelOpacities = config.panelOpacities or {}
+local panelModes = config.panelModes or {}
 local panelScales = config.panelScales or {}
 local hasPanelScaling=false
 for _, name in ipairs(names) do
+    if panelModes[name]~=0 and panelModes[name]~=1 and panelModes[name]~=2 then
+        print("[Quiet Dawn - Configurable HUD] Invalid panel mode; disabled.")
+        return
+    end
     local scale=panelScales[name] or 1
     if type(scale)~="number" or scale~=scale or scale<0.25 or scale>2
         or math.abs(scale*20-math.floor(scale*20+0.5))>1e-6 then
@@ -97,8 +102,19 @@ for _, name in ipairs(names) do
     end
 end
 local panelScaling=hasPanelScaling and require("QuietDawnPanelScale").new(panelScales,D,Session) or nil
-local manualPeekEnabled=config.manualPeek and config.manualPeekSeconds>0 and #names>0
-local timeRevealEnabled=seen.WBP_HudTimer and (panelOpacities.WBP_HudTimer or 0)==0 and config.timeHoldSeconds>0
+local function hasPeekPanels()
+    for _,name in ipairs(names) do
+        if panelModes[name]==1 and name~="CombatFocusPanel"
+            and name~="WBP_HUD_Quickslots_ChangePrompt" and name~="WBP_HUD_SpecialAttackCooldown"
+            and name~="WBP_OpenFocusPrompt" then return true end
+    end
+    return false
+end
+local function hasSwitchPanels()
+    return panelModes.WBP_HUD_Quickslots==1 or panelModes.WBP_AA_Quickslots==1
+end
+local manualPeekEnabled=config.manualPeek and config.manualPeekSeconds>0 and hasPeekPanels()
+local timeRevealEnabled=seen.WBP_HudTimer and panelModes.WBP_HudTimer==1 and config.timeHoldSeconds>0
 if type(ExecuteInGameThreadWithDelay) ~= "function" or type(CancelDelayedAction) ~= "function" then
     print("[Quiet Dawn - Configurable HUD] Requires cancellable delayed game-thread callbacks; disabled.")
     return
@@ -573,7 +589,7 @@ local function currentPanelEvent(context,field)
         and sameObject(object:GetOwningPlayer(),controller) and sameObject(object:GetWorld(),world)
 end
 local function cooldownEvent(context)
-    if (panelOpacities.WBP_HUD_SpecialAttackCooldown or 0)~=0 then return end
+    if panelModes.WBP_HUD_SpecialAttackCooldown~=1 then return end
     if not currentPanelEvent(context,"WBP_HUD_SpecialAttackCooldown") then return end
     -- Setup/finish update the stock Remaining Time before post delivery.
     -- The existing panel slice reads it, including during initial acquisition.
@@ -585,7 +601,7 @@ local function switchedQuickslots(context,entryParam)
     -- Stock Toggle AA Quickslots delegate enters the graph at 4146.
     -- Observe that entry directly, also covering calls that bypass its stub.
     if tonumber(unwrap(entryParam))~=4146 then return end
-    if config.switchRevealSeconds<=0 or not currentPanelEvent(context) then return end
+    if config.switchRevealSeconds<=0 or not hasSwitchPanels() or not currentPanelEvent(context) then return end
     local focus=hud.CombatFocusPanel
     if valid(focus) and focus:IsActivated() then return end -- stock toggle guard
     switchRequested,statsPending=true,true
@@ -645,11 +661,11 @@ if timeRevealEnabled then
     specs[#specs+1]={path=TIME..":ExecuteUbergraph_WBP_HudTimer", callback=timeChanged, optional="time"}
     specs[#specs+1]={path=TIME..":Update Time Display", callback=timeDisplayUpdated, optional="time"}
 end
-if seen.WBP_HUD_SpecialAttackCooldown and (panelOpacities.WBP_HUD_SpecialAttackCooldown or 0)==0 then
+if seen.WBP_HUD_SpecialAttackCooldown and panelModes.WBP_HUD_SpecialAttackCooldown==1 then
     specs[#specs+1]={path=SPECIAL..":SetupCooldownEffect", callback=cooldownEvent, optional="panel"}
     specs[#specs+1]={path=SPECIAL..":OnCooldownFinished", callback=cooldownEvent, optional="panel"}
 end
-if config.switchRevealSeconds>0 and (seen.WBP_HUD_Quickslots or seen.WBP_AA_Quickslots) then
+if config.switchRevealSeconds>0 and hasSwitchPanels() then
     specs[#specs+1]={path=ROOT..":ExecuteUbergraph_WBP_GameHUD", callback=switchedQuickslots, optional="panel"}
 end
     local last=#specs
@@ -859,6 +875,10 @@ local function snapshot()
 end
 snapshot=D.wrap("sample",snapshot)
 local function panelStep(name)
+    -- Vanilla panels need no opacity reads once the previous override is
+    -- released. Size remains an independent preference in every mode.
+    if panelModes[name]==0 and not panelScaling
+        and not (panels[name] and panels[name].opacityOwned) then return true end
     -- Revalidate ownership inside every deferred operation, including a still
     -- valid HUD left over from the previous world.
     if valid(hud) and valid(controller) and sameObject(hud:GetWorld(),world)
@@ -882,41 +902,54 @@ local function panelStep(name)
             end
         end
         if valid(object) then
-            local current = object:GetRenderOpacity()
+            local mode=panelModes[name]
             local entry = panels[name]
             if not entry or not sameObject(entry.object,object) then
-                entry = {object=object, original=current}
+                entry = {object=object, original=mode~=0 and object:GetRenderOpacity() or nil}
                 panels[name]=entry
             end
+            if mode==0 then
+                if entry.opacityOwned then
+                    local restored=Session.restore('opacity:'..tostring(object:GetAddress()))
+                    entry.opacityOwned=false
+                    entry.original=nil
+                    if restored and panelScaling then return false end
+                end
+                if panelScaling then return panelScaling.step(name,object,entry) end
+                return true
+            end
+            local current=object:GetRenderOpacity()
+            if entry.original==nil then entry.original=current end
             if manualPeekEnabled and name=="WBP_ControlsLegend" then
                 peekWidgetAddress,peekControllerAddress=object:GetAddress(),controllerAddress
             end
             local isStats = name == "HumanStats" or name == "VampireStats"
             local target = panelOpacities[name] or 0
-            if name=="WBP_Compass" and config.compassOpacity~=nil then target=config.compassOpacity end
+            -- Quiet Dawn mode always starts hidden, independently of its saved fixed opacity.
             -- Zero opacity preserves resource-driven hiding and revealing.
             -- Missing readings retain the game's opacity.
             if isStats and dynamicPanels[name] then
                 target = desired == 1 and (stateReady and 1 or entry.original) or 0
             end
-            if name=="WBP_HudTimer" and timeVisible then target=1 end
-            if name=="WBP_HUD_SpecialAttackCooldown" and target==0 then
+            if mode==1 and name=="WBP_HudTimer" and timeVisible then target=1 end
+            if mode==1 and name=="WBP_HUD_SpecialAttackCooldown" then
                 local display=widget.WBP_CooldownDisplay
                 local remaining=valid(display) and tonumber(display["Remaining Time"]) or nil
                 if not hooks[SPECIAL..":SetupCooldownEffect"] or not hooks[SPECIAL..":OnCooldownFinished"] then
                     target=entry.original -- unavailable events retain game control
                 else target=remaining and remaining>0 and remaining<math.huge and 1 or 0 end
             end
-            if switchVisible and target==0 and (name=="WBP_HUD_Quickslots" or name=="WBP_AA_Quickslots") then target=1 end
+            if mode==1 and switchVisible and (name=="WBP_HUD_Quickslots" or name=="WBP_AA_Quickslots") then target=1 end
             -- The combat-focus radial selector keeps its own opacity setting;
             -- revealing it for a HUD peek overlays the ordinary player panels.
-            if peekVisible and name~="CombatFocusPanel" and name~="WBP_HUD_Quickslots_ChangePrompt" and name~="WBP_HUD_SpecialAttackCooldown"
+            if mode==1 and peekVisible and name~="CombatFocusPanel" and name~="WBP_HUD_Quickslots_ChangePrompt" and name~="WBP_HUD_SpecialAttackCooldown"
                 and name~="WBP_OpenFocusPrompt" then target=1 end
             -- UWidget stores float opacity: e.g. 0.4 returns 0.400000006.
             -- Match the session journal's tolerance over the opacity range.
             local wroteOpacity=false
             if math.abs(current-target)>1e-5 then
                 wroteOpacity=opacity(object, target)
+                if wroteOpacity then entry.opacityOwned=true end
                 if wroteOpacity and D.debugLogging then D.count("panelWrites");D.event("panel","name=%s opacity=%.3f->%.3f",name,current,target) end
             end
             if panelScaling then
@@ -1173,7 +1206,10 @@ applyLiveSettings=function(run)
         if type(value)~='table' and config[key]~=value then changed[key]=true end
     end
     for _,name in ipairs(names) do
-        if panelOpacities[name]~=updated.panelOpacities[name] then livePanels[name]=true;absent[name]=nil end
+        if panelModes[name]~=updated.panelModes[name] or panelOpacities[name]~=updated.panelOpacities[name] then
+            livePanels[name]=true;absent[name]=nil
+        end
+        panelModes[name]=updated.panelModes[name]
         if panelScales[name]~=updated.panelScales[name] then
             if not panelScaling then panelScaling=require('QuietDawnPanelScale').new(panelScales,D,Session) end
             panelScaling.configure(name,updated.panelScales[name]);livePanels[name]=true;absent[name]=nil
@@ -1185,25 +1221,26 @@ applyLiveSettings=function(run)
     dynamicPanels.HumanStats,dynamicPanels.VampireStats=updated.dynamicPanels.HumanStats,updated.dynamicPanels.VampireStats
     statNames={}
     for _,name in ipairs({'HumanStats','VampireStats'}) do if dynamicPanels[name] then statNames[#statNames+1]=name end end
-    manualPeekEnabled=config.manualPeek and config.manualPeekSeconds>0 and #names>0
-    timeRevealEnabled=seen.WBP_HudTimer and (panelOpacities.WBP_HudTimer or 0)==0 and config.timeHoldSeconds>0
+    manualPeekEnabled=config.manualPeek and config.manualPeekSeconds>0 and hasPeekPanels()
+    timeRevealEnabled=seen.WBP_HudTimer and panelModes.WBP_HudTimer==1 and config.timeHoldSeconds>0
     if changed.debugLogging and QuietDawnNative then QuietDawnNative.setLogging(config.debugLogging) end
     if changed.healthThreshold or changed.staminaThreshold or changed.healthHoldSeconds or changed.staminaHoldSeconds
+        or changed.mode_HumanStats or changed.mode_VampireStats
         or changed.opacity_HumanStats or changed.opacity_VampireStats then
         healthUntil,staminaUntil=0,0
         statsPending,statsRefresh=true,true
         livePanels.HumanStats,livePanels.VampireStats=true,true
     end
-    if changed.manualPeek or changed.manualPeekSeconds then
+    if changed.manualPeek or changed.manualPeekSeconds or not manualPeekEnabled then
         if peekVisible then for _,name in ipairs(names) do livePanels[name]=true end end
         peekRequested,peekVisible,peekUntil=false,false,0
     end
-    if changed.timeHoldSeconds or changed.opacity_WBP_HudTimer then
+    if changed.timeHoldSeconds or changed.mode_WBP_HudTimer or changed.opacity_WBP_HudTimer then
         timeWatcher=timeRevealEnabled and require("QuietDawnTime").new(D) or nil
         if timeWatcher then timeWatcher.reset() end
         timeRequested,timeVisible,timeUntil=false,false,0;livePanels.WBP_HudTimer=true
     end
-    if changed.switchRevealSeconds then
+    if changed.switchRevealSeconds or not hasSwitchPanels() then
         switchRequested,switchVisible,switchUntil=false,false,0
         livePanels.WBP_HUD_Quickslots,livePanels.WBP_AA_Quickslots=true,true
     end
@@ -1241,7 +1278,9 @@ applyLiveSettings=function(run)
     ensureFeatureSpecs()
     -- Existing reveal expiry owns its one deadline; changes cancel/rearm it.
     if changed.healthThreshold or changed.staminaThreshold or changed.healthHoldSeconds or changed.staminaHoldSeconds
-        or changed.manualPeek or changed.manualPeekSeconds or changed.timeHoldSeconds or changed.switchRevealSeconds then armExpiry() end
+        or changed.manualPeek or changed.manualPeekSeconds or changed.timeHoldSeconds or changed.switchRevealSeconds
+        or changed.mode_HumanStats or changed.mode_VampireStats or changed.mode_WBP_HudTimer
+        or changed.mode_WBP_HUD_Quickslots or changed.mode_WBP_AA_Quickslots then armExpiry() end
 end
 
 if config.hideClawSlashMarks then

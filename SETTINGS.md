@@ -4,7 +4,7 @@ Required: [Mod Setting Menu 1.0.6 or later](https://www.nexusmods.com/thebloodof
 
 ## Menu categories
 
-The menu runs from General through Player status, Combat, Exploration and Controls, ending with Diagnostics. Categories are alphabetical within each group, using headings such as Combat / Crosshair and Exploration / Compass. Each panel keeps its size directly after opacity, followed by related thresholds or reveal durations. Combat / Indicators contains counterattack directions, parry cues, unblockable warnings, the enemy dot/diamond, the lock icon and cue size. Logging remains the final entry.
+The menu runs from General through Player status, Combat, Exploration and Controls, ending with Diagnostics. Categories are alphabetical within each group, using headings such as Combat / Crosshair and Exploration / Compass. Each panel keeps its mode, conditional opacity and size together, followed by related thresholds or reveal durations. Combat / Indicators contains counterattack directions, parry cues, unblockable warnings, the enemy dot/diamond, the lock icon and cue size. Logging remains the final entry.
 
 | Category | Controls |
 | --- | --- |
@@ -29,13 +29,21 @@ The menu runs from General through Player status, Combat, Exploration and Contro
 | Controls / HUD peek | Show HUD on hold and its duration |
 | Diagnostics | Logging |
 
-Each player-panel category also includes its size slider, directly after the matching opacity control. The 17 size sliders use 25% to 200%, in 5% steps, with a 100% default.
+Each player-panel category has a mode picker, an opacity slider visible only in Fixed opacity mode, and an independent size slider. The 17 size sliders use 25% to 200%, in 5% steps, with a 100% default.
 
 ## Default behavior
 
-On a fresh install with no saved or imported preferences, the mod is enabled and all 17 player HUD opacities start at 0% (automatic hiding and contextual reveals). All panel sizes start at 100%. Enemy health bars, enemy names, difficulty icons, claw slash marks, and sprint/haste prompts are hidden. All five combat indicator toggles are Off; cue size is 100%. Health/blood below 50% or stamina below 20% keeps the stat panels visible. Health alerts hold for 4 seconds and stamina alerts for 1.5 seconds. Holding Controls Legend reveals the HUD for 3 seconds; switching quickslots reveals them for 3 seconds; time changes reveal the time panel for 4 seconds. Logging is Off. Existing saved or supported imported preferences take precedence over these defaults.
+On a fresh install with no saved or imported preferences, the mod is enabled and all 17 player panels start in Quiet Dawn mode (automatic hiding and contextual reveals), with saved fixed opacities at 0%. All panel sizes start at 100%. Enemy health bars, enemy names, difficulty icons, claw slash marks, and sprint/haste prompts are hidden. All five combat indicator toggles are Off; cue size is 100%. Health/blood below 50% or stamina below 20% keeps the stat panels visible. Health alerts hold for 4 seconds and stamina alerts for 1.5 seconds. Holding Controls Legend reveals the HUD for 3 seconds; switching quickslots reveals them for 3 seconds; time changes reveal the time panel for 4 seconds. Logging is Off. Existing saved or supported imported preferences take precedence over these defaults.
 
-Older settings files receive missing panel size keys at 100%, preserving existing values, comments and prior backups. The current upgrade uses `settings.ini.before-claw-slash-marks`; older `settings.ini.before-panel-scaling` backups are retained. Existing malformed or duplicate values are rejected without replacing the file.
+Older settings files receive missing panel size keys at 100%, preserving existing values, comments and prior backups. Claw-mark upgrades retain `settings.ini.before-claw-slash-marks`; older `settings.ini.before-panel-scaling` backups are retained. Existing malformed or duplicate values are rejected without replacing the file.
+
+## Panel modes
+
+Each of the 17 player panels has a **Vanilla / Quiet Dawn / Fixed opacity** mode picker. Vanilla leaves opacity and visibility to the game and excludes the panel from Quiet Dawn reveals. Quiet Dawn uses automatic hiding, resource alerts and contextual reveals. Fixed opacity shows a conditional 0%–100% slider in 5% steps; 0% keeps the panel hidden, including during cooldowns and HUD peek. Fixed values are not overridden by alerts, switching, time changes or peek. The game retains its contextual visibility rules. Size remains independent in all three modes.
+
+The opacity slider appears immediately when Fixed opacity is selected and disappears in the other modes. Hidden sliders retain their saved values. Apply commits both mode and opacity together; Restore discards pending edits, and Reset returns modes to Quiet Dawn after Apply.
+
+Older settings gain missing mode keys without changing opacity values, comments, unknown keys or existing recovery copies. Previous 0% becomes Quiet Dawn; positive values become Fixed opacity. The original file is backed up as `settings.ini.before-panel-modes`. Invalid or duplicate values are rejected before replacement. Selecting Vanilla during play conditionally restores the last unmodified game opacity and stops overriding it; later game updates remain in control. Panel size is independent: select 100% size for original proportions.
 
 ## Claw slash marks
 
@@ -45,7 +53,7 @@ Existing settings gain only the missing `hideClawSlashMarks = 1` entry, with a `
 
 ## Panel size
 
-All 17 player panels have independent size sliders from 25% to 200% in 5% steps, defaulting to 100%. Edge panels grow inward and centered panels stay centered. Original layout spacing stays fixed, so large sizes can overlap nearby elements. Apply to save and update the active game. Scaling uses each panel's original proportions, including its text and icons. Size is independent of opacity and contextual visibility; 0% opacity still allows a scaled panel to appear during its normal reveal.
+All 17 player panels have independent size sliders from 25% to 200% in 5% steps, defaulting to 100%. Edge panels grow inward and centered panels stay centered. Original layout spacing stays fixed, so large sizes can overlap nearby elements. Apply to save and update the active game. Scaling uses each panel's original proportions, including its text and icons. Size is independent of mode and contextual visibility. Quiet Dawn reveals use the selected size; Fixed opacity at 0% keeps the panel hidden.
 
 Only initialization, replacement and settings Apply events apply transforms; there is no recurring size update. Returning to 100% or disabling the mod restores the original size and scaling origin.
 
@@ -53,14 +61,16 @@ Only initialization, replacement and settings Apply events apply transforms; the
 
 1. Install Quiet Dawn through Vortex with its required UE4SS loader, then launch the game once. Quiet Dawn creates its own `settings.ini`; you can load a save and play immediately with the defaults.
 2. Close the game and back up that generated file. Open `<game folder>/Dawnwalker/Binaries/Win64/ue4ss/Mods/QuietDawnHUD/settings.ini` in a text editor.
-3. Edit the existing entries under `[Settings]`, keeping every other entry and the section header. Use `1` for On and `0` for Off, percentages such as `50` (not `0.5`), and seconds such as `1.5`. Keep the exact key names and use a decimal point. Do not add duplicate keys or replace the file with the example below.
+3. Edit the existing entries under `[Settings]`, keeping every other entry and the section header. Use `1` for On and `0` for Off; panel modes use 0 = Vanilla, 1 = Quiet Dawn, 2 = Fixed opacity. Use percentages such as `50` (not `0.5`), and seconds such as `1.5`. Keep the exact key names and use a decimal point. Do not add duplicate keys or replace the file with the example below.
 4. Save the file, restart the game, and load a save. The next save load reads your values; settings are not polled during play.
 
 Example edits to the matching existing lines (this is not a complete settings file):
 
 ```ini
+mode_WBP_Compass = 2
 compassOpacity = 50
 scale_WBP_Compass = 75
+mode_Crosshair = 2
 opacity_Crosshair = 100
 hideSprintPrompt = 0
 hideEnemyHealthBars = 0
@@ -81,22 +91,31 @@ Missing existing settings, duplicate or invalid settings stop configuration load
 | Group | Setting | Choices or range |
 | --- | --- | --- |
 | General | Enabled | Off, On |
+| Player status / Active buffs | Active buffs mode | Vanilla, Quiet Dawn (default), Fixed opacity |
 | Player status / Active buffs | Active buffs opacity | 0% to 100% in 5-point steps |
+| Player status / Experience | Experience bar mode | Vanilla, Quiet Dawn (default), Fixed opacity |
 | Player status / Experience | Experience bar opacity | 0% to 100% in 5-point steps |
+| Player status / Health and stamina | Human health and stamina mode | Vanilla, Quiet Dawn (default), Fixed opacity |
 | Player status / Health and stamina | Human health and stamina opacity | 0% to 100% in 5-point steps |
+| Player status / Health and stamina | Vampire blood and stamina mode | Vanilla, Quiet Dawn (default), Fixed opacity |
 | Player status / Health and stamina | Vampire blood and stamina opacity | 0% to 100% in 5-point steps |
 | Player status / Health and stamina | Keep health visible below | 0% to 100% in 5-point steps (default 50%) |
 | Player status / Health and stamina | Health / blood hold duration | 0 to 10 seconds in 0.5-second steps |
 | Player status / Health and stamina | Keep stamina visible below | 0% to 100% in 5-point steps (default 20%) |
 | Player status / Health and stamina | Stamina hold duration | 0 to 10 seconds in 0.5-second steps |
+| Combat / Ability cooldowns | Ability cooldowns mode | Vanilla, Quiet Dawn (default), Fixed opacity |
 | Combat / Ability cooldowns | Ability cooldowns opacity | 0% to 100% in 5-point steps |
+| Combat / Crosshair | Crosshair mode | Vanilla, Quiet Dawn (default), Fixed opacity |
 | Combat / Crosshair | Crosshair opacity | 0% to 100% in 5-point steps |
 | Combat / Enemies | Hide enemy health bars | Off, On (default On) |
 | Combat / Enemies | Hide enemy names | Off, On |
 | Combat / Enemies | Hide enemy difficulty icons | Off, On |
 | Combat / Enemies | Hide claw slash marks | Off, On (default On) |
+| Combat / Focus activation prompt | Focus activation prompt mode | Vanilla, Quiet Dawn (default), Fixed opacity |
 | Combat / Focus activation prompt | Focus activation prompt opacity | 0% to 100% in 5-point steps |
+| Combat / Focus charge | Focus charge mode | Vanilla, Quiet Dawn (default), Fixed opacity |
 | Combat / Focus charge | Focus charge opacity | 0% to 100% in 5-point steps |
+| Combat / Focus panel | Combat focus mode | Vanilla, Quiet Dawn (default), Fixed opacity |
 | Combat / Focus panel | Combat focus opacity | 0% to 100% in 5-point steps |
 | Combat / Indicators | Show counterattack direction | Off (default), On |
 | Combat / Indicators | Show unblockable warning | Off (default), On |
@@ -104,16 +123,24 @@ Missing existing settings, duplicate or invalid settings stop configuration load
 | Combat / Indicators | Show enemy dot/diamond | Off (default), On |
 | Combat / Indicators | Show lock icon | Off (default), On |
 | Combat / Indicators | Combat cue size | 10%–200%, step 10%; default 100% |
+| Combat / Quickslots | Quickslots mode | Vanilla, Quiet Dawn (default), Fixed opacity |
 | Combat / Quickslots | Quickslots opacity | 0% to 100% in 5-point steps |
+| Combat / Quickslots | Quickslot shortcuts mode | Vanilla, Quiet Dawn (default), Fixed opacity |
 | Combat / Quickslots | Quickslot shortcuts opacity | 0% to 100% in 5-point steps |
+| Combat / Quickslots | Switch quickslots prompt mode | Vanilla, Quiet Dawn (default), Fixed opacity |
 | Combat / Quickslots | Switch quickslots prompt opacity | 0% to 100% in 5-point steps |
 | Combat / Quickslots | Show quickslots after switching | 0 to 10 seconds in 0.5-second steps (default 3; 0 disables) |
+| Combat / Special attack cooldown | Special attack cooldown mode | Vanilla, Quiet Dawn (default), Fixed opacity |
 | Combat / Special attack cooldown | Special attack cooldown opacity | 0% to 100% in 5-point steps |
+| Exploration / Compass | Compass mode | Vanilla, Quiet Dawn (default), Fixed opacity |
 | Exploration / Compass | Compass opacity | 0% to 100% in 5-point steps |
+| Exploration / Quest tracker | Quest tracker mode | Vanilla, Quiet Dawn (default), Fixed opacity |
 | Exploration / Quest tracker | Quest tracker opacity | 0% to 100% in 5-point steps |
+| Exploration / Time of day | Time of day mode | Vanilla, Quiet Dawn (default), Fixed opacity |
 | Exploration / Time of day | Time of day opacity | 0% to 100% in 5-point steps |
 | Exploration / Time of day | Time of day reveal duration | 0 to 10 seconds in 0.5-second steps (default 4 seconds) |
 | Controls / Action prompts | Hide sprint/haste prompt | Off, On (default On) |
+| Controls / Controls legend | Controls legend mode | Vanilla, Quiet Dawn (default), Fixed opacity |
 | Controls / Controls legend | Controls legend opacity | 0% to 100% in 5-point steps |
 | Controls / HUD peek | Show HUD on hold | Off, On |
 | Controls / HUD peek | Show HUD duration | 0 to 10 seconds in 0.5-second steps |
@@ -129,29 +156,29 @@ Conditional rows and groups show relevant controls as you edit. Hidden options k
 
 When upgrading an older Quiet Dawn package, back up `Scripts/QuietDawnConfig.lua` before Vortex replaces/removes that package. Restore the backed-up file beside the new scripts before first launch to import its panel/compass choices. If it is absent, the mod uses QuietDawnDefaults.lua. Successfully imported legacy Lua and diagnostics files are removed after the new settings are saved and verified.
 
-**HUD opacity:** all 17 player panels have 0% to 100% sliders in 5-point steps. At 0%, Quiet Dawn manages visibility through resource alerts, quickslot switching, special-attack cooldowns, time changes and manual peek. Positive opacity keeps the selected value while the game controls contextual visibility. HUD peek reveals other managed panels at 100%; the Focus hint, switch hint and special-attack panel retain their own rules.
+**Panel modes and opacity:** Each of the 17 player panels has a **Vanilla / Quiet Dawn / Fixed opacity** mode picker. Vanilla leaves opacity and visibility to the game and excludes the panel from Quiet Dawn reveals. Quiet Dawn uses automatic hiding, resource alerts and contextual reveals. Fixed opacity shows a conditional 0%–100% slider in 5% steps; 0% keeps the panel hidden, including during cooldowns and HUD peek. Fixed values are not overridden by alerts, switching, time changes or peek. The game retains its contextual visibility rules. Size remains independent in all three modes.
 
-**Show HUD** uses the game's **Toggle Controls Legend** action. Hold **Menu (Xbox)**, **Options (PlayStation)**, or **L (keyboard)** by default. To change the controller button, edit **Toggle Controls Legend** in Controller Tweaks and Remap. For keyboard, change the game's Controls Legend binding. Quiet Dawn follows the remapped action. Show HUD duration controls the time the HUD remains visible after activation. The combat-focus action wheel keeps its configured opacity during the peek; at 0% it stays hidden.
+**Show HUD** uses the game's **Toggle Controls Legend** action. Hold **Menu (Xbox)**, **Options (PlayStation)**, or **L (keyboard)** by default. To change the controller button, edit **Toggle Controls Legend** in Controller Tweaks and Remap. For keyboard, change the game's Controls Legend binding. Quiet Dawn follows the remapped action. Show HUD duration controls the time the HUD remains visible after activation. Only panels in Quiet Dawn mode participate in peek. The combat-focus action wheel remains hidden in Quiet Dawn mode; Vanilla and Fixed opacity keep their own behavior.
 
 **Logging** is the final optional menu setting and the only diagnostic control; manually set `debugLogging` to `0` (Off) or `1` (On). Leave it Off for normal play; On writes troubleshooting details to `Dawnwalker/Binaries/Win64/ue4ss/UE4SS.log`. Slash-effect diagnostics include preparation, retention and restoration counts, bounded failures and `clawMarks` worker timings. These timings overlap the main worker timing.
 
 **Timers:** all five HUD durations range from 0 to 10 seconds in 0.5-second steps. Zero disables that timed reveal. Health and stamina thresholds and positive panel opacity still apply independently. Defaults remain 4 seconds for health/blood, 1.5 seconds for stamina, 3 seconds for HUD peek, 3 seconds for quickslot switching and 4 seconds for time of day. Older durations above 10 seconds are capped at 10; other fractional durations round to the nearest half-second. If an existing settings file needs this adjustment, the original is kept as `settings.ini.before-short-timers`, preserving all other preferences and comments.
 
-**Visibility thresholds:** keep the health/stamina display visible while human health or vampire blood is below 50%, or stamina is below 20%, by default. Exactly the selected percentage does not trigger the threshold. Damage and stamina use can also reveal it for their hold durations, even above the thresholds. A 0% threshold disables that low-resource trigger. These rules apply when the corresponding panel opacity is 0%. Positive opacity keeps that panel shown without resource-driven hiding.
+**Visibility thresholds:** keep the health/stamina display visible while human health or vampire blood is below 50%, or stamina is below 20%, by default. Exactly the selected percentage does not trigger the threshold. Damage and stamina use can also reveal it for their hold durations, even above the thresholds. A 0% threshold disables that low-resource trigger. These rules apply only in Quiet Dawn mode. Fixed opacity is independent of resource-driven hiding; Vanilla follows the game.
 
-Older On/Off panel settings are imported into the new opacity controls: Off becomes 0% and On becomes 100%. The upgrade adds the new keys while preserving existing settings, unknown keys and comments; it retains the original file under a `settings.ini.before-*` name for the upgrade being applied (currently `settings.ini.before-enemy-marker`). Earlier recovery backups are retained. Compass opacity remains unchanged. Keep recovery files if an upgrade error is reported.
+Older On/Off panel settings are imported into the new opacity controls: Off becomes 0% and On becomes 100%. The upgrade adds the new keys while preserving existing settings, unknown keys and comments; it retains the original file under a `settings.ini.before-*` name for the upgrade being applied (currently `settings.ini.before-panel-modes`). Earlier recovery backups are retained. Compass opacity remains unchanged. Keep recovery files if an upgrade error is reported.
 
-Switching items/abilities briefly reveals panels set to 0%; positive opacity stays at its selected value. The switch hint remains at its own opacity, including during manual HUD peek. Set the special-attack panel to 0% to show it only while recharging; positive values show it normally at the chosen opacity. Both still respect the game's visibility restrictions. The reveal duration uses game time and pauses with the game.
+Switching items/abilities briefly reveals quickslots in Quiet Dawn mode. Their Fixed opacity and Vanilla choices do not use this reveal. The switch hint keeps its own mode. Quiet Dawn shows the special-attack panel only while recharging; Fixed opacity at 0% hides it even during recharge. Vanilla follows the game. Reveal durations use game time and pause with the game.
 
 Small blood fluctuations below 0.2% of bar capacity do not renew the health hold. Low-resource thresholds and human damage/stamina alerts remain unchanged. Existing opacity settings gain the new duration without changing selected values; keep the `settings.ini.before-hud-events` recovery copy.
 
-**Time of day:** 0% opacity hides the complete time panel between time changes and HUD peeks. Activities that advance time, including shrine restoration, reveal it at 100% and restart the reveal duration, which defaults to 4 seconds. If the activity hides the HUD, the full reveal waits until the HUD returns. Previewing an activity without advancing time does not reveal it. Pausing preserves the remaining duration. Set the duration to 0 seconds to disable automatic time-change reveals; HUD peek still works. Positive opacity keeps the panel shown and does not use the timer. Existing settings gain these two options without resetting other preferences.
+**Time of day:** Quiet Dawn mode hides the complete time panel between time changes and HUD peeks. Activities that advance time, including shrine restoration, reveal it at 100% and restart the reveal duration, which defaults to 4 seconds. If the activity hides the HUD, the full reveal waits until the HUD returns. Previewing an activity without advancing time does not reveal it. Pausing preserves the remaining duration. Set the duration to 0 seconds to disable automatic time-change reveals; HUD peek still works. Fixed opacity keeps the selected value without timed reveals or peek overrides. Vanilla follows the game. Existing settings gain these two options without resetting other preferences.
 
 **Hide sprint/haste prompt** is in the **Controls / Action prompts** section. It suppresses only the running prompts in human and vampire form, including after prompt refreshes and during manual HUD peek. It suppresses running prompts at their source and works independently of the display language. Other action prompts retain game behavior. Apply to save and update the active game. Existing settings receive the new option set to On, with their preferences and comments preserved.
 
-**Focus activation prompt opacity:** 0% keeps the Toggle abilities button and label hidden in Focus mode and during HUD peek. Positive values use the selected opacity when the game shows the prompt. Ability switching still works. Apply to save and update the active game.
+**Focus activation prompt:** Quiet Dawn mode or Fixed opacity at 0% keeps the Toggle abilities button and label hidden in Focus mode and during HUD peek. Vanilla restores game control; Fixed opacity uses the selected value when the game shows the prompt. Ability switching still works. Apply to save and update the active game.
 
-**Healing and regeneration:** Health and blood gains of at least 0.2% of the bar reveal the stat panel and refresh the health hold duration (4 seconds by default). Repeated qualifying regeneration gains keep the panel visible until that duration expires after the last gain. Smaller gains stay quiet until the bar reaches full. That full-bar reveal rearms only after a deficit of at least 0.2%, preventing repeated near-full notifications. Positive panel opacity and low-resource thresholds keep their existing behavior. The health / blood hold duration also controls these healing reveals; 0 disables them. Small stamina recovery does not trigger a reveal.
+**Healing and regeneration:** Health and blood gains of at least 0.2% of the bar reveal the stat panel and refresh the health hold duration (4 seconds by default). Repeated qualifying regeneration gains keep the panel visible until that duration expires after the last gain. Smaller gains stay quiet until the bar reaches full. That full-bar reveal rearms only after a deficit of at least 0.2%, preventing repeated near-full notifications. These alerts apply only to stat panels in Quiet Dawn mode; Fixed opacity and Vanilla do not use them. The health / blood hold duration also controls these healing reveals in Quiet Dawn mode; 0 disables them. Small stamina recovery does not trigger a reveal.
 
 ## Manual setting reference
 
@@ -177,45 +204,62 @@ All entries below belong under `[Settings]`. Defaults apply to a fresh install w
 | Show HUD duration | `manualPeekSeconds` | `3` | 0 to 10, step 0.5 |
 | Show HUD on hold | `manualPeek` | `1` | 0 = Off, 1 = On |
 | Hide sprint/haste prompt | `hideSprintPrompt` | `1` | 0 = Off, 1 = On |
+| Time of day mode | `mode_WBP_HudTimer` | `1` | 0 = Vanilla, 1 = Quiet Dawn, 2 = Fixed opacity |
 | Time of day opacity | `opacity_WBP_HudTimer` | `0` | 0 to 100, step 5 |
 | Time of day size | `scale_WBP_HudTimer` | `100` | 25 to 200, step 5 |
 | Time of day reveal duration | `timeHoldSeconds` | `4` | 0 to 10, step 0.5 |
+| Compass mode | `mode_WBP_Compass` | `1` | 0 = Vanilla, 1 = Quiet Dawn, 2 = Fixed opacity |
 | Compass opacity | `compassOpacity` | `0` | 0 to 100 percent; 5-point steps match the menu |
 | Compass size | `scale_WBP_Compass` | `100` | 25 to 200, step 5 |
+| Human health and stamina mode | `mode_HumanStats` | `1` | 0 = Vanilla, 1 = Quiet Dawn, 2 = Fixed opacity |
 | Human health and stamina opacity | `opacity_HumanStats` | `0` | 0 to 100, step 5 |
 | Human health and stamina size | `scale_HumanStats` | `100` | 25 to 200, step 5 |
+| Vampire blood and stamina mode | `mode_VampireStats` | `1` | 0 = Vanilla, 1 = Quiet Dawn, 2 = Fixed opacity |
 | Vampire blood and stamina opacity | `opacity_VampireStats` | `0` | 0 to 100, step 5 |
 | Vampire blood and stamina size | `scale_VampireStats` | `100` | 25 to 200, step 5 |
+| Quest tracker mode | `mode_WBP_HUD_QuestInfo` | `1` | 0 = Vanilla, 1 = Quiet Dawn, 2 = Fixed opacity |
 | Quest tracker opacity | `opacity_WBP_HUD_QuestInfo` | `0` | 0 to 100, step 5 |
 | Quest tracker size | `scale_WBP_HUD_QuestInfo` | `100` | 25 to 200, step 5 |
+| Quickslots mode | `mode_WBP_HUD_Quickslots` | `1` | 0 = Vanilla, 1 = Quiet Dawn, 2 = Fixed opacity |
 | Quickslots opacity | `opacity_WBP_HUD_Quickslots` | `0` | 0 to 100, step 5 |
 | Quickslots size | `scale_WBP_HUD_Quickslots` | `100` | 25 to 200, step 5 |
+| Crosshair mode | `mode_Crosshair` | `1` | 0 = Vanilla, 1 = Quiet Dawn, 2 = Fixed opacity |
 | Crosshair opacity | `opacity_Crosshair` | `0` | 0 to 100, step 5 |
 | Crosshair size | `scale_Crosshair` | `100` | 25 to 200, step 5 |
+| Quickslot shortcuts mode | `mode_WBP_AA_Quickslots` | `1` | 0 = Vanilla, 1 = Quiet Dawn, 2 = Fixed opacity |
 | Quickslot shortcuts opacity | `opacity_WBP_AA_Quickslots` | `0` | 0 to 100, step 5 |
 | Quickslot shortcuts size | `scale_WBP_AA_Quickslots` | `100` | 25 to 200, step 5 |
+| Focus activation prompt mode | `mode_WBP_OpenFocusPrompt` | `1` | 0 = Vanilla, 1 = Quiet Dawn, 2 = Fixed opacity |
 | Focus activation prompt opacity | `opacity_WBP_OpenFocusPrompt` | `0` | 0 to 100, step 5 |
 | Focus activation prompt size | `scale_WBP_OpenFocusPrompt` | `100` | 25 to 200, step 5 |
+| Switch quickslots prompt mode | `mode_WBP_HUD_Quickslots_ChangePrompt` | `1` | 0 = Vanilla, 1 = Quiet Dawn, 2 = Fixed opacity |
 | Switch quickslots prompt opacity | `opacity_WBP_HUD_Quickslots_ChangePrompt` | `0` | 0 to 100, step 5 |
 | Switch quickslots prompt size | `scale_WBP_HUD_Quickslots_ChangePrompt` | `100` | 25 to 200, step 5 |
+| Controls legend mode | `mode_WBP_ControlsLegend` | `1` | 0 = Vanilla, 1 = Quiet Dawn, 2 = Fixed opacity |
 | Controls legend opacity | `opacity_WBP_ControlsLegend` | `0` | 0 to 100, step 5 |
 | Controls legend size | `scale_WBP_ControlsLegend` | `100` | 25 to 200, step 5 |
+| Active buffs mode | `mode_WBP_BuffContainer` | `1` | 0 = Vanilla, 1 = Quiet Dawn, 2 = Fixed opacity |
 | Active buffs opacity | `opacity_WBP_BuffContainer` | `0` | 0 to 100, step 5 |
 | Active buffs size | `scale_WBP_BuffContainer` | `100` | 25 to 200, step 5 |
+| Ability cooldowns mode | `mode_WBP_HUD_AbilityCooldownsContainer` | `1` | 0 = Vanilla, 1 = Quiet Dawn, 2 = Fixed opacity |
 | Ability cooldowns opacity | `opacity_WBP_HUD_AbilityCooldownsContainer` | `0` | 0 to 100, step 5 |
 | Ability cooldowns size | `scale_WBP_HUD_AbilityCooldownsContainer` | `100` | 25 to 200, step 5 |
+| Combat focus mode | `mode_CombatFocusPanel` | `1` | 0 = Vanilla, 1 = Quiet Dawn, 2 = Fixed opacity |
 | Combat focus opacity | `opacity_CombatFocusPanel` | `0` | 0 to 100, step 5 |
 | Combat focus size | `scale_CombatFocusPanel` | `100` | 25 to 200, step 5 |
+| Focus charge mode | `mode_WBP_HUD_FocusCharge_Bar` | `1` | 0 = Vanilla, 1 = Quiet Dawn, 2 = Fixed opacity |
 | Focus charge opacity | `opacity_WBP_HUD_FocusCharge_Bar` | `0` | 0 to 100, step 5 |
 | Focus charge size | `scale_WBP_HUD_FocusCharge_Bar` | `100` | 25 to 200, step 5 |
+| Special attack cooldown mode | `mode_WBP_HUD_SpecialAttackCooldown` | `1` | 0 = Vanilla, 1 = Quiet Dawn, 2 = Fixed opacity |
 | Special attack cooldown opacity | `opacity_WBP_HUD_SpecialAttackCooldown` | `0` | 0 to 100, step 5 |
 | Special attack cooldown size | `scale_WBP_HUD_SpecialAttackCooldown` | `100` | 25 to 200, step 5 |
+| Experience bar mode | `mode_XPBar` | `1` | 0 = Vanilla, 1 = Quiet Dawn, 2 = Fixed opacity |
 | Experience bar opacity | `opacity_XPBar` | `0` | 0 to 100, step 5 |
 | Experience bar size | `scale_XPBar` | `100` | 25 to 200, step 5 |
 | Show quickslots after switching | `switchRevealSeconds` | `3` | 0 to 10, step 0.5 |
 | Logging | `debugLogging` | `0` | 0 = Off, 1 = On |
 
-A panel opacity of 0 retains automatic behavior; positive opacity keeps that panel at the chosen opacity subject to game visibility rules. Timers accept 0 to 10 seconds in 0.5-second steps; 0 disables that timed reveal without disabling independent low-resource triggers. Opacity and threshold percentages are stored on a 0 to 100 scale. Panel sizes accept 25 to 200 in 5-point steps. Combat cue size accepts 10 to 200 in 10-point steps.
+Each `mode_<panel>` accepts 0 = Vanilla, 1 = Quiet Dawn, or 2 = Fixed opacity. The saved opacity percentage is used only in Fixed opacity mode; 0% hides the panel. Size remains independent. Timers accept 0 to 10 seconds in 0.5-second steps and apply only to Quiet Dawn reveals. Opacity and threshold percentages use a 0 to 100 scale. Panel sizes accept 25 to 200 in 5-point steps; combat cue size accepts 10 to 200 in 10-point steps.
 
 If a value is malformed, duplicated, missing, or outside the supported range, the settings loader reports it in `Dawnwalker/Binaries/Win64/ue4ss/UE4SS.log`. Correct the existing line or restore your backup, then restart and load a save.
 

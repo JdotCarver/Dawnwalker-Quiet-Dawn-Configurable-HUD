@@ -1,6 +1,6 @@
 [size=5][b][color=#E8C88A]Quiet Dawn - Configurable HUD[/color][/b][/size]
 
-Keep the world in view, with health and stamina returning when needed. Choose automatic hiding or a fixed opacity for each player panel, and toggle enemy information separately.
+Keep the world in view, with health and stamina returning when needed. Choose Vanilla, Quiet Dawn or Fixed opacity for each player panel, and toggle enemy information separately.
 
 [size=4][b][color=#E8C88A]Why use Quiet Dawn instead of other HUD mods?[/color][/b][/size]
 
@@ -18,16 +18,16 @@ Keep the world in view, with health and stamina returning when needed. Choose au
 [size=4][b][color=#E8C88A]Features[/color][/b][/size]
 
 [list]
-[*][b][color=#A8D5C2]17 panel opacity controls:[/color][/b] Adjust each managed player panel from 0% to 100% in 5% steps. Zero uses automatic hiding and contextual reveals; a positive value sets its opacity while the game retains contextual visibility rules. Compass opacity alone controls the compass.
+[*][b][color=#A8D5C2]17 panel opacity controls:[/color][/b] Choose Vanilla to follow the game, Quiet Dawn for automatic hiding and contextual reveals, or Fixed opacity to show a 0%–100% slider in 5% steps. Fixed 0% keeps the panel hidden, including during cooldowns and HUD peek. Fixed values are not overridden by reveals; size remains independent.
 [*][b][color=#A8D5C2]17 panel size controls:[/color][/b] Adjust each player panel from 25% to 200% in 5% steps, defaulting to 100%. Edge panels grow inward and centered panels stay centered. Size works independently of opacity; large sizes can overlap nearby elements.
-[*][b][color=#A8D5C2]Health and stamina alerts:[/color][/b] At their default 0% opacity, both stat panels appear after damage, meaningful healing or stamina use. They remain visible while health/blood is strictly below 50% or stamina is strictly below 20%. Human health follows HP; vampire health follows the blood bar.
+[*][b][color=#A8D5C2]Health and stamina alerts:[/color][/b] In their default Quiet Dawn mode, both stat panels appear after damage, meaningful healing or stamina use. They remain visible while health/blood is strictly below 50% or stamina is strictly below 20%. Human health follows HP; vampire health follows the blood bar.
 [*][b][color=#A8D5C2]Adjustable hide delays:[/color][/b] Health alerts last 4 seconds and stamina alerts 1.5 seconds by default. Damage, stamina use and health/blood gains of at least 0.2% of the bar refresh their corresponding timers. Repeated qualifying regeneration gains keep health visible until its timer expires after the last gain. Smaller gains stay quiet; reaching full after a deficit of at least 0.2% briefly reveals health.
-[*][b][color=#A8D5C2]Manual HUD peek:[/color][/b] Hold Controls Legend (Menu on Xbox, Options on PlayStation, or L on keyboard by default) for a 3-second HUD peek. Repeat to refresh it. The combat-focus action wheel keeps its selected opacity. Automatic resource alerts resume afterward; enemy information and special prompt rules keep their settings.
-[*][b][color=#A8D5C2]Contextual panels:[/color][/b] Item and ability quickslots appear for 3 seconds after switching. The time panel appears for 4 seconds after an activity advances time, including shrine restoration. If the activity hides the HUD, the reveal waits for it to return. At automatic opacity, the special-attack panel appears only during its cooldown. Timed reveals range from 0 to 10 seconds in 0.5-second steps; zero disables that timed reveal.
+[*][b][color=#A8D5C2]Manual HUD peek:[/color][/b] Hold Controls Legend (Menu on Xbox, Options on PlayStation, or L on keyboard by default) for a 3-second HUD peek. Repeat to refresh it. Only panels in Quiet Dawn mode participate; the combat-focus action wheel keeps its own rules. Automatic resource alerts resume afterward; enemy information and special prompt rules keep their settings.
+[*][b][color=#A8D5C2]Contextual panels:[/color][/b] In Quiet Dawn mode, item and ability quickslots appear for 3 seconds after switching. The time panel in Quiet Dawn mode appears for 4 seconds after an activity advances time, including shrine restoration. If the activity hides the HUD, the reveal waits for it to return. In Quiet Dawn mode, the special-attack panel appears only during its cooldown. Timed reveals range from 0 to 10 seconds in 0.5-second steps; zero disables that timed reveal.
 [*][b][color=#A8D5C2]Claw slash marks:[/color][/b] Hide the red Shredded Touch slash effects, including the sword variant, with Hide claw slash marks under Combat / Enemies. On by default; turn it Off to show the marks again. Damage, bleeding and ordinary blood effects retain game behavior.
 [*][b][color=#A8D5C2]Enemy information:[/color][/b] Enemy health bars, names and difficulty icons are hidden by default, with three independent toggles to restore them. Turn off Hide enemy health bars to restore ordinary enemy and boss health bars, end caps and boss health-phase indicators; turn off Hide enemy names to restore name labels (boss names). Enemy stamina and wounds retain game behavior.
 [*][b][color=#A8D5C2]Five combat indicator toggles:[/color][/b] Independently enable counterattack directions, unblockable warnings, directional parry cues, the enemy dot/diamond and the lock icon. All default to Off. Parry cues show the incoming direction and highlight its parry window; counterattack cues show weak-spot directions during openings. Cue size ranges from 10% to 200%, default 100%. Show enemy dot/diamond restores the red marker independently of Show lock icon; when both are enabled, a locked target shows the padlock. Directions and unblockable warnings take priority.
-[*][b][color=#A8D5C2]Quieter prompts:[/color][/b] Hide Sprint/Haste prompts in human and vampire form regardless of display language, the quickslot switch hint and the Focus Toggle abilities hint. Restore running prompts with Hide sprint/haste prompt, or restore the Focus hint with positive Focus activation prompt opacity. Ability switching, interaction prompts, dialogue, subtitles, notifications and menus retain game behavior.
+[*][b][color=#A8D5C2]Quieter prompts:[/color][/b] Hide Sprint/Haste prompts in human and vampire form regardless of display language, the quickslot switch hint and the Focus Toggle abilities hint. Restore running prompts with Hide sprint/haste prompt, or restore the Focus and quickslot switch hints with Vanilla or a positive Fixed opacity. Ability switching, interaction prompts, dialogue, subtitles, notifications and menus retain game behavior.
 [/list]
 [size=4][b][color=#E8C88A]Installation[/color][/b][/size]
 
@@ -37,9 +37,9 @@ Keep the world in view, with health and stamina returning when needed. Choose au
 [/list]
 [size=4][b][color=#E8C88A]Configuration[/color][/b][/size]
 
-Open Mod Settings > All Mods, select Quiet Dawn, adjust settings and press Apply to save and update the active game. Restore discards unapplied changes; Reset selects the defaults.
+Open Mod Settings > All Mods, select Quiet Dawn, choose each panel mode and adjust the opacity slider shown for Fixed opacity and press Apply to save and update the active game. Restore discards unapplied changes; Reset selects the defaults.
 
-The menu groups Player status, Combat, Exploration and Controls alphabetically, with General first and Diagnostics last. Each panel keeps its size after opacity and its related thresholds or durations together.
+The menu groups Player status, Combat, Exploration and Controls alphabetically, with General first and Diagnostics last. Each panel keeps its mode, conditional opacity and size together and its related thresholds or durations together.
 
 For manual configuration, launch the game once to generate the settings file. Close the game, back up that file and edit its existing [Settings] entries:
 
@@ -48,11 +48,12 @@ Use 1 for On, 0 for Off, whole percentages such as 50, and decimal seconds such 
 
 For example, change these existing lines to show the compass at half opacity, restore enemy health bars and names, and enable directional parry cues:
 
-[code]compassOpacity = 50
+[code]mode_WBP_Compass = 2
+compassOpacity = 50
 hideEnemyHealthBars = 0
 hideEnemyNames = 0
 showDirectionalParry = 1[/code]
-Fresh settings enable the mod with all 17 panel opacities at 0% and sizes at 100%, enemy health bars/names/difficulty icons, claw slash marks and running prompts hidden, all five combat indicators Off, and Logging Off. Existing saved or supported imported preferences take precedence. All defaults, panel keys and ranges are listed in the included SETTINGS.md and the [url=https://github.com/my-mods/Dawnwalker-Quiet-Dawn-Configurable-HUD/blob/main/SETTINGS.md]settings reference[/url].
+Fresh settings enable the mod with all 17 panels in Quiet Dawn mode, fixed opacity values at 0% and sizes at 100%, enemy health bars/names/difficulty icons, claw slash marks and running prompts hidden, all five combat indicators Off, and Logging Off. Existing saved or supported imported preferences take precedence. All defaults, panel keys and ranges are listed in the included SETTINGS.md and the [url=https://github.com/my-mods/Dawnwalker-Quiet-Dawn-Configurable-HUD/blob/main/SETTINGS.md]settings reference[/url].
 
 [b][color=#A8D5C2]Logging:[/color][/b] The final menu option, or debugLogging = 1 in settings.ini, enables HUD diagnostics in Dawnwalker/Binaries/Win64/ue4ss/UE4SS.log. Apply to update diagnostics immediately; restart to diagnose startup activation. Logging is Off by default.
 
