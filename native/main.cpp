@@ -1,5 +1,5 @@
 // Quiet Dawn - Configurable HUD. MIT.
-// SDK: RE-UE4SS 97b7e501c / UEPseudo eb40a05f. Framecore 2b only.
+// SDK reference: RE-UE4SS 97b7e501c / UEPseudo eb40a05f.
 #include <Mod/CppUserModBase.hpp>
 #include <Mod/LuaMod.hpp>
 #include <LuaMadeSimple/LuaMadeSimple.hpp>
@@ -12,15 +12,14 @@
 #include <Unreal/UObjectArray.hpp>
 #include <Unreal/Core/Windows/AllowWindowsPlatformTypes.hpp>
 #include <Windows.h>
-#include <bcrypt.h>
 #include <array>
 #include <atomic>
-#include <fstream>
 #include <mutex>
 #include <cstring>
 #include "EventQueue.hpp"
 #include "SprintPrompts.hpp"
 #include "ClawAssets.hpp"
+#include "LuaOwner.hpp"
 
 // Public exported declaration in LuaType/LuaUObject.hpp. Keep its heavy
 // template implementation out of this translation unit; conversion belongs
@@ -244,39 +243,22 @@ int bind(State& state, std::string_view path) {
     }
     return static_cast<int>(id+1);
 }
-bool supportedRuntime() {
-    wchar_t path[32768]; auto module=GetModuleHandleW(L"UE4SS.dll");
-    auto length=GetModuleFileNameW(module,path,32768);
-    if (!module || !length || length==32768) return false;
-    std::ifstream file(std::filesystem::path(path),std::ios::binary);
-    if (!file) return false;
-    BCRYPT_ALG_HANDLE algorithm{}; BCRYPT_HASH_HANDLE hash{};
-    if (BCryptOpenAlgorithmProvider(&algorithm,BCRYPT_SHA256_ALGORITHM,nullptr,0)<0) return false;
-    std::array<unsigned char,32> digest{}; bool ok=false;
-    if (BCryptCreateHash(algorithm,&hash,nullptr,0,nullptr,0,0)>=0) {
-        std::array<char,65536> data{}; bool valid=true;
-        while (file.read(data.data(),data.size()) || file.gcount())
-            if (BCryptHashData(hash,reinterpret_cast<PUCHAR>(data.data()),static_cast<ULONG>(file.gcount()),0)<0) {valid=false;break;}
-        ok=valid && file.eof() && BCryptFinishHash(hash,digest.data(),digest.size(),0)>=0;
-        BCryptDestroyHash(hash);
-    }
-    BCryptCloseAlgorithmProvider(algorithm,0);
-    constexpr std::array<unsigned char,32> expected{0xfb,0x18,0x39,0xee,0x91,0xf7,0x1f,0x83,0xd5,0x08,0xd4,0x4a,0x27,0x63,0xa1,0x5a,0xc1,0xbb,0x0c,0x5f,0xb4,0xe5,0x04,0xac,0x0f,0xcf,0xca,0x64,0x37,0x6a,0x05,0x4a};
-    return ok && digest==expected;
-}
 class QuietDawnMod final: public CppUserModBase {
     std::shared_ptr<State> state=std::make_shared<State>();
 public:
     QuietDawnMod() { ModName=STR("Quiet Dawn native HUD bridge"); ModVersion=STR("1"); ModAuthors=STR("oOCamilleOo_"); }
-    void on_lua_start(StringViewType name,Lua& lua,Lua&,Lua&,Lua*) override {
+    void on_lua_start(StringViewType name,Lua& lua,Lua& main,Lua& async,Lua* hook) override {
         if (name!=STR("QuietDawnHUD")) return;
-        // Full-feature loader/profile: leave RegisterHook with its usual owner.
-        if (!supportedRuntime()) return;
         QuietDawn::SprintPrompts::registerLua(lua);
         QuietDawn::ClawAssets::registerLua(lua);
         if (UnrealInitializer::StaticStorage::GlobalConfig.bHookProcessLocalScriptFunction) return;
+        auto owner=get_mod_ref(lua);
+        if(!QuietDawn::matchesLuaOwner(owner,main,async,hook)) {
+            Output::send(STR("[Quiet Dawn native] HUD event adapter unavailable: host Lua owner states do not match the supplied main/async/hook states. Other native features remain available.\n"));
+            return;
+        }
         auto s=state; current=s;
-        s->mod=get_mod_ref(lua);
+        s->mod=owner;
         lua.register_function("_QDNInit",[](const Lua& l) {
             auto s=current;
             if (!l.is_function()) throw std::runtime_error("Expected Quiet Dawn scheduler callback");
@@ -306,7 +288,7 @@ public:
                 s->hook=Hook::RegisterProcessLocalScriptFunctionPostCallback(
                     [s](Hook::TCallbackIterationData<void>&,UObject* object,FFrame& stack,void*) { capture(s,object,stack); },
                     {false,true,STR("QuietDawnHUD"),STR("HUD events")});
-                if (s->hook==Hook::ERROR_ID) throw std::runtime_error("Framecore could not install the native HUD dispatch hook");
+                if (s->hook==Hook::ERROR_ID) throw std::runtime_error("UE4SS could not install the required ProcessLocalScriptFunction HUD hook");
             }
             s->active=true;
             return 0;

@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Remove loader-fingerprint restrictions from the native HUD helpers.
+
 - Keep the combat-focus action wheel at its configured opacity during Show HUD on hold.
 
 ## 1.0.1

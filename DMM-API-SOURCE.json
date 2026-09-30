@@ -38,19 +38,20 @@
     "package/Data/QuietDawnHUD/Scripts/QuietDawnSprintSource.lua": "6396524baf031641178ca5105f0a7658268263aa5de230382a9caef1b317ede5"
   },
   "nativeSources": {
-    "native/BUILD.md": "b5300ea5939d257898c33354619afea7b24090a3fdfd2f91496bb9da34377db5",
+    "native/BUILD.md": "2cb0ee5018f20d0eb6d57b3876fb58f6d88fcc1540e73c3dd928baf4e8d34f79",
+    "native/ClawAssets.cpp": "65cd254d5ff67338b91ef0f5b7966d868bd722f6db98bf1bb7b8325078605cf5",
+    "native/ClawAssets.hpp": "2af082cea1ca16df0a112ae15e3bcc2995669500393564eebfe64406cd09ea63",
     "native/CMakeLists.txt": "432644c88bc801b813ff2cab2074ce04860e7e11e4fadc83eccb66c62bb151c3",
     "native/EventQueue.hpp": "2f3698b0df7fe233552c348f4936eb5878395fdcac4c1ffe611b392878dbe4cb",
     "native/Framecore2b.def": "2026baaedb80d6809e460a20a67dc9be7aec50ad0d7d0d6e8808789d64b81863",
-    "native/main.cpp": "050a35c7cf9394c4c33f78353f8e14475340110c3eba810502a0d2f21207efee",
+    "native/LuaOwner.hpp": "1d991a6edba4d2eaec73a8e6389cc703a22af5d01f5e3c95b2c56c904c074352",
+    "native/main.cpp": "ff955c1e906ec9b059c96f6269661a9cc9466d52cb03c0044d2101687eb164ad",
     "native/ObjectIdentity.hpp": "18b21a331f9bfb0e6ddd70e4ce68177d2d82dde2faff0839c03f3c37e038b0ad",
     "native/SprintPrompts.cpp": "341c1946a8985751098cfc028d8c58fcde71d1918ff6e4b8da8b127d83d7b658",
-    "native/SprintPrompts.hpp": "ad55e7eadadd85daf87464addcdfa5dd3fde64330c8dbc74517d906c66977de1",
-    "native/ClawAssets.cpp": "65cd254d5ff67338b91ef0f5b7966d868bd722f6db98bf1bb7b8325078605cf5",
-    "native/ClawAssets.hpp": "2af082cea1ca16df0a112ae15e3bcc2995669500393564eebfe64406cd09ea63"
+    "native/SprintPrompts.hpp": "ad55e7eadadd85daf87464addcdfa5dd3fde64330c8dbc74517d906c66977de1"
   },
   "nativeDll": {
     "path": "package/Data/QuietDawnHUD/dlls/main.dll",
-    "sha256": "51305b21cc69e8261564425c0c781f17682f3c0ea26845ba4548ff87f9784527"
+    "sha256": "0467241aff55f3abf1f2ad709fbd2e1284415faeb2e620ce0cd4d3c268368773"
   }
 }
