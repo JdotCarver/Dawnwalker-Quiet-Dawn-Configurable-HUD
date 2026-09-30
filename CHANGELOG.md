@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Keep the combat-focus action wheel at its configured opacity during Show HUD on hold.
+
 ## 1.0.1
 
 - Fix Shredded Touch slash marks sometimes appearing with swords.

@@ -908,7 +908,9 @@ local function panelStep(name)
                 else target=remaining and remaining>0 and remaining<math.huge and 1 or 0 end
             end
             if switchVisible and target==0 and (name=="WBP_HUD_Quickslots" or name=="WBP_AA_Quickslots") then target=1 end
-            if peekVisible and name~="WBP_HUD_Quickslots_ChangePrompt" and name~="WBP_HUD_SpecialAttackCooldown"
+            -- The combat-focus radial selector keeps its own opacity setting;
+            -- revealing it for a HUD peek overlays the ordinary player panels.
+            if peekVisible and name~="CombatFocusPanel" and name~="WBP_HUD_Quickslots_ChangePrompt" and name~="WBP_HUD_SpecialAttackCooldown"
                 and name~="WBP_OpenFocusPrompt" then target=1 end
             -- UWidget stores float opacity: e.g. 0.4 returns 0.400000006.
             -- Match the session journal's tolerance over the opacity range.
