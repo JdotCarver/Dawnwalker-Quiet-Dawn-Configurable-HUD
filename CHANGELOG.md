@@ -1,13 +1,12 @@
 # Changelog
 
-## Unreleased
+## 1.1.0
 
-- Remove loader-fingerprint restrictions from the native HUD helpers.
-
+- Add Vanilla, Quiet Dawn and Fixed opacity modes for all 17 player panels, with opacity sliders shown only in Fixed opacity mode.
+- Keep Fixed opacity panels at their chosen opacity during contextual reveals and HUD peek, including fully hidden at 0%.
 - Add Show enemy dot/diamond independently of Show lock icon.
-- Add Vanilla / Quiet Dawn / Fixed opacity modes for all 17 player panels, with conditional opacity sliders and fixed 0% hiding during reveals and HUD peek.
-
 - Keep the combat-focus action wheel at its configured opacity during Show HUD on hold.
+- Remove unnecessary UE4SS restrictions from the native HUD helpers.
 
 ## 1.0.1
 

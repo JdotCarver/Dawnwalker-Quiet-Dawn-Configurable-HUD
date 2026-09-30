@@ -8,8 +8,7 @@ Keep the world in view, with health and stamina returning when needed. Choose Va
 [*][b][color=#A8D5C2]Warnings without constant clutter:[/color][/b] Health/blood and stamina return for resource alerts and stay visible below your chosen thresholds.
 [*][b][color=#A8D5C2]A quick check on demand:[/color][/b] Hold Controls Legend for a HUD peek. Switching items/abilities or advancing time briefly reveals the relevant panel.
 [*][b][color=#A8D5C2]Keep the help you want:[/color][/b] Adjust 17 panel opacities and sizes, and choose which counterattack, unblockable, parry and lock-on cues to show.
-[/list]
-[b][color=#A8D5C2]How the HUD refreshes:[/color][/b] Quiet Dawn uses game events and temporary timers, with no continuous HUD polling. Dynamic HUD 1.3 and HUD tweaks 5 combine event hooks with repeating checks. It doesn't mean one mod is inherently more performant than the others, but the implementation is different. Try one if you're not satisfied with the other.
+[/list][b][color=#A8D5C2]How the HUD refreshes:[/color][/b] Quiet Dawn uses game events and temporary timers, with no continuous HUD polling. Dynamic HUD 1.3 and HUD tweaks 5 combine event hooks with repeating checks. It doesn't mean one mod is inherently more performant than the others, but the implementation is different. Try one if you're not satisfied with the other.
 
 [b][color=#A8D5C2]Compared with [url=https://www.nexusmods.com/thebloodofdawnwalker/mods/344]Dynamic HUD[/url]:[/color][/b] Choose Quiet Dawn to keep your chosen HUD setup during exploration and combat. Choose Dynamic HUD if you want different panels to appear in Focus or when drawing a weapon.
 
@@ -28,14 +27,12 @@ Keep the world in view, with health and stamina returning when needed. Choose Va
 [*][b][color=#A8D5C2]Enemy information:[/color][/b] Enemy health bars, names and difficulty icons are hidden by default, with three independent toggles to restore them. Turn off Hide enemy health bars to restore ordinary enemy and boss health bars, end caps and boss health-phase indicators; turn off Hide enemy names to restore name labels (boss names). Enemy stamina and wounds retain game behavior.
 [*][b][color=#A8D5C2]Five combat indicator toggles:[/color][/b] Independently enable counterattack directions, unblockable warnings, directional parry cues, the enemy dot/diamond and the lock icon. All default to Off. Parry cues show the incoming direction and highlight its parry window; counterattack cues show weak-spot directions during openings. Cue size ranges from 10% to 200%, default 100%. Show enemy dot/diamond restores the red marker independently of Show lock icon; when both are enabled, a locked target shows the padlock. Directions and unblockable warnings take priority.
 [*][b][color=#A8D5C2]Quieter prompts:[/color][/b] Hide Sprint/Haste prompts in human and vampire form regardless of display language, the quickslot switch hint and the Focus Toggle abilities hint. Restore running prompts with Hide sprint/haste prompt, or restore the Focus and quickslot switch hints with Vanilla or a positive Fixed opacity. Ability switching, interaction prompts, dialogue, subtitles, notifications and menus retain game behavior.
-[/list]
-[size=4][b][color=#E8C88A]Installation[/color][/b][/size]
+[/list][size=4][b][color=#E8C88A]Installation[/color][/b][/size]
 
 [list]
 [*][b][color=#A8D5C2]Vortex:[/color][/b] Install Quiet-Dawn-Configurable-HUD.zip through Vortex, enable it and deploy.
 [*][b][color=#A8D5C2]Manual:[/color][/b] Copy the archive's Data/QuietDawnHUD folder into ...\steamapps\common\The Blood of Dawnwalker\Dawnwalker\Binaries\Win64\ue4ss\Mods\, preserving the folder structure.
-[/list]
-[size=4][b][color=#E8C88A]Configuration[/color][/b][/size]
+[/list][size=4][b][color=#E8C88A]Configuration[/color][/b][/size]
 
 Open Mod Settings > All Mods, select Quiet Dawn, choose each panel mode and adjust the opacity slider shown for Fixed opacity and press Apply to save and update the active game. Restore discards unapplied changes; Reset selects the defaults.
 
@@ -43,8 +40,7 @@ The menu groups Player status, Combat, Exploration and Controls alphabetically, 
 
 For manual configuration, launch the game once to generate the settings file. Close the game, back up that file and edit its existing [Settings] entries:
 
-[code]Dawnwalker/Binaries/Win64/ue4ss/Mods/QuietDawnHUD/settings.ini[/code]
-Use 1 for On, 0 for Off, whole percentages such as 50, and decimal seconds such as 1.5. Save, restart the game and load a save. Edit the generated settings.ini; mod_settings.ini defines the settings menu.
+[code]Dawnwalker/Binaries/Win64/ue4ss/Mods/QuietDawnHUD/settings.ini[/code]Use 1 for On, 0 for Off, whole percentages such as 50, and decimal seconds such as 1.5. Save, restart the game and load a save. Edit the generated settings.ini; mod_settings.ini defines the settings menu.
 
 For example, change these existing lines to show the compass at half opacity, restore enemy health bars and names, and enable directional parry cues:
 
