@@ -1,7 +1,7 @@
 -- Independent combat marker presentation. Stock events supply the current state.
 local M = {}
 function M.new(config, diagnostics, session)
-    local padlock, diamond
+    local padlock, diamond, skull
     local fields={"Reticle","FarAwayReticle","HardLockTarget","HardLockTarget_Outline",
         "LeftArrow","RightArrow","TopArrow","BottomArrow","Indicator"}
     local attack={[1]="RightArrow",[2]="LeftArrow",[3]="TopArrow",[4]="BottomArrow",
@@ -158,6 +158,17 @@ function M.new(config, diagnostics, session)
         local unblockable=icon==9 and config.showUnblockableWarning
         local lock=config.showLockIcon and object.bHardLockEnabled==true and not arrow and not unblockable
         local marker=config.showEnemyMarker==true and not arrow and not unblockable and not lock
+        if unblockable and not valid(skull) then
+            skull=StaticFindObject('/Game/_Dawnwalker/UI/_Unified/Combat/Atlas/Frames/T_Combat_Icon_SkullRed.T_Combat_Icon_SkullRed')
+            if not valid(skull) then
+                if diagnostics.debugLogging and not entry.cueSkullMissing then
+                    diagnostics.event('combatCueSprite','unblockable skull asset unavailable; id=%s',tostring(object:GetAddress()))
+                    entry.cueSkullMissing=true
+                end
+                return false
+            end
+            entry.cueSkullMissing=nil
+        end
         if marker and not valid(diamond) then
             diamond=StaticFindObject('/Game/_Dawnwalker/UI/_Unified/Combat/Atlas/Frames/T_Combat_Icon_Diamond.T_Combat_Icon_Diamond')
             if not valid(diamond) then return false end
@@ -180,12 +191,17 @@ function M.new(config, diagnostics, session)
             -- two hooked display helpers must never be called while active.
             object['Apply Attack Style To Arrow'](object,children[arrow])
             if icon>=5 then children[arrow]:SetColorAndOpacity(object['Parry Window Color']) end
-        elseif lock or marker then
-            local sprite=lock and padlock or diamond
+        elseif unblockable or lock or marker then
+            -- EnableHardLock can replace the near brush with a diamond/padlock
+            -- without changing icon 9. Reassert the skull from the current
+            -- state; never call a hooked renderer or restart its animation.
+            local sprite=unblockable and skull or lock and padlock or diamond
             children.Reticle:SetBrushFromAtlasInterface(sprite,true)
             children.Reticle:SetColorAndOpacity({R=1,G=1,B=1,A=1})
-            children.FarAwayReticle:SetBrushFromAtlasInterface(sprite,true)
-            entry.farStyledAddress=children.FarAwayReticle:GetAddress()
+            if lock or marker then
+                children.FarAwayReticle:SetBrushFromAtlasInterface(sprite,true)
+                entry.farStyledAddress=children.FarAwayReticle:GetAddress()
+            end
         end
         local factor=(config.combatCueSize or 100)/100
         entry.cueScale=scale(children.Indicator,factor,entry.cueScale)

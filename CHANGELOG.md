@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Fix lock-state changes replacing an active unblockable-warning skull with an enemy dot or padlock.
+
 ## 1.1.0
 
 - Add Vanilla, Quiet Dawn and Fixed opacity modes for all 17 player panels, with opacity sliders shown only in Fixed opacity mode.
