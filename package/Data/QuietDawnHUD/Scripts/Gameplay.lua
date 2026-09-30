@@ -1235,7 +1235,7 @@ applyLiveSettings=function(run)
         end
     end
     if changed.showCounterattackDirection or changed.showUnblockableWarning or changed.showDirectionalParry
-        or changed.showLockIcon or changed.combatCueSize then
+        or changed.showEnemyMarker or changed.showLockIcon or changed.combatCueSize then
         for _,entry in pairs(markerCache) do queueMarker(entry.object) end
     end
     ensureFeatureSpecs()

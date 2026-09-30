@@ -65,7 +65,7 @@ local values, err = Store.load(directory, compatibleSchema, function()
     return result, nil, sources
 end)
 if not values and err and err:match('^Missing setting:') then
-    local defaults={hideClawSlashMarks=1,hideEnemyHealthBars=1,showUnblockableWarning=0,showDirectionalParry=0,showLockIcon=0,combatCueSize=100,showCounterattackDirection=0,hideSprintPrompt=1,hideEnemyNames=1, hideEnemyDifficultyIcons=1, opacity_WBP_HudTimer=0, timeHoldSeconds=4, switchRevealSeconds=3}
+    local defaults={showEnemyMarker=0,hideClawSlashMarks=1,hideEnemyHealthBars=1,showUnblockableWarning=0,showDirectionalParry=0,showLockIcon=0,combatCueSize=100,showCounterattackDirection=0,hideSprintPrompt=1,hideEnemyNames=1, hideEnemyDifficultyIcons=1, opacity_WBP_HudTimer=0, timeHoldSeconds=4, switchRevealSeconds=3}
     for _, p in ipairs(panels) do defaults['scale_'..p]=100 end
     local path=Store.path(directory)
     local text=Store.read(path)
@@ -76,7 +76,7 @@ if not values and err and err:match('^Missing setting:') then
     for _, row in ipairs(compatibleSchema) do
         if not row.key:match('^scale_') and not row.key:match('^opacity_') and row.key~='timeHoldSeconds' and row.key~='switchRevealSeconds' and row.key~='hideSprintPrompt'
             and row.key~='showCounterattackDirection' and row.key~='showUnblockableWarning'
-            and row.key~='showDirectionalParry' and row.key~='showLockIcon' and row.key~='combatCueSize'
+            and row.key~='showEnemyMarker' and row.key~='showDirectionalParry' and row.key~='showLockIcon' and row.key~='combatCueSize'
             and row.key~='hideClawSlashMarks' and not row.key:match('^hideEnemy') then legacySchema[#legacySchema+1]=row end
     end
     for _, p in ipairs(panels) do
@@ -89,7 +89,7 @@ if not values and err and err:match('^Missing setting:') then
         end
     end
     values, err = dofile(directory..'UE4SSCommonSettingsUpgrade.lua').ensure(
-        Store, path, compatibleSchema, defaults, 'claw-slash-marks')
+        Store, path, compatibleSchema, defaults, 'enemy-marker')
 end
 if values then
     local needsUpgrade=false
@@ -113,6 +113,7 @@ values.hideEnemyDifficultyIcons=values.hideEnemyDifficultyIcons==1
 values.showCounterattackDirection=values.showCounterattackDirection==1
 values.showUnblockableWarning=values.showUnblockableWarning==1
 values.showDirectionalParry=values.showDirectionalParry==1
+values.showEnemyMarker=values.showEnemyMarker==1
 values.showLockIcon=values.showLockIcon==1
 values.hideSprintPrompt=values.hideSprintPrompt==1
 -- Menu percentages become fractions only at the gameplay boundary.

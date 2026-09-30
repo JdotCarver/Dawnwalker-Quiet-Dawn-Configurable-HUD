@@ -4,7 +4,7 @@ Required: [Mod Setting Menu 1.0.6 or later](https://www.nexusmods.com/thebloodof
 
 ## Menu categories
 
-The menu runs from General through Player status, Combat, Exploration and Controls, ending with Diagnostics. Categories are alphabetical within each group, using headings such as Combat / Crosshair and Exploration / Compass. Each panel keeps its size directly after opacity, followed by related thresholds or reveal durations. Combat / Indicators contains counterattack directions, parry cues, unblockable warnings, the lock icon and cue size. Logging remains the final entry.
+The menu runs from General through Player status, Combat, Exploration and Controls, ending with Diagnostics. Categories are alphabetical within each group, using headings such as Combat / Crosshair and Exploration / Compass. Each panel keeps its size directly after opacity, followed by related thresholds or reveal durations. Combat / Indicators contains counterattack directions, parry cues, unblockable warnings, the enemy dot/diamond, the lock icon and cue size. Logging remains the final entry.
 
 | Category | Controls |
 | --- | --- |
@@ -18,7 +18,7 @@ The menu runs from General through Player status, Combat, Exploration and Contro
 | Combat / Focus activation prompt | Toggle abilities hint opacity |
 | Combat / Focus charge | Focus charge bar opacity |
 | Combat / Focus panel | Combat focus panel opacity |
-| Combat / Indicators | Counterattack directions, unblockable warnings, parry cues, lock icon and cue size |
+| Combat / Indicators | Counterattack directions, unblockable warnings, parry cues, enemy dot/diamond, lock icon and cue size |
 | Combat / Quickslots | Item and ability quickslot opacity, switch prompt opacity and switch reveal duration |
 | Combat / Special attack cooldown | Special attack cooldown opacity |
 | Exploration / Compass | Compass opacity |
@@ -33,7 +33,7 @@ Each player-panel category also includes its size slider, directly after the mat
 
 ## Default behavior
 
-On a fresh install with no saved or imported preferences, the mod is enabled and all 17 player HUD opacities start at 0% (automatic hiding and contextual reveals). All panel sizes start at 100%. Enemy health bars, enemy names, difficulty icons, claw slash marks, and sprint/haste prompts are hidden. All four combat cue toggles are Off; cue size is 100%. Health/blood below 50% or stamina below 20% keeps the stat panels visible. Health alerts hold for 4 seconds and stamina alerts for 1.5 seconds. Holding Controls Legend reveals the HUD for 3 seconds; switching quickslots reveals them for 3 seconds; time changes reveal the time panel for 4 seconds. Logging is Off. Existing saved or supported imported preferences take precedence over these defaults.
+On a fresh install with no saved or imported preferences, the mod is enabled and all 17 player HUD opacities start at 0% (automatic hiding and contextual reveals). All panel sizes start at 100%. Enemy health bars, enemy names, difficulty icons, claw slash marks, and sprint/haste prompts are hidden. All five combat indicator toggles are Off; cue size is 100%. Health/blood below 50% or stamina below 20% keeps the stat panels visible. Health alerts hold for 4 seconds and stamina alerts for 1.5 seconds. Holding Controls Legend reveals the HUD for 3 seconds; switching quickslots reveals them for 3 seconds; time changes reveal the time panel for 4 seconds. Logging is Off. Existing saved or supported imported preferences take precedence over these defaults.
 
 Older settings files receive missing panel size keys at 100%, preserving existing values, comments and prior backups. The current upgrade uses `settings.ini.before-claw-slash-marks`; older `settings.ini.before-panel-scaling` backups are retained. Existing malformed or duplicate values are rejected without replacing the file.
 
@@ -101,6 +101,7 @@ Missing existing settings, duplicate or invalid settings stop configuration load
 | Combat / Indicators | Show counterattack direction | Off (default), On |
 | Combat / Indicators | Show unblockable warning | Off (default), On |
 | Combat / Indicators | Show directional parry cues | Off (default), On |
+| Combat / Indicators | Show enemy dot/diamond | Off (default), On |
 | Combat / Indicators | Show lock icon | Off (default), On |
 | Combat / Indicators | Combat cue size | 10%–200%, step 10%; default 100% |
 | Combat / Quickslots | Quickslots opacity | 0% to 100% in 5-point steps |
@@ -120,7 +121,7 @@ Missing existing settings, duplicate or invalid settings stop configuration load
 
 Turn off **Hide enemy health bars** to restore ordinary enemy and boss health bars, end caps and boss health-phase indicators. Turn off **Hide enemy names** to restore name labels (boss names), or **Hide enemy difficulty icons** to restore difficulty indicators. All three choices are independent and restore the game's normal visibility for that information. Apply to save and update the active game. The player HUD peek keeps these choices in effect. At startup, older settings files receive any missing enemy-information options, set to On. Existing preferences and comments are preserved, with a backup before adding missing options.
 
-The four Combat cues toggles work independently of the game's Directional Indicator option. Counterattack directions show the attack opening after a perfect parry; unblockable warnings show the skull; directional parry cues show the incoming direction and highlight its arrow during the parry window; the lock option shows a padlock on a hard-locked target between cues. The dot stays hidden and directions hide all center lock icons. All four toggles default to Off. Combat cue size scales the whole cue group from 10% to 200% in 10% steps, defaulting to 100%. Apply to save and update the active game. Existing counterattack choices are retained when adding the new controls. Logging reports the observed icon, selected arrow or warning, lock state, size and readiness failures in `Dawnwalker/Binaries/Win64/ue4ss/UE4SS.log`.
+The five Combat / Indicators toggles work independently of the game's Directional Indicator option. Counterattack directions show the attack opening after a perfect parry; unblockable warnings show the skull; directional parry cues show the incoming direction and highlight its arrow during the parry window; the lock option shows a padlock on a hard-locked target between cues. Show enemy dot/diamond restores the red marker independently of Show lock icon. With only the marker enabled, locked and unlocked targets show the diamond. With both enabled, a hard-locked target shows the padlock. Directions and unblockable warnings take priority. All five toggles default to Off. Combat cue size scales the whole cue group from 10% to 200% in 10% steps, defaulting to 100%. Apply to save and update the active game. Existing counterattack choices are retained when adding the new controls. Logging reports the observed icon, selected arrow or warning, lock state, size and readiness failures in `Dawnwalker/Binaries/Win64/ue4ss/UE4SS.log`.
 
 Console commands are not used to change settings.
 
@@ -138,7 +139,7 @@ When upgrading an older Quiet Dawn package, back up `Scripts/QuietDawnConfig.lua
 
 **Visibility thresholds:** keep the health/stamina display visible while human health or vampire blood is below 50%, or stamina is below 20%, by default. Exactly the selected percentage does not trigger the threshold. Damage and stamina use can also reveal it for their hold durations, even above the thresholds. A 0% threshold disables that low-resource trigger. These rules apply when the corresponding panel opacity is 0%. Positive opacity keeps that panel shown without resource-driven hiding.
 
-Older On/Off panel settings are imported into the new opacity controls: Off becomes 0% and On becomes 100%. The upgrade adds the new keys while preserving existing settings, unknown keys and comments; it retains the original file under a `settings.ini.before-*` name for the upgrade being applied (currently `settings.ini.before-combat-cues`). Earlier recovery backups are retained. Compass opacity remains unchanged. Keep recovery files if an upgrade error is reported.
+Older On/Off panel settings are imported into the new opacity controls: Off becomes 0% and On becomes 100%. The upgrade adds the new keys while preserving existing settings, unknown keys and comments; it retains the original file under a `settings.ini.before-*` name for the upgrade being applied (currently `settings.ini.before-enemy-marker`). Earlier recovery backups are retained. Compass opacity remains unchanged. Keep recovery files if an upgrade error is reported.
 
 Switching items/abilities briefly reveals panels set to 0%; positive opacity stays at its selected value. The switch hint remains at its own opacity, including during manual HUD peek. Set the special-attack panel to 0% to show it only while recharging; positive values show it normally at the chosen opacity. Both still respect the game's visibility restrictions. The reveal duration uses game time and pauses with the game.
 
@@ -166,6 +167,7 @@ All entries below belong under `[Settings]`. Defaults apply to a fresh install w
 | Show counterattack direction | `showCounterattackDirection` | `0` | 0 = Off, 1 = On |
 | Show unblockable warning | `showUnblockableWarning` | `0` | 0 = Off, 1 = On |
 | Show directional parry cues | `showDirectionalParry` | `0` | 0 = Off, 1 = On |
+| Show enemy dot/diamond | `showEnemyMarker` | `0` | 0 = Off, 1 = On |
 | Show lock icon | `showLockIcon` | `0` | 0 = Off, 1 = On |
 | Combat cue size | `combatCueSize` | `100` | 10 to 200, step 10 |
 | Keep health visible below | `healthThreshold` | `50` | 0 to 100 percent; 5-point steps match the menu |

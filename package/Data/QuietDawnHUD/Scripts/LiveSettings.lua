@@ -35,6 +35,7 @@ function M.new(directory, report)
         ["showCounterattackDirection"]="showCounterattackDirection",
         ["showUnblockableWarning"]="showUnblockableWarning",
         ["showDirectionalParry"]="showDirectionalParry",
+        ["showEnemyMarker"]="showEnemyMarker",
         ["showLockIcon"]="showLockIcon",
         ["combatCueSize"]="combatCueSize",
         ["opacity_WBP_HUD_Quickslots"]="opacity_WBP_HUD_Quickslots",

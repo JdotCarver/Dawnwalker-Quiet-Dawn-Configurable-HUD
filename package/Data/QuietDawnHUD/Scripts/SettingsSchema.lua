@@ -37,6 +37,7 @@ return {
     {key="showCounterattackDirection", default=0, values={0,1}},
     {key="showUnblockableWarning", default=0, values={0,1}},
     {key="showDirectionalParry", default=0, values={0,1}},
+    {key="showEnemyMarker", default=0, values={0,1}},
     {key="showLockIcon", default=0, values={0,1}},
     {key="combatCueSize", default=100, values=cueSizes},
     {key="healthThreshold", default=50, min=0, max=100, integer=false},

@@ -1,7 +1,7 @@
 -- Independent combat marker presentation. Stock events supply the current state.
 local M = {}
 function M.new(config, diagnostics, session)
-    local padlock
+    local padlock, diamond
     local fields={"Reticle","FarAwayReticle","HardLockTarget","HardLockTarget_Outline",
         "LeftArrow","RightArrow","TopArrow","BottomArrow","Indicator"}
     local attack={[1]="RightArrow",[2]="LeftArrow",[3]="TopArrow",[4]="BottomArrow",
@@ -127,6 +127,21 @@ function M.new(config, diagnostics, session)
                     or 'Display Icon State Directionally'
                 local fn=method(object,name)
                 if fn then fn(object,icon) end
+                -- Stock minimum-scale rendering selects the same diamond or
+                -- padlock for the distant reticle, outside the display helpers.
+                local far=object.FarAwayReticle
+                if entry.farStyledAddress and valid(far) and far:GetAddress()==entry.farStyledAddress then
+                    local locked=object.bHardLockEnabled==true
+                    local sprite
+                    if locked then sprite=padlock else sprite=diamond end
+                    if not valid(sprite) then
+                        local path=locked and '/Game/_Dawnwalker/UI/_Unified/SharedTextures/General/Frames/T_Icon_Padlock.T_Icon_Padlock'
+                            or '/Game/_Dawnwalker/UI/_Unified/Combat/Atlas/Frames/T_Combat_Icon_Diamond.T_Combat_Icon_Diamond'
+                        sprite=StaticFindObject(path)
+                    end
+                    local set=method(far,'SetBrushFromAtlasInterface')
+                    if valid(sprite) and set then set(far,sprite,true) end
+                end
             end)
             entry.cueCleanup=true
         end
@@ -142,14 +157,19 @@ function M.new(config, diagnostics, session)
         if not arrow and config.showDirectionalParry then arrow=attack[icon] end
         local unblockable=icon==9 and config.showUnblockableWarning
         local lock=config.showLockIcon and object.bHardLockEnabled==true and not arrow and not unblockable
+        local marker=config.showEnemyMarker==true and not arrow and not unblockable and not lock
+        if marker and not valid(diamond) then
+            diamond=StaticFindObject('/Game/_Dawnwalker/UI/_Unified/Combat/Atlas/Frames/T_Combat_Icon_Diamond.T_Combat_Icon_Diamond')
+            if not valid(diamond) then return false end
+        end
         if lock and not valid(padlock) then
             padlock=StaticFindObject('/Game/_Dawnwalker/UI/_Unified/SharedTextures/General/Frames/T_Icon_Padlock.T_Icon_Padlock')
             if not valid(padlock) then return false end
         end
         -- Hide the center through visibility: its own opacity animations must
         -- not bring the dot/lock back during a directional cue.
-        visibility(entry,"Reticle",children.Reticle,(unblockable or lock) and 4 or 1)
-        visibility(entry,"FarAwayReticle",children.FarAwayReticle,lock and 4 or 1)
+        visibility(entry,"Reticle",children.Reticle,(unblockable or lock or marker) and 4 or 1)
+        visibility(entry,"FarAwayReticle",children.FarAwayReticle,(lock or marker) and 4 or 1)
         visibility(entry,"HardLockTarget",children.HardLockTarget,1)
         visibility(entry,"HardLockTarget_Outline",children.HardLockTarget_Outline,1)
         for _,name in ipairs({'LeftArrow','RightArrow','TopArrow','BottomArrow'}) do
@@ -160,20 +180,22 @@ function M.new(config, diagnostics, session)
             -- two hooked display helpers must never be called while active.
             object['Apply Attack Style To Arrow'](object,children[arrow])
             if icon>=5 then children[arrow]:SetColorAndOpacity(object['Parry Window Color']) end
-        elseif lock then
-            children.Reticle:SetBrushFromAtlasInterface(padlock,true)
+        elseif lock or marker then
+            local sprite=lock and padlock or diamond
+            children.Reticle:SetBrushFromAtlasInterface(sprite,true)
             children.Reticle:SetColorAndOpacity({R=1,G=1,B=1,A=1})
-            children.FarAwayReticle:SetBrushFromAtlasInterface(padlock,true)
+            children.FarAwayReticle:SetBrushFromAtlasInterface(sprite,true)
+            entry.farStyledAddress=children.FarAwayReticle:GetAddress()
         end
         local factor=(config.combatCueSize or 100)/100
         entry.cueScale=scale(children.Indicator,factor,entry.cueScale)
         entry.farCueScale=scale(children.FarAwayReticle,factor,entry.farCueScale)
-        if diagnostics.debugLogging and (entry.cueIcon~=icon or entry.cueArrow~=arrow or entry.cueLock~=lock) then
-            diagnostics.event('combatCue','icon=%s arrow=%s unblockable=%s lock=%s size=%s',
-                tostring(icon),tostring(arrow),tostring(unblockable),tostring(lock),tostring(config.combatCueSize or 100))
+        if diagnostics.debugLogging and (entry.cueIcon~=icon or entry.cueArrow~=arrow or entry.cueLock~=lock or entry.cueMarker~=marker) then
+            diagnostics.event('combatCue','icon=%s arrow=%s unblockable=%s lock=%s marker=%s size=%s',
+                tostring(icon),tostring(arrow),tostring(unblockable),tostring(lock),tostring(marker),tostring(config.combatCueSize or 100))
         end
-        entry.cueIcon,entry.cueArrow,entry.cueLock=icon,arrow,lock
-        return true,arrow~=nil or unblockable or lock
+        entry.cueIcon,entry.cueArrow,entry.cueLock,entry.cueMarker=icon,arrow,lock,marker
+        return true,arrow~=nil or unblockable or lock or marker
     end
 end
 return M

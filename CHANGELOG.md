@@ -4,6 +4,8 @@
 
 - Remove loader-fingerprint restrictions from the native HUD helpers.
 
+- Add Show enemy dot/diamond independently of Show lock icon.
+
 - Keep the combat-focus action wheel at its configured opacity during Show HUD on hold.
 
 ## 1.0.1

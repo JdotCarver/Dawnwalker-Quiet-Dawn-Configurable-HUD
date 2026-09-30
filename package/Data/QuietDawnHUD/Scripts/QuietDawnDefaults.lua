@@ -8,6 +8,7 @@ return {
     showCounterattackDirection = false,
     showUnblockableWarning = false,
     showDirectionalParry = false,
+    showEnemyMarker = false,
     showLockIcon = false,
     combatCueSize = 100,
     -- Both stat panels show together when either resource needs attention.
