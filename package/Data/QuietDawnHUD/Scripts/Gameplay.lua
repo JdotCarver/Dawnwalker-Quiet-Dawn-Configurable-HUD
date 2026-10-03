@@ -412,8 +412,8 @@ end
 markerStep=D.wrap("marker",markerStep)
 markerHooksStep=D.wrap("hook",markerHooksStep)
 -- Enemy bars live outside WBP_GameHUD. Health, name and difficulty children
--- follow independent settings. Stamina, wounds and
--- combat warnings stay under game control.
+-- follow independent settings. The secondary attack dot follows showEnemyMarker.
+-- Stamina, wounds and other combat warnings stay under their existing controls.
 -- Build 25232147: these named children and lifecycle functions are exported
 -- by WBP_CombatCharacterBar and WBP_Combat_BossBar.
 local healthTypes = {
@@ -435,6 +435,21 @@ if config.hideEnemyDifficultyIcons then
     for _, spec in ipairs(healthTypes) do
         spec.fields[#spec.fields+1] = "LevelIndicator"
     end
+end
+-- AttackIndicatorFade animates Image_118 inside this attachment. Hiding the
+-- parent opacity survives that animation and stock SetIndicatorVisible calls.
+if not config.showEnemyMarker then
+    healthTypes[1].fields[#healthTypes[1].fields+1] = "HelperAttackIndicator"
+end
+local function enemyFieldSetting(field)
+    if field=='HelperAttackIndicator' then return 'showEnemyMarker' end
+    if field=='BossNameLabel' then return 'hideEnemyNames' end
+    if field=='LevelIndicator' then return 'hideEnemyDifficultyIcons' end
+    return 'hideEnemyHealthBars'
+end
+local function enemyFieldHidden(field)
+    if field=='HelperAttackIndicator' then return not config.showEnemyMarker end
+    return config[enemyFieldSetting(field)]
 end
 local healthQueue, healthPending, healthFirst, healthLast = {}, {}, 1, 0
 local function healthReady()
@@ -522,13 +537,16 @@ local function healthStep()
             keep=retry() or nextField()
             return
         end
-        local setting=field=='BossNameLabel' and 'hideEnemyNames' or (field=='LevelIndicator' and 'hideEnemyDifficultyIcons' or 'hideEnemyHealthBars')
-        if config[setting] then
+        if enemyFieldHidden(field) then
             if child:GetRenderOpacity()~=0 then
                 opacity(child,0)
                 if D.debugLogging then D.count('enemyHealthWrites') end
+                if D.debugLogging and field=='HelperAttackIndicator' then D.event('enemyAttackDot','hidden=true') end
             end
-        else Session.restore('opacity:'..tostring(child:GetAddress())) end
+        else
+            local restored=Session.restore('opacity:'..tostring(child:GetAddress()))
+            if D.debugLogging and restored and field=='HelperAttackIndicator' then D.event('enemyAttackDot','hidden=false') end
+        end
         keep=nextField()
     end)
     if not success then
@@ -1258,14 +1276,14 @@ applyLiveSettings=function(run)
         end
         if clawMarks then clawMarks.configure(config.hideClawSlashMarks) end
     end
-    if changed.hideEnemyHealthBars or changed.hideEnemyNames or changed.hideEnemyDifficultyIcons then
-        local fields={{'SegmentedHealthBar','HealthBarLeftCap','HealthBarRightCap','LevelIndicator'},
+    if changed.hideEnemyHealthBars or changed.hideEnemyNames or changed.hideEnemyDifficultyIcons or changed.showEnemyMarker then
+        local fields={{'SegmentedHealthBar','HealthBarLeftCap','HealthBarRightCap','LevelIndicator','HelperAttackIndicator'},
             {'HealthBar','HealthBarLeftCap','HealthBarRightCap','IndicatorBox','BossNameLabel','LevelIndicator'}}
         for index,spec in ipairs(healthTypes) do
             local affected={};spec.fields={}
             for _,field in ipairs(fields[index]) do
-                local setting=field=='BossNameLabel' and 'hideEnemyNames' or (field=='LevelIndicator' and 'hideEnemyDifficultyIcons' or 'hideEnemyHealthBars')
-                if config[setting] then spec.fields[#spec.fields+1]=field end
+                local setting=enemyFieldSetting(field)
+                if enemyFieldHidden(field) then spec.fields[#spec.fields+1]=field end
                 if changed[setting] then affected[#affected+1]=field end
             end
             for _,object in ipairs(spec.recent or {}) do queueHealth(object,spec,affected) end

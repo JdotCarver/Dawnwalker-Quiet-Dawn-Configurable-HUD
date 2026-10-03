@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Hide the secondary-enemy attack dot beside health bars when Show enemy dot/diamond is Off.
+
 ## 1.1.1
 
 - Fix lock-state changes replacing an active unblockable-warning skull with an enemy dot or padlock.
