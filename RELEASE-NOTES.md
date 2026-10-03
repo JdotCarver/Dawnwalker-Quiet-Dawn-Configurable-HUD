@@ -1,8 +1,7 @@
-# Quiet Dawn - Configurable HUD 1.1.1
+# Quiet Dawn - Configurable HUD 1.1.2
 
-- Recover safely when a combat marker's ownership methods are not ready, with bounded retries and quiet normal-play logging.
-- Make Show HUD reveal and hide eligible panels together.
-- Keep resource alerts responsive during HUD refreshes, and prevent missing or failed panels from delaying the rest of the HUD.
-- Repair stat-panel opacity after game refreshes and clear the temporary stat reveal when Show HUD is cancelled.
-- Hide the secondary-enemy attack dot beside health bars when Show enemy dot/diamond is Off.
-- Fix lock-state changes replacing an active unblockable-warning skull with an enemy dot or padlock.
+- Show HUD now reveals and hides panels together.
+- Improve health and stamina alerts and restore their chosen opacity more reliably.
+- Fix stat panels staying revealed after cancelling Show HUD.
+- Hide secondary enemies' red attack dots when Show enemy dot/diamond is Off. Thanks to BryanHudson, author of Free Combat Camera, for finding this bug!
+- Improve combat indicator reliability when entering gameplay.
