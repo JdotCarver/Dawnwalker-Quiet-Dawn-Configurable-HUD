@@ -361,15 +361,15 @@ local function markerStep()
     if not valid(object) then return end
     job.address=object:GetAddress()
     if not valid(controller) or not valid(world) then return end
-    local objectWorld, owner=object:GetWorld(), object:GetOwningPlayer()
+    local objectWorld, owner=require('QuietDawnMarkerOwner').read(object)
     if not valid(objectWorld) or not valid(owner) then
         if D.debugLogging then
             D.count("markerNotReady")
-            if job.retries==0 or job.retries==119 then
-                D.event("marker","id=%s ownership not ready; attempt=%d/120",tostring(job.address),job.retries+1)
+            if job.retries==0 or job.retries==7 then
+                D.event("marker","id=%s ownership unavailable; attempt=%d/8",tostring(job.address),job.retries+1)
             end
         end
-        if job.retries<119 then queueMarker(object,job.retries+1) end
+        if job.retries<7 then queueMarker(object,job.retries+1) end
         return
     end
     if not sameObject(objectWorld,world) or not sameObject(owner,controller) then
@@ -1204,7 +1204,10 @@ local function step()
     markerTurn=not markerTurn
     if markersReady() and (markerTurn or (cursor==0 and not dirty)) then
         local success, reason=pcall(markerStep)
-        if not success then print("[Quiet Dawn - Configurable HUD] Marker update skipped: "..tostring(reason)) end
+        if not success and D.debugLogging then
+            D.count('markerFailures')
+            D.event('markerFailure','Marker update skipped: %s',tostring(reason))
+        end
         return false
     end
     if cursor==0 and not dirty and timeDirty then
