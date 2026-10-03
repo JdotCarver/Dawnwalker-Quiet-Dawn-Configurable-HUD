@@ -14,14 +14,14 @@
   },
   "runtimeSources": {
     "package/Data/QuietDawnHUD/Scripts/dmm_api.lua": "6bb667bffc543d1c5c1b36ab6da66c621d6c81c9ee46f94f0f6339cae9cc884c",
-    "package/Data/QuietDawnHUD/Scripts/Gameplay.lua": "8706f1eb082f951660adbc2e380a0882c1f823041107e191b9fa762dc61af294",
+    "package/Data/QuietDawnHUD/Scripts/Gameplay.lua": "a8c442f69552c85a866efa6989bce6eb060b26941fede85f5ed64eefcf6e11e0",
     "package/Data/QuietDawnHUD/Scripts/LiveSettings.lua": "245ad48858ab0b001e3816e0ad4a2282ce1d07df7eb30d6d8f05f33c870a8e14",
     "package/Data/QuietDawnHUD/Scripts/main.lua": "e28c50a36ada47dbb21a2fe1aa2a4cd478fdc77fd490bae8019b253b0b1a04fd",
     "package/Data/QuietDawnHUD/Scripts/MenuSettings.lua": "944cc45747f5f8ca5b562b5830c29df7593307349609c6907a4db89bb2d15451",
     "package/Data/QuietDawnHUD/Scripts/QuietDawnClawMarks.lua": "b45dee7d8ce43732329e2c72bd5f0010f403ba4f9aae1baae4ee2845c170a128",
     "package/Data/QuietDawnHUD/Scripts/QuietDawnCombatCues.lua": "9fdc729e563dca0c113af62a10df963ad0e39485d7a4a18ed0543093e041de85",
     "package/Data/QuietDawnHUD/Scripts/QuietDawnDefaults.lua": "8c7a3715b394e9c782fbb8c8e680333498a54e922ee073287c8c303650e9ed5d",
-    "package/Data/QuietDawnHUD/Scripts/QuietDawnDiagnostics.lua": "b3069592e0ccb6d0defb59e6fe829b2914857c7301f39779a842bf7f8c67ac1a",
+    "package/Data/QuietDawnHUD/Scripts/QuietDawnDiagnostics.lua": "cb2d114c094b5bff757a93b74b4fe6150e1f9a7d27adede4edbd9d117ab4c102",
     "package/Data/QuietDawnHUD/Scripts/QuietDawnNative.lua": "a3afdcfc07c7658930ca1fe631118de000a7a4ff344830f907d09de7b9117073",
     "package/Data/QuietDawnHUD/Scripts/QuietDawnPanelScale.lua": "295c319cccbfbd952c301e46c1675b1ca1c89377ed69d3564ca85eb856f35bf2",
     "package/Data/QuietDawnHUD/Scripts/QuietDawnSprintPrompt.lua": "6fadb34612163f7577fc61f1ed7f81b27202c9439e82da1630ebf4ae01e258c5",
@@ -35,7 +35,8 @@
     "package/Data/QuietDawnHUD/Scripts/UE4SSCommonSettingsUpgrade.lua": "7e477c5ea119ad650564c803ab28bcab6802c063bb7c2e27b6c20336156d7b59",
     "package/Data/QuietDawnHUD/Scripts/UE4SSDawnwalkerSaveLoad.lua": "17e9cbb70326f536b14ba5512a46ac425e7e1446c90516e826b2092b30465707",
     "package/Data/QuietDawnHUD/Scripts/UE4SSDawnwalkerSettings.lua": "039b09679eafec2b19cd8f27e3033dec26a52484a7529edbf14f15193ba07ef1",
-    "package/Data/QuietDawnHUD/Scripts/QuietDawnSprintSource.lua": "6396524baf031641178ca5105f0a7658268263aa5de230382a9caef1b317ede5"
+    "package/Data/QuietDawnHUD/Scripts/QuietDawnSprintSource.lua": "6396524baf031641178ca5105f0a7658268263aa5de230382a9caef1b317ede5",
+    "package/Data/QuietDawnHUD/Scripts/QuietDawnPanelOpacity.lua": "7738a50cfeeab23af774fe2a98a5d1012c4dd8e0961889a0f51e48222f120e75"
   },
   "nativeSources": {
     "native/BUILD.md": "2cb0ee5018f20d0eb6d57b3876fb58f6d88fcc1540e73c3dd928baf4e8d34f79",

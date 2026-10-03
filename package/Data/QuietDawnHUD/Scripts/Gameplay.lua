@@ -127,6 +127,7 @@ local hudAddress, controllerAddress
 local worker, dirty, stateReady = false, false, false
 local statsPending, expiryPending = false, false
 local statsRefresh=true
+local statReassert=false
 local expiryHandle,expiryDue,expiryHUD,expiryController,expiryPawn
 local healthDropped, staminaDropped = false, false
 local statHookFailures, hookAttempt = false, 0
@@ -135,6 +136,7 @@ local timeRequested,timeDirty,timeVisible,timeUntil=false,false,false,0
 local timeJobNames={"WBP_HudTimer"}
 local timeWatcher=timeRevealEnabled and require("QuietDawnTime").new(D) or nil
 local peekRequested,peekUntil,peekVisible=false,0,false
+local peekStartPending=false
 local switchRequested,switchUntil,switchVisible=false,0,false
 local switchCursor=0
 local switchJobNames={"WBP_HUD_Quickslots","WBP_AA_Quickslots"}
@@ -146,6 +148,10 @@ local fullRecoveryArmed=false
 local HEALING_REVEAL_GAIN, FULL_REARM_GAP, FULL_EPSILON=0.002,0.002,0.000001
 local healthUntil, staminaUntil = 0, 0
 local panels = {}
+local panelOpacity=require("QuietDawnPanelOpacity").new(Session,D)
+local peekDirty,statDirty,refreshDirty=false,false,false
+local panelRetries={}
+local priorityTurn=0
 local absent, jobNames, fullPending, fullJob = {}, names, false, true
 local cursor, desired, attempts = 0, 1, 0
 local hooks, hookIndex = {}, 1
@@ -203,6 +209,13 @@ local function statEvent(kind, field)
             elseif kind=="stamina" then staminaDropped=true end
         end
         statsPending=true
+        if kind=="refresh" and dynamicPanels[field] and panels[field] then
+            -- This callback already validated the owned stat widget. Only
+            -- queue a repair when a stock refresh actually changed opacity.
+            local target=peekVisible and 1 or desired==1 and (stateReady and 1 or panels[field].original or 1) or 0
+            local readable,current=pcall(function()return object:GetRenderOpacity()end)
+            if not readable or type(current)~="number" or math.abs(current-target)>1e-5 then statReassert=true end
+        end
         if D.debugLogging then D.count("resourceEvents") end
         wake("resource")
     end
@@ -592,6 +605,7 @@ end
 local function signal()
     if D.debugLogging then D.count("presetEvents") end
     if timeWatcher then timeWatcher.resume() end
+    refreshDirty=true
     wake()
 end
 local function capture(context)
@@ -746,6 +760,8 @@ local function accept(object)
     if valid(controller) and not sameObject(controller,pc) then return false, "controller mismatch" end
     if not sameObject(object,hud) or not sameObject(objectWorld,world) then
         hud, world, panels, absent = object, objectWorld, {}, {}
+        panelRetries={}
+        peekDirty,statDirty,refreshDirty=false,false,false
         if timeWatcher then timeWatcher.reset() end
         lastPawnAddress, lastCombatAddress, previousHealth, previousStamina = nil, nil, nil, nil
         lastBloodAddress,lastForm=nil,nil
@@ -754,12 +770,15 @@ local function accept(object)
         fullRecoveryArmed=false
         healthUntil, staminaUntil = 0, 0
         peekRequested,peekUntil,peekVisible=false,0,false
+        peekStartPending=false
         timeRequested,timeDirty,timeVisible,timeUntil=false,false,false,0
         switchRequested,switchUntil,switchVisible=false,0,false
         switchCursor=0
         statsRefresh=true
         healthDropped,staminaDropped=false,false
         if D.debugLogging then D.event("lifecycle","HUD/world changed; cached state reset") end
+    else
+        refreshDirty=true
     end
     controller = pc
     if timeWatcher then timeWatcher.resume() end
@@ -786,8 +805,9 @@ local function snapshot()
         lastBloodCapacity=nil
         lastCombatAddress=nil
         healthUntil,staminaUntil=0,0
-        if peekVisible then fullPending,dirty=true,true end
+        if peekVisible then peekDirty=true end
         peekUntil,peekVisible=0,false
+        peekStartPending=false
         if switchVisible then switchCursor=1 end
         switchUntil,switchVisible=0,false
         lastPawnAddress=pawnAddress
@@ -796,7 +816,7 @@ local function snapshot()
     -- with both dynamic panels disabled or unavailable resource readings.
     if peekRequested then
         peekUntil=now+config.manualPeekSeconds
-        if not peekVisible then fullPending,dirty=true,true end
+        if not peekVisible then peekDirty,peekStartPending=true,true end
         peekVisible=true
         if D.debugLogging then D.event("manualPeek","player HUD visible for %.1fs",config.manualPeekSeconds) end
     end
@@ -887,16 +907,98 @@ local function snapshot()
     previousHealth, previousStamina = health, stamina
     previousHealthAmount=healthAmount
     local needed = health < config.healthThreshold or stamina < config.staminaThreshold
-        or now < healthUntil or now < staminaUntil or now < peekUntil
+        or now < healthUntil or now < staminaUntil
     if D.debugLogging then D.vitals(health,stamina,needed,now,healthUntil,staminaUntil) end
     return needed and 1 or 0
 end
 snapshot=D.wrap("sample",snapshot)
+local function panelTarget(name,entry,widget)
+    local isStats = name == "HumanStats" or name == "VampireStats"
+    local mode=panelModes[name]
+    local target = panelOpacities[name] or 0
+    -- Quiet Dawn mode always starts hidden, independently of its saved fixed opacity.
+    -- Zero opacity preserves resource-driven hiding and revealing.
+    -- Missing readings retain the game's opacity.
+    if isStats and dynamicPanels[name] then
+        target = desired == 1 and (stateReady and 1 or entry.original) or 0
+    end
+    if mode==1 and name=="WBP_HudTimer" and timeVisible then target=1 end
+    if mode==1 and name=="WBP_HUD_SpecialAttackCooldown" then
+        local display=widget.WBP_CooldownDisplay
+        local remaining=valid(display) and tonumber(display["Remaining Time"]) or nil
+        if not hooks[SPECIAL..":SetupCooldownEffect"] or not hooks[SPECIAL..":OnCooldownFinished"] then
+            target=entry.original -- unavailable events retain game control
+        else target=remaining and remaining>0 and remaining<math.huge and 1 or 0 end
+    end
+    if mode==1 and switchVisible and (name=="WBP_HUD_Quickslots" or name=="WBP_AA_Quickslots") then target=1 end
+    -- The combat-focus radial selector keeps its own opacity setting;
+    -- revealing it for a HUD peek overlays the ordinary player panels.
+    if mode==1 and peekVisible and name~="CombatFocusPanel" and name~="WBP_HUD_Quickslots_ChangePrompt" and name~="WBP_HUD_SpecialAttackCooldown"
+        and name~="WBP_OpenFocusPrompt" then target=1 end
+    return target
+end
+local function peekPanel(name)
+    return panelModes[name]==1 and name~="CombatFocusPanel"
+        and name~="WBP_HUD_Quickslots_ChangePrompt" and name~="WBP_HUD_SpecialAttackCooldown"
+        and name~="WBP_OpenFocusPrompt"
+end
+local function writePanel(name,entry,target)
+    local wrote=panelOpacity.apply(entry.lease,target)
+    if wrote then
+        entry.opacityOwned=true
+        if D.debugLogging then D.count("panelWrites");D.event("panel","name=%s opacity=%.3f",name,target) end
+    end
+    return wrote
+end
+local function panelFailure(name,err)
+    panels[name]=nil
+    local tries=(panelRetries[name] or 0)+1
+    if tries<8 then panelRetries[name]=tries
+    else panelRetries[name]=nil;absent[name]=true end
+    if D.debugLogging and (tries==1 or tries==8) then
+        D.event("panelFailure","name=%s attempt=%d/8 error=%s",name,tries,tostring(err))
+    end
+end
+-- At most 17 named, cached panels (13 for peek, two for resource alerts).
+-- No discovery, hook registration, transforms or config I/O in this slice.
+-- A single commit keeps visible transitions in the same rendered frame.
+local function cachedVisibility(kind)
+    if not valid(hud) or not valid(controller) or not sameObject(hud:GetWorld(),world)
+        or not sameObject(controller:GetWorld(),world) or not sameObject(hud:GetOwningPlayer(),controller) then return end
+    for _,name in ipairs(kind~="stats" and names or statNames) do
+        if kind=="refresh" and panelScaling then
+            local entry=panels[name]
+            if not entry or panelScaling.pending(name,entry) then livePanels[name]=true end
+        end
+        local dedicated=name=="WBP_HUD_Quickslots_ChangePrompt" or name=="WBP_HUD_SpecialAttackCooldown" or name=="WBP_OpenFocusPrompt"
+        if kind=="refresh" and dedicated then
+            livePanels[name]=true -- reacquire replaceable inner opacity containers
+        elseif panelModes[name]~=0 and (kind~="peek" or peekPanel(name)) and not absent[name] then
+            local entry=panels[name]
+            local widget=hud[name]
+            if entry and sameObject(entry.widget,widget) and valid(entry.object) then
+                local ok,err=pcall(writePanel,name,entry,panelTarget(name,entry,widget))
+                if not ok then panelFailure(name,err) end
+            else
+                -- Late/replaced fields are discovered separately. Never hold
+                -- the visible cohort behind an unavailable widget.
+                livePanels[name]=true
+            end
+        end
+    end
+    if kind=="refresh" and not statsRefresh then
+        -- The cache covers this preset already. Keep missing-field, scaling,
+        -- cue and time jobs, but do not repeat a full opacity discovery pass.
+        fullPending,dirty,cursor=false,false,0
+    end
+    if D.debugLogging then D.count(kind.."Commits") end
+end
+cachedVisibility=D.wrap("visibility",cachedVisibility)
 local function panelStep(name)
     -- Vanilla panels need no opacity reads once the previous override is
     -- released. Size remains an independent preference in every mode.
     if panelModes[name]==0 and not panelScaling
-        and not (panels[name] and panels[name].opacityOwned) then return true end
+        and not (panels[name] and panels[name].opacityOwned) then panelRetries[name]=nil;return true end
     -- Revalidate ownership inside every deferred operation, including a still
     -- valid HUD left over from the previous world.
     if valid(hud) and valid(controller) and sameObject(hud:GetWorld(),world)
@@ -923,17 +1025,19 @@ local function panelStep(name)
             local mode=panelModes[name]
             local entry = panels[name]
             if not entry or not sameObject(entry.object,object) then
-                entry = {object=object, original=mode~=0 and object:GetRenderOpacity() or nil}
+                entry = {object=object, widget=widget, original=mode~=0 and object:GetRenderOpacity() or nil,
+                    lease=panelOpacity.bind(object)}
                 panels[name]=entry
             end
             if mode==0 then
                 if entry.opacityOwned then
-                    local restored=Session.restore('opacity:'..tostring(object:GetAddress()))
+                    local restored=panelOpacity.restore(entry.lease)
                     entry.opacityOwned=false
                     entry.original=nil
                     if restored and panelScaling then return false end
                 end
                 if panelScaling then return panelScaling.step(name,object,entry) end
+                panelRetries[name]=nil
                 return true
             end
             local current=object:GetRenderOpacity()
@@ -941,64 +1045,78 @@ local function panelStep(name)
             if manualPeekEnabled and name=="WBP_ControlsLegend" then
                 peekWidgetAddress,peekControllerAddress=object:GetAddress(),controllerAddress
             end
-            local isStats = name == "HumanStats" or name == "VampireStats"
-            local target = panelOpacities[name] or 0
-            -- Quiet Dawn mode always starts hidden, independently of its saved fixed opacity.
-            -- Zero opacity preserves resource-driven hiding and revealing.
-            -- Missing readings retain the game's opacity.
-            if isStats and dynamicPanels[name] then
-                target = desired == 1 and (stateReady and 1 or entry.original) or 0
-            end
-            if mode==1 and name=="WBP_HudTimer" and timeVisible then target=1 end
-            if mode==1 and name=="WBP_HUD_SpecialAttackCooldown" then
-                local display=widget.WBP_CooldownDisplay
-                local remaining=valid(display) and tonumber(display["Remaining Time"]) or nil
-                if not hooks[SPECIAL..":SetupCooldownEffect"] or not hooks[SPECIAL..":OnCooldownFinished"] then
-                    target=entry.original -- unavailable events retain game control
-                else target=remaining and remaining>0 and remaining<math.huge and 1 or 0 end
-            end
-            if mode==1 and switchVisible and (name=="WBP_HUD_Quickslots" or name=="WBP_AA_Quickslots") then target=1 end
-            -- The combat-focus radial selector keeps its own opacity setting;
-            -- revealing it for a HUD peek overlays the ordinary player panels.
-            if mode==1 and peekVisible and name~="CombatFocusPanel" and name~="WBP_HUD_Quickslots_ChangePrompt" and name~="WBP_HUD_SpecialAttackCooldown"
-                and name~="WBP_OpenFocusPrompt" then target=1 end
+            local target=panelTarget(name,entry,widget)
             -- UWidget stores float opacity: e.g. 0.4 returns 0.400000006.
             -- Match the session journal's tolerance over the opacity range.
             local wroteOpacity=false
             if math.abs(current-target)>1e-5 then
-                wroteOpacity=opacity(object, target)
-                if wroteOpacity then entry.opacityOwned=true end
-                if wroteOpacity and D.debugLogging then D.count("panelWrites");D.event("panel","name=%s opacity=%.3f->%.3f",name,current,target) end
+                wroteOpacity=writePanel(name,entry,target)
             end
+            panelRetries[name]=nil
             if panelScaling then
                 -- Keep opacity and each transform phase in separate frame slices.
                 if wroteOpacity and panelScaling.pending(name,entry) then return false end
                 return panelScaling.step(name,object,entry)
             end
-        elseif attempts < 120 then
-            attempts=attempts+1
-            return false
         else
-            -- Missing fields stay absent until a lifecycle/preset event.
-            -- Resource changes must not restart readiness retries.
-            absent[name]=true
-            if D.debugLogging then D.event("missing","panel=%s; retries exhausted",name) end
+            local tries=(panelRetries[name] or 0)+1
+            if tries<8 then panelRetries[name]=tries
+            else
+                panelRetries[name]=nil;absent[name]=true
+                if D.debugLogging then D.event("missing","panel=%s; retries exhausted",name) end
+            end
         end
     else
         hud, world, panels = nil, nil, {}
+        panelRetries,livePanels={},{}
         hudAddress=nil
         peekWidgetAddress,peekControllerAddress=nil,nil
         timeRequested,timeDirty,timeVisible,timeUntil=false,false,false,0
     end
     return true
 end
+do
+    local updatePanel=panelStep
+    panelStep=function(name)
+        local ok,done=pcall(updatePanel,name)
+        if ok then return done end
+        panelFailure(name,done)
+        return true -- a failed field never blocks the other panels
+    end
+end
 local timeTurn=false
 local timeSampleTurn=false
 local function step()
     if livePending then applyLiveSettings(true);return false end
+    priorityTurn=(priorityTurn+1)%3
+    -- Coalesce resource events; no timer requests resource reads.
+    if statsPending and candidate==nil and priorityTurn~=0 and not (peekDirty or statDirty) then
+        statsPending=false
+        local wasReady=stateReady
+        local success,value=pcall(snapshot)
+        peekRequested,switchRequested=false,false
+        stateReady=success and value~=nil
+        if not stateReady then healthDropped,staminaDropped=false,false end
+        local target=stateReady and value or 1
+        if target~=desired or wasReady~=stateReady or statReassert then desired=target;statDirty=true end
+        statReassert=false
+        armExpiry()
+        return false
+    end
+    if candidate==nil and (peekDirty or (priorityTurn~=0 and (statDirty or refreshDirty))) then
+        local kind=refreshDirty and "refresh" or peekDirty and "peek" or "stats"
+        peekDirty,statDirty,refreshDirty=false,false,false
+        cachedVisibility(kind)
+        if peekVisible and peekStartPending then
+            peekStartPending=false
+            peekUntil=frameClock:GetGameTimeInSeconds(controller)+config.manualPeekSeconds
+        end
+        armExpiry()
+        return false
+    end
     if sprintSource.pending() then sprintSource.step();return false end
-    -- At most one hook registration OR one state snapshot OR one direct panel
-    -- read/write per callback. 16 ms delay yields to a later game frame.
+    -- Discovery, hook registration, state reads and transforms remain sliced.
+    -- Every third slice is reserved for this work even under resource bursts.
     if clawMarks and clawMarks.pending() then
         clawMarks.step()
         return false
@@ -1078,19 +1196,6 @@ local function step()
         healthStep()
         return false
     end
-    -- Coalesce resource events; no timer requests resource reads.
-    if statsPending and candidate==nil and cursor==0 and not dirty then
-        statsPending=false
-        local wasReady=stateReady
-        local success,value=pcall(snapshot)
-        peekRequested,switchRequested=false,false
-        stateReady=success and value~=nil
-        if not stateReady then healthDropped,staminaDropped=false,false end
-        local target=stateReady and value or 1
-        if target~=desired or wasReady~=stateReady then desired=target;dirty=true end
-        armExpiry()
-        return false
-    end
     local changedPanel=next(livePanels)
     if changedPanel and candidate==nil then
         if panelStep(changedPanel) then livePanels[changedPanel]=nil end
@@ -1108,8 +1213,12 @@ local function step()
         cursor=1
         return false
     end
+    if cursor==0 and not dirty and next(panelRetries) then
+        panelStep(next(panelRetries))
+        return false
+    end
     if cursor==0 and not dirty then
-        if switchCursor>0 or timeRequested or (timeWatcher and timeWatcher.pending()) or markersReady() or healthReady() or promptsReady() then return false end
+        if statsPending or peekDirty or statDirty or refreshDirty or switchCursor>0 or timeRequested or (timeWatcher and timeWatcher.pending()) or markersReady() or healthReady() or promptsReady() then return false end
         worker=false
         armExpiry()
         return true
@@ -1141,7 +1250,7 @@ local function step()
         jobNames = fullJob and names or statNames
         -- Resource events already supplied a fresh snapshot; only lifecycle jobs read again.
         if fullJob then
-            if #statNames > 0 and statsRefresh then
+            if statsRefresh and (#statNames > 0 or peekRequested or switchRequested) then
                 statsRefresh=false
                 local success, value = pcall(snapshot)
                 peekRequested,switchRequested=false,false
@@ -1149,6 +1258,7 @@ local function step()
                 desired = stateReady and value or 1
             elseif #statNames==0 then
                 stateReady, desired = false, 0
+                statsRefresh=false
             end
         end
         cursor=1
@@ -1159,7 +1269,7 @@ local function step()
         return false
     end
     cursor=0
-    if switchCursor>0 or dirty or statsPending or timeRequested or timeDirty or (timeWatcher and timeWatcher.pending()) or markersReady() or healthReady() or promptsReady() then return false end
+    if switchCursor>0 or dirty or statsPending or peekDirty or statDirty or refreshDirty or next(panelRetries) or timeRequested or timeDirty or (timeWatcher and timeWatcher.pending()) or markersReady() or healthReady() or promptsReady() then return false end
     attempts=0
     worker=false
     armExpiry()
@@ -1184,6 +1294,7 @@ wake = function(statsOnly)
         failedHooks={}
         fullPending=true
         absent={}
+        panelRetries={}
         settingsPending,settingsAttempts=true,0
     end
     if statsOnly~="marker" and statsOnly~="settings" and statsOnly~="resource" and statsOnly~="enemyHealth" and statsOnly~="time" and statsOnly~="sprintPrompt" and statsOnly~="clawMarks" and statsOnly~="liveSettings" then dirty=true end
@@ -1250,8 +1361,9 @@ applyLiveSettings=function(run)
         livePanels.HumanStats,livePanels.VampireStats=true,true
     end
     if changed.manualPeek or changed.manualPeekSeconds or not manualPeekEnabled then
-        if peekVisible then for _,name in ipairs(names) do livePanels[name]=true end end
+        if peekVisible then peekDirty=true end
         peekRequested,peekVisible,peekUntil=false,false,0
+        peekStartPending=false
     end
     if changed.timeHoldSeconds or changed.mode_WBP_HudTimer or changed.opacity_WBP_HudTimer then
         timeWatcher=timeRevealEnabled and require("QuietDawnTime").new(D) or nil
@@ -1359,7 +1471,7 @@ armExpiry = function()
         and previousHealth>=config.healthThreshold and previousStamina>=config.staminaThreshold
     local remaining=eligible and math.max(healthUntil,staminaUntil)-now or 0
     -- One deadline serves resource alerts, manual peek and switching.
-    for _,deadline in ipairs({peekVisible and peekUntil or false,switchVisible and switchUntil or false,timeVisible and timeUntil or false}) do
+    for _,deadline in ipairs({peekVisible and not peekStartPending and peekUntil or false,switchVisible and switchUntil or false,timeVisible and timeUntil or false}) do
         if deadline and now then
             local delay=math.max(0.016,deadline-now)
             remaining=remaining>0 and math.min(remaining,delay) or delay
@@ -1394,7 +1506,7 @@ armExpiry = function()
         local endedPeek=peekVisible and now>=peekUntil
         if endedPeek then
             peekVisible=false
-            fullPending=true
+            peekDirty=true
             if D.debugLogging then D.event("manualPeek","ended; automatic HUD visibility restored") end
         end
         local endedSwitch=switchVisible and now>=switchUntil
@@ -1405,9 +1517,10 @@ armExpiry = function()
         end
         local needed=not stateReady or (previousHealth and previousHealth<config.healthThreshold)
             or (previousStamina and previousStamina<config.staminaThreshold)
-            or now<healthUntil or now<staminaUntil or peekVisible
+            or now<healthUntil or now<staminaUntil
         local target=needed and 1 or 0
-        if endedPeek or endedSwitch or desired~=target then desired=target;wake(true)
+        if endedPeek or endedSwitch or desired~=target then
+            desired=target;statDirty=true;wake("resource")
         elseif endedTime then wake("time")
         else armExpiry() end
     end)
