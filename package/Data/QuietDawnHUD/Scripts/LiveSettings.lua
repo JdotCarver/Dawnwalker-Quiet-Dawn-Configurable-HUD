@@ -24,6 +24,8 @@ function M.new(directory, report)
         ["mode_WBP_HudTimer"]="mode_WBP_HudTimer",
 
         ["enabled"]="enabled",
+        ["hideEnemyEffectIcons"]="hideEnemyEffectIcons",
+        ["hidePlayerEffectIcons"]="hidePlayerEffectIcons",
         ["opacity_WBP_BuffContainer"]="opacity_WBP_BuffContainer",
         ["scale_WBP_BuffContainer"]="scale_WBP_BuffContainer",
         ["opacity_XPBar"]="opacity_XPBar",

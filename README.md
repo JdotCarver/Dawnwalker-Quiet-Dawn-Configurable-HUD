@@ -4,7 +4,7 @@ A quiet view of the world, with health and stamina returning when needed.
 
 For **The Blood of Dawnwalker**. In Quiet Dawn mode, combat, drawing a weapon, lock-on, and focus no longer reveal the general HUD.
 
-- **Enemy information:** health bars, names and difficulty icons are hidden by default, with three independent settings in the settings menu or `settings.ini`. Turn off **Hide enemy health bars** to restore ordinary enemy and boss health bars, their end caps and boss health-phase indicators. Turn off **Hide enemy names** to restore name labels (boss names). Enemy stamina and wounds retain game behavior; combat warnings follow the separate cue settings.
+- **Enemy information:** health bars, names and difficulty icons are hidden by default, with three independent settings in the settings menu or `settings.ini`. Turn off **Hide enemy health bars** to restore ordinary enemy and boss health bars, their end caps and boss health-phase indicators. Turn off **Hide enemy names** to restore name labels (boss names). Enemy stamina retains game behavior; effect icons have their own toggle; combat warnings follow the separate cue settings.
 - **Claw slash marks:** **Hide claw slash marks** hides the red Shredded Touch slash effects on enemies, including the sword variant. It defaults to On and changes only these visuals; damage, bleeding and ordinary blood effects keep their game behavior. Turn it Off under **Combat / Enemies**, or set `hideClawSlashMarks = 0` in `settings.ini`, to show the marks again. Apply to save and update the active game.
 - **Enemy lock-on marker:** Five independent Combat / Indicators toggles control counterattack directions, unblockable warnings, directional parry cues, the enemy dot/diamond and the lock icon. All default to Off. **Show enemy dot/diamond** restores the red marker independently of **Show lock icon**. It also controls the red secondary-enemy attack dot beside an enemy health bar: Off hides it, and On allows the game to show it when appropriate, independently of health-bar visibility. When both are On, a hard-locked target shows the padlock. Directions and unblockable warnings take priority over the marker. Enabled unblockable warnings retain their skull icon when soft-lock or hard-lock targets change.
 - **Player health and stamina:** in their default Quiet Dawn mode, shown together at full opacity after damage, meaningful healing or stamina use, while health is strictly below **50%**, or while stamina is strictly below **20%**. Vampire health follows the blood bar; human health follows HP.
@@ -24,6 +24,14 @@ The Toggle abilities hint (RT with the remapped controller layout) stays hidden 
 Health and blood gains of at least 0.2% of the bar reveal the stat panel and refresh the health hold duration (4 seconds by default). Repeated qualifying regeneration gains keep the panel visible until that duration expires after the last gain. Smaller gains stay quiet until the bar reaches full. That full-bar reveal rearms only after a deficit of at least 0.2%, preventing repeated near-full notifications. These alerts apply only to stat panels in Quiet Dawn mode; Fixed opacity and Vanilla do not use them.
 
 The time-of-day panel is hidden by default. It appears at full opacity when an activity advances time, including shrine restoration, then hides after the configured duration (4 seconds by default). If the activity hides the HUD, the reveal starts when the HUD returns. Time of day reveal duration adjusts from 0 to 10 seconds in 0.5-second steps; 0 disables automatic reveals. Fixed opacity keeps the selected value, including 0% to hide it. Vanilla follows the game. HUD peek reveals it only in Quiet Dawn mode.
+
+## Effect icons
+
+**Hide enemy effect icons** under Combat / Enemies hides effect icons and timers, including bleeding, on ordinary enemies and bosses. It is independent of enemy health bars, names, difficulty icons, combat warnings and Hide claw slash marks.
+
+**Hide player effect icons** under Player status / Active buffs hides the player's buff/debuff icons and their timers, including during Show HUD. While On it overrides Active buffs mode and opacity; turning it Off resumes those saved settings. Size preferences are retained.
+
+Both toggles default to Off. They only hide HUD visuals; damage, bleeding, buffs, debuffs and their durations keep their game behavior. Press Apply to update the active game.
 
 ## Panel size
 

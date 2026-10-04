@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Add separate options to hide player and enemy effect icons and timers, including enemy bleed timers.
+
 ## 1.1.2
 
 - Show HUD now reveals and hides panels together.

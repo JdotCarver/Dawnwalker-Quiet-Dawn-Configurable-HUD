@@ -3,7 +3,12 @@ local directory = assert(debug.getinfo(1,'S').source:sub(2):match('^(.*[/\\])'))
 local Store = dofile(directory .. 'SettingsStore.lua')
 local schema = dofile(directory .. 'SettingsSchema.lua')
 local Timers = dofile(directory .. 'QuietDawnTimers.lua')
-local compatibleSchema = Timers.compatibleSchema(schema)
+local effectDefaults={hideEnemyEffectIcons=0,hidePlayerEffectIcons=0}
+local fullCompatibleSchema = Timers.compatibleSchema(schema)
+local compatibleSchema = {}
+for _, row in ipairs(fullCompatibleSchema) do
+    if effectDefaults[row.key]==nil then compatibleSchema[#compatibleSchema+1]=row end
+end
 local priorSchema = {}
 for _, row in ipairs(compatibleSchema) do
     if not row.key:match('^mode_') then priorSchema[#priorSchema+1]=row end
@@ -11,7 +16,7 @@ end
 local panels = {"HumanStats","VampireStats","WBP_Compass","WBP_HUD_QuestInfo","WBP_HUD_Quickslots","Crosshair","WBP_AA_Quickslots","WBP_OpenFocusPrompt","WBP_HUD_Quickslots_ChangePrompt","WBP_ControlsLegend","WBP_BuffContainer","WBP_HUD_AbilityCooldownsContainer","CombatFocusPanel","WBP_HUD_FocusCharge_Bar","WBP_HUD_SpecialAttackCooldown","XPBar","WBP_HudTimer"}
 local M={}
 function M.load()
-local values, err = Store.load(directory, compatibleSchema, function()
+local values, err = Store.load(directory, fullCompatibleSchema, function()
     local legacyPath = directory .. 'QuietDawnConfig.lua'
     local legacy, le, lc = Store.read(legacyPath)
     local sources = legacy and {{path=legacyPath, text=legacy}} or {}
@@ -71,8 +76,27 @@ local values, err = Store.load(directory, compatibleSchema, function()
     end
     result.debugLogging=canonical or legacy or 0
     Timers.normalize(result)
+    for key,value in pairs(effectDefaults) do result[key]=value end
     return result, nil, sources
 end)
+-- Validate any saved effect choices before older migrations can write. Missing
+-- keys are added only after the prior schema has passed its own upgrade rules.
+if not values and err and err:match('^Missing setting:') then
+    local text=Store.read(Store.path(directory))
+    if text then
+        for _,row in ipairs(fullCompatibleSchema) do
+            if effectDefaults[row.key]~=nil then
+                local _,effectError=Store.parse(text,{row})
+                if effectError and not effectError:match('^Missing setting:') then
+                    error('Quiet Dawn settings rejected: '..effectError)
+                end
+            end
+        end
+        if err:match('^Missing setting: hideEnemyEffectIcons$') or err:match('^Missing setting: hidePlayerEffectIcons$') then
+            values,err=Store.parse(text,compatibleSchema)
+        end
+    end
+end
 -- Existing opacity settings precede panel modes. Validate them independently
 -- first, so older feature upgrades keep their own backups and behavior.
 if not values and err and err:match('^Missing setting: mode_') then
@@ -133,6 +157,10 @@ if values then
         Store, Store.path(directory), compatibleSchema, defaults, 'panel-modes')
 end
 if values then
+    values, err = dofile(directory..'UE4SSCommonSettingsUpgrade.lua').ensure(
+        Store, Store.path(directory), fullCompatibleSchema, effectDefaults, 'effect-icons')
+end
+if values then
     local needsUpgrade=false
     for _, key in ipairs({'healthHoldSeconds','staminaHoldSeconds','manualPeekSeconds','timeHoldSeconds','switchRevealSeconds'}) do
         if values[key]>10 or values[key]*2%1~=0 then needsUpgrade=true;break end
@@ -148,6 +176,8 @@ local values={}
 for key,value in pairs(numeric) do values[key]=value end
 values.enabled=values.enabled==1;values.manualPeek=values.manualPeek==1;values.debugLogging=values.debugLogging==1
 values.hideEnemyHealthBars=values.hideEnemyHealthBars==1
+values.hideEnemyEffectIcons=values.hideEnemyEffectIcons==1
+values.hidePlayerEffectIcons=values.hidePlayerEffectIcons==1
 values.hideClawSlashMarks=values.hideClawSlashMarks==1
 values.hideEnemyNames=values.hideEnemyNames==1
 values.hideEnemyDifficultyIcons=values.hideEnemyDifficultyIcons==1
@@ -171,6 +201,12 @@ for _, p in ipairs(panels) do
     values.panelModes[p]=values['mode_'..p]
     values.panelOpacities[p]=values.panelModes[p]==1 and 0
         or (p=='WBP_Compass' and values.compassOpacity or values['opacity_'..p]/100)
+end
+-- Override only the runtime panel policy. Saved mode/opacity/size remain intact
+-- and resume when the player-effect toggle is turned off.
+if values.hidePlayerEffectIcons then
+    values.panelModes.WBP_BuffContainer=2
+    values.panelOpacities.WBP_BuffContainer=0
 end
 values.dynamicPanels={HumanStats=values.mode_HumanStats==1,VampireStats=values.mode_VampireStats==1}
 values.path=Store.path(directory)

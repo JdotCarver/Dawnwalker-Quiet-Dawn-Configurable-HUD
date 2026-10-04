@@ -426,7 +426,7 @@ markerStep=D.wrap("marker",markerStep)
 markerHooksStep=D.wrap("hook",markerHooksStep)
 -- Enemy bars live outside WBP_GameHUD. Health, name and difficulty children
 -- follow independent settings. The secondary attack dot follows showEnemyMarker.
--- Stamina, wounds and other combat warnings stay under their existing controls.
+-- Wound/effect icons have their own toggle. Stamina and combat warnings remain independent.
 -- Build 25232147: these named children and lifecycle functions are exported
 -- by WBP_CombatCharacterBar and WBP_Combat_BossBar.
 local healthTypes = {
@@ -455,10 +455,14 @@ if not config.showEnemyMarker then
     healthTypes[1].fields[#healthTypes[1].fields+1] = "HelperAttackIndicator"
 end
 local function enemyFieldSetting(field)
+    if field=='WBP_NPCWoundContainer' then return 'hideEnemyEffectIcons' end
     if field=='HelperAttackIndicator' then return 'showEnemyMarker' end
     if field=='BossNameLabel' then return 'hideEnemyNames' end
     if field=='LevelIndicator' then return 'hideEnemyDifficultyIcons' end
     return 'hideEnemyHealthBars'
+end
+if config.hideEnemyEffectIcons then
+    for _,spec in ipairs(healthTypes) do spec.fields[#spec.fields+1]='WBP_NPCWoundContainer' end
 end
 local function enemyFieldHidden(field)
     if field=='HelperAttackIndicator' then return not config.showEnemyMarker end
@@ -555,10 +559,12 @@ local function healthStep()
                 opacity(child,0)
                 if D.debugLogging then D.count('enemyHealthWrites') end
                 if D.debugLogging and field=='HelperAttackIndicator' then D.event('enemyAttackDot','hidden=true') end
+                if D.debugLogging and field=='WBP_NPCWoundContainer' then D.event('enemyEffects','hidden=true') end
             end
         else
             local restored=Session.restore('opacity:'..tostring(child:GetAddress()))
             if D.debugLogging and restored and field=='HelperAttackIndicator' then D.event('enemyAttackDot','hidden=false') end
+            if D.debugLogging and restored and field=='WBP_NPCWoundContainer' then D.event('enemyEffects','hidden=false') end
         end
         keep=nextField()
     end)
@@ -1391,9 +1397,9 @@ applyLiveSettings=function(run)
         end
         if clawMarks then clawMarks.configure(config.hideClawSlashMarks) end
     end
-    if changed.hideEnemyHealthBars or changed.hideEnemyNames or changed.hideEnemyDifficultyIcons or changed.showEnemyMarker then
-        local fields={{'SegmentedHealthBar','HealthBarLeftCap','HealthBarRightCap','LevelIndicator','HelperAttackIndicator'},
-            {'HealthBar','HealthBarLeftCap','HealthBarRightCap','IndicatorBox','BossNameLabel','LevelIndicator'}}
+    if changed.hideEnemyHealthBars or changed.hideEnemyNames or changed.hideEnemyDifficultyIcons or changed.showEnemyMarker or changed.hideEnemyEffectIcons then
+        local fields={{'SegmentedHealthBar','HealthBarLeftCap','HealthBarRightCap','LevelIndicator','HelperAttackIndicator','WBP_NPCWoundContainer'},
+            {'HealthBar','HealthBarLeftCap','HealthBarRightCap','IndicatorBox','BossNameLabel','LevelIndicator','WBP_NPCWoundContainer'}}
         for index,spec in ipairs(healthTypes) do
             local affected={};spec.fields={}
             for _,field in ipairs(fields[index]) do
