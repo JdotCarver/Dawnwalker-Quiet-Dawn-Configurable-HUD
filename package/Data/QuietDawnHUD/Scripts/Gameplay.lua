@@ -8,7 +8,7 @@ if SaveLoadDiagnostics and ok and type(config)=="table" then
     SaveLoadDiagnostics.debugLogging = config.debugLogging == true
 end
 if not ok or type(config) ~= "table" then
-    print("[Quiet Dawn - Configurable HUD] Invalid configuration; HUD left to the game.")
+    D.logError("Invalid configuration; HUD left to the game.")
     return
 end
 local allowed = {HumanStats=true, VampireStats=true, WBP_Compass=true,
@@ -22,7 +22,7 @@ local names, seen = {}, {}
 if type(config.panels) ~= "table" then return end
 for _, name in ipairs(config.panels) do
     if not allowed[name] or seen[name] then
-        print("[Quiet Dawn - Configurable HUD] Unknown or duplicate panel; disabled.")
+        D.logError("Unknown or duplicate panel; disabled.")
         return
     end
     seen[name] = true
@@ -31,13 +31,13 @@ end
 if type(config.enabled) ~= "boolean" then return end
 if config.compassOpacity~=nil and (type(config.compassOpacity)~="number"
     or config.compassOpacity~=config.compassOpacity or config.compassOpacity<0 or config.compassOpacity>1) then
-    print("[Quiet Dawn - Configurable HUD] Invalid compass opacity; disabled.")
+    D.logError("Invalid compass opacity; disabled.")
     return
 end
 for _, key in ipairs({"healthThreshold", "staminaThreshold"}) do
     local value=config[key]
     if type(value) ~= "number" or value ~= value or value < 0 or value > 1 then
-        print("[Quiet Dawn - Configurable HUD] Invalid threshold; disabled.")
+        D.logError("Invalid threshold; disabled.")
         return
     end
 end
@@ -49,7 +49,7 @@ if type(config.manualPeek)~="boolean" then return end
 for _, key in ipairs({"healthHoldSeconds", "staminaHoldSeconds", "manualPeekSeconds", "switchRevealSeconds", "timeHoldSeconds"}) do
     local value=config[key]
     if type(value) ~= "number" or value ~= value or value < 0 or value > 10 or value*2%1 ~= 0 then
-        print("[Quiet Dawn - Configurable HUD] Invalid hold duration; disabled.")
+        D.logError("Invalid hold duration; disabled.")
         return
     end
 end
@@ -83,19 +83,19 @@ local panelScales = config.panelScales or {}
 local hasPanelScaling=false
 for _, name in ipairs(names) do
     if panelModes[name]~=0 and panelModes[name]~=1 and panelModes[name]~=2 then
-        print("[Quiet Dawn - Configurable HUD] Invalid panel mode; disabled.")
+        D.logError("Invalid panel mode; disabled.")
         return
     end
     local scale=panelScales[name] or 1
     if type(scale)~="number" or scale~=scale or scale<0.25 or scale>2
         or math.abs(scale*20-math.floor(scale*20+0.5))>1e-6 then
-        print("[Quiet Dawn - Configurable HUD] Invalid panel size; disabled.")
+        D.logError("Invalid panel size; disabled.")
         return
     end
     if scale~=1 then hasPanelScaling=true end
     local value=panelOpacities[name]
     if value~=nil and (type(value)~="number" or value~=value or value<0 or value>1) then
-        print("[Quiet Dawn - Configurable HUD] Invalid panel opacity; disabled.")
+        D.logError("Invalid panel opacity; disabled.")
         return
     end
     if (name == "HumanStats" or name == "VampireStats") and dynamicPanels[name] then
@@ -117,10 +117,11 @@ end
 local manualPeekEnabled=config.manualPeek and config.manualPeekSeconds>0 and hasPeekPanels()
 local timeRevealEnabled=seen.WBP_HudTimer and panelModes.WBP_HudTimer==1 and config.timeHoldSeconds>0
 if type(ExecuteInGameThreadWithDelay) ~= "function" or type(CancelDelayedAction) ~= "function" then
-    print("[Quiet Dawn - Configurable HUD] Requires cancellable delayed game-thread callbacks; disabled.")
+    D.logError("Requires cancellable delayed game-thread callbacks; disabled.")
     return
 end
 
+D.logInfo("active: managing %d panel(s), manual peek %s",#names,config.manualPeek and "on" or "off")
 if D.debugLogging then D.event("config","healthThreshold=%.3f staminaThreshold=%.3f healthHold=%.3fs staminaHold=%.3fs panels=%d",config.healthThreshold,config.staminaThreshold,config.healthHoldSeconds,config.staminaHoldSeconds,#names) end
 local ROOT = "/Game/_Dawnwalker/UI/_Unified/HUD/WBP_GameHUD.WBP_GameHUD_C"
 local hud, candidate, controller, world
@@ -158,12 +159,12 @@ local cursor, desired, attempts = 0, 1, 0
 local hooks, hookIndex = {}, 1
 local hookErrors = {}
 local function reportHookError(path, success, pre, post)
-    if not D.debugLogging or hookErrors[path] then return end
+    if hookErrors[path] then return end
     hookErrors[path] = true
     -- Once per hook per session; preserve the exception even when ordinary
     -- diagnostic events have reached their rate limit.
     local reason = success and ("invalid hook IDs: "..tostring(pre)..", "..tostring(post)) or tostring(pre)
-    print("[Quiet Dawn - Configurable HUD][DEBUG] Hook registration failed: "..path.." | "..reason)
+    D.logWarning("Hook registration failed: %s | %s",path,reason)
 end
 local warned = false
 local frameClock, lastFrame
@@ -739,16 +740,16 @@ local function registerOne()
         if hookAttempt>=12 then
             failedHooks[spec.optional]=failedHooks[spec.optional] or hookIndex
             if spec.optional=="time" then
-                print("[Quiet Dawn - Configurable HUD] Time-change hook unavailable; time panel keeps its configured opacity.")
+                D.logWarning("Time-change hook unavailable; time panel keeps its configured opacity.")
             elseif spec.optional=="panel" then
-                print("[Quiet Dawn - Configurable HUD] Panel event unavailable; other HUD controls remain active: "..spec.path)
+                D.logWarning("Panel event unavailable; other HUD controls remain active: %s",spec.path)
             elseif spec.optional=="prompt" then
                 if D.debugLogging then D.event("sprintPrompt","prompt hook unavailable: %s",spec.path) end
             elseif spec.optional=="peek" then
-                print("[Quiet Dawn - Configurable HUD] Manual peek input unavailable; automatic health alerts remain enabled.")
+                D.logWarning("Manual peek input unavailable; automatic health alerts remain enabled.")
             else
                 statHookFailures=true
-                print("[Quiet Dawn - Configurable HUD] Resource event hook unavailable; stat panels left to the game: "..spec.path)
+                D.logWarning("Resource event hook unavailable; stat panels left to the game: %s",spec.path)
             end
             hookIndex=hookIndex+1
             hookAttempt=0
@@ -1138,7 +1139,7 @@ local function step()
         registerOne()
         attempts = attempts + 1
         if attempts >= 120 then
-            if not warned then print("[Quiet Dawn - Configurable HUD] HUD hooks not ready; waiting for a lifecycle event."); warned=true end
+            if not warned then D.logWarning("HUD hooks not ready; waiting for a lifecycle event."); warned=true end
             worker=false
             return true
         end
@@ -1320,7 +1321,7 @@ wake = function(statsOnly)
                 frameClock=StaticFindObject("/Script/Engine.Default__KismetSystemLibrary")
                 if not valid(frameClock) then
                     worker=false
-                    print("[Quiet Dawn - Configurable HUD] Frame clock unavailable; waiting for a lifecycle event.")
+                    D.logWarning("Frame clock unavailable; waiting for a lifecycle event.")
                     return true
                 end
             end
@@ -1332,7 +1333,7 @@ wake = function(statsOnly)
         if not success then
             worker=false
             cursor=0
-            print("[Quiet Dawn - Configurable HUD] Update failed: "..tostring(stop))
+            D.logError("Update failed: %s",tostring(stop))
             return true
         end
         return stop
@@ -1447,7 +1448,7 @@ local subscribed = pcall(NotifyOnNewObject, ROOT, function(object)
     wake()
 end)
 if not subscribed then
-    print("[Quiet Dawn - Configurable HUD] HUD lifecycle notification unavailable; disabled.")
+    D.logError("HUD lifecycle notification unavailable; disabled.")
     return
 end
 pcall(NotifyOnNewObject,PROMPT_WIDGET,function()
@@ -1464,7 +1465,7 @@ if seen.WBP_HudTimer then
         if timeWatcher then timeWatcher.recover() end
         if hudAddress then wake() end
     end)
-    if not timeSubscribed then print("[Quiet Dawn - Configurable HUD] Time panel lifecycle notification unavailable.") end
+    if not timeSubscribed then D.logWarning("Time panel lifecycle notification unavailable.") end
 end
 local markerSubscribed=pcall(NotifyOnNewObject, MARKER, function(object)
     markerSeen=true
@@ -1472,7 +1473,7 @@ local markerSubscribed=pcall(NotifyOnNewObject, MARKER, function(object)
     queueMarker(object)
 end)
 if not markerSubscribed then
-    print("[Quiet Dawn - Configurable HUD] Marker lifecycle notification unavailable; marker left to the game.")
+    D.logWarning("Marker lifecycle notification unavailable; marker left to the game.")
 end
 for _,spec in ipairs(healthTypes) do
     do
@@ -1482,7 +1483,7 @@ for _,spec in ipairs(healthTypes) do
             end
             queueHealth(object,spec)
         end)
-        if not subscribedHealth then print("[Quiet Dawn - Configurable HUD] Enemy health notification unavailable: "..spec.path) end
+        if not subscribedHealth then D.logWarning("Enemy health notification unavailable: %s",spec.path) end
     end
 end
 -- At most one outstanding hide deadline. It reads cached percentages and the
