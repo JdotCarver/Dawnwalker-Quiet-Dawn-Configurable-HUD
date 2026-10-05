@@ -87,8 +87,9 @@ function M.new(D, session, wake)
         if D.debugLogging then D.count('clawMarkWrites');D.event('clawMarks','cue=%s hidden',entry.name) end
         return true
     end
-    -- Loads the cue's Blueprint class synchronously. Expensive, and the
-    -- reason clawMarks shows up as the slowest phase of a load.
+    -- Loads the cue's Blueprint class through the asset registry. Measured
+    -- at about 1.5 ms, so despite appearances this is NOT the expensive
+    -- step; StaticFindObject and apply() are (17 ms and up to 34 ms).
     local function prepare(entry)
         -- Same UE5 AssetRegistryHelpers route as the pinned UE4SS Blueprint
         -- loader. Suppression follows synchronous load in this atomic slice.
@@ -102,11 +103,17 @@ function M.new(D, session, wake)
         if not matches(class,'BlueprintGeneratedClass '..entry.classPath) then return nil end
         return class:GetCDO()
     end
-    -- Three separately timed phases, so the log says which one costs the
-    -- ~50 ms rather than leaving it attributed to "clawMarks" as a whole.
-    -- prepare() is the prime suspect: registry:GetAsset is a synchronous
-    -- package load, and the cost appears exactly twice per session, which
-    -- matches clawMarkPreloads=2.
+    -- Three separately timed phases. Measured over a real load:
+    --
+    --     clawLookup   calls=2  avg=17.0  max=17   <- StaticFindObject
+    --     clawPrepare  calls=2  avg=1.5   max=2    <- registry:GetAsset
+    --     clawApply    calls=4  avg=17.0  max=34   <- retain and write
+    --
+    -- The synchronous asset load was the obvious suspect and is in fact the
+    -- cheapest of the three. The cost is in the name lookup and in apply's
+    -- native retain, neither of which subdivides into smaller work -- so
+    -- the fix is to run them when nothing is on screen to disturb, not to
+    -- slice them.
     apply = D.wrap('clawApply', apply)
     prepare = D.wrap('clawPrepare', prepare)
     local function findDefault(entry)
@@ -217,12 +224,13 @@ function M.new(D, session, wake)
                         entry.preloaded=true;entry.preparing=true
                         local loaded,result=pcall(prepare,entry);entry.preparing=false
                         if not loaded then error(result) end
-                        -- The synchronous load has already spent this
-                        -- frame's budget; applying on top of it is what made
-                        -- a single call cost three clock ticks. Keep the
-                        -- result and apply it on the next worker frame, so
-                        -- neither frame carries both costs.
-                        if valid(result) then entry.object=result;return false end
+                        -- Applied in the same call again. Splitting this
+                        -- across two frames was meant to stop one frame
+                        -- carrying both the load and the write, but the
+                        -- measurement showed prepare() is the cheap step
+                        -- (1.5 ms); the extra frame bought nothing and took
+                        -- clawMarks from four calls a load to six.
+                        if valid(result) then entry.object=result;return apply(entry,result) end
                         if not valid(object) then
                             report(entry,'asset unavailable; waiting for lifecycle/Apply')
                             return true -- cache absence until a relevant event
@@ -231,7 +239,7 @@ function M.new(D, session, wake)
                     return false
                 end)
                 if ok and done then entry.pending=false;entry.restorePending=false
-                elseif entry.attempts>=10 then
+                elseif entry.attempts>=8 then
                     entry.pending=false;entry.restorePending=false
                     if D.debugLogging then report(entry,ok and 'asset unavailable; waiting for lifecycle/Apply'
                         or 'operation failed: '..tostring(done)) end
