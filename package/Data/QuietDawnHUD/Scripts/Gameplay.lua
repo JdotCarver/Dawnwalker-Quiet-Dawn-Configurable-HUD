@@ -505,241 +505,25 @@ local function markerStep()
 end
 markerStep=D.wrap("marker",markerStep)
 markerHooksStep=D.wrap("hook",markerHooksStep)
--- Enemy bars live outside WBP_GameHUD. Health, name and difficulty children
--- follow independent settings. The secondary attack dot follows showEnemyMarker.
--- Wound/effect icons have their own toggle. Stamina and combat warnings remain independent.
--- Build 25232147: these named children and lifecycle functions are exported
--- by WBP_CombatCharacterBar and WBP_Combat_BossBar.
-local healthTypes = {
-    {path="/Game/_Dawnwalker/UI/_Unified/Combat/WBP_CombatCharacterBar.WBP_CombatCharacterBar_C",
-     fields=config.hideEnemyHealthBars and {"SegmentedHealthBar","HealthBarLeftCap","HealthBarRightCap"} or {},
-     events={"Construct","UpdateTarget"}},
-    {path="/Game/_Dawnwalker/UI/_Unified/Combat/WBP_Combat_BossBar.WBP_Combat_BossBar_C",
-     fields=config.hideEnemyHealthBars and {"HealthBar","HealthBarLeftCap","HealthBarRightCap","IndicatorBox"} or {},
-     events={"Update Owner"}},
-}
--- The ordinary bar has no name label; boss names use BossNameLabel.
--- Hide the difficulty widget's parent so its internal icon animation cannot
--- reveal it. Never suppress the shared combat warning/lock-on widget here.
-if config.hideEnemyNames then
-    local boss = healthTypes[2]
-    boss.fields[#boss.fields+1] = "BossNameLabel"
-end
-if config.hideEnemyDifficultyIcons then
-    for _, spec in ipairs(healthTypes) do
-        spec.fields[#spec.fields+1] = "LevelIndicator"
-    end
-end
--- AttackIndicatorFade animates Image_118 inside this attachment. Hiding the
--- parent opacity survives that animation and stock SetIndicatorVisible calls.
-if not config.showEnemyMarker then
-    healthTypes[1].fields[#healthTypes[1].fields+1] = "HelperAttackIndicator"
-end
-local function enemyFieldSetting(field)
-    if field=='WBP_NPCWoundContainer' then return 'hideEnemyEffectIcons' end
-    if field=='HelperAttackIndicator' then return 'showEnemyMarker' end
-    if field=='BossNameLabel' then return 'hideEnemyNames' end
-    if field=='LevelIndicator' then return 'hideEnemyDifficultyIcons' end
-    return 'hideEnemyHealthBars'
-end
-if config.hideEnemyEffectIcons then
-    for _,spec in ipairs(healthTypes) do spec.fields[#spec.fields+1]='WBP_NPCWoundContainer' end
-end
-local function enemyFieldHidden(field)
-    if field=='HelperAttackIndicator' then return not config.showEnemyMarker end
-    return config[enemyFieldSetting(field)]
-end
--- Names of a widget's child properties, for diagnostics only. UE4SS exposes
--- property reflection through ForEachProperty on newer builds; where it is
--- missing this degrades to a plain note rather than failing.
-function runtime.childNames(object)
-    local class=object and object.GetClass and object:GetClass()
-    if not class or not class.ForEachProperty then return "<reflection unavailable>" end
-    local names,total={},0
-    local ok=pcall(function()
-        class:ForEachProperty(function(property)
-            total=total+1
-            if total<=40 then names[#names+1]=property:GetFName():ToString() end
-        end)
-    end)
-    if not ok or total==0 then return "<reflection unavailable>" end
-    table.sort(names)
-    return table.concat(names,", ")..(total>40 and (" ... (+"..(total-40).." more)") or "")
-end
--- Resolve a named child of a widget.
---
--- `object[field]` only works when the Blueprint marked that widget "Is
--- Variable", because that is what promotes it to a property on the generated
--- class. WBP_CombatCharacterBar does; WBP_Combat_BossBar does not -- walking
--- its class reports exactly one property, UberGraphFrame -- so no amount of
--- retrying could ever resolve its HealthBar. That is the boss health bar
--- never being hidden.
---
--- GetWidgetFromName searches the widget tree instead and does not care about
--- the flag. It also answers the other half of the question: the tree is only
--- populated once the widget is actually built, so a bar that does not exist
--- until a boss appears simply returns nil here and is retried, rather than
--- being mistaken for a missing name.
-function runtime.findChild(object, field)
-    local child = object[field]
-    if valid(child) then return child end
-    local found = select(2, pcall(function()
-        -- UE4SS converts a Lua string to FName for this parameter.
-        return object:GetWidgetFromName(field)
-    end))
-    if valid(found) then return found end
-    return nil
-end
-local function describeObject(object)
-    if object==nil then return "<nil>" end
-    local named,name=pcall(function() return object:GetFullName() end)
-    return named and tostring(name) or "<name unavailable>"
-end
-local healthQueue, healthPending, healthFirst, healthLast = {}, {}, 1, 0
--- Repeated identical failures are reported once per session. A single
--- unreachable widget otherwise emits hundreds of identical lines, because
--- each field retries 120 times.
-local healthFailures = {seen={}, count=0}
-local function healthReady()
-    return healthFirst<=healthLast and candidate==nil and valid(hud)
-end
-local function queueHealth(object, spec, requestedFields)
-    if object==nil then return end
-    spec.recent,spec.recentSet=spec.recent or {},spec.recentSet or {}
-    if not spec.recentSet[object] then
-        if #spec.recent>=64 then spec.recentSet[table.remove(spec.recent,1)]=nil end
-        spec.recent[#spec.recent+1]=object;spec.recentSet[object]=true
-    end
-    local fields=requestedFields or spec.fields
-    if #fields==0 then return end
-    if healthPending[object] then
-        local job=healthPending[object];job.again=true
-        local merged,seenFields={},{}
-        for _,list in ipairs({job.fields,job.nextFields or {},fields}) do
-            for _,field in ipairs(list) do if not seenFields[field] then merged[#merged+1]=field;seenFields[field]=true end end
-        end
-        job.nextFields=merged
-        return
-    end
-    if healthLast-healthFirst+1>=64 then
-        if D.debugLogging then D.count("enemyHealthQueueFull") end
-        return
-    end
-    local job={object=object,spec=spec,fields=fields,field=1,attempts=0}
-    healthLast=healthLast+1;healthQueue[healthLast]=job;healthPending[object]=job
-    wake("enemyHealth")
-end
-local function healthStep()
-    local job=healthQueue[healthFirst]
-    healthQueue[healthFirst]=nil;healthFirst=healthFirst+1
-    if healthFirst>healthLast then healthFirst,healthLast=1,0 end
-    local object,spec=job.object,job.spec
-    local function retry()
-        job.attempts=job.attempts+1
-        if job.attempts>=120 then
-            -- Giving up means that child never appeared. The usual cause is a
-            -- name that moved in a game update, and the message alone cannot
-            -- tell that apart from a widget that is simply empty right now.
-            -- So report it as a WARNING once per path+field, and list the
-            -- widget's actual children alongside, which names the real field.
-            local signature="readiness:"..spec.path.."#"..tostring(job.fields[job.field])
-            if not healthFailures.seen[signature] and healthFailures.count<32 then
-                healthFailures.seen[signature]=true;healthFailures.count=healthFailures.count+1
-                D.logWarning("Enemy HUD child never appeared: %s field=%s. "
-                    .."Not a class variable and not in the widget tree. Class properties: %s",
-                    spec.path,tostring(job.fields[job.field]),runtime.childNames(object))
-            end
-            return false
-        end
-        return true
-    end
-    local function nextField()
-        job.field=job.field+1
-        job.attempts=0
-        if job.field<=#job.fields then return true end
-        if job.again then job.field=1;job.fields=job.nextFields or spec.fields;job.nextFields=nil;job.again=false;return #job.fields>0 end
-        return false
-    end
-    local keep=false
-    local success,reason=pcall(function()
-        if not valid(object) then return end
-        -- A class default object is not a live widget: no world, no owning
-        -- player, so the readiness checks below can never pass and it would
-        -- burn its whole retry budget on every field. Dynamic HUD filters
-        -- these the same way.
-        --
-        -- Checked HERE rather than when the job is queued. Queuing happens
-        -- straight off NotifyOnNewObject, during level load, on objects the
-        -- engine may still be constructing; a reflected call at that moment
-        -- is not safe. By this point the object has been revalidated.
-        if describeObject(object):find("Default__",1,true) then
-            if D.debugLogging then D.count("enemyHealthClassDefaultSkipped") end
-            return
-        end
-        local eventIndex=spec.eventIndex or 1
-        if eventIndex<=#spec.events then
-            local path=spec.path..":"..spec.events[eventIndex]
-            if hooks[path] then spec.eventIndex=eventIndex+1;keep=true;return end
-            local ok,pre,post=pcall(RegisterHook,path,function(context)
-                queueHealth(unwrap(context),spec)
-            end)
-            spec.hookAttempts=(spec.hookAttempts or 0)+1
-            if ok and type(pre)=="number" and type(post)=="number" then
-                hooks[path]={pre,post};spec.eventIndex=eventIndex+1;spec.hookAttempts=0
-            else
-                reportHookError(path, ok, pre, post)
-                if spec.hookAttempts>=12 then
-                    spec.failedEvent=spec.failedEvent or eventIndex
-                    spec.eventIndex=eventIndex+1;spec.hookAttempts=0
-                    if D.debugLogging then D.event("enemyHealth","lifecycle hook unavailable: %s",path) end
-                end
-            end
-            keep=true
-            return
-        end
-        local ow,pc=object:GetWorld(),object:GetOwningPlayer()
-        if not valid(ow) or not valid(pc) then keep=retry();return end
-        if not sameObject(ow,world) or not sameObject(pc,controller)
-            or not sameObject(controller:GetWorld(),world) then return end
-        local field=job.fields[job.field]
-        local child=runtime.findChild(object,field)
-        if not valid(child) then
-            -- A missing bar/label must not block independent children. Each
-            -- field gets finite readiness, and later target events retry it.
-            keep=retry() or nextField()
-            return
-        end
-        if enemyFieldHidden(field) then
-            if child:GetRenderOpacity()~=0 then
-                opacity(child,0)
-                if D.debugLogging then D.count('enemyHealthWrites') end
-                if D.debugLogging and field=='HelperAttackIndicator' then D.event('enemyAttackDot','hidden=true') end
-                if D.debugLogging and field=='WBP_NPCWoundContainer' then D.event('enemyEffects','hidden=true') end
-            end
-        else
-            local restored=Session.restore('opacity:'..tostring(child:GetAddress()))
-            if D.debugLogging and restored and field=='HelperAttackIndicator' then D.event('enemyAttackDot','hidden=false') end
-            if D.debugLogging and restored and field=='WBP_NPCWoundContainer' then D.event('enemyEffects','hidden=false') end
-        end
-        keep=nextField()
-    end)
-    if not success then
-        keep=retry()
-        -- Report each distinct cause once, with the object that triggered it.
-        -- The identity is what makes this actionable: the message alone does
-        -- not say which widget could not be read.
-        local signature=spec.path.." | "..tostring(reason)
-        if not healthFailures.seen[signature] and healthFailures.count<32 then
-            healthFailures.seen[signature]=true;healthFailures.count=healthFailures.count+1
-            D.logWarning("Enemy health update failed (reported once): %s | object=%s",
-                tostring(reason),describeObject(object))
-        end
-        if D.debugLogging then D.count("enemyHealthUpdateFailures") end
-    end
-    if keep then healthLast=healthLast+1;healthQueue[healthLast]=job
-    else healthPending[object]=nil end
-end
-healthStep=D.wrap("enemyHealth",healthStep)
+-- Enemy bars live outside WBP_GameHUD: they are spawned per enemy, come and
+-- go constantly, and each named child follows its own setting, so they get
+-- their own queue rather than riding the panel pass. QuietDawnEnemyBars owns
+-- all of that. It is handed accessors rather than values for hud, world,
+-- controller and idleness because those four are reassigned on every world
+-- change, and a captured copy would quietly go stale.
+local enemyBars = require("QuietDawnEnemyBars").new({
+    D=D, config=config, Session=Session,
+    valid=valid, sameObject=sameObject, unwrap=unwrap,
+    opacity=opacity, hooks=hooks, reportHookError=reportHookError,
+    registerHook=RegisterHook,
+    wake=function(tag) return wake(tag) end,
+    hud=function() return hud end,
+    world=function() return world end,
+    controller=function() return controller end,
+    -- The panel pass is mid-flight while a HUD candidate is being adopted;
+    -- enemy bars wait rather than read a half-bound world.
+    idle=function() return candidate==nil end,
+})
 local healthTurn=false
 local sprintSource=require("QuietDawnSprintSource").new({
     _QDNSprintConfigure=_QDNSprintConfigure,_QDNIsSprintPrompt=_QDNIsSprintPrompt},D,Session)
@@ -1402,8 +1186,8 @@ local function step()
     -- Alternate with existing work: one health child operation per frame,
     -- sharing the same one-shot worker and its native frame gate.
     healthTurn=not healthTurn
-    if healthReady() and (healthTurn or (cursor==0 and not dirty and not statsPending and not markersReady())) then
-        healthStep()
+    if enemyBars.ready() and (healthTurn or (cursor==0 and not dirty and not statsPending and not markersReady())) then
+        enemyBars.step()
         return false
     end
     local changedPanel=next(livePanels)
@@ -1439,7 +1223,7 @@ local function step()
         return false
     end
     if cursor==0 and not dirty then
-        if statsPending or peekDirty or statDirty or refreshDirty or switchCursor>0 or timeRequested or (timeWatcher and timeWatcher.pending()) or markersReady() or healthReady() or promptsReady() then return false end
+        if statsPending or peekDirty or statDirty or refreshDirty or switchCursor>0 or timeRequested or (timeWatcher and timeWatcher.pending()) or markersReady() or enemyBars.ready() or promptsReady() then return false end
         worker=false
         armExpiry()
         return true
@@ -1494,7 +1278,7 @@ local function step()
     -- Only a full job counts: the short stat-only sweeps do not hide
     -- everything and must not release the preloads early.
     if fullJob and valid(hud) then runtime.panelsSettled=true end
-    if switchCursor>0 or dirty or statsPending or peekDirty or statDirty or refreshDirty or next(panelRetries) or timeRequested or timeDirty or (timeWatcher and timeWatcher.pending()) or markersReady() or healthReady() or promptsReady() or fade.pending() then return false end
+    if switchCursor>0 or dirty or statsPending or peekDirty or statDirty or refreshDirty or next(panelRetries) or timeRequested or timeDirty or (timeWatcher and timeWatcher.pending()) or markersReady() or enemyBars.ready() or promptsReady() or fade.pending() then return false end
     attempts=0
     worker=false
     armExpiry()
@@ -1721,17 +1505,7 @@ applyLiveSettings=function(run)
         if clawMarks then clawMarks.configure(config.hideClawSlashMarks) end
     end
     if changed.hideEnemyHealthBars or changed.hideEnemyNames or changed.hideEnemyDifficultyIcons or changed.showEnemyMarker or changed.hideEnemyEffectIcons then
-        local fields={{'SegmentedHealthBar','HealthBarLeftCap','HealthBarRightCap','LevelIndicator','HelperAttackIndicator','WBP_NPCWoundContainer'},
-            {'HealthBar','HealthBarLeftCap','HealthBarRightCap','IndicatorBox','BossNameLabel','LevelIndicator','WBP_NPCWoundContainer'}}
-        for index,spec in ipairs(healthTypes) do
-            local affected={};spec.fields={}
-            for _,field in ipairs(fields[index]) do
-                local setting=enemyFieldSetting(field)
-                if enemyFieldHidden(field) then spec.fields[#spec.fields+1]=field end
-                if changed[setting] then affected[#affected+1]=field end
-            end
-            for _,object in ipairs(spec.recent or {}) do queueHealth(object,spec,affected) end
-        end
+        enemyBars.reconfigure(changed)
     end
     if changed.showCounterattackDirection or changed.showUnblockableWarning or changed.showDirectionalParry
         or changed.showEnemyMarker or changed.showLockIcon or changed.combatCueSize then
@@ -1786,17 +1560,7 @@ end)
 if not markerSubscribed then
     D.logWarning("Marker lifecycle notification unavailable; marker left to the game.")
 end
-for _,spec in ipairs(healthTypes) do
-    do
-        local subscribedHealth=pcall(NotifyOnNewObject,spec.path,function(object)
-            if spec.failedEvent then
-                spec.eventIndex=spec.failedEvent;spec.failedEvent=nil;spec.hookAttempts=0
-            end
-            queueHealth(object,spec)
-        end)
-        if not subscribedHealth then D.logWarning("Enemy health notification unavailable: %s",spec.path) end
-    end
-end
+enemyBars.subscribe(NotifyOnNewObject)
 -- At most one outstanding hide deadline. It reads cached percentages and the
 -- game clock only. A pause/extended hold reschedules its remaining delay; once
 -- settled or below threshold there is no timer and no resource polling.
