@@ -14,6 +14,67 @@ commits* below.
 
 ## Bugs fixed
 
+### Fading stuttered because of the clock, not the algorithm
+
+Worth recording as a general rule for this codebase. `D.now()` is `os.clock`:
+processor time consumed by the process, granularity about 15.6 ms on Windows,
+no fixed relationship to wall time. The diagnostics header has always said so
+-- *"clock=os.clock; phase timings overlap and are not engine frame times"*.
+It is the right clock for comparing phase costs and the wrong one for
+animating anything.
+
+The mod already had the right clock and used it for the peek and time-of-day
+holds: `GetGameTimeInSeconds`. Fading now takes the same one, injected by the
+caller so the module still touches no UObject.
+
+Game time is stoppable, which brings two consequences that are handled
+explicitly:
+
+* it **goes backwards** on a new world -- those transitions are dropped;
+* it **freezes** while paused or alt-tabbed, so a time-based expiry can never
+  fire in exactly the situation where a stuck worker hurts most. Transitions
+  therefore also count the worker calls they survive and retire after 2000 of
+  them whatever the clock says.
+
+Beware when reading `slow phase=... elapsedMs=14.000` lines: values landing on
+exactly 14/15/16 ms are the Windows timer granularity, not real cost.
+
+### Commit hygiene slip
+
+The game-time commit also contains an unrelated change: moving the class
+default object guard out of `queueHealth` and into `healthStep`. Queuing runs
+straight off `NotifyOnNewObject` during level load, on objects the engine may
+still be constructing, and a reflected `GetFullName()` there is not safe --
+a plausible contributor to the access violation seen on save load. It belongs
+in its own commit; it was swept up by a `git add -A`. Recorded here rather
+than rewritten, because the branch was already pushed.
+
+### Still open: a crash on save load
+
+`EXCEPTION_ACCESS_VIOLATION reading 0x0000000000000123` with an all-UE4SS
+stack, plus hangs on alt-tab. Not yet attributed. The low address suggests a
+field read off a near-null pointer, i.e. a destroyed or half-constructed
+UObject. Two changes since then may bear on it -- the reflected call removed
+from the load path, and the tick-based transition expiry -- but neither is
+confirmed. Several other mods were loaded (CenterHUD, EasierParry, Save
+Settings). **Next step is isolation: run with fading off, then with the mod
+alone.**
+
+### Confirmed: ubergraph entry 4026 is Focus LEAVE
+
+Eight sightings, all `focusMode=false`, none during unrelated HUD activity.
+It fires **twice** per release, so any consumer must debounce.
+
+This is the useful half. The intent is to reveal the HUD once the player is
+done with Focus, so a trigger on deactivation is what was wanted anyway.
+
+Note that `slow phase=worker` lines appear on Focus *press* too. That is not
+a hidden Focus hook: it is the ordinary resource callbacks (health, stamina,
+focus charge) firing and waking the worker. It does mean that sampling
+`bIsInFocusMode` on wakes the worker already receives would detect Focus
+*entry* cheaply, if that is ever wanted.
+
+
 ### Fading rejected every existing settings.ini
 
 The worst defect of the session, because backwards compatibility is the one
