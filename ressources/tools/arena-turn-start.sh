@@ -283,5 +283,28 @@ if [ "$VERIFY_ONLY" -eq 1 ]; then
     exit 0
 fi
 
+# Run the offline suite. These are fast (a couple of seconds all told) and
+# each one exists because something shipped broken without it, so the cost of
+# running them unconditionally is far below the cost of forgetting to.
+#
+# Every test needs lupa, which lives in ~/.local and is therefore wiped by a
+# sandbox restore. setup.sh is cheap when it is already installed.
+bash "$(dirname "$0")/setup.sh" >/dev/null 2>&1 || true
+
+suite_failed=0
+for test in check-lua.py check-mod-settings.py test-settings-migration.py test-fade.py; do
+    output="$(python3 "$(dirname "$0")/$test" 2>&1)" || suite_failed=1
+    printf '%s\n' "$output" | tail -1 | sed 's/^/   /'
+    if printf '%s\n' "$output" | grep -q '^FAIL\|^!!'; then
+        suite_failed=1
+        printf '%s\n' "$output" | grep '^FAIL\|^!!' | sed 's/^/   /'
+        echo "!! $test reported problems"
+    fi
+done
+if [ "$suite_failed" -ne 0 ]; then
+    echo "!! the offline suite is not green BEFORE you have changed anything —"
+    echo "   investigate that first; do not assume it is your edit."
+fi
+
 echo "== ready: HEAD=$(git rev-parse --short HEAD) dirty=$(git status --porcelain | wc -l)"
 git log --oneline -3
