@@ -233,12 +233,41 @@ end
 local function statUpdate(field)
     return statEvent("refresh",field)
 end
+-- Hunting aid for new Blueprint hooks, Debug level only.
+--
+-- A Blueprint class compiles its entire event graph into one function,
+-- ExecuteUbergraph_<Class>, whose only argument is the bytecode offset to
+-- jump to. Every event in that class is therefore reachable through a single
+-- hook and told apart by that number -- which is how the 850 and 4146 below
+-- were found, and the only practical way to reach an event the game exposes
+-- no C++ UFunction for.
+--
+-- Nothing can look an offset up at runtime: you hook the graph, log the
+-- numbers, perform the action in game, and read which number appeared at that
+-- moment. Each number is reported once per session so the log stays short
+-- enough to read by eye, and the whole thing costs nothing unless the log
+-- level is Debug.
+--
+-- This chunk is at Lua's 200-locals ceiling, so the seen-set and its counter
+-- share one table rather than taking a slot each.
+local ubergraph = {seen = {}, count = 0}
+local function noteUbergraphEntry(graph, entryParam)
+    if not D.debugLogging or ubergraph.count >= 256 then return end
+    local entry = tonumber(unwrap(entryParam))
+    if entry == nil then return end
+    local key = graph .. "#" .. tostring(entry)
+    if ubergraph.seen[key] then return end
+    ubergraph.seen[key] = true
+    ubergraph.count = ubergraph.count + 1
+    D.event("ubergraph", "%s entry=%s (first time this session)", graph, tostring(entry))
+end
 -- The stock Controls Legend action already handles the Menu/Options hold.
 -- Its button click enters this graph at 850 (Steam build 25191761). Filter
 -- before object access: entry activation/cinematic events must never reveal.
 -- This widget has no Tick event; no button-state sampling or remapping is used.
 local LEGEND="/Game/_Dawnwalker/UI/_Unified/HUD/ControlsLegend/WBP_ControlsLegend.WBP_ControlsLegend_C"
 local function peekInput(context,entryParam)
+    noteUbergraphEntry("WBP_ControlsLegend",entryParam)
     if not manualPeekEnabled then return end
     if tonumber(unwrap(entryParam))~=850 then return end
     local object=unwrap(context)
@@ -480,24 +509,21 @@ local function describeObject(object)
     local named,name=pcall(function() return object:GetFullName() end)
     return named and tostring(name) or "<name unavailable>"
 end
--- A class default object is not a live widget: it has no world and no owning
--- player, so the readiness checks below can never pass for it and it would
--- burn its full retry budget on every field. Dynamic HUD filters these the
--- same way.
-local function isClassDefaultObject(object)
-    return describeObject(object):find("Default__",1,true)~=nil
-end
 local healthQueue, healthPending, healthFirst, healthLast = {}, {}, 1, 0
 -- Repeated identical failures are reported once per session. A single
 -- unreachable widget otherwise emits hundreds of identical lines, because
 -- each field retries 120 times.
-local healthFailures,healthFailureCount = {},0
+local healthFailures = {seen={}, count=0}
 local function healthReady()
     return healthFirst<=healthLast and candidate==nil and valid(hud)
 end
 local function queueHealth(object, spec, requestedFields)
     if object==nil then return end
-    if isClassDefaultObject(object) then
+    -- A class default object is not a live widget: it has no world and no
+    -- owning player, so the readiness checks in healthStep can never pass for
+    -- it and it would burn its full retry budget on every field. Dynamic HUD
+    -- filters these the same way.
+    if describeObject(object):find("Default__",1,true) then
         if D.debugLogging then D.count("enemyHealthClassDefaultSkipped") end
         return
     end
@@ -601,8 +627,8 @@ local function healthStep()
         -- The identity is what makes this actionable: the message alone does
         -- not say which widget could not be read.
         local signature=spec.path.." | "..tostring(reason)
-        if not healthFailures[signature] and healthFailureCount<32 then
-            healthFailures[signature]=true;healthFailureCount=healthFailureCount+1
+        if not healthFailures.seen[signature] and healthFailures.count<32 then
+            healthFailures.seen[signature]=true;healthFailures.count=healthFailures.count+1
             D.logWarning("Enemy health update failed (reported once): %s | object=%s",
                 tostring(reason),describeObject(object))
         end
@@ -672,6 +698,7 @@ local function cooldownEvent(context)
     wake("cooldown")
 end
 local function switchedQuickslots(context,entryParam)
+    noteUbergraphEntry("WBP_GameHUD",entryParam)
     -- Stock Toggle AA Quickslots delegate enters the graph at 4146.
     -- Observe that entry directly, also covering calls that bypass its stub.
     if tonumber(unwrap(entryParam))~=4146 then return end
