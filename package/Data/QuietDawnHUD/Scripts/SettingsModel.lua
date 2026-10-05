@@ -13,8 +13,13 @@ local newestSchema = Timers.compatibleSchema(schema)
 -- They must stay STRICT SUBSETS of the newest schema. `ensure` adds every key
 -- its schema declares but the file lacks, so a schema naming a retired key
 -- would write that key back into an already-current file.
-local preLogLevelSchema = {}
+local FADE_KEYS = {fadeTransitions=true, fadeInSeconds=true, fadeOutSeconds=true}
+local preFadeSchema = {}
 for _,row in ipairs(newestSchema) do
+    if not FADE_KEYS[row.key] then preFadeSchema[#preFadeSchema+1]=row end
+end
+local preLogLevelSchema = {}
+for _,row in ipairs(preFadeSchema) do
     if row.key~="logLevel" then preLogLevelSchema[#preLogLevelSchema+1]=row end
 end
 local fullCompatibleSchema = {}
@@ -201,9 +206,17 @@ if values then
     local saved=Store.read(Store.path(directory))
     local legacyLogging=saved and Store.parse(saved,{{key='debugLogging', values={0,1}}})
     values, err = dofile(directory..'UE4SSCommonSettingsUpgrade.lua').ensure(
-        Store, Store.path(directory), newestSchema,
+        Store, Store.path(directory), preFadeSchema,
         {logLevel=LogLevels.fromLegacyToggle(legacyLogging and legacyLogging.debugLogging or 0)},
         'log-levels')
+end
+if values then
+    -- Fading added three keys. Their schema defaults already preserve existing
+    -- behaviour (fading off), so no overrides are needed; this step exists to
+    -- give the addition its own tag, so a file already stamped 'log-levels'
+    -- still gains the new keys.
+    values, err = dofile(directory..'UE4SSCommonSettingsUpgrade.lua').ensure(
+        Store, Store.path(directory), newestSchema, {}, 'fade-transitions')
 end
 if values then
     local needsUpgrade=false
@@ -220,6 +233,7 @@ function M.convert(numeric)
 local values={}
 for key,value in pairs(numeric) do values[key]=value end
 values.enabled=values.enabled==1;values.manualPeek=values.manualPeek==1
+values.fadeTransitions=values.fadeTransitions==1
 -- `debugLogging` survives as the hot per-event guard read across the gameplay
 -- scripts and handed to the native bridge. It now means "the level is Debug".
 values.debugLogging=values.logLevel>=LogLevels.DEBUG

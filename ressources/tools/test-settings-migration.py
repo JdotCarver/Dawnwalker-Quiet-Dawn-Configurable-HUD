@@ -153,6 +153,32 @@ def main():
     _, error = parse(text, schema)
     check("logLevel=5 is rejected", error == "Invalid setting: logLevel", f"got {error!r}")
 
+    # --- Fading (item 7) ------------------------------------------------
+    # The three keys must exist in the schema with behaviour-preserving
+    # defaults, so an existing settings.ini that gains them does not suddenly
+    # start animating.
+    rows = {row["key"]: row for row in schema.values()}
+    for key, default in (("fadeTransitions", 0), ("fadeInSeconds", 0.22), ("fadeOutSeconds", 0.45)):
+        row = rows.get(key)
+        check(f"{key} is declared in the schema", row is not None)
+        if row is not None:
+            check(
+                f"{key} defaults to {default}",
+                abs(float(row["default"]) - default) < 1e-9,
+                f"got {row['default']!r}",
+            )
+
+    # Fading off is the default, so nothing changes for an existing player.
+    check("fading is off by default", float(rows["fadeTransitions"]["default"]) == 0)
+
+    # The fade grid must contain both defaults exactly; 0.22 is not on the
+    # 0.5-second grid the hold timers use, which is why it has its own list.
+    for key in ("fadeInSeconds", "fadeOutSeconds"):
+        values = rows[key]["values"]
+        wanted = float(rows[key]["default"])
+        present = values is not None and any(abs(v - wanted) < 1e-9 for v in values.values())
+        check(f"{key}'s default lies on its own value grid", present)
+
     print()
     if failures:
         print(f"!! {len(failures)} check(s) failed")

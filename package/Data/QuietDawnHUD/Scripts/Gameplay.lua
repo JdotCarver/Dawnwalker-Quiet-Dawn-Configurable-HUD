@@ -151,6 +151,11 @@ local HEALING_REVEAL_GAIN, FULL_REARM_GAP, FULL_EPSILON=0.002,0.002,0.000001
 local healthUntil, staminaUntil = 0, 0
 local panels = {}
 local panelOpacity=require("QuietDawnPanelOpacity").new(Session,D)
+-- Fading resolves a show or hide target into a per frame opacity. It owns no
+-- timer: the panel worker already ticks while work remains, and keeps itself
+-- awake for as long as fade.pending() is true.
+local fade=require("QuietDawnFade").new(D)
+fade.configure(config.fadeTransitions,config.fadeInSeconds,config.fadeOutSeconds)
 local peekDirty,statDirty,refreshDirty=false,false,false
 local panelRetries={}
 local priorityTurn=0
@@ -981,10 +986,13 @@ local function peekPanel(name)
         and name~="WBP_OpenFocusPrompt"
 end
 local function writePanel(name,entry,target)
-    local wrote=panelOpacity.apply(entry.lease,target)
+    -- The fade turns the eventual target into this frame's value. With fading
+    -- off, or on the frame a transition lands, that is the target itself.
+    local value=fade.step(name,entry.object:GetRenderOpacity(),target)
+    local wrote=panelOpacity.apply(entry.lease,value)
     if wrote then
         entry.opacityOwned=true
-        if D.debugLogging then D.count("panelWrites");D.event("panel","name=%s opacity=%.3f",name,target) end
+        if D.debugLogging then D.count("panelWrites");D.event("panel","name=%s opacity=%.3f target=%.3f",name,value,target) end
     end
     return wrote
 end
@@ -1106,6 +1114,8 @@ local function panelStep(name)
         end
     else
         hud, world, panels = nil, nil, {}
+        -- The panels these transitions referred to are gone with the world.
+        fade.reset()
         panelRetries,livePanels={},{}
         hudAddress=nil
         peekWidgetAddress,peekControllerAddress=nil,nil
@@ -1255,6 +1265,14 @@ local function step()
         cursor=1
         return false
     end
+    -- A transition in flight still owes frames. Revisit only the panels that
+    -- are mid fade, rather than sweeping all of them, then let the worker
+    -- terminate as usual once the last one lands.
+    if cursor==0 and not dirty and fade.pending() then
+        jobNames=fade.names()
+        cursor=1
+        return false
+    end
     if cursor==0 and not dirty and next(panelRetries) then
         panelStep(next(panelRetries))
         return false
@@ -1311,7 +1329,7 @@ local function step()
         return false
     end
     cursor=0
-    if switchCursor>0 or dirty or statsPending or peekDirty or statDirty or refreshDirty or next(panelRetries) or timeRequested or timeDirty or (timeWatcher and timeWatcher.pending()) or markersReady() or healthReady() or promptsReady() then return false end
+    if switchCursor>0 or dirty or statsPending or peekDirty or statDirty or refreshDirty or next(panelRetries) or timeRequested or timeDirty or (timeWatcher and timeWatcher.pending()) or markersReady() or healthReady() or promptsReady() or fade.pending() then return false end
     attempts=0
     worker=false
     armExpiry()
@@ -1389,6 +1407,9 @@ applyLiveSettings=function(run)
         panelScales[name]=updated.panelScales[name]
     end
     for key,value in pairs(updated) do if type(value)~='table' then config[key]=value end end
+    if changed.fadeTransitions or changed.fadeInSeconds or changed.fadeOutSeconds then
+        fade.configure(config.fadeTransitions,config.fadeInSeconds,config.fadeOutSeconds)
+    end
     dynamicPanels.HumanStats,dynamicPanels.VampireStats=updated.dynamicPanels.HumanStats,updated.dynamicPanels.VampireStats
     statNames={}
     for _,name in ipairs({'HumanStats','VampireStats'}) do if dynamicPanels[name] then statNames[#statNames+1]=name end end

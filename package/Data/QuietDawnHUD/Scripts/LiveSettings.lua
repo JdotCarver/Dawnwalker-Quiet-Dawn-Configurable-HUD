@@ -80,6 +80,9 @@ function M.new(directory, report)
         ["scale_WBP_ControlsLegend"]="scale_WBP_ControlsLegend",
         ["manualPeek"]="manualPeek",
         ["manualPeekSeconds"]="manualPeekSeconds",
+        ["fadeTransitions"]="fadeTransitions",
+        ["fadeInSeconds"]="fadeInSeconds",
+        ["fadeOutSeconds"]="fadeOutSeconds",
         ["logLevel"]="logLevel"
         }})
     live.start(function(id,callback)

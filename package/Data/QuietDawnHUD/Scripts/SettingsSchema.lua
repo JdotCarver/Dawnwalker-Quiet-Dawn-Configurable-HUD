@@ -8,6 +8,10 @@ local function choices(maximum, step)
     return values
 end
 local durations = choices(10, 0.5)
+-- Fades are short, so they need a finer grid than the hold timers: build it
+-- from integer hundredths to avoid accumulating float error over 201 steps.
+local fadeDurations = {}
+for hundredths = 0, 200, 1 do fadeDurations[#fadeDurations + 1] = hundredths / 100 end
 local opacities = choices(100, 5)
 local panelSizes = {}
 for value=25,200,5 do panelSizes[#panelSizes+1]=value end
@@ -72,6 +76,11 @@ return {
     {key="manualPeekSeconds", default=3, values=durations},
     {key="switchRevealSeconds", default=3, values=durations},
     {key="manualPeek", default=1, values={0,1}},
+    -- Fading defaults to off so an existing settings.ini keeps its exact
+    -- current behaviour; `ensure` simply adds the three missing keys.
+    {key="fadeTransitions", default=0, values={0,1}},
+    {key="fadeInSeconds", default=0.22, values=fadeDurations},
+    {key="fadeOutSeconds", default=0.45, values=fadeDurations},
     {key="compassOpacity", default=0, min=0, max=100, integer=false},
     -- Replaced the former `debugLogging` on/off toggle. See QuietDawnLogLevels.
     {key="logLevel", default=LogLevels.DEFAULT, values=LogLevels.ordered},
