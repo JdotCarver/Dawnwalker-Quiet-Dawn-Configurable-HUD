@@ -5,8 +5,8 @@ A quiet view of the world, with health and stamina returning when needed.
 For **The Blood of Dawnwalker**. In Quiet Dawn mode, combat, drawing a weapon, lock-on, and focus no longer reveal the general HUD.
 
 - **Enemy information:** health bars, names and difficulty icons are hidden by default, with three independent settings in the settings menu or `settings.ini`. Turn off **Hide enemy health bars** to restore ordinary enemy and boss health bars, their end caps and boss health-phase indicators. Turn off **Hide enemy names** to restore name labels (boss names). Enemy stamina retains game behavior; effect icons have their own toggle; combat warnings follow the separate cue settings.
-- **Claw slash marks:** **Hide claw slash marks** hides the red Shredded Touch slash effects on enemies, including the sword variant. It defaults to On and changes only these visuals; damage, bleeding and ordinary blood effects keep their game behavior. Turn it Off under **Combat / Enemies**, or set `hideClawSlashMarks = 0` in `settings.ini`, to show the marks again. Apply to save and update the active game.
-- **Enemy lock-on marker:** Five independent Combat / Indicators toggles control counterattack directions, unblockable warnings, directional parry cues, the enemy dot/diamond and the lock icon. All default to Off. **Show enemy dot/diamond** restores the red marker independently of **Show lock icon**. It also controls the red secondary-enemy attack dot beside an enemy health bar: Off hides it, and On allows the game to show it when appropriate, independently of health-bar visibility. When both are On, a hard-locked target shows the padlock. Directions and unblockable warnings take priority over the marker. Enabled unblockable warnings retain their skull icon when soft-lock or hard-lock targets change.
+- **Claw slash marks:** **Hide claw slash marks** hides the red Shredded Touch slash effects on enemies, including the sword variant. It defaults to On and changes only these visuals; damage, bleeding and ordinary blood effects keep their game behavior. Turn it Off under **Combat: Enemies**, or set `hideClawSlashMarks = 0` in `settings.ini`, to show the marks again. Apply to save and update the active game.
+- **Enemy lock-on marker:** Five independent Combat: Indicators toggles control counterattack directions, unblockable warnings, directional parry cues, the enemy dot/diamond and the lock icon. All default to Off. **Show enemy dot/diamond** restores the red marker independently of **Show lock icon**. It also controls the red secondary-enemy attack dot beside an enemy health bar: Off hides it, and On allows the game to show it when appropriate, independently of health-bar visibility. When both are On, a hard-locked target shows the padlock. Directions and unblockable warnings take priority over the marker. Enabled unblockable warnings retain their skull icon when soft-lock or hard-lock targets change.
 - **Player health and stamina:** in their default Quiet Dawn mode, shown together at full opacity after damage, meaningful healing or stamina use, while health is strictly below **50%**, or while stamina is strictly below **20%**. Vampire health follows the blood bar; human health follows HP.
 - **Hide delay:** **4 seconds** after the last health/blood alert; **1.5 seconds** after the last stamina drop. Further meaningful drops restart the relevant delay; blood fluctuations smaller than 0.2% of the bar do not keep renewing it. Low health or stamina keeps the panel visible without a timeout. Exactly 50% health or 20% stamina does not qualify by itself.
 - **Manual HUD peek:** hold the Controls Legend button (Menu on Xbox, Options on PlayStation, or L on keyboard by default) to show the player HUD for **3 seconds**. Repeat the gesture to refresh the peek. Show HUD brings eligible panels up together and restores their automatic visibility together when the peek ends. Panels with an active resource alert, cooldown or other independent reveal keep their own visibility rules.
@@ -17,7 +17,7 @@ Each of the 17 player panels has a **Vanilla / Quiet Dawn / Fixed opacity** mode
 
 In Quiet Dawn mode, quickslots appear briefly after switching and the special-attack panel appears only during cooldown. HUD peek reveals eligible Quiet Dawn panels at full opacity; the combat-focus wheel, Focus hint, switch hint and special-attack panel keep their own rules. Interaction prompts, dialogue, subtitles, notifications and menus retain game behavior.
 
-The Sprint and Haste button prompts stay hidden while running in human and vampire form, including after the game refreshes their text or button icon. Sprint/Haste suppression works independently of the display language. **Hide sprint/haste prompt** is in the **Controls / Action prompts** section. Turn off **Hide sprint/haste prompt** in the settings menu, or set `hideSprintPrompt = 0` in `settings.ini`, to restore them. Other action prompts retain game behavior, and manual HUD peek keeps running prompts hidden.
+The Sprint and Haste button prompts stay hidden while running in human and vampire form, including after the game refreshes their text or button icon. Sprint/Haste suppression works independently of the display language. **Hide sprint/haste prompt** is in the **Controls: Action prompts** section. Turn off **Hide sprint/haste prompt** in the settings menu, or set `hideSprintPrompt = 0` in `settings.ini`, to restore them. Other action prompts retain game behavior, and manual HUD peek keeps running prompts hidden.
 
 The Toggle abilities hint (RT with the remapped controller layout) stays hidden in Focus mode and during manual HUD peek. Ability switching still works. Select Vanilla, or select Fixed opacity with a positive value, to restore the hint.
 
@@ -27,13 +27,13 @@ The time-of-day panel is hidden by default. It appears at full opacity when an a
 
 ## Player combat effects
 
-**Hide player combat effects**, under Player status / Active buffs, hides Crimson Rush's bright red arm effect in human and vampire form. It defaults to Off and is separate from effect icons and enemy claw slash marks. Buff strength, duration and sound stay unchanged. Apply updates effects already active on the player; Off restores their visibility.
+**Hide player combat effects**, under Player status: Active buffs, hides Crimson Rush's bright red arm effect in human and vampire form. It defaults to Off and is separate from effect icons and enemy claw slash marks. Buff strength, duration and sound stay unchanged. Apply updates effects already active on the player; Off restores their visibility.
 
 ## Effect icons
 
-**Hide enemy effect icons** under Combat / Enemies hides effect icons and timers, including bleeding, on ordinary enemies and bosses. It is independent of enemy health bars, names, difficulty icons, combat warnings and Hide claw slash marks.
+**Hide enemy effect icons** under Combat: Enemies hides effect icons and timers, including bleeding, on ordinary enemies and bosses. It is independent of enemy health bars, names, difficulty icons, combat warnings and Hide claw slash marks.
 
-**Hide player effect icons** under Player status / Active buffs hides the player's buff/debuff icons and their timers, including during Show HUD. While On it overrides Active buffs mode and opacity; turning it Off resumes those saved settings. Size preferences are retained.
+**Hide player effect icons** under Player status: Active buffs hides the player's buff/debuff icons and their timers, including during Show HUD. While On it overrides Active buffs mode and opacity; turning it Off resumes those saved settings. Size preferences are retained.
 
 Both toggles default to Off. They only hide HUD visuals; damage, bleeding, buffs, debuffs and their durations keep their game behavior. Press Apply to update the active game.
 
@@ -63,7 +63,7 @@ Select Compass mode in the settings menu: Vanilla follows the game, Quiet Dawn h
 
 Required: [Mod Setting Menu 1.0.6 or later](https://www.nexusmods.com/thebloodofdawnwalker/mods/271). Open Mod Settings and press Apply to save and update gameplay.
 
-The menu runs from General through Player status, Combat, Exploration and Controls, ending with Diagnostics. Categories are alphabetical within each group, using headings such as Combat / Crosshair and Exploration / Compass. Each panel keeps its mode, conditional opacity and size together, followed by related thresholds or reveal durations. Combat / Indicators contains counterattack directions, parry cues, unblockable warnings, the enemy dot/diamond, the lock icon and cue size. Logging remains the final entry.
+The menu runs from General through Player status, Combat, Exploration and Controls, ending with Diagnostics. Categories are alphabetical within each group, using headings such as Combat: Crosshair and Exploration: Compass. Each panel keeps its mode, conditional opacity and size together, followed by related thresholds or reveal durations. Combat: Indicators contains counterattack directions, parry cues, unblockable warnings, the enemy dot/diamond, the lock icon and cue size. Logging remains the final entry.
 
 ### Defaults
 
