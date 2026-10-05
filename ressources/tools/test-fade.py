@@ -201,6 +201,46 @@ def main():
     check("without a clock the target is applied immediately", fade.step("p", 0.0, 1.0) == 1.0)
     check("without a clock nothing is left pending", not fade.pending())
 
+    # --- Lockstep: a group started in one call moves as one -------------
+    # The symptom this guards against is panels dissolving raggedly, one
+    # element at a time, because each transition began at a different moment.
+    clock = {"now": 100.0}
+    fade = module.new(diagnostics, lambda: clock["now"])
+    fade.configure(True, 0.4, 0.4)
+    check("fading reports itself as enabled", fade.enabled())
+    check("an untouched key is not active", not fade.active("a"))
+    for key in ("a", "b", "c"):
+        fade.step(key, 1.0, 0.0)
+    check("every key in the group is now active", all(fade.active(k) for k in "abc"))
+
+    clock["now"] = 100.2  # halfway
+    values = [fade.step(key, 1.0, 0.0) for key in ("a", "b", "c")]
+    check(
+        "panels started together hold identical opacity mid-fade",
+        max(values) - min(values) < 1e-9,
+        f"got {values}",
+    )
+    check("and are genuinely mid-transition, not snapped", 0.0 < values[0] < 1.0)
+
+    # The same group started across separate calls is what used to happen.
+    clock = {"now": 200.0}
+    fade = module.new(diagnostics, lambda: clock["now"])
+    fade.configure(True, 0.4, 0.4)
+    fade.step("a", 1.0, 0.0)
+    clock["now"] = 200.05  # the next panel is visited a worker call later
+    fade.step("b", 1.0, 0.0)
+    clock["now"] = 200.2
+    staggered = [fade.step(k, 1.0, 0.0) for k in ("a", "b")]
+    check(
+        "staggered starts do drift apart, which is the bug being prevented",
+        abs(staggered[0] - staggered[1]) > 1e-3,
+        f"got {staggered}",
+    )
+
+    fade.configure(False, 0.4, 0.4)
+    check("fading reports itself as disabled once switched off", not fade.enabled())
+    check("disabled fading leaves nothing active", not fade.active("a"))
+
     print()
     if failures:
         print(f"!! {len(failures)} check(s) failed")

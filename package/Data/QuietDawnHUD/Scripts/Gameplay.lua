@@ -181,6 +181,10 @@ local frameClock, lastFrame
 -- a slice) while the HUD sat fully visible. Elements only disappeared at the
 -- first refresh afterwards, which is exactly what it looked like.
 local runtime = {panelsSettled = false, peekFocusExitAt = nil}
+-- Panels whose fade has been deferred so the whole group can start together.
+-- See writePanel and the flush in step(). On the runtime table rather than as
+-- locals because this file sits near Lua's 200-local ceiling.
+runtime.fadeWave, runtime.fadeWaveSize = {}, 0
 local wake, armExpiry, clawMarks
 local function valid(object)
     return object ~= nil and object:IsValid()
@@ -924,6 +928,26 @@ local function peekPanel(name)
         and name~="WBP_OpenFocusPrompt"
 end
 local function writePanel(name,entry,target)
+    -- Panels are visited one per worker call, so a transition started inline
+    -- here would start at a different moment for every panel: on the last
+    -- load they began about 50 ms apart and the HUD dissolved raggedly, one
+    -- element at a time, instead of as a single movement. fade.forEach
+    -- already advances everything in lockstep once transitions exist -- the
+    -- missing half was that they never *began* together.
+    --
+    -- So the first write for a panel is deferred: record that it wants a
+    -- transition and write nothing. Once the pass finishes, step() replays
+    -- the whole group inside one worker call, so they share a start moment
+    -- and move as one from then on. A transition already running is advanced
+    -- normally, and with fading switched off nothing is deferred at all.
+    if fade.enabled() and not fade.active(name) and not runtime.fadeFlushing then
+        if runtime.fadeWave[name]==nil then
+            runtime.fadeWave[name]=true
+            runtime.fadeWaveSize=runtime.fadeWaveSize+1
+            if D.debugLogging then D.count("panelFadeDeferred") end
+        end
+        return false
+    end
     -- The fade turns the eventual target into this frame's value. With fading
     -- off, or on the frame a transition lands, that is the target itself.
     local value=fade.step(name,entry.object:GetRenderOpacity(),target)
@@ -1061,6 +1085,7 @@ local function panelStep(name)
         hud, world, panels = nil, nil, {}
         -- The panels these transitions referred to are gone with the world.
         fade.reset()
+        runtime.fadeWave,runtime.fadeWaveSize={},0
         panelRetries,livePanels={},{}
         hudAddress=nil
         peekWidgetAddress,peekControllerAddress=nil,nil
@@ -1274,11 +1299,30 @@ local function step()
         return false
     end
     cursor=0
+    -- Every panel that wants to start fading has now been identified. Start
+    -- them all here, in this one worker call, so they share a start moment
+    -- and thereafter move together under fade.forEach.
+    if runtime.fadeWaveSize>0 then
+        local wave=runtime.fadeWave
+        runtime.fadeWave,runtime.fadeWaveSize=({}),0
+        runtime.fadeFlushing=true
+        local started=0
+        for name in pairs(wave) do
+            if panels[name] then started=started+1 end
+            pcall(panelStep,name)
+        end
+        runtime.fadeFlushing=false
+        if D.debugLogging and started>0 then
+            D.count("panelFadeWaves")
+            D.event("panelFade","%d panel(s) began fading together",started)
+        end
+        return false
+    end
     -- The panels have had a full pass, so the deferred startup work may run.
     -- Only a full job counts: the short stat-only sweeps do not hide
     -- everything and must not release the preloads early.
     if fullJob and valid(hud) then runtime.panelsSettled=true end
-    if switchCursor>0 or dirty or statsPending or peekDirty or statDirty or refreshDirty or next(panelRetries) or timeRequested or timeDirty or (timeWatcher and timeWatcher.pending()) or markersReady() or enemyBars.ready() or promptsReady() or fade.pending() then return false end
+    if switchCursor>0 or dirty or statsPending or peekDirty or statDirty or refreshDirty or next(panelRetries) or runtime.fadeWaveSize>0 or timeRequested or timeDirty or (timeWatcher and timeWatcher.pending()) or markersReady() or enemyBars.ready() or promptsReady() or fade.pending() then return false end
     attempts=0
     worker=false
     armExpiry()
@@ -1396,15 +1440,17 @@ function runtime.auditPanels()
     -- worker only sets a flag, so this is cheap. A fade is the one case where
     -- a panel is supposed to differ from its target.
     if not valid(hud) then return end
+    -- Collect every drifted panel, not just the first. One wake fixes them
+    -- all, but naming them all is what makes the log worth reading.
     local ok, drifted = pcall(function()
-        local fading = fade.pending()
+        local found, fading = {}, fade.pending()
         for _,name in ipairs(names) do
             if panelModes[name]~=0 then
                 local entry = panels[name]
                 if entry and valid(entry.object) then
                     if not fading then
                         local target = panelTarget(name,entry,entry.widget)
-                        if math.abs(entry.object:GetRenderOpacity()-target)>1e-5 then return name end
+                        if math.abs(entry.object:GetRenderOpacity()-target)>1e-5 then found[#found+1]=name end
                     end
                 -- No cached entry means we either never found this panel or
                 -- gave up on it after eight fast retries. Both happen during
@@ -1417,16 +1463,16 @@ function runtime.auditPanels()
                 elseif valid(hud[name]) then
                     absent[name]=nil
                     panelRetries[name]=nil
-                    return name
+                    found[#found+1]=name
                 end
             end
         end
-        return nil
+        return #found>0 and table.concat(found,", ") or nil
     end)
     if not ok or drifted==nil then return end
     if D.debugLogging then
         D.count("panelAuditWakes")
-        D.event("panelAudit","panel=%s drifted from its target; refreshing",drifted)
+        D.event("panelAudit","drifted from target, refreshing: %s",drifted)
     end
     wake()
 end

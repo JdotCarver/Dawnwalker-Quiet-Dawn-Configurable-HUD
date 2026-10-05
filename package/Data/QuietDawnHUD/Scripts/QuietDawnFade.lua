@@ -78,6 +78,17 @@ function M.new(D, clock)
 
     api.forget = discard
 
+    -- Whether fading is switched on at all. The caller needs this to decide
+    -- whether it is worth deferring a write to keep panels in step: with
+    -- fading off there is nothing to synchronise and the extra frame of
+    -- latency would buy nothing.
+    function api.enabled() return enabled end
+
+    -- Whether this key is already mid-transition. A transition that is
+    -- running is advanced in place; only a brand new one has a start moment
+    -- to choose, and therefore only a brand new one needs synchronising.
+    function api.active(key) return transitions[key] ~= nil end
+
     -- Also the sweep that retires orphans, so a panel that stopped being
     -- written cannot hold the worker open. Bounded by MAX_TRANSITIONS.
     function api.pending()
