@@ -4,6 +4,17 @@
 # Arena turn-start sync + harness repair
 #
 # Run at the START of every turn:   bash ressources/tools/arena-turn-start.sh
+# Run again BEFORE EVERY COMMIT:    bash ressources/tools/arena-turn-start.sh --verify
+#
+# --verify skips all git classification and only answers "is the tree still the
+# one I have been editing?". Use it before committing: a snapshot restore can
+# land MID-TURN, and when it does it reverts tracked files to HEAD while
+# leaving untracked files in place. Observed twice on 2026-10-05: once it threw
+# away a feature's worth of edits to tracked files between writing them and
+# running git status, while new untracked files survived and left the tree
+# looking healthy; once it knocked HEAD back to the base commit. Only the
+# integrity checks catch the first case, and the turn-start pass cannot,
+# because by then it has already run.
 #
 # Why this exists
 # ---------------
@@ -60,9 +71,21 @@ KEY_FILES=(
     package/Data/QuietDawnHUD/Scripts/QuietDawnDiagnostics.lua
 )
 
+VERIFY_ONLY=0
+for argument in "$@"; do
+    case "$argument" in
+        --verify) VERIFY_ONLY=1 ;;
+        *) echo "!! unknown argument: $argument (expected --verify)"; exit 2 ;;
+    esac
+done
+
 cd "$REPO_ROOT" || exit 1
 
-echo "== arena turn-start ($(date +%H:%M:%S)) =="
+if [ "$VERIFY_ONLY" -eq 1 ]; then
+    echo "== arena verify ($(date +%H:%M:%S)) =="
+else
+    echo "== arena turn-start ($(date +%H:%M:%S)) =="
+fi
 echo "   branch=$(git rev-parse --abbrev-ref HEAD)  HEAD=$(git rev-parse --short HEAD)  dirty=$(git status --porcelain | wc -l)"
 
 # --- 1. Is a snapshot restore still landing files? ---------------------------
@@ -77,6 +100,11 @@ if [ "$before" != "$(status_hash)" ]; then
     echo "!! working tree still changing (snapshot restore in flight) — waiting 10s"
     sleep 10
 fi
+
+# --- 2 and 3. Git state. Skipped by --verify, which never touches HEAD. ------
+# --verify must stay side-effect free: it is called with uncommitted work in
+# the tree, where a reset or a fast-forward would be destructive.
+if [ "$VERIFY_ONLY" -eq 0 ]; then
 
 # --- 2. Guard: the session branch must be checked out. -----------------------
 CURRENT_BRANCH="$(git rev-parse --abbrev-ref HEAD)"
@@ -163,6 +191,8 @@ else
     exit 1
 fi
 
+fi  # end of the git classification sections
+
 # --- 4. Settle: restored files can keep arriving in waves. -------------------
 for round in 1 2 3; do
     before="$(status_hash)"
@@ -236,6 +266,21 @@ fi
 if [ "$missing" -ne 0 ]; then
     echo "!! tree incomplete — repair by hand; inspect the missing files above"
     exit 1
+fi
+
+if [ "$VERIFY_ONLY" -eq 1 ]; then
+    echo "== verified: HEAD=$(git rev-parse --short HEAD) dirty=$(git status --porcelain | wc -l)"
+    # Printing the pending changes is the point: if a mid-turn restore has
+    # reverted the files you were editing, this list is suddenly far shorter
+    # than you expect, which is the signal to re-apply before committing.
+    changes="$(git status --porcelain)"
+    if [ -n "$changes" ]; then
+        echo "   pending changes:"
+        echo "$changes" | sed 's/^/     /'
+    else
+        echo "   no pending changes (expected? a mid-turn restore looks exactly like this)"
+    fi
+    exit 0
 fi
 
 echo "== ready: HEAD=$(git rev-parse --short HEAD) dirty=$(git status --porcelain | wc -l)"
