@@ -137,7 +137,7 @@ local failedHooks = {}
 local timeRequested,timeDirty,timeVisible,timeUntil=false,false,false,0
 local timeJobNames={"WBP_HudTimer"}
 local timeWatcher=timeRevealEnabled and require("QuietDawnTime").new(D) or nil
-local peekRequested,peekUntil,peekVisible,peekFocusExitAt=false,0,false,nil
+local peekRequested,peekUntil,peekVisible=false,0,false
 local peekStartPending=false
 local switchRequested,switchUntil,switchVisible=false,0,false
 local switchCursor=0
@@ -169,6 +169,18 @@ local function reportHookError(path, success, pre, post)
 end
 local warned = false
 local frameClock, lastFrame
+-- Assorted worker state, sharing one table deliberately: this chunk sits at
+-- Lua's hard limit of 200 locals per chunk, and every new flag used to want a
+-- slot of its own. Extracting the worker into a module is the real fix.
+--
+-- panelsSettled -- startup ordering. The visible job on load is hiding the
+-- panels the player asked to be hidden; everything else can wait a few frames.
+--
+-- Before this, the worker spent its first half second registering ~30 hooks
+-- at one per frame and preloading claw mark assets (observed at up to 137 ms
+-- a slice) while the HUD sat fully visible. Elements only disappeared at the
+-- first refresh afterwards, which is exactly what it looked like.
+local runtime = {panelsSettled = false, peekFocusExitAt = nil}
 -- Fading resolves a show or hide target into a per frame opacity. It owns no
 -- timer: the panel worker already ticks while work remains, and keeps itself
 -- awake for as long as fade.pending() is true.
@@ -282,8 +294,14 @@ local function noteUbergraphEntry(graph, entryParam)
     -- amount of staring at the number can settle.
     local focus = "?"
     if valid(controller) then
-        local read, flag = pcall(function() return controller.Pawn.bIsInFocusMode end)
-        if read and flag ~= nil then focus = tostring(flag) end
+        -- Validate the pawn before reading through it. pcall catches a Lua
+        -- error but not an access violation, and during a world teardown
+        -- controller.Pawn can still be a pointer to freed memory.
+        local got, pawn = pcall(function() return controller.Pawn end)
+        if got and valid(pawn) then
+            local read, flag = pcall(function() return pawn.bIsInFocusMode end)
+            if read and flag ~= nil then focus = tostring(flag) end
+        end
     end
     D.event("ubergraph", "%s entry=%s sighting=%d/%d focusMode=%s",
         graph, tostring(entry), seen + 1, ubergraph.limit, focus)
@@ -531,6 +549,23 @@ local function enemyFieldHidden(field)
     if field=='HelperAttackIndicator' then return not config.showEnemyMarker end
     return config[enemyFieldSetting(field)]
 end
+-- Names of a widget's child properties, for diagnostics only. UE4SS exposes
+-- property reflection through ForEachProperty on newer builds; where it is
+-- missing this degrades to a plain note rather than failing.
+function runtime.childNames(object)
+    local class=object and object.GetClass and object:GetClass()
+    if not class or not class.ForEachProperty then return "<reflection unavailable>" end
+    local names,total={},0
+    local ok=pcall(function()
+        class:ForEachProperty(function(property)
+            total=total+1
+            if total<=40 then names[#names+1]=property:GetFName():ToString() end
+        end)
+    end)
+    if not ok or total==0 then return "<reflection unavailable>" end
+    table.sort(names)
+    return table.concat(names,", ")..(total>40 and (" ... (+"..(total-40).." more)") or "")
+end
 local function describeObject(object)
     if object==nil then return "<nil>" end
     local named,name=pcall(function() return object:GetFullName() end)
@@ -578,7 +613,17 @@ local function healthStep()
     local function retry()
         job.attempts=job.attempts+1
         if job.attempts>=120 then
-            if D.debugLogging then D.event("enemyHealth","readiness exhausted: %s field=%s",spec.path,job.fields[job.field]) end
+            -- Giving up means that child never appeared. The usual cause is a
+            -- name that moved in a game update, and the message alone cannot
+            -- tell that apart from a widget that is simply empty right now.
+            -- So report it as a WARNING once per path+field, and list the
+            -- widget's actual children alongside, which names the real field.
+            local signature="readiness:"..spec.path.."#"..tostring(job.fields[job.field])
+            if not healthFailures.seen[signature] and healthFailures.count<32 then
+                healthFailures.seen[signature]=true;healthFailures.count=healthFailures.count+1
+                D.logWarning("Enemy HUD child never appeared: %s field=%s. Children seen: %s",
+                    spec.path,tostring(job.fields[job.field]),runtime.childNames(object))
+            end
             return false
         end
         return true
@@ -748,8 +793,9 @@ local function switchedQuickslots(context,entryParam)
         -- A game time that has gone backwards means a new world; accept it.
         local now=valid(frameClock) and valid(controller)
             and frameClock:GetGameTimeInSeconds(controller) or nil
-        if now and peekFocusExitAt and now>=peekFocusExitAt and now-peekFocusExitAt<0.2 then return end
-        peekFocusExitAt=now
+        local last=runtime.peekFocusExitAt
+        if now and last and now>=last and now-last<0.2 then return end
+        runtime.peekFocusExitAt=now
         peekRequested,statsPending=true,true
         if D.debugLogging then D.count("manualPeekFocusExits") end
         wake("resource")
@@ -1255,12 +1301,12 @@ local function step()
     if sprintSource.pending() then sprintSource.step();return false end
     -- Discovery, hook registration, state reads and transforms remain sliced.
     -- Every third slice is reserved for this work even under resource bursts.
-    if playerEffects and playerEffects.pending() then playerEffects.step();return false end
-    if clawMarks and clawMarks.pending() then
+    if runtime.panelsSettled and playerEffects and playerEffects.pending() then playerEffects.step();return false end
+    if runtime.panelsSettled and clawMarks and clawMarks.pending() then
         clawMarks.step()
         return false
     end
-    if hookIndex <= #specs then
+    if hookIndex <= #specs and (hookIndex <= 3 or runtime.panelsSettled or not valid(hud)) then
         if hookIndex > 3 and candidate == nil and not valid(hud) then
             worker=false
             return true
@@ -1419,6 +1465,10 @@ local function step()
         return false
     end
     cursor=0
+    -- The panels have had a full pass, so the deferred startup work may run.
+    -- Only a full job counts: the short stat-only sweeps do not hide
+    -- everything and must not release the preloads early.
+    if fullJob and valid(hud) then runtime.panelsSettled=true end
     if switchCursor>0 or dirty or statsPending or peekDirty or statDirty or refreshDirty or next(panelRetries) or timeRequested or timeDirty or (timeWatcher and timeWatcher.pending()) or markersReady() or healthReady() or promptsReady() or fade.pending() then return false end
     attempts=0
     worker=false
