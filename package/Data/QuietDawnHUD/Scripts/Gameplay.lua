@@ -181,20 +181,6 @@ local frameClock, lastFrame
 -- a slice) while the HUD sat fully visible. Elements only disappeared at the
 -- first refresh afterwards, which is exactly what it looked like.
 local runtime = {panelsSettled = false, peekFocusExitAt = nil}
--- Fading resolves a show or hide target into a per frame opacity. It owns no
--- timer: the panel worker already ticks while work remains, and keeps itself
--- awake for as long as fade.pending() is true.
---
--- It is given GAME time, the same clock the peek and time-of-day holds use,
--- not the diagnostics clock. D.now() is os.clock -- processor time, coarse
--- and not proportional to wall time -- which makes a fade visibly stutter.
--- Game time also stops while the game is paused or alt-tabbed, so a fade
--- waits rather than finishing invisibly in the background.
-local fade=require("QuietDawnFade").new(D,function()
-    if not valid(frameClock) or not valid(controller) then return nil end
-    return frameClock:GetGameTimeInSeconds(controller)
-end)
-fade.configure(config.fadeTransitions,config.fadeInSeconds,config.fadeOutSeconds)
 local wake, armExpiry, clawMarks
 local function valid(object)
     return object ~= nil and object:IsValid()
@@ -212,6 +198,20 @@ local function unwrap(param)
     if param == nil then return nil end
     return param:get()
 end
+-- Fading resolves a show or hide target into a per frame opacity. It owns no
+-- timer: the panel worker already ticks while work remains, and keeps itself
+-- awake for as long as fade.pending() is true.
+--
+-- It is given GAME time, the same clock the peek and time-of-day holds use,
+-- not the diagnostics clock. D.now() is os.clock -- processor time, coarse
+-- and not proportional to wall time -- which makes a fade visibly stutter.
+-- Game time also stops while the game is paused or alt-tabbed, so a fade
+-- waits rather than finishing invisibly in the background.
+local fade=require("QuietDawnFade").new(D,function()
+    if not valid(frameClock) or not valid(controller) then return nil end
+    return frameClock:GetGameTimeInSeconds(controller)
+end)
+fade.configure(config.fadeTransitions,config.fadeInSeconds,config.fadeOutSeconds)
 -- These are actual Blueprint delegate handlers, not delegate signatures.
 -- Stock OnInitialized binds VampireStats to OnStaminaChanged in both forms.
 local STAT_ROOT = "/Game/_Dawnwalker/UI/_Unified/HUD/PlayerStatPanel/"
@@ -566,6 +566,30 @@ function runtime.childNames(object)
     table.sort(names)
     return table.concat(names,", ")..(total>40 and (" ... (+"..(total-40).." more)") or "")
 end
+-- Resolve a named child of a widget.
+--
+-- `object[field]` only works when the Blueprint marked that widget "Is
+-- Variable", because that is what promotes it to a property on the generated
+-- class. WBP_CombatCharacterBar does; WBP_Combat_BossBar does not -- walking
+-- its class reports exactly one property, UberGraphFrame -- so no amount of
+-- retrying could ever resolve its HealthBar. That is the boss health bar
+-- never being hidden.
+--
+-- GetWidgetFromName searches the widget tree instead and does not care about
+-- the flag. It also answers the other half of the question: the tree is only
+-- populated once the widget is actually built, so a bar that does not exist
+-- until a boss appears simply returns nil here and is retried, rather than
+-- being mistaken for a missing name.
+function runtime.findChild(object, field)
+    local child = object[field]
+    if valid(child) then return child end
+    local found = select(2, pcall(function()
+        -- UE4SS converts a Lua string to FName for this parameter.
+        return object:GetWidgetFromName(field)
+    end))
+    if valid(found) then return found end
+    return nil
+end
 local function describeObject(object)
     if object==nil then return "<nil>" end
     local named,name=pcall(function() return object:GetFullName() end)
@@ -621,7 +645,8 @@ local function healthStep()
             local signature="readiness:"..spec.path.."#"..tostring(job.fields[job.field])
             if not healthFailures.seen[signature] and healthFailures.count<32 then
                 healthFailures.seen[signature]=true;healthFailures.count=healthFailures.count+1
-                D.logWarning("Enemy HUD child never appeared: %s field=%s. Children seen: %s",
+                D.logWarning("Enemy HUD child never appeared: %s field=%s. "
+                    .."Not a class variable and not in the widget tree. Class properties: %s",
                     spec.path,tostring(job.fields[job.field]),runtime.childNames(object))
             end
             return false
@@ -677,7 +702,7 @@ local function healthStep()
         if not sameObject(ow,world) or not sameObject(pc,controller)
             or not sameObject(controller:GetWorld(),world) then return end
         local field=job.fields[job.field]
-        local child=object[field]
+        local child=runtime.findChild(object,field)
         if not valid(child) then
             -- A missing bar/label must not block independent children. Each
             -- field gets finite readiness, and later target events retry it.

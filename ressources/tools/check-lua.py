@@ -31,7 +31,81 @@ Usage:
 """
 
 import pathlib
+import re
 import sys
+
+# Identifiers Lua or UE4SS provide, so using one before a same-named local is
+# declared is not necessarily a mistake worth reporting.
+AMBIENT = {
+    "print", "pairs", "ipairs", "type", "tostring", "tonumber", "table", "math",
+    "string", "os", "pcall", "xpcall", "error", "assert", "select", "require",
+    "dofile", "load", "setmetatable", "getmetatable", "rawget", "rawset", "next",
+    "unpack", "debug", "io", "coroutine", "_G", "_ENV", "self",
+}
+
+DECLARATION = re.compile(r"^local\s+(?:function\s+([A-Za-z_]\w*)|([A-Za-z_][\w,\s]*?))\s*(?:=|$|\()")
+WORD = re.compile(r"[A-Za-z_]\w*")
+
+
+def strip_noise(line):
+    """Remove comments and string literals, approximately.
+
+    Only good enough to stop quoted words and prose counting as code.
+    """
+    line = re.sub(r"--\[\[.*?\]\]", " ", line)
+    line = re.sub(r"--.*$", " ", line)
+    line = re.sub(r"'[^']*'", "''", line)
+    line = re.sub(r'"[^"]*"', '""', line)
+    return line
+
+
+def check_declaration_order(source):
+    """Find file-scope locals used on a line above their declaration.
+
+    In Lua a name is global until its `local` is reached, so referencing a
+    module-level helper before its declaration silently reads nil. Inside a
+    closure that only runs later this is invisible: the call raises at
+    runtime, and any surrounding pcall turns it into a wrong answer rather
+    than an error. That is exactly how the fade clock broke -- the closure
+    called valid() six lines before `local function valid` existed.
+
+    Only column-zero declarations are considered. Locals in nested scopes
+    have their own visibility rules and would produce noise.
+    """
+    lines = [strip_noise(line) for line in source.splitlines()]
+
+    declared = {}
+    for number, line in enumerate(lines, start=1):
+        if not line.startswith("local"):
+            continue
+        match = DECLARATION.match(line)
+        if not match:
+            continue
+        names = match.group(1) or match.group(2) or ""
+        for name in (n.strip() for n in names.split(",")):
+            if name and name not in declared:
+                declared[name] = number
+
+    problems = []
+    for number, line in enumerate(lines, start=1):
+        # Skip the declaration line itself; `local x = x` is a real idiom.
+        if line.startswith("local"):
+            continue
+        for match in WORD.finditer(line):
+            name = match.group()
+            if name in AMBIENT or name not in declared or declared[name] <= number:
+                continue
+            # Field and method access is unrelated to the local of that name.
+            before = line[:match.start()].rstrip()
+            if before.endswith(".") or before.endswith(":"):
+                continue
+            # A table key, as in {from = current}, is not a variable read.
+            after = line[match.end():].lstrip()
+            if after.startswith("=") and not after.startswith("=="):
+                continue
+            problems.append((number, name, declared[name]))
+    return problems
+
 
 DEFAULT_TARGETS = [
     "package/Data/QuietDawnHUD/Scripts",
@@ -85,19 +159,32 @@ def main():
     failures = []
     for path in files:
         source = path.read_text(encoding="utf-8", errors="replace")
-        display = path.relative_to(repository_root) if path.is_absolute() else path
+        try:
+            display = path.relative_to(repository_root) if path.is_absolute() else path
+        except ValueError:
+            # A path outside the repository, e.g. a scratch file being checked
+            # by hand. Report it as given.
+            display = path
         compiled, error = compile_chunk(source, f"@{display}")
         if not compiled:
             failures.append((display, error))
             print(f"FAIL {display}\n       {error}")
+            continue
+        ordering = check_declaration_order(source)
+        if ordering:
+            failures.append((display, "used before declaration"))
+            print(f"FAIL {display}")
+            for number, name, declared_at in ordering:
+                print(f"       line {number}: '{name}' is read here but its local "
+                      f"is declared on line {declared_at} -- it is nil at this point")
         else:
             print(f"ok   {display}")
 
     print()
     if failures:
-        print(f"!! {len(failures)} of {len(files)} file(s) failed to compile")
+        print(f"!! {len(failures)} of {len(files)} file(s) failed")
         return 1
-    print(f"== all {len(files)} Lua file(s) compile")
+    print(f"== all {len(files)} Lua file(s) compile, declaration order clean")
     return 0
 
 
