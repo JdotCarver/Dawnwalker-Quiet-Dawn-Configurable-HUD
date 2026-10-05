@@ -12,6 +12,43 @@ commits* below.
 
 ---
 
+## Next change: extract the enemy-bar subsystem (greenlit, not yet done)
+
+Deliberately held back from the build carrying the fade and boss bar fixes,
+so that if something misbehaves in game it can be attributed. It should land
+as one commit, revertible on its own.
+
+**Scope.** `Gameplay.lua` lines 513-742, about 230 lines, into
+`QuietDawnEnemyBars.lua`. The block is already cohesive: `healthTypes`,
+`enemyFieldSetting`, `enemyFieldHidden`, `describeObject`,
+`runtime.childNames`, `runtime.findChild`, the health queue, `healthReady`,
+`queueHealth` and `healthStep`.
+
+**Interface.** The same shape the existing modules use, so it reads like its
+neighbours:
+
+```lua
+local bars = require('QuietDawnEnemyBars').new(context)
+bars.queue(object, spec, fields)
+bars.pending()
+bars.step()
+```
+
+**Injected context**, measured from the region rather than guessed: `D`,
+`config`, `Session`, `valid`, `sameObject`, `unwrap`, `opacity`, `wake`,
+`RegisterHook`, the shared `hooks` table, `reportHookError`, and accessors
+for `hud`, `world` and `controller` (accessors, not values -- they are
+reassigned on every world change).
+
+**Why it is worth doing.** It frees roughly twelve to fourteen file-scope
+locals. `Gameplay.lua` is at Lua's hard limit of 200 locals per chunk, which
+has now blocked four separate edits, and the error names whichever edit came
+last rather than the cause.
+
+**Safety.** It is a pure move: no behaviour change intended, so any
+difference in game is a refactor bug. `check-lua.py` now also catches the
+use-before-declaration hazard that moving code around creates.
+
 ## Working agreement (revised 2026-10-06)
 
 The upstream-contribution ceremony is **dropped**. This is a private fork and
