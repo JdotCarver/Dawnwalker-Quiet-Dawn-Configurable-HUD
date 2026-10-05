@@ -14,6 +14,44 @@ commits* below.
 
 ## Bugs fixed
 
+### Fading rejected every existing settings.ini
+
+The worst defect of the session, because backwards compatibility is the one
+hard rule here. Adding the three fading keys made the mod refuse to load for
+anyone who already had a `settings.ini`; it had to be deleted and recreated.
+
+`ensure()` fills a missing key from the `defaults` table handed to it and
+**never** from the schema. Given no entry it returns `Missing setting: <key>`
+and the whole load fails. The fading step passed `{}`, assuming the schema's
+own defaults applied. They are now derived from the schema so the two cannot
+drift.
+
+Fade durations also moved from a discrete 0.01 grid to a continuous clamped
+range: a 0.01-step slider emits values such as `1.1300000000000001`, which no
+grid of floats can match, so the grid was a second rejection waiting to
+happen.
+
+### Fading was jerky, out of step, and never let the worker sleep
+
+Three defects, all visible in a single Debug log of a 2 s fade.
+
+*One panel per worker call.* With ~50 worker calls a second and six panels
+fading, each panel moved about eight times a second and they visibly arrived
+at different moments. Every fading panel now advances inside one call, so one
+call is one visual step.
+
+*Transitions were never retired* when their panel stopped being written --
+hidden, mode changed, widget gone. `pending()` then stayed true forever and
+the worker never slept, turning an event-driven mod into a permanent 50 Hz
+tick. This is what an idle log showing ~510 worker calls per ten seconds with
+no events was, and the most likely cause of a hang when reloading a save.
+Transitions now carry a deadline of their duration plus one second.
+
+*Intermediate frames drowned the log*, tripping the events-per-second limiter
+(129 suppressed events in the shipped log). They are counted as
+`panelFadeFrames`; only the settled value is narrated.
+
+
 ### Diagnostic summaries were unreadable
 `73fc7c2`
 
@@ -263,6 +301,20 @@ missing", which silently stops a recovery branch from firing and rejects
 existing players' settings at startup. This is now covered by a test.
 
 ---
+
+## External resources worth knowing about
+
+Found by the mod's user, not used yet, recorded so the next session does not
+have to rediscover them:
+
+* **DawnwalkerSDK** -- https://github.com/Dekita/DawnwalkerSDK -- an SDK from
+  Nexus Mods staff. Likely a far better source of class and property names
+  than grepping a CXX dump by hand.
+* **ue4ss-bridge** -- https://github.com/littleRabbit94/ue4ss-bridge -- a
+  bridge by a well-regarded modder.
+
+Both are worth evaluating before any further reverse engineering, especially
+for the Focus-mode question.
 
 ## Dependencies between commits
 
