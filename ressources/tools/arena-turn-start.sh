@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
-# tools/arena-turn-start.sh
+# ressources/tools/arena-turn-start.sh
 #
 # Arena turn-start sync + harness repair
 #
-# Run at the START of every turn:   bash tools/arena-turn-start.sh
+# Run at the START of every turn:   bash ressources/tools/arena-turn-start.sh
 #
 # Why this exists
 # ---------------
@@ -41,14 +41,23 @@
 
 set -uo pipefail
 
-REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-BRANCH="arena/01a1028a-qmk-adaptive-lighting"
-BASE_COMMIT="e489696390187ba4db902ecb3319171ad2b3489c"
+# This script lives in ressources/tools/, so the repository root is TWO levels up.
+# (It sat in tools/ in the previous project; a stale "/.." silently rooted every
+# check at ressources/ and made the integrity checks pass against nothing.)
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+BRANCH="arena/01a10d4b-dawnwalker-quiet-dawn-configur"
+BASE_COMMIT="a2b34300fb553b1a7849aacd64192701c67c6353"
 
 # Files whose absence means "the snapshot restore is incomplete".
 # Keep this in sync when load-bearing files appear.
 KEY_FILES=(
     README.md
+    ue4ss-common.lock.json
+    package/mod.manifest
+    package/Data/QuietDawnHUD/mod_settings.ini
+    package/Data/QuietDawnHUD/Scripts/Gameplay.lua
+    package/Data/QuietDawnHUD/Scripts/SettingsSchema.lua
+    package/Data/QuietDawnHUD/Scripts/QuietDawnDiagnostics.lua
 )
 
 cd "$REPO_ROOT" || exit 1
@@ -176,9 +185,50 @@ for file in "${KEY_FILES[@]}"; do
 done
 
 # Any JSON we ship must at least parse; a corrupted manifest is invisible otherwise.
-if [ -f extension/manifest.json ]; then
-    if ! python3 -c 'import json,sys; json.load(open("extension/manifest.json"))'; then
-        echo "!! extension/manifest.json is not valid JSON"
+for json_file in DMM-API-SOURCE.json ue4ss-common.lock.json package/vortex_override_instructions.json; do
+    if [ -f "$json_file" ]; then
+        if ! python3 -c "import json,sys; json.load(open(sys.argv[1]))" "$json_file"; then
+            echo "!! $json_file is not valid JSON"
+            missing=1
+        fi
+    fi
+done
+
+# Vendored-module guard.
+#
+# Seven files under package/Data/QuietDawnHUD/Scripts/ are NOT this repository's
+# code. They are copied from github.com/my-mods/ue4ss-common and pinned by sha256
+# in ue4ss-common.lock.json. Editing them here desyncs the lock, so changes to
+# those files belong upstream instead.
+#
+# This check exists for two reasons: it proves a snapshot restore did not corrupt
+# them, and it catches the agent accidentally editing one of them.
+if [ -f ue4ss-common.lock.json ]; then
+    python3 - <<'PY'
+import hashlib, json, os, sys
+
+lock = json.load(open("ue4ss-common.lock.json"))
+drifted = []
+for module in lock["modules"]:
+    for destination in module["destinations"]:
+        if not os.path.exists(destination):
+            drifted.append(f"MISSING  {destination}")
+            continue
+        digest = hashlib.sha256(open(destination, "rb").read()).hexdigest()
+        if digest != module["sha256"]:
+            drifted.append(f"MODIFIED {destination}  (expected {module['sha256'][:12]}, got {digest[:12]})")
+
+if drifted:
+    print("!! vendored ue4ss-common modules no longer match ue4ss-common.lock.json:")
+    for entry in drifted:
+        print("     " + entry)
+    print("   These files are upstream-owned. Revert them here and send the change")
+    print("   to github.com/my-mods/ue4ss-common instead, or re-pin the lock on purpose.")
+    sys.exit(1)
+
+print(f"== vendored ue4ss-common modules verified ({len(lock['modules'])} pinned)")
+PY
+    if [ $? -ne 0 ]; then
         missing=1
     fi
 fi
