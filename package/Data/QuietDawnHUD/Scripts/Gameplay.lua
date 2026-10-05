@@ -251,15 +251,32 @@ end
 -- This chunk is at Lua's 200-locals ceiling, so the seen-set and its counter
 -- share one table rather than taking a slot each.
 local ubergraph = {seen = {}, count = 0}
+-- Up to this many sightings of each entry are reported. One is enough to
+-- discover a number; several are needed to tell what it means -- whether it
+-- fires on entering Focus or on leaving it, and whether it also fires during
+-- unrelated HUD activity.
+local UBERGRAPH_SIGHTINGS = 8
 local function noteUbergraphEntry(graph, entryParam)
     if not D.debugLogging or ubergraph.count >= 256 then return end
     local entry = tonumber(unwrap(entryParam))
     if entry == nil then return end
     local key = graph .. "#" .. tostring(entry)
-    if ubergraph.seen[key] then return end
-    ubergraph.seen[key] = true
-    ubergraph.count = ubergraph.count + 1
-    D.event("ubergraph", "%s entry=%s (first time this session)", graph, tostring(entry))
+    local seen = ubergraph.seen[key]
+    if seen == nil then ubergraph.count = ubergraph.count + 1; seen = 0 end
+    if seen >= UBERGRAPH_SIGHTINGS then return end
+    ubergraph.seen[key] = seen + 1
+
+    -- Focus mode has no event to hook, only a property on the pawn. Sampling
+    -- it right next to the entry number is what distinguishes "this fired on
+    -- entering Focus" from "this fired on leaving it" -- a distinction no
+    -- amount of staring at the number can settle.
+    local focus = "?"
+    if valid(controller) then
+        local read, flag = pcall(function() return controller.Pawn.bIsInFocusMode end)
+        if read and flag ~= nil then focus = tostring(flag) end
+    end
+    D.event("ubergraph", "%s entry=%s sighting=%d/%d focusMode=%s",
+        graph, tostring(entry), seen + 1, UBERGRAPH_SIGHTINGS, focus)
 end
 -- The stock Controls Legend action already handles the Menu/Options hold.
 -- Its button click enters this graph at 850 (Steam build 25191761). Filter
