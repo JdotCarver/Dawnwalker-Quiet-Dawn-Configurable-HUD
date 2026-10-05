@@ -49,6 +49,30 @@ last rather than the cause.
 difference in game is a refactor bug. `check-lua.py` now also catches the
 use-before-declaration hazard that moving code around creates.
 
+## Timing data in this project is quantised -- read it carefully
+
+`D.now()` is `os.clock`, which on Windows advances in steps of about
+**15.6 ms**. Sorting the phase timings seen across several logs shows it
+plainly; they cluster at zero, one and 3.3 ticks and nowhere else:
+
+    2, 3, 4, 5 | 14, 15, 16, 17, 18, 19 | 50, 51, 52, 53
+
+Consequences, learned the hard way:
+
+* A phase reported as **15 or 16 ms is one tick**. It may have cost a
+  microsecond. `hook avgMs=9.167 slow=25` looked like the second worst
+  problem in the mod and is very probably nothing at all.
+* Only **clawMarks**, at over three ticks, is a measured cost.
+* The slow-phase threshold defaulted to 2 ms, well under the resolution, so
+  any call straddling a tick boundary reported itself as slow. It is now
+  floored at 1.5 ticks.
+* The summary marks any line whose worst sample is within two ticks as
+  `(<= 2 clock ticks; not resolvable)`.
+
+Before optimising anything on the strength of a number in the log, check it
+is more than a couple of ticks. Game time (`GetGameTimeInSeconds`) is smooth
+but cannot resolve anything *within* a frame, so it is not a substitute here.
+
 ## Working agreement (revised 2026-10-06)
 
 The upstream-contribution ceremony is **dropped**. This is a private fork and
