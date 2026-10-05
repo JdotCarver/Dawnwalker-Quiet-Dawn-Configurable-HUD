@@ -13,7 +13,11 @@ local lastVisible,lastGameTime,lastHealth,lastStamina,gapMax
 local level=cfg.logLevel or Levels.DEFAULT
 -- The shared library calls this with one argument, so its own output keeps the
 -- Debug tag it has always had.
-local function output(message,tag) print("[Quiet Dawn - Configurable HUD]["..(tag or Levels.tags[Levels.DEBUG]).."] "..message) end
+--
+-- The trailing newline is required: UE4SS's print does NOT terminate a line,
+-- so without it every message runs straight into the next one's timestamp.
+-- main.lua and dmm_api.lua already append it for the same reason.
+local function output(message,tag) print("[Quiet Dawn - Configurable HUD]["..(tag or Levels.tags[Levels.DEBUG]).."] "..message.."\n") end
 -- Every line is printed on its own so the shared UE4SS log stays readable and
 -- each line keeps the mod prefix, even when other mods interleave their output.
 local function outputIndented(message) output("    "..message) end
