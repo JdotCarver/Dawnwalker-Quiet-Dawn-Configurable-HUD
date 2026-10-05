@@ -470,12 +470,32 @@ local function enemyFieldHidden(field)
     if field=='HelperAttackIndicator' then return not config.showEnemyMarker end
     return config[enemyFieldSetting(field)]
 end
+local function describeObject(object)
+    if object==nil then return "<nil>" end
+    local named,name=pcall(function() return object:GetFullName() end)
+    return named and tostring(name) or "<name unavailable>"
+end
+-- A class default object is not a live widget: it has no world and no owning
+-- player, so the readiness checks below can never pass for it and it would
+-- burn its full retry budget on every field. Dynamic HUD filters these the
+-- same way.
+local function isClassDefaultObject(object)
+    return describeObject(object):find("Default__",1,true)~=nil
+end
 local healthQueue, healthPending, healthFirst, healthLast = {}, {}, 1, 0
+-- Repeated identical failures are reported once per session. A single
+-- unreachable widget otherwise emits hundreds of identical lines, because
+-- each field retries 120 times.
+local healthFailures,healthFailureCount = {},0
 local function healthReady()
     return healthFirst<=healthLast and candidate==nil and valid(hud)
 end
 local function queueHealth(object, spec, requestedFields)
     if object==nil then return end
+    if isClassDefaultObject(object) then
+        if D.debugLogging then D.count("enemyHealthClassDefaultSkipped") end
+        return
+    end
     spec.recent,spec.recentSet=spec.recent or {},spec.recentSet or {}
     if not spec.recentSet[object] then
         if #spec.recent>=64 then spec.recentSet[table.remove(spec.recent,1)]=nil end
@@ -572,7 +592,16 @@ local function healthStep()
     end)
     if not success then
         keep=retry()
-        if D.debugLogging then D.event("enemyHealth","update failed: %s",tostring(reason)) end
+        -- Report each distinct cause once, with the object that triggered it.
+        -- The identity is what makes this actionable: the message alone does
+        -- not say which widget could not be read.
+        local signature=spec.path.." | "..tostring(reason)
+        if not healthFailures[signature] and healthFailureCount<32 then
+            healthFailures[signature]=true;healthFailureCount=healthFailureCount+1
+            D.logWarning("Enemy health update failed (reported once): %s | object=%s",
+                tostring(reason),describeObject(object))
+        end
+        if D.debugLogging then D.count("enemyHealthUpdateFailures") end
     end
     if keep then healthLast=healthLast+1;healthQueue[healthLast]=job
     else healthPending[object]=nil end
