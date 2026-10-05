@@ -53,7 +53,7 @@ hideEnemyNames = 0
 showDirectionalParry = 1[/code]
 Fresh settings enable the mod with all 17 panels in Quiet Dawn mode, fixed opacity values at 0% and sizes at 100%, enemy health bars/names/difficulty icons, claw slash marks and running prompts hidden, all five combat indicators Off, and Logging Off. Existing saved or supported imported preferences take precedence. All defaults, panel keys and ranges are listed in the included SETTINGS.md and the [url=https://github.com/my-mods/Dawnwalker-Quiet-Dawn-Configurable-HUD/blob/main/SETTINGS.md]settings reference[/url].
 
-[b][color=#A8D5C2]Logging:[/color][/b] The final menu option, or debugLogging = 1 in settings.ini, enables HUD diagnostics in Dawnwalker/Binaries/Win64/ue4ss/UE4SS.log. Apply to update diagnostics immediately; restart to diagnose startup activation. Logging is Off by default.
+[b][color=#A8D5C2]Logging:[/color][/b] The final menu option, or logLevel in settings.ini, sets how much detail reaches Dawnwalker/Binaries/Win64/ue4ss/UE4SS.log: Off, Error, Warning, Info or Debug, each including the levels above it. Warning is the default and reports failures and features that could not start. Debug adds full tracing for troubleshooting. Apply to update diagnostics immediately; restart to diagnose startup activation.
 
 [size=4][b][color=#E8C88A]Credits and source[/color][/b][/size]
 

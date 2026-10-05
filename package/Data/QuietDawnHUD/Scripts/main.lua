@@ -7,7 +7,9 @@ local live=dofile(directory..'LiveSettings.lua').new(directory,report)
 local prepared,prepareError=pcall(model.load)
 if prepared then live.seed(prepareError) end
 if not prepared then report('Menu settings preparation failed: '..tostring(prepareError)) end
-local diagnostics = {debugLogging=prepared and type(prepareError)=='table' and prepareError.debugLogging==1}
+local Levels=dofile(directory..'QuietDawnLogLevels.lua')
+local diagnostics = {debugLogging=prepared and type(prepareError)=='table'
+    and (prepareError.logLevel or Levels.OFF)>=Levels.DEBUG}
 local api = setmetatable({SaveLoadDiagnostics=diagnostics}, {__index=_G})
 local bridge=dofile(directory..'QuietDawnNative.lua').attach(api,report)
 local session = dofile(directory..'UE4SSCommonSession.lua').new(api, directory, report,{settings=live,loadSettings=model.load})

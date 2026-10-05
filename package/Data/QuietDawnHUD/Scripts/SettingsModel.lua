@@ -1,12 +1,24 @@
+-- SettingsModel.lua
 -- Shared startup snapshot for gameplay and diagnostics. MIT.
 local directory = assert(debug.getinfo(1,'S').source:sub(2):match('^(.*[/\\])'))
 local Store = dofile(directory .. 'SettingsStore.lua')
 local schema = dofile(directory .. 'SettingsSchema.lua')
 local Timers = dofile(directory .. 'QuietDawnTimers.lua')
+local LogLevels = dofile(directory .. 'QuietDawnLogLevels.lua')
 local effectDefaults={hideEnemyEffectIcons=0,hidePlayerEffectIcons=0}
 local newestSchema = Timers.compatibleSchema(schema)
-local fullCompatibleSchema = {}
+-- Each schema below describes one older generation of settings.ini, so the
+-- upgrades further down can run in the order the keys were introduced.
+--
+-- They must stay STRICT SUBSETS of the newest schema. `ensure` adds every key
+-- its schema declares but the file lacks, so a schema naming a retired key
+-- would write that key back into an already-current file.
+local preLogLevelSchema = {}
 for _,row in ipairs(newestSchema) do
+    if row.key~="logLevel" then preLogLevelSchema[#preLogLevelSchema+1]=row end
+end
+local fullCompatibleSchema = {}
+for _,row in ipairs(preLogLevelSchema) do
     if row.key~="hidePlayerCombatEffects" then fullCompatibleSchema[#fullCompatibleSchema+1]=row end
 end
 local compatibleSchema = {}
@@ -78,11 +90,20 @@ local values, err = Store.load(directory, newestSchema, function()
             end
         end
     end
-    result.debugLogging=canonical or legacy or 0
+    -- The personal QuietDawnHUD.ini predates levels and only had an on/off
+    -- switch, so translate it rather than dropping the player's choice.
+    result.logLevel=LogLevels.fromLegacyToggle(canonical or legacy or 0)
     Timers.normalize(result)
     for key,value in pairs(effectDefaults) do result[key]=value end
     return result, nil, sources
 end)
+-- logLevel is the newest key, so a settings.ini from any earlier release stops
+-- here. Re-parse against the schema that predates it, leaving the older
+-- upgrades below free to run in their original order.
+if not values and err=='Missing setting: logLevel' then
+    local text=Store.read(Store.path(directory))
+    if text then values,err=Store.parse(text,preLogLevelSchema) end
+end
 -- Validate any saved effect choices before older migrations can write. Missing
 -- keys are added only after the prior schema has passed its own upgrade rules.
 if not values and err=='Missing setting: hidePlayerCombatEffects' then
@@ -170,7 +191,19 @@ if values then
 end
 if values then
     values, err = dofile(directory..'UE4SSCommonSettingsUpgrade.lua').ensure(
-        Store, Store.path(directory), newestSchema, {hidePlayerCombatEffects=0}, 'player-combat-effects')
+        Store, Store.path(directory), preLogLevelSchema, {hidePlayerCombatEffects=0}, 'player-combat-effects')
+end
+if values then
+    -- logLevel replaced the debugLogging toggle. Read the retired key straight
+    -- from the file so a player who had logging On stays verbose instead of
+    -- silently dropping to the default. The stale line is then ignored:
+    -- Store.parse skips keys the current schema does not declare.
+    local saved=Store.read(Store.path(directory))
+    local legacyLogging=saved and Store.parse(saved,{{key='debugLogging', values={0,1}}})
+    values, err = dofile(directory..'UE4SSCommonSettingsUpgrade.lua').ensure(
+        Store, Store.path(directory), newestSchema,
+        {logLevel=LogLevels.fromLegacyToggle(legacyLogging and legacyLogging.debugLogging or 0)},
+        'log-levels')
 end
 if values then
     local needsUpgrade=false
@@ -186,7 +219,10 @@ end
 function M.convert(numeric)
 local values={}
 for key,value in pairs(numeric) do values[key]=value end
-values.enabled=values.enabled==1;values.manualPeek=values.manualPeek==1;values.debugLogging=values.debugLogging==1
+values.enabled=values.enabled==1;values.manualPeek=values.manualPeek==1
+-- `debugLogging` survives as the hot per-event guard read across the gameplay
+-- scripts and handed to the native bridge. It now means "the level is Debug".
+values.debugLogging=values.logLevel>=LogLevels.DEBUG
 values.hideEnemyHealthBars=values.hideEnemyHealthBars==1
 values.hideEnemyEffectIcons=values.hideEnemyEffectIcons==1
 values.hidePlayerEffectIcons=values.hidePlayerEffectIcons==1

@@ -1,8 +1,19 @@
+-- QuietDawnDiagnostics.lua
 -- MIT License. HUD-specific observations stay local; diagnostics are shared.
+--
+-- This file is the level-aware layer over UE4SSCommonDiagnostics. The shared
+-- library is vendored from github.com/my-mods/ue4ss-common and pinned by
+-- sha256, so it still speaks a single `debugLogging` boolean. Levels therefore
+-- live here: the library is switched on only at Debug, which is the one level
+-- that wants its per-event tracing and timing summaries.
 local cfg=require('MenuSettings')
 local Diagnostics=require('UE4SSCommonDiagnostics')
+local Levels=require('QuietDawnLogLevels')
 local lastVisible,lastGameTime,lastHealth,lastStamina,gapMax
-local function output(message) print("[Quiet Dawn - Configurable HUD][DEBUG] "..message) end
+local level=cfg.logLevel or Levels.DEFAULT
+-- The shared library calls this with one argument, so its own output keeps the
+-- Debug tag it has always had.
+local function output(message,tag) print("[Quiet Dawn - Configurable HUD]["..(tag or Levels.tags[Levels.DEBUG]).."] "..message) end
 -- Every line is printed on its own so the shared UE4SS log stays readable and
 -- each line keeps the mod prefix, even when other mods interleave their output.
 local function outputIndented(message) output("    "..message) end
@@ -23,6 +34,33 @@ local D=Diagnostics.new({mutable=true,debugLogging=cfg.debugLogging,prefix='',ou
     slowCallbackMs=math.max(0.1,math.min(1000,cfg.SlowCallbackMs or 2)),
     maxEventsPerSecond=math.floor(math.max(1,math.min(20,cfg.MaxEventsPerSecond or 6))),
     onSummary=summary})
+-- Level-aware output.
+--
+-- `D.debugLogging` keeps its original meaning, "the Debug level is active",
+-- so the hot per-event guards spread across the gameplay scripts stay correct
+-- and stay cheap. The functions below are for messages that deserve to be
+-- seen at quieter levels.
+local function describe(message,...)
+    if select('#',...)==0 then return tostring(message) end
+    local ok,text=pcall(string.format,message,...)
+    return ok and text or tostring(message)
+end
+local function emit(severity,message,...)
+    if level<severity then return end
+    output(describe(message,...),Levels.tags[severity])
+end
+function D.logError(message,...) emit(Levels.ERROR,message,...) end
+function D.logWarning(message,...) emit(Levels.WARNING,message,...) end
+function D.logInfo(message,...) emit(Levels.INFO,message,...) end
+function D.level() return level end
+function D.allows(severity) return level>=severity end
+-- Apply is allowed to change the level mid-session. Only Debug needs the
+-- shared library's tracing machinery, so only Debug toggles it.
+function D.setLevel(newLevel)
+    if not Levels.valid(newLevel) then return end
+    level=newLevel
+    D.setEnabled(newLevel>=Levels.DEBUG)
+end
 function D.vitals() end
 function D.vitals(health,stamina,visible,gameTime,healthUntil,staminaUntil)
     if not D.debugLogging then return end

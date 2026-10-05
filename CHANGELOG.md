@@ -4,6 +4,8 @@
 
 - Improve hiding of red claw slash marks on enemies when combat cues were already loaded.
 - Add Hide player combat effects to hide Crimson Rush's bright red arm effect in both forms.
+- Replace the Logging on/off toggle with a level: Off, Error, Warning, Info or Debug. Warning is the default and matches what earlier versions printed; an existing On setting becomes Debug.
+- Fix diagnostic summaries being concatenated onto a single unreadable line.
 
 ## 1.1.3
 

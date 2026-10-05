@@ -1,6 +1,8 @@
 ; Copy to %LOCALAPPDATA%/Dawnwalker/Saved/Config/QuietDawnHUD.ini
 ; Personal settings are read once at startup. Restart after editing.
 [Debug]
+; Retired in favour of the Logging level in Mod Settings. Still read once, on
+; first run only, to seed that level: true becomes Debug, false becomes Warning.
 debugLogging=false
 SummarySeconds=10
 SlowCallbackMs=2

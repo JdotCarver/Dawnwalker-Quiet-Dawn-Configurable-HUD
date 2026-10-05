@@ -1,4 +1,7 @@
+-- SettingsSchema.lua
 -- Settings contract shared by the loader and Mod Setting Menu. MIT License.
+local directory = assert(debug.getinfo(1,'S').source:sub(2):match('^(.*[/\\])'))
+local LogLevels = dofile(directory .. 'QuietDawnLogLevels.lua')
 local function choices(maximum, step)
     local values = {}
     for value=0,maximum,step do values[#values+1]=value end
@@ -70,7 +73,8 @@ return {
     {key="switchRevealSeconds", default=3, values=durations},
     {key="manualPeek", default=1, values={0,1}},
     {key="compassOpacity", default=0, min=0, max=100, integer=false},
-    {key="debugLogging", default=0, values={0,1}},
+    -- Replaced the former `debugLogging` on/off toggle. See QuietDawnLogLevels.
+    {key="logLevel", default=LogLevels.DEFAULT, values=LogLevels.ordered},
     {key="SummarySeconds", default=10, min=5, max=120, integer=false},
     {key="SlowCallbackMs", default=2, min=0.1, max=1000, integer=false},
     {key="MaxEventsPerSecond", default=6, min=1, max=20, integer=false},

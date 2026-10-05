@@ -58,8 +58,8 @@ local livePending,applyLiveSettings
 local livePanels={}
 Session.onSettings(function(values)
     if (values.enabled==1)~=config.enabled then Session.restart();return end
-    D.setEnabled(values.debugLogging==1)
-    if SaveLoadDiagnostics then SaveLoadDiagnostics.debugLogging=values.debugLogging==1 end
+    D.setLevel(values.logLevel)
+    if SaveLoadDiagnostics then SaveLoadDiagnostics.debugLogging=D.debugLogging end
     if applyLiveSettings then
         livePending=values
         -- The persistent subscription only queues owned data.
@@ -1364,7 +1364,7 @@ applyLiveSettings=function(run)
     for _,name in ipairs({'HumanStats','VampireStats'}) do if dynamicPanels[name] then statNames[#statNames+1]=name end end
     manualPeekEnabled=config.manualPeek and config.manualPeekSeconds>0 and hasPeekPanels()
     timeRevealEnabled=seen.WBP_HudTimer and panelModes.WBP_HudTimer==1 and config.timeHoldSeconds>0
-    if changed.debugLogging and QuietDawnNative then QuietDawnNative.setLogging(config.debugLogging) end
+    if changed.logLevel and QuietDawnNative then QuietDawnNative.setLogging(config.debugLogging) end
     if changed.healthThreshold or changed.staminaThreshold or changed.healthHoldSeconds or changed.staminaHoldSeconds
         or changed.mode_HumanStats or changed.mode_VampireStats
         or changed.opacity_HumanStats or changed.opacity_VampireStats then
@@ -1393,7 +1393,7 @@ applyLiveSettings=function(run)
         end
         if sprintPrompts then sprintPrompts.setEnabled(config.hideSprintPrompt);sprintPrompts.queue(hud) end
     end
-    if changed.debugLogging and not changed.hideSprintPrompt then sprintSource.configure(config.hideSprintPrompt) end
+    if changed.logLevel and not changed.hideSprintPrompt then sprintSource.configure(config.hideSprintPrompt) end
     if changed.hidePlayerCombatEffects then
         if not playerEffects and config.hidePlayerCombatEffects then
             playerEffects=require('QuietDawnPlayerEffects').new(D,Session,function()wake('playerEffects')end,function()

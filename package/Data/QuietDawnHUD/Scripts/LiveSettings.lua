@@ -80,7 +80,7 @@ function M.new(directory, report)
         ["scale_WBP_ControlsLegend"]="scale_WBP_ControlsLegend",
         ["manualPeek"]="manualPeek",
         ["manualPeekSeconds"]="manualPeekSeconds",
-        ["debugLogging"]="debugLogging"
+        ["logLevel"]="logLevel"
         }})
     live.start(function(id,callback)
         return dofile(directory..'dmm_api.lua').subscribe(id,callback)

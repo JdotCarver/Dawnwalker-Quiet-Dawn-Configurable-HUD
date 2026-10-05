@@ -32,7 +32,7 @@ Identities contain an opaque address, object index and the serial number already
 
 Widget replacement triggers finite, coalesced function rebinding. A save/session change clears pending events and refreshes function identities. No background thread, continuous readiness timer, widget-tree walk or global UObject scan is added. The helper remains loaded until the game exits; live DLL/Lua reload is unsupported.
 
-Logging uses Quiet Dawn's existing `debugLogging` setting. Session summaries include captured/delivered/coalesced/dropped events, stale identities, failures and aggregate native capture time. Frame-time impact must be measured in the game; counts and compilation do not measure FPS.
+Logging follows Quiet Dawn's `logLevel` setting, and is enabled at the Debug level. Session summaries include captured/delivered/coalesced/dropped events, stale identities, failures and aggregate native capture time. Frame-time impact must be measured in the game; counts and compilation do not measure FPS.
 
 ## Credits
 
