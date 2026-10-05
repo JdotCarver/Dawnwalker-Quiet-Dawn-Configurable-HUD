@@ -26,6 +26,54 @@ embedded newlines, so every line keeps its `[Quiet Dawn - Configurable HUD]`
 prefix. A multi-line string would leave the continuation lines unattributed in
 a log shared with every other mod.
 
+### Log lines ran into each other (two attempts)
+
+The first attempt was incomplete and is recorded here deliberately, because
+the second fix only makes sense against it.
+
+Attempt one changed the *structure* of diagnostic output: one `print` per
+message instead of joining several with `" | "`. The output became
+better-formed but the lines still ran together, because the real cause was
+elsewhere.
+
+Attempt two found it. **UE4SS's Lua `print` does not append a newline.** The
+codebase already relied on this knowledge in two places — `main.lua:3` and
+`dmm_api.lua:62` both write `print(... .. '\n')` — but
+`QuietDawnDiagnostics.output()`, which carries *every* `D.log*`, `D.event`,
+`D.count` and summary message, did not. So each line's text was immediately
+followed by the next line's timestamp:
+
+    [DEBUG] enabled build=diagnostics-common-1[21:43:19...
+
+Both remaining unterminated sites now append `'\n'`:
+`QuietDawnDiagnostics.output()` and the deliberate raw `[ERROR]` print in
+`MenuSettings.lua`. The rule is recorded as a comment at the `output()` site
+so the next person adding a print does not rediscover it.
+
+### Enemy health updates fail, and said so 373 times
+
+An in-game run showed `Gameplay.lua` raising
+`attempt to call a TrivialObject value (method 'GetOwningPlayer')` on roughly
+373 `enemyHealth` steps in a ten-second window. Two separate defects combined
+to produce that:
+
+*Flooding.* Each field retries 120 times before readiness is declared
+exhausted, and the failure was logged on every attempt. Distinct causes are
+now reported once per session, capped at 32 causes, with the per-attempt
+detail kept as a counter.
+
+*Invisibility.* The report was gated behind `debugLogging`, so a permanent
+failure of enemy-health handling was silent at the default level. It is now a
+WARNING, and it names the object that failed — without the identity the
+message does not say which widget could not be read.
+
+*Likely cause.* Class default objects are now skipped before being queued. A
+CDO is not a live widget, has no world and no owning player, so it can never
+pass the readiness checks and burns its whole retry budget; Dynamic HUD
+filters `Default__` objects the same way. This is a hypothesis, not a
+confirmed fix — it lives in its own guard so it can be reverted alone if the
+next run shows a different object in the new WARNING line.
+
 ### Twenty-one messages ignored the logging setting
 `8f6fd8a`
 
