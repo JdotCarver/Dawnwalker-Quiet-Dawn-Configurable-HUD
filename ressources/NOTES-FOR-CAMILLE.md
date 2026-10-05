@@ -61,18 +61,44 @@ enemyHealth readiness exhausted: /Game/_Dawnwalker/UI/_Unified/Combat/
     WBP_Combat_BossBar.WBP_Combat_BossBar_C field=HealthBar
 ```
 
-The `HealthBar` child of `WBP_Combat_BossBar_C` never becomes valid, so after
-120 attempts that field is abandoned and the boss health bar stays visible.
-`WBP_CombatCharacterBar` (fields `SegmentedHealthBar`, `HealthBarLeftCap`,
-`HealthBarRightCap`) works fine; only the boss bar's `HealthBar` fails.
+**Diagnosed.** A named widget is only reachable as `object.HealthBar` when
+the Blueprint marks that widget **"Is Variable"** — that flag is what
+promotes it to a property on the generated class. Walking the class with
+`ForEachProperty` reports exactly one property for `WBP_Combat_BossBar_C`:
 
-The comment above `healthTypes` records these names as verified against build
-**25232147**, while the controls-legend ubergraph entry nearby is annotated
-**25191761**, so one of the two predates a game update. A renamed child would
-explain it exactly.
+```
+Class properties: UberGraphFrame
+```
 
-Reported at Debug only, so by default a feature silently does not work. Worth
-promoting to a warning whatever the cause.
+So `HealthBar` is not a property at all, and no number of retries could ever
+have resolved it. `WBP_CombatCharacterBar` does set the flag, which is why
+`SegmentedHealthBar`, `HealthBarLeftCap` and `HealthBarRightCap` work there.
+
+My earlier guess that a game update had renamed the child was wrong; the
+build-number mismatch in the comments is a red herring for this symptom.
+
+**Fix:** fall back to `object:GetWidgetFromName(field)`, which searches the
+widget tree and does not care about the flag:
+
+```lua
+local function findChild(object, field)
+    local child = object[field]
+    if valid(child) then return child end
+    local found = select(2, pcall(function()
+        return object:GetWidgetFromName(field)
+    end))
+    if valid(found) then return found end
+    return nil
+end
+```
+
+This also handles the lazily-built case correctly: the tree is only populated
+once the widget exists, so a bar that is not built until a boss appears
+returns nil and is retried, rather than being mistaken for a bad name.
+
+Reported at Debug only, so by default a feature silently does not work.
+Worth promoting to a warning, and worth printing the class's actual property
+list alongside — that one line is what identified this.
 
 ---
 
@@ -258,8 +284,9 @@ In rough order of value for effort:
 
 1. The `\n` in `QuietDawnDiagnostics.output()` — one string, fixes all output.
 2. The `[Save Settings]` prefix in `main.lua` — one string.
-3. Promote the boss bar readiness failure to a warning, and check whether
-   `HealthBar` is still the right child name on current builds.
+3. Resolve enemy bar children with `GetWidgetFromName` as well as by
+   property, and promote the readiness failure to a warning. See finding 3:
+   `WBP_Combat_BossBar` does not mark its children "Is Variable".
 4. Collapse repeated identical `enemyHealth` failures.
 5. Let the first panel pass run before hook registration and claw mark
    preloads.
