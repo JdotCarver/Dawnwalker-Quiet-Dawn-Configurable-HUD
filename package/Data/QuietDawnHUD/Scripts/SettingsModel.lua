@@ -215,8 +215,16 @@ if values then
     -- behaviour (fading off), so no overrides are needed; this step exists to
     -- give the addition its own tag, so a file already stamped 'log-levels'
     -- still gains the new keys.
+    -- `ensure` fills a missing key from the table passed here and NEVER from
+    -- the schema: given no entry it reports "Missing setting: <key>" and the
+    -- whole load fails. Derive the table from the schema so the two cannot
+    -- drift apart as keys are added.
+    local fadeDefaults = {}
+    for _,row in ipairs(newestSchema) do
+        if FADE_KEYS[row.key] then fadeDefaults[row.key]=row.default end
+    end
     values, err = dofile(directory..'UE4SSCommonSettingsUpgrade.lua').ensure(
-        Store, Store.path(directory), newestSchema, {}, 'fade-transitions')
+        Store, Store.path(directory), newestSchema, fadeDefaults, 'fade-transitions')
 end
 if values then
     local needsUpgrade=false

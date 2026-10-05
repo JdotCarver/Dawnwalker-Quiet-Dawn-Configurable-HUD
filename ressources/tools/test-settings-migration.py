@@ -153,6 +153,52 @@ def main():
     _, error = parse(text, schema)
     check("logLevel=5 is rejected", error == "Invalid setting: logLevel", f"got {error!r}")
 
+    # --- Upgrade steps must supply a default for every key they add -------
+    #
+    # ensure() fills a missing key from the `defaults` table handed to it and
+    # NEVER from the schema. Given no entry it returns "Missing setting: <key>"
+    # and the entire load fails, which is how a shipped build rejected every
+    # existing settings.ini. This mirrors ensure()'s parse/patch loop without
+    # touching the filesystem.
+    def ensure_dry_run(text, dry_schema, dry_defaults):
+        values, error = None, None
+        for _ in range(len(list(dry_schema.values())) + 1):
+            values, error = parse(text, dry_schema)
+            if values is not None:
+                return values, None
+            missing = error and error.startswith("Missing setting: ")
+            key = error[len("Missing setting: "):] if missing else None
+            if key is None or dry_defaults.get(key) is None:
+                return None, error
+            text += f"{key} = {dry_defaults[key]}\n"
+        return None, error
+
+    # A settings.ini from before fading: every key the newest schema has,
+    # except the three fading added.
+    rows = {row["key"]: row for row in schema.values()}
+    fade_keys = ("fadeTransitions", "fadeInSeconds", "fadeOutSeconds")
+    pre_fade = "[Settings]\n" + "".join(
+        f"{key} = {row['default']}\n" for key, row in rows.items() if key not in fade_keys
+    )
+
+    # The defaults SettingsModel derives from the schema for that step.
+    fade_defaults = {key: rows[key]["default"] for key in fade_keys}
+    values, error = ensure_dry_run(pre_fade, schema, fade_defaults)
+    check(
+        "a pre-fade settings.ini upgrades instead of being rejected",
+        values is not None,
+        f"error={error!r}",
+    )
+
+    # And the failure mode that actually shipped, so the test proves it would
+    # have been caught: the same step with no defaults at all.
+    values, error = ensure_dry_run(pre_fade, schema, {})
+    check(
+        "the same upgrade with no defaults is correctly detected as broken",
+        values is None and (error or "").startswith("Missing setting: "),
+        f"got values={values is not None} error={error!r}",
+    )
+
     # --- Fading (item 7) ------------------------------------------------
     # The three keys must exist in the schema with behaviour-preserving
     # defaults, so an existing settings.ini that gains them does not suddenly
@@ -171,13 +217,16 @@ def main():
     # Fading off is the default, so nothing changes for an existing player.
     check("fading is off by default", float(rows["fadeTransitions"]["default"]) == 0)
 
-    # The fade grid must contain both defaults exactly; 0.22 is not on the
-    # 0.5-second grid the hold timers use, which is why it has its own list.
+    # Fade durations are continuous, not a discrete grid: a 0.01-step slider
+    # emits values such as 1.1300000000000001 that no grid can match.
     for key in ("fadeInSeconds", "fadeOutSeconds"):
-        values = rows[key]["values"]
-        wanted = float(rows[key]["default"])
-        present = values is not None and any(abs(v - wanted) < 1e-9 for v in values.values())
-        check(f"{key}'s default lies on its own value grid", present)
+        row = rows[key]
+        check(f"{key} is a continuous range, not a value grid", row["values"] is None)
+        wanted = float(row["default"])
+        check(
+            f"{key}'s default lies inside its range",
+            row["min"] is not None and row["min"] <= wanted <= row["max"],
+        )
 
     print()
     if failures:
