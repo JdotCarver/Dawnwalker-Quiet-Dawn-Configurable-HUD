@@ -1605,15 +1605,36 @@ end
 runtime.auditIntervalMs = 1000
 function runtime.auditPanels()
     ExecuteInGameThreadWithDelay(runtime.auditIntervalMs, runtime.auditPanels)
-    -- Mid-transition a panel is *meant* to differ from its target, and the
-    -- worker is already running, so there is nothing to detect or to wake.
-    if worker or not valid(hud) then return end
+    -- Deliberately NOT gated on the worker being idle. On the first load the
+    -- worker runs continuously for ten seconds or more registering hooks, and
+    -- that is precisely the window in which the HUD finishes assembling
+    -- itself -- the one time we most need to be watching. Waking a running
+    -- worker only sets a flag, so this is cheap. A fade is the one case where
+    -- a panel is supposed to differ from its target.
+    if not valid(hud) then return end
     local ok, drifted = pcall(function()
+        local fading = fade.pending()
         for _,name in ipairs(names) do
-            local entry = panels[name]
-            if entry and panelModes[name]~=0 and valid(entry.object) then
-                local target = panelTarget(name,entry,entry.widget)
-                if math.abs(entry.object:GetRenderOpacity()-target)>1e-5 then return name end
+            if panelModes[name]~=0 then
+                local entry = panels[name]
+                if entry and valid(entry.object) then
+                    if not fading then
+                        local target = panelTarget(name,entry,entry.widget)
+                        if math.abs(entry.object:GetRenderOpacity()-target)>1e-5 then return name end
+                    end
+                -- No cached entry means we either never found this panel or
+                -- gave up on it after eight fast retries. Both happen during
+                -- a load, when the widget genuinely does not exist yet, and
+                -- both used to be permanent: an exhausted panel is marked
+                -- absent and skipped forever, so the drift check above could
+                -- never see it either. That is why the HUD stayed up until a
+                -- manual peek cleared the absent set by hand. If the widget
+                -- has since appeared, forget the verdict and look again.
+                elseif valid(hud[name]) then
+                    absent[name]=nil
+                    panelRetries[name]=nil
+                    return name
+                end
             end
         end
         return nil
