@@ -12,6 +12,30 @@ commits* below.
 
 ---
 
+## Working agreement (revised 2026-10-06)
+
+The upstream-contribution ceremony is **dropped**. This is a private fork and
+is not posing as a maintainer of Camille's repository.
+
+What that changes:
+
+* Commits no longer need to be independently cherry-pickable. They should
+  still be coherent and well described, because the log is the only record of
+  why anything was done.
+* Vendored `ue4ss-common` modules may be edited. The lock file guard is now
+  advisory, not a hard stop.
+* Polling is allowed where it is genuinely the better design. The
+  event-driven worker is still preferred where it works.
+* `Gameplay.lua` may be restructured. It is at Lua's 200-locals-per-chunk
+  limit and that has already blocked three edits.
+
+What does not change: the mod must keep working for existing users, and
+`settings.ini` compatibility is still required.
+
+Camille is being kept informed privately. `ressources/NOTES-FOR-CAMILLE.md`
+is the condensed, self-contained version to send: findings only, separated
+into what is theirs and what was ours, with no requests attached.
+
 ## Licensing and portability (researched 2026-10-06)
 
 Recorded because it determines what can be built on what, and the answer is
