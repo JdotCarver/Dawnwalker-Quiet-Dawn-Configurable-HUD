@@ -9,7 +9,7 @@ The menu runs from General through Player status, Combat, Exploration and Contro
 | Category | Controls |
 | --- | --- |
 | General | Enabled |
-| Player status / Active buffs | Hide player effect icons, Active buffs mode, opacity and size |
+| Player status / Active buffs | Hide player combat effects, Hide player effect icons, Active buffs mode, opacity and size |
 | Player status / Experience | Experience bar opacity |
 | Player status / Health and stamina | Human and vampire panel opacity, health/blood and stamina thresholds, and their hold durations |
 | Combat / Ability cooldowns | Ability cooldowns opacity |
@@ -38,6 +38,12 @@ On a fresh install with no saved or imported preferences, the mod is enabled and
 Older settings files receive missing panel size keys at 100%, preserving existing values, comments and prior backups. Claw-mark upgrades retain `settings.ini.before-claw-slash-marks`; older `settings.ini.before-panel-scaling` backups are retained. Existing malformed or duplicate values are rejected without replacing the file.
 
 New effect-icon settings are added as Off to older INIs, preserving existing entries and comments in the updated file and the original in `settings.ini.before-effect-icons`. Existing recovery backups are retained.
+
+## Player combat effects
+
+**Hide player combat effects**, under Player status / Active buffs, hides Crimson Rush's bright red arm effect in human and vampire form. It defaults to Off and is separate from effect icons and enemy claw slash marks. Buff strength, duration and sound stay unchanged. Apply updates effects already active on the player; Off restores their visibility.
+
+The setting is `hidePlayerCombatEffects` (0 = Off, 1 = On). Older INIs receive this missing key with a `settings.ini.before-player-combat-effects` backup. Existing preferences and comments are retained; conflicting backups and malformed values are rejected.
 
 ## Effect icons
 
@@ -101,6 +107,7 @@ Missing existing settings, duplicate or invalid settings stop configuration load
 | Group | Setting | Choices or range |
 | --- | --- | --- |
 | General | Enabled | Off, On |
+| Player status / Active buffs | Hide player combat effects | Off, On (default Off) |
 | Player status / Active buffs | Hide player effect icons | Off, On (default Off) |
 | Player status / Active buffs | Active buffs mode | Vanilla, Quiet Dawn (default), Fixed opacity |
 | Player status / Active buffs | Active buffs opacity | 0% to 100% in 5-point steps |
@@ -204,6 +211,7 @@ All entries below belong under `[Settings]`. Defaults apply to a fresh install w
 | Hide enemy health bars | `hideEnemyHealthBars` | `1` | 0 = Off, 1 = On |
 | Hide enemy effect icons | `hideEnemyEffectIcons` | `0` | 0 = Off, 1 = On |
 | Hide player effect icons | `hidePlayerEffectIcons` | `0` | 0 = Off, 1 = On |
+| Hide player combat effects | `hidePlayerCombatEffects` | `0` | 0 = Off, 1 = On |
 | Hide enemy names | `hideEnemyNames` | `1` | 0 = Off, 1 = On |
 | Hide enemy difficulty icons | `hideEnemyDifficultyIcons` | `1` | 0 = Off, 1 = On |
 | Hide claw slash marks | `hideClawSlashMarks` | `1` | 0 = Off, 1 = On |

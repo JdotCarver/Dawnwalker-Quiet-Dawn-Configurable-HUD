@@ -26,6 +26,7 @@ function M.new(directory, report)
         ["enabled"]="enabled",
         ["hideEnemyEffectIcons"]="hideEnemyEffectIcons",
         ["hidePlayerEffectIcons"]="hidePlayerEffectIcons",
+        ["hidePlayerCombatEffects"]="hidePlayerCombatEffects",
         ["opacity_WBP_BuffContainer"]="opacity_WBP_BuffContainer",
         ["scale_WBP_BuffContainer"]="scale_WBP_BuffContainer",
         ["opacity_XPBar"]="opacity_XPBar",

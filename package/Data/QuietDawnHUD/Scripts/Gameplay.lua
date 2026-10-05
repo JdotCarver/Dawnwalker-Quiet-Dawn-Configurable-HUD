@@ -1,7 +1,7 @@
 local D = require("QuietDawnDiagnostics")
 -- Quiet Dawn - Configurable HUD | MIT License
--- Event-driven panel opacity. No widget-tree walks, global object searches,
--- animation hooks, or Lua coroutines. Claw marks use two named cue defaults.
+-- Event-driven panel opacity. No widget-tree walks, animation hooks or Lua
+-- coroutines. Claw marks discover two exact cue classes once per enablement.
 -- Resource reads run only on resource-change and HUD/player lifecycle events.
 local ok, config = pcall(require, "MenuSettings")
 if SaveLoadDiagnostics and ok and type(config)=="table" then
@@ -53,6 +53,7 @@ for _, key in ipairs({"healthHoldSeconds", "staminaHoldSeconds", "manualPeekSeco
         return
     end
 end
+local playerEffects
 local livePending,applyLiveSettings
 local livePanels={}
 Session.onSettings(function(values)
@@ -787,6 +788,7 @@ local function accept(object)
         refreshDirty=true
     end
     controller = pc
+    if playerEffects then playerEffects.recover() end
     if timeWatcher then timeWatcher.resume() end
     hudAddress, controllerAddress = object:GetAddress(), pc:GetAddress()
     if sprintPrompts then sprintPrompts.queue(object) end
@@ -1123,6 +1125,7 @@ local function step()
     if sprintSource.pending() then sprintSource.step();return false end
     -- Discovery, hook registration, state reads and transforms remain sliced.
     -- Every third slice is reserved for this work even under resource bursts.
+    if playerEffects and playerEffects.pending() then playerEffects.step();return false end
     if clawMarks and clawMarks.pending() then
         clawMarks.step()
         return false
@@ -1306,7 +1309,7 @@ wake = function(statsOnly)
         panelRetries={}
         settingsPending,settingsAttempts=true,0
     end
-    if statsOnly~="marker" and statsOnly~="settings" and statsOnly~="resource" and statsOnly~="enemyHealth" and statsOnly~="time" and statsOnly~="sprintPrompt" and statsOnly~="clawMarks" and statsOnly~="liveSettings" then dirty=true end
+    if statsOnly~="marker" and statsOnly~="settings" and statsOnly~="resource" and statsOnly~="enemyHealth" and statsOnly~="time" and statsOnly~="sprintPrompt" and statsOnly~="clawMarks" and statsOnly~="playerEffects" and statsOnly~="liveSettings" then dirty=true end
     if worker then if D.debugLogging then D.count("workerCoalesced") end; return end
     worker=true
     if D.debugLogging then D.count("workerStarts") end
@@ -1391,6 +1394,14 @@ applyLiveSettings=function(run)
         if sprintPrompts then sprintPrompts.setEnabled(config.hideSprintPrompt);sprintPrompts.queue(hud) end
     end
     if changed.debugLogging and not changed.hideSprintPrompt then sprintSource.configure(config.hideSprintPrompt) end
+    if changed.hidePlayerCombatEffects then
+        if not playerEffects and config.hidePlayerCombatEffects then
+            playerEffects=require('QuietDawnPlayerEffects').new(D,Session,function()wake('playerEffects')end,function()
+                if valid(controller) and valid(world) then return controller.Pawn,world end
+            end)
+        end
+        if playerEffects then playerEffects.configure(config.hidePlayerCombatEffects) end
+    end
     if changed.hideClawSlashMarks then
         if not clawMarks and config.hideClawSlashMarks then
             clawMarks=require('QuietDawnClawMarks').new(D,Session,function()wake('clawMarks')end)
@@ -1422,6 +1433,11 @@ applyLiveSettings=function(run)
         or changed.mode_WBP_HUD_Quickslots or changed.mode_WBP_AA_Quickslots then armExpiry() end
 end
 
+if config.hidePlayerCombatEffects then
+    playerEffects=require('QuietDawnPlayerEffects').new(D,Session,function()wake('playerEffects')end,function()
+        if valid(controller) and valid(world) then return controller.Pawn,world end
+    end)
+end
 if config.hideClawSlashMarks then
     clawMarks=require('QuietDawnClawMarks').new(D,Session,function()wake('clawMarks')end)
 end

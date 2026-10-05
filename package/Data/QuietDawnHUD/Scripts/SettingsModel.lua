@@ -4,7 +4,11 @@ local Store = dofile(directory .. 'SettingsStore.lua')
 local schema = dofile(directory .. 'SettingsSchema.lua')
 local Timers = dofile(directory .. 'QuietDawnTimers.lua')
 local effectDefaults={hideEnemyEffectIcons=0,hidePlayerEffectIcons=0}
-local fullCompatibleSchema = Timers.compatibleSchema(schema)
+local newestSchema = Timers.compatibleSchema(schema)
+local fullCompatibleSchema = {}
+for _,row in ipairs(newestSchema) do
+    if row.key~="hidePlayerCombatEffects" then fullCompatibleSchema[#fullCompatibleSchema+1]=row end
+end
 local compatibleSchema = {}
 for _, row in ipairs(fullCompatibleSchema) do
     if effectDefaults[row.key]==nil then compatibleSchema[#compatibleSchema+1]=row end
@@ -16,7 +20,7 @@ end
 local panels = {"HumanStats","VampireStats","WBP_Compass","WBP_HUD_QuestInfo","WBP_HUD_Quickslots","Crosshair","WBP_AA_Quickslots","WBP_OpenFocusPrompt","WBP_HUD_Quickslots_ChangePrompt","WBP_ControlsLegend","WBP_BuffContainer","WBP_HUD_AbilityCooldownsContainer","CombatFocusPanel","WBP_HUD_FocusCharge_Bar","WBP_HUD_SpecialAttackCooldown","XPBar","WBP_HudTimer"}
 local M={}
 function M.load()
-local values, err = Store.load(directory, fullCompatibleSchema, function()
+local values, err = Store.load(directory, newestSchema, function()
     local legacyPath = directory .. 'QuietDawnConfig.lua'
     local legacy, le, lc = Store.read(legacyPath)
     local sources = legacy and {{path=legacyPath, text=legacy}} or {}
@@ -81,11 +85,15 @@ local values, err = Store.load(directory, fullCompatibleSchema, function()
 end)
 -- Validate any saved effect choices before older migrations can write. Missing
 -- keys are added only after the prior schema has passed its own upgrade rules.
+if not values and err=='Missing setting: hidePlayerCombatEffects' then
+    local text=Store.read(Store.path(directory))
+    if text then values,err=Store.parse(text,fullCompatibleSchema) end
+end
 if not values and err and err:match('^Missing setting:') then
     local text=Store.read(Store.path(directory))
     if text then
-        for _,row in ipairs(fullCompatibleSchema) do
-            if effectDefaults[row.key]~=nil then
+        for _,row in ipairs(newestSchema) do
+            if effectDefaults[row.key]~=nil or row.key=='hidePlayerCombatEffects' then
                 local _,effectError=Store.parse(text,{row})
                 if effectError and not effectError:match('^Missing setting:') then
                     error('Quiet Dawn settings rejected: '..effectError)
@@ -161,6 +169,10 @@ if values then
         Store, Store.path(directory), fullCompatibleSchema, effectDefaults, 'effect-icons')
 end
 if values then
+    values, err = dofile(directory..'UE4SSCommonSettingsUpgrade.lua').ensure(
+        Store, Store.path(directory), newestSchema, {hidePlayerCombatEffects=0}, 'player-combat-effects')
+end
+if values then
     local needsUpgrade=false
     for _, key in ipairs({'healthHoldSeconds','staminaHoldSeconds','manualPeekSeconds','timeHoldSeconds','switchRevealSeconds'}) do
         if values[key]>10 or values[key]*2%1~=0 then needsUpgrade=true;break end
@@ -178,6 +190,7 @@ values.enabled=values.enabled==1;values.manualPeek=values.manualPeek==1;values.d
 values.hideEnemyHealthBars=values.hideEnemyHealthBars==1
 values.hideEnemyEffectIcons=values.hideEnemyEffectIcons==1
 values.hidePlayerEffectIcons=values.hidePlayerEffectIcons==1
+values.hidePlayerCombatEffects=values.hidePlayerCombatEffects==1
 values.hideClawSlashMarks=values.hideClawSlashMarks==1
 values.hideEnemyNames=values.hideEnemyNames==1
 values.hideEnemyDifficultyIcons=values.hideEnemyDifficultyIcons==1
