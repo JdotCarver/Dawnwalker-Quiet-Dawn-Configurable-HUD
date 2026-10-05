@@ -42,7 +42,7 @@ Only initialization, replacement and settings Apply events apply transforms; the
 ## Requirements
 
 - Required: [Mod Setting Menu 1.0.6 or later](https://www.nexusmods.com/thebloodofdawnwalker/mods/271). Enable `HookProcessConsoleExec = 1` in your UE4SS loader profile for live Apply.
-- A Dawnwalker-compatible UE4SS build exposing `ExecuteInGameThreadWithDelay`, `CancelDelayedAction`, `KismetSystemLibrary.GetFrameCount`, and `GetGameTimeInSeconds`, with either Blueprint script hooks or the bundled native HUD adapter. Native helpers use the imported C++ APIs; no DLL fingerprint or fork-name restriction is imposed. Development reference: commit `97b7e501c`.
+- Required: [UE4SS for Dawnwalker by Vercadi](https://www.nexusmods.com/thebloodofdawnwalker/mods/18) **1.3 (RC6) or later**, exposing `ExecuteInGameThreadWithDelay`, `CancelDelayedAction`, `KismetSystemLibrary.GetFrameCount`, and `GetGameTimeInSeconds`, with either Blueprint script hooks or the bundled native HUD adapter. Native helpers use the imported C++ APIs; no DLL fingerprint or fork-name restriction is imposed. Development reference: commit `97b7e501c`.
 
 ## Installation
 
@@ -96,9 +96,9 @@ See [SETTINGS.md](SETTINGS.md) for every key, default, supported value, first-us
 
 ## Behavior and performance
 
-Framecore 2b uses a native filter for Quiet Dawn's HUD events. It copies event values into a bounded queue and delivers them through the existing game-thread scheduler. Player alerts take priority over enemy-widget bursts; saved changes update the active session. The helper adds no polling thread or continuous readiness timer.
+The bundled native helper filters Quiet Dawn's HUD events. It copies event values into a bounded queue and delivers them through the existing game-thread scheduler. Player alerts take priority over enemy-widget bursts; saved changes update the active session. The helper adds no polling thread or continuous readiness timer.
 
-Claw-mark suppression prepares the two slash effects when enabled. On Framecore 2b, it keeps their original assets available until the option is turned off or the save session closes. Missing or expired enemy widgets are skipped during reload cleanup so the new HUD can receive its settings. Logging includes slash preparation counts and timings.
+Claw-mark suppression prepares the two slash effects when enabled. The native helper keeps their original assets available until the option is turned off or the save session closes. Missing or expired enemy widgets are skipped during reload cleanup so the new HUD can receive its settings. Logging includes slash preparation counts and timings.
 
 Player creation and possession can activate the HUD when a loading-screen notification is missed. Readiness checks share one finite window of less than ten seconds; they stop after success or exhaustion and can resume on a later player event. An old world's player cannot activate a new session. Ordinary travel retains the settings snapshot.
 
@@ -120,7 +120,7 @@ There are no global HUD searches, widget-tree walks, or recurring configuration 
 
 ## License
 
-MIT. Standalone code informed by the author's HUD Tweaks - Fixes work and the game's HUD structure. No game assets or UE4SS runtime DLL are included. The bundled native helper uses UE4SS and Framecore APIs; their authors retain credit for the runtime and hook implementation. See LICENSES for third-party notices.
+MIT. Standalone code informed by the author's HUD Tweaks - Fixes work and the game's HUD structure. No game assets or UE4SS runtime DLL are included. The bundled native helper uses UE4SS APIs; their authors retain credit for the runtime and hook implementation. See LICENSES for third-party notices.
 
 This mod includes the MIT-licensed [ue4ss-common Lua helpers](https://github.com/my-mods/ue4ss-common). No separate library installation is required. Its license is included in LICENSES/QuietDawnHUD-ue4ss-common.txt.
 
