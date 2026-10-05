@@ -184,5 +184,60 @@ pinned to 5.4 deliberately.
 
 ## Still open
 
-- **HUD peek button selector** — researched, not implemented. See below.
-- **Fade on show/hide** — researched, not implemented. See below.
+### HUD peek selector (item 6)
+Agreed shape: `manualPeek` becomes a picker, `Off / Controls legend hold /
+Focus mode`.
+
+No settings migration is needed, which is unusual and worth noting: the old
+values `0` and `1` keep their exact meaning, and widening the allowed set to
+`{0,1,2}` leaves every existing `settings.ini` valid as written.
+
+**The open risk is the Focus trigger.** Dynamic HUD detects focus by reading
+the property `pawn.bIsInFocusMode` every tick; there is no event. Quiet Dawn's
+existing peek works because it hooks a real blueprint entry point,
+`ExecuteUbergraph_WBP_ControlsLegend` filtered to entry `850`. Focus has no
+known equivalent hook, so either:
+
+  * an equivalent entry point is found in the GameHUD ubergraph, which is
+    already hooked for quickslot switching, and the same entry-number
+    filtering technique applies; or
+  * `bIsInFocusMode` is sampled on the events the worker already receives,
+    which avoids a dedicated poll but makes responsiveness depend on those
+    events firing.
+
+Either way the trigger needs confirming in game. Keep it behind a small module
+so swapping the detection method is a one-line change.
+
+### Fade on show/hide (item 7)
+Agreed shape: enable toggle plus separate fade-in and fade-out duration
+sliders, defaulting to Dynamic HUD's values, shown only when fading is on.
+Driven by the existing finite worker, not a permanent tick.
+
+Dynamic HUD's algorithm, worth copying closely:
+
+```lua
+if target ~= r.target then r.from = r.mult; r.target = target; r.elapsed = 0 end
+r.elapsed = r.elapsed + DT
+local duration = target < r.from and 0.45 or 0.22   -- out slower than in
+local t = math.min(1, r.elapsed / duration)
+r.mult = r.from + (target - r.from) * (t*t*(3-2*t))  -- smoothstep
+local desired = r.base * r.mult
+```
+
+Three details that matter:
+
+  * **Asymmetric durations.** 0.45s out, 0.22s in. Fading out slowly reads as
+    calm; fading in quickly reads as responsive. These become the slider
+    defaults.
+  * **Smoothstep** rather than linear interpolation.
+  * **Base adoption.** `if math.abs(actual - r.last) > 0.002 then r.base = actual end`
+    notices the game writing the opacity itself and re-bases instead of
+    fighting it. Quiet Dawn's `QuietDawnPanelOpacity.lua` already has the
+    readback discipline this needs.
+
+**Why Dynamic HUD polls, and why Quiet Dawn does not have to.** Its tick serves
+three purposes: sampling state that has no event, observing external opacity
+writes for base adoption, and advancing the fade. Only the third is inherent to
+fading. Quiet Dawn already solves the first with hooks, so a fade module can
+intercept the existing opacity-write path and schedule the worker only while a
+transition is in flight, going idle again afterwards.
