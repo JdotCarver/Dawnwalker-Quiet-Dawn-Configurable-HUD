@@ -151,11 +151,7 @@ local HEALING_REVEAL_GAIN, FULL_REARM_GAP, FULL_EPSILON=0.002,0.002,0.000001
 local healthUntil, staminaUntil = 0, 0
 local panels = {}
 local panelOpacity=require("QuietDawnPanelOpacity").new(Session,D)
--- Fading resolves a show or hide target into a per frame opacity. It owns no
--- timer: the panel worker already ticks while work remains, and keeps itself
--- awake for as long as fade.pending() is true.
-local fade=require("QuietDawnFade").new(D)
-fade.configure(config.fadeTransitions,config.fadeInSeconds,config.fadeOutSeconds)
+
 local peekDirty,statDirty,refreshDirty=false,false,false
 local panelRetries={}
 local priorityTurn=0
@@ -173,6 +169,20 @@ local function reportHookError(path, success, pre, post)
 end
 local warned = false
 local frameClock, lastFrame
+-- Fading resolves a show or hide target into a per frame opacity. It owns no
+-- timer: the panel worker already ticks while work remains, and keeps itself
+-- awake for as long as fade.pending() is true.
+--
+-- It is given GAME time, the same clock the peek and time-of-day holds use,
+-- not the diagnostics clock. D.now() is os.clock -- processor time, coarse
+-- and not proportional to wall time -- which makes a fade visibly stutter.
+-- Game time also stops while the game is paused or alt-tabbed, so a fade
+-- waits rather than finishing invisibly in the background.
+local fade=require("QuietDawnFade").new(D,function()
+    if not valid(frameClock) or not valid(controller) then return nil end
+    return frameClock:GetGameTimeInSeconds(controller)
+end)
+fade.configure(config.fadeTransitions,config.fadeInSeconds,config.fadeOutSeconds)
 local wake, armExpiry, clawMarks
 local function valid(object)
     return object ~= nil and object:IsValid()
@@ -536,14 +546,6 @@ local function healthReady()
 end
 local function queueHealth(object, spec, requestedFields)
     if object==nil then return end
-    -- A class default object is not a live widget: it has no world and no
-    -- owning player, so the readiness checks in healthStep can never pass for
-    -- it and it would burn its full retry budget on every field. Dynamic HUD
-    -- filters these the same way.
-    if describeObject(object):find("Default__",1,true) then
-        if D.debugLogging then D.count("enemyHealthClassDefaultSkipped") end
-        return
-    end
     spec.recent,spec.recentSet=spec.recent or {},spec.recentSet or {}
     if not spec.recentSet[object] then
         if #spec.recent>=64 then spec.recentSet[table.remove(spec.recent,1)]=nil end
@@ -591,6 +593,19 @@ local function healthStep()
     local keep=false
     local success,reason=pcall(function()
         if not valid(object) then return end
+        -- A class default object is not a live widget: no world, no owning
+        -- player, so the readiness checks below can never pass and it would
+        -- burn its whole retry budget on every field. Dynamic HUD filters
+        -- these the same way.
+        --
+        -- Checked HERE rather than when the job is queued. Queuing happens
+        -- straight off NotifyOnNewObject, during level load, on objects the
+        -- engine may still be constructing; a reflected call at that moment
+        -- is not safe. By this point the object has been revalidated.
+        if describeObject(object):find("Default__",1,true) then
+            if D.debugLogging then D.count("enemyHealthClassDefaultSkipped") end
+            return
+        end
         local eventIndex=spec.eventIndex or 1
         if eventIndex<=#spec.events then
             local path=spec.path..":"..spec.events[eventIndex]

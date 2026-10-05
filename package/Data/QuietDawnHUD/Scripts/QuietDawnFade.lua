@@ -9,7 +9,13 @@
 -- that is true, and terminates as usual once the last transition lands.
 --
 -- Nothing here touches a UObject. The caller owns every read and write, which
--- keeps the session journal and the opacity lease discipline unchanged.
+-- keeps the session journal and the opacity lease discipline unchanged, and
+-- supplies the clock, because which clock is used matters a great deal here.
+-- D.now() is os.clock, i.e. processor time consumed by the process: coarse
+-- (about 15.6 ms per tick on Windows) and not proportional to wall time. A
+-- fade driven by it visibly stutters. The caller passes game time instead,
+-- which is smooth, and which stops while the game is paused -- so a fade
+-- does not silently complete behind a pause menu.
 local M = {}
 
 -- Panels are capped at 17 by the caller. The margin absorbs enemy bars and
@@ -22,11 +28,26 @@ local MAX_TRANSITIONS = 32
 -- Every transition therefore expires shortly after it was due to finish.
 local ORPHAN_GRACE_SECONDS = 1
 
-function M.new(D)
+-- And a second, clock-independent bound. A deadline is only as trustworthy as
+-- the clock behind it: game time stops while the game is paused or the window
+-- is in the background, so a time-based expiry alone can never fire in
+-- exactly the situation where a stuck worker hurts most. Counting the worker
+-- calls a transition survives cannot be fooled that way. At roughly 60 calls
+-- a second this is about thirty seconds, far longer than any sane fade.
+local MAX_TICKS = 2000
+
+function M.new(D, clock)
     local transitions, transitionCount = {}, 0
     -- Reused so a fade allocates nothing per frame.
     local buffer = {}
     local enabled, fadeInSeconds, fadeOutSeconds = false, 0, 0
+
+    -- Falls back to the diagnostics clock only if the caller supplied none.
+    local function now()
+        local ok, seconds = pcall(clock or D.now)
+        if not ok or type(seconds) ~= "number" or seconds ~= seconds then return nil end
+        return seconds
+    end
 
     -- Smoothstep: ease into and out of the transition so a panel does not
     -- start and stop abruptly. Dynamic HUD uses the same curve.
@@ -60,10 +81,18 @@ function M.new(D)
     -- Also the sweep that retires orphans, so a panel that stopped being
     -- written cannot hold the worker open. Bounded by MAX_TRANSITIONS.
     function api.pending()
-        local now = D.now()
+        local moment = now()
         local alive = false
         for key, transition in pairs(transitions) do
-            if now == nil or now > transition.deadline then discard(key) else alive = true end
+            transition.ticks = transition.ticks + 1
+            -- A clock that has gone backwards means a new world, or a reset
+            -- game time. The transition refers to a world that no longer
+            -- exists either way.
+            local stale = moment == nil
+                or moment > transition.deadline
+                or moment < transition.start
+                or transition.ticks > MAX_TICKS
+            if stale then discard(key) else alive = true end
         end
         return alive
     end
@@ -86,12 +115,17 @@ function M.new(D)
     -- that this is outstanding.
     function api.step(key, current, target)
         if not enabled then discard(key); return target end
-        local now = D.now()
+        local moment = now()
         -- Without a trustworthy clock a fade cannot be timed. Landing on the
         -- target immediately is the honest fallback, not a guessed frame rate.
-        if now == nil then discard(key); return target end
+        if moment == nil then discard(key); return target end
 
         local transition = transitions[key]
+        if transition ~= nil and moment < transition.start then
+            -- Game time restarted under us; the old transition is meaningless.
+            discard(key)
+            transition = nil
+        end
         if transition == nil or transition.target ~= target then
             if transition == nil then
                 if transitionCount >= MAX_TRANSITIONS then return target end
@@ -103,14 +137,14 @@ function M.new(D)
             -- Hiding is slower than showing: an element appearing should feel
             -- responsive, one leaving should not snap away.
             local duration = target < current and fadeOutSeconds or fadeInSeconds
-            transition = {from = current, target = target, start = now,
-                duration = duration, deadline = now + duration + ORPHAN_GRACE_SECONDS}
+            transition = {from = current, target = target, start = moment, ticks = 0,
+                duration = duration, deadline = moment + duration + ORPHAN_GRACE_SECONDS}
             transitions[key] = transition
         end
 
         if transition.duration <= 0 then discard(key); return target end
 
-        local progress = (now - transition.start) / transition.duration
+        local progress = (moment - transition.start) / transition.duration
         if progress >= 1 then discard(key); return target end
         return transition.from + (target - transition.from) * smoothstep(progress)
     end

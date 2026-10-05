@@ -61,7 +61,10 @@ def main():
     })
 
     def new_fade(enabled=True, fade_in=0.2, fade_out=0.4):
-        fade = module.new(diagnostics)
+        # The second argument is the clock. In the mod this is game time, not
+        # the diagnostics clock: os.clock is processor time, too coarse and
+        # not proportional to wall time, which makes a fade stutter.
+        fade = module.new(diagnostics, lambda: clock["now"])
         fade.configure(enabled, fade_in, fade_out)
         return fade
 
@@ -158,9 +161,42 @@ def main():
     fade.configure(True, 1.0, 1.0)
     check("changing the settings does not strand a half-finished fade", not fade.pending())
 
+    # --- Game time stopping must not strand the worker -------------------
+    # Game time stops while the game is paused or the window is in the
+    # background. A time-based expiry can therefore never fire in exactly the
+    # situation where a stuck worker hurts most, which is why transitions also
+    # count the worker calls they survive.
+    fade = new_fade()
+    clock["now"] = 800.0
+    fade.step("p", 0.0, 1.0)
+    for _ in range(2100):
+        if not fade.pending():
+            break
+    check(
+        "a frozen clock cannot keep a transition alive forever",
+        not fade.pending(),
+        "pending() stayed true with the clock stopped: the worker would never sleep",
+    )
+
+    # --- Game time restarting (a new world) ------------------------------
+    fade = new_fade()
+    clock["now"] = 900.0
+    fade.step("p", 0.0, 1.0)
+    clock["now"] = 5.0  # a fresh level: game time counts from zero again
+    check("a transition from the previous world is dropped", not fade.pending())
+
+    clock["now"] = 900.0
+    fade.step("p", 0.0, 1.0)
+    clock["now"] = 3.0
+    restarted = fade.step("p", 0.25, 1.0)
+    check(
+        "a fade continues sanely after game time restarts",
+        abs(restarted - 0.25) < 1e-9,
+        f"got {restarted}",
+    )
+
     # --- An unusable clock falls back to instant -------------------------
-    stopped = lua.table_from({"now": lambda: None, "debugLogging": False})
-    fade = module.new(stopped)
+    fade = module.new(diagnostics, lambda: None)
     fade.configure(True, 0.2, 0.4)
     check("without a clock the target is applied immediately", fade.step("p", 0.0, 1.0) == 1.0)
     check("without a clock nothing is left pending", not fade.pending())
