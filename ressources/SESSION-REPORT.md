@@ -135,6 +135,37 @@ quickslot shortcut hints. Sentences conjugate for plural subjects.
 inside an entry", and the format defines no escape sequence. These values are
 single-line by design. Length was cut and ordering made consistent instead.
 
+### Optional fading when elements are shown and hidden
+
+Elements appeared and vanished instantly. They can now ease in and out, with
+separate durations per direction -- showing should feel responsive, hiding
+should not snap away. The curve and the 0.22 s / 0.45 s defaults come from
+Dynamic HUD.
+
+The constraint worth recording is how it stays off the main thread's back.
+Quiet Dawn has no permanent tick by design: the worker wakes on a game event,
+drains the work, stops. Dynamic HUD's standing `LoopAsync(50)` was therefore
+not portable. `QuietDawnFade` schedules nothing at all. It answers "what
+opacity should this panel have right now" and reports through `pending()`
+that it still owes frames; the existing worker keeps itself alive while that
+is true and terminates normally once the last transition lands. Mid-fade it
+revisits only the panels actually transitioning, reusing the pattern the
+time-of-day job already follows.
+
+The module touches no UObject, so the opacity-lease and session-journal
+discipline is untouched: `writePanel` remains the single write site. With no
+trustworthy clock, or a duration of zero, it lands on the target immediately
+rather than guessing a frame rate.
+
+Settings are a toggle plus two sliders, the sliders visible only when the
+toggle is on. Fading defaults to **off**, so an existing `settings.ini` keeps
+its exact behaviour.
+
+### Debug-level ubergraph entry logging
+
+A standing version of the technique that found the magic numbers in
+`Gameplay.lua`. See "How Blueprint hooks are found" below.
+
 ### Menu headings use a colon
 `182df73`
 
@@ -154,6 +185,38 @@ sections. The manifest validator confirms all 18 still match.
 ---
 
 ## Workarounds used to stay compatible with upstream's way of working
+
+### How Blueprint hooks are found
+
+Worth writing down, because it is the whole reason some features are possible
+and others are not.
+
+UE4SS can hook a `UFunction`. If the game exposes a C++ function for an
+event, you hook it and you are done. You find out by dumping: `DumpAllObjects`
+for paths, and the CXX header dump for every class with its properties *and*
+its function signatures. Grep that for the concept.
+
+The two kinds of hit are not interchangeable:
+
+* a **UFunction** is hookable -- event-driven, cheap, exact;
+* a **UProperty** is not. You can only read it, which means polling.
+
+When there is no C++ function, the Blueprint is the remaining route. A
+Blueprint class compiles its entire event graph into a single function,
+`ExecuteUbergraph_<Class>`, taking one argument: the bytecode offset to jump
+to. So every event in that class sits behind one hook, distinguished only by
+that integer. Quiet Dawn's controls-legend peek is exactly this -- hook
+`WBP_ControlsLegend:ExecuteUbergraph_WBP_ControlsLegend`, act only on entry
+`850`.
+
+Nothing can look that number up at runtime. You hook the graph, log every
+number you see, do the thing in game, and read which number appeared. That is
+now a standing capability at Debug level rather than something needing a
+one-off instrumented build.
+
+The cost: **entry numbers are not stable across game patches.** Recompiling
+the Blueprint moves the offsets. `850` is recorded against Steam build
+25191761 for that reason, and any new number should be recorded the same way.
 
 ### Vendored modules were left untouched
 Seven files under `package/Data/QuietDawnHUD/Scripts/` are copied from
