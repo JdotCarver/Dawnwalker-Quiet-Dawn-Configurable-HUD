@@ -1502,11 +1502,29 @@ local function step()
 end
 step=D.wrap("worker",step)
 -- UE4SS repeating timers ignore return values. Chain one-shots explicitly.
+--
+-- `delay` is asked for again before every re-arm rather than captured once,
+-- because the right pause depends on what the worker is currently doing.
+-- Ordinary work is event driven and 16 ms is plenty. A fade is not: it needs
+-- a sample on every frame the display actually draws, and a fixed 16 ms timer
+-- samples at about 62 Hz. On a 75 Hz screen those two rates beat against each
+-- other roughly 12 times a second -- some frames get two steps, some none --
+-- which reads as judder no matter how smooth the easing curve is. While a
+-- transition is outstanding we therefore re-arm as fast as the timer allows
+-- and let the frame-count guard in the worker collapse the surplus wakeups,
+-- so one rendered frame is one fade step at any refresh rate.
 local function repeatUntilDone(delay,fn)
     local function tick()
-        if not fn() then ExecuteInGameThreadWithDelay(delay,tick) end
+        if not fn() then ExecuteInGameThreadWithDelay(delay(),tick) end
     end
-    ExecuteInGameThreadWithDelay(delay,tick)
+    ExecuteInGameThreadWithDelay(delay(),tick)
+end
+-- On the runtime table rather than as locals: Gameplay.lua sits on Lua's
+-- hard ceiling of 200 locals per chunk.
+runtime.workerIdleMs, runtime.workerFadeMs = 16, 1
+function runtime.workerDelay()
+    local ok,fading = pcall(fade.pending)
+    return (ok and fading) and runtime.workerFadeMs or runtime.workerIdleMs
 end
 wake = function(statsOnly)
     if not statsOnly then
@@ -1527,7 +1545,7 @@ wake = function(statsOnly)
     worker=true
     if D.debugLogging then D.count("workerStarts") end
     attempts=0
-    repeatUntilDone(16, function()
+    repeatUntilDone(runtime.workerDelay, function()
         local success, stop = pcall(function()
             if not valid(frameClock) then
                 frameClock=StaticFindObject("/Script/Engine.Default__KismetSystemLibrary")
@@ -1538,7 +1556,25 @@ wake = function(statsOnly)
                 end
             end
             local frame=frameClock:GetFrameCount()
-            if frame == lastFrame then return false end
+            if frame == lastFrame then
+                -- A surplus wakeup during a fade is expected and is the
+                -- mechanism, not waste: we deliberately over-arm the timer
+                -- and let this guard collapse it down to one step per frame.
+                if D.debugLogging then D.count("workerSameFrame") end
+                return false
+            end
+            -- Whether a fade is actually getting every frame is invisible
+            -- from the outside, so measure it. steps == frames drawn means
+            -- we are matching the display; a non-zero skip count means the
+            -- timer is still coarser than the refresh rate.
+            if D.debugLogging and lastFrame ~= nil and fade.pending() then
+                D.count("fadeSteps")
+                local skipped = frame - lastFrame - 1
+                if skipped > 0 then
+                    D.count("fadeFramesSkipped")
+                    D.event("fadeGap","%d frame(s) passed without a fade step",skipped)
+                end
+            end
             lastFrame=frame
             return step()
         end)
@@ -1551,6 +1587,45 @@ wake = function(statsOnly)
         return stop
     end)
 end
+-- The HUD is not ours and it does not announce everything it does.
+--
+-- On the first load the worker hides every panel it can see and then stops,
+-- exactly as designed. But the game keeps building its HUD after that: the
+-- crosshair, the quickslot bar and the form-specific stat panel are switched
+-- on later, by code we have no hook for. Nothing wakes us, so they stay
+-- visible until some unrelated event happens to run a full pass -- which is
+-- why a manual peek "fixed" it. The panels were never mis-hidden; we simply
+-- stopped looking.
+--
+-- So once per second, read the panels we manage and compare each one against
+-- what it is supposed to be. If reality has drifted, wake the worker and let
+-- the ordinary path correct it. This is a read-only poll of at most 17 cached
+-- widgets and costs well under a millisecond; it buys correctness against an
+-- unobservable HUD, which no amount of extra hooks has bought us so far.
+runtime.auditIntervalMs = 1000
+function runtime.auditPanels()
+    ExecuteInGameThreadWithDelay(runtime.auditIntervalMs, runtime.auditPanels)
+    -- Mid-transition a panel is *meant* to differ from its target, and the
+    -- worker is already running, so there is nothing to detect or to wake.
+    if worker or not valid(hud) then return end
+    local ok, drifted = pcall(function()
+        for _,name in ipairs(names) do
+            local entry = panels[name]
+            if entry and panelModes[name]~=0 and valid(entry.object) then
+                local target = panelTarget(name,entry,entry.widget)
+                if math.abs(entry.object:GetRenderOpacity()-target)>1e-5 then return name end
+            end
+        end
+        return nil
+    end)
+    if not ok or drifted==nil then return end
+    if D.debugLogging then
+        D.count("panelAuditWakes")
+        D.event("panelAudit","panel=%s drifted from its target; refreshing",drifted)
+    end
+    wake()
+end
+ExecuteInGameThreadWithDelay(runtime.auditIntervalMs, runtime.auditPanels)
 applyLiveSettings=function(run)
     if not run then wake('liveSettings');return end
     local values=livePending;livePending=nil
