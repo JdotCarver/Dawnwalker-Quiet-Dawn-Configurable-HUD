@@ -147,6 +147,33 @@ def main():
     for key in sorted(schema_keys - config_keys - SCHEMA_ONLY_KEYS):
         fail(f"schema key {key} has no row in mod_settings.ini")
 
+    # The menu silently drops a logo it cannot load, so check the guide's
+    # limits here: PNG or JPEG, at most 8 MiB and 2048 pixels per dimension,
+    # resolved relative to this manifest.
+    logo = mod.get("LogoFile")
+    if logo:
+        if ".." in logo or logo.startswith(("/", "\\")) or ":" in logo:
+            fail(f"LogoFile {logo} must be a relative path without parent traversal")
+        else:
+            path = MANIFEST.parent / logo
+            if not path.exists():
+                fail(f"LogoFile {logo} does not exist at {path}")
+            else:
+                data = path.read_bytes()
+                is_png = data[:8] == b"\x89PNG\r\n\x1a\n"
+                is_jpeg = data[:3] == b"\xff\xd8\xff"
+                if not (is_png or is_jpeg):
+                    fail(f"LogoFile {logo} is not a PNG or JPEG (starts with {data[:4]!r})")
+                elif len(data) > 8 * 1024 * 1024:
+                    fail(f"LogoFile {logo} is {len(data)} bytes; the limit is 8 MiB")
+                elif is_png:
+                    import struct
+                    width, height = struct.unpack(">II", data[16:24])
+                    if max(width, height) > 2048:
+                        fail(f"LogoFile {logo} is {width}x{height}; the limit is 2048 per dimension")
+                    else:
+                        print(f"   logo: {logo} {width}x{height} {len(data)} bytes")
+
     print()
     print(f"   {len(settings)} settings, {len(categories)} categories, {len(groups)} groups")
     print(f"   {len({f.get('Description') for _, f in settings})} distinct descriptions")
