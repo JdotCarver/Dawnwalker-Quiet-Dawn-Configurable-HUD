@@ -137,7 +137,7 @@ local failedHooks = {}
 local timeRequested,timeDirty,timeVisible,timeUntil=false,false,false,0
 local timeJobNames={"WBP_HudTimer"}
 local timeWatcher=timeRevealEnabled and require("QuietDawnTime").new(D) or nil
-local peekRequested,peekUntil,peekVisible=false,0,false
+local peekRequested,peekUntil,peekVisible,peekFocusExitAt=false,0,false,nil
 local peekStartPending=false
 local switchRequested,switchUntil,switchVisible=false,0,false
 local switchCursor=0
@@ -261,11 +261,11 @@ end
 -- This chunk is at Lua's 200-locals ceiling, so the seen-set and its counter
 -- share one table rather than taking a slot each.
 local ubergraph = {seen = {}, count = 0}
--- Up to this many sightings of each entry are reported. One is enough to
--- discover a number; several are needed to tell what it means -- whether it
--- fires on entering Focus or on leaving it, and whether it also fires during
--- unrelated HUD activity.
-local UBERGRAPH_SIGHTINGS = 8
+-- ubergraph.limit: how many sightings of each entry are reported. One is
+-- enough to discover a number; several are needed to tell what it means --
+-- whether it fires on entering Focus or on leaving it, and whether it also
+-- fires during unrelated HUD activity. That is how entry 4026 was confirmed.
+ubergraph.limit = 8
 local function noteUbergraphEntry(graph, entryParam)
     if not D.debugLogging or ubergraph.count >= 256 then return end
     local entry = tonumber(unwrap(entryParam))
@@ -273,7 +273,7 @@ local function noteUbergraphEntry(graph, entryParam)
     local key = graph .. "#" .. tostring(entry)
     local seen = ubergraph.seen[key]
     if seen == nil then ubergraph.count = ubergraph.count + 1; seen = 0 end
-    if seen >= UBERGRAPH_SIGHTINGS then return end
+    if seen >= ubergraph.limit then return end
     ubergraph.seen[key] = seen + 1
 
     -- Focus mode has no event to hook, only a property on the pawn. Sampling
@@ -286,7 +286,7 @@ local function noteUbergraphEntry(graph, entryParam)
         if read and flag ~= nil then focus = tostring(flag) end
     end
     D.event("ubergraph", "%s entry=%s sighting=%d/%d focusMode=%s",
-        graph, tostring(entry), seen + 1, UBERGRAPH_SIGHTINGS, focus)
+        graph, tostring(entry), seen + 1, ubergraph.limit, focus)
 end
 -- The stock Controls Legend action already handles the Menu/Options hold.
 -- Its button click enters this graph at 850 (Steam build 25191761). Filter
@@ -295,7 +295,7 @@ end
 local LEGEND="/Game/_Dawnwalker/UI/_Unified/HUD/ControlsLegend/WBP_ControlsLegend.WBP_ControlsLegend_C"
 local function peekInput(context,entryParam)
     noteUbergraphEntry("WBP_ControlsLegend",entryParam)
-    if not manualPeekEnabled then return end
+    if not manualPeekEnabled or not config.peekOnLegendHold then return end
     if tonumber(unwrap(entryParam))~=850 then return end
     local object=unwrap(context)
     -- The accepted HUD owns this cached widget. The worker revalidates the
@@ -731,9 +731,33 @@ local function cooldownEvent(context)
 end
 local function switchedQuickslots(context,entryParam)
     noteUbergraphEntry("WBP_GameHUD",entryParam)
+    local entry=tonumber(unwrap(entryParam))
+    -- Entry 4026 is Focus mode being LEFT (Steam build 25191761). Confirmed
+    -- by sampling bIsInFocusMode beside it over eight sightings: every one
+    -- read false, and it never fired during unrelated HUD activity. Focus
+    -- exposes no event of its own, which is why an ubergraph entry is used.
+    --
+    -- Leaving is the useful half: the HUD is revealed once the player is
+    -- DONE with Focus, so the hold also starts counting from there.
+    if entry==4026 then
+        if not manualPeekEnabled or not config.peekOnFocusExit then return end
+        if not currentPanelEvent(context) then return end
+        -- The entry fires twice per release, so brief repeats collapse into
+        -- one reveal. A deliberate second press is far slower than this and
+        -- still restarts the hold, which is what intermittent tapping needs.
+        -- A game time that has gone backwards means a new world; accept it.
+        local now=valid(frameClock) and valid(controller)
+            and frameClock:GetGameTimeInSeconds(controller) or nil
+        if now and peekFocusExitAt and now>=peekFocusExitAt and now-peekFocusExitAt<0.2 then return end
+        peekFocusExitAt=now
+        peekRequested,statsPending=true,true
+        if D.debugLogging then D.count("manualPeekFocusExits") end
+        wake("resource")
+        return
+    end
     -- Stock Toggle AA Quickslots delegate enters the graph at 4146.
     -- Observe that entry directly, also covering calls that bypass its stub.
-    if tonumber(unwrap(entryParam))~=4146 then return end
+    if entry~=4146 then return end
     if config.switchRevealSeconds<=0 or not hasSwitchPanels() or not currentPanelEvent(context) then return end
     local focus=hud.CombatFocusPanel
     if valid(focus) and focus:IsActivated() then return end -- stock toggle guard

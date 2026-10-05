@@ -71,7 +71,10 @@ return {
     {key="staminaHoldSeconds", default=1.5, values=durations},
     {key="manualPeekSeconds", default=3, values=durations},
     {key="switchRevealSeconds", default=3, values=durations},
-    {key="manualPeek", default=1, values={0,1}},
+    -- HUD peek trigger: 0 off, 1 controls-legend hold, 2 after leaving Focus.
+    -- Widened from {0,1}; both old values keep their exact meaning, so an
+    -- existing settings.ini needs no migration.
+    {key="manualPeek", default=1, values={0,1,2}},
     -- Fading defaults to off so an existing settings.ini keeps its exact
     -- current behaviour; `ensure` simply adds the three missing keys.
     {key="fadeTransitions", default=0, values={0,1}},

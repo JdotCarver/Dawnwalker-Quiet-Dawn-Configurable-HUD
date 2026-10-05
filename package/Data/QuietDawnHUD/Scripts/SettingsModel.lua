@@ -240,7 +240,12 @@ end
 function M.convert(numeric)
 local values={}
 for key,value in pairs(numeric) do values[key]=value end
-values.enabled=values.enabled==1;values.manualPeek=values.manualPeek==1
+values.enabled=values.enabled==1
+-- The HUD peek trigger is one setting with three meanings, so the model turns
+-- it into named intent and the gameplay code never compares magic numbers.
+values.peekOnLegendHold=values.manualPeek==1
+values.peekOnFocusExit=values.manualPeek==2
+values.manualPeek=values.manualPeek~=0
 values.fadeTransitions=values.fadeTransitions==1
 -- `debugLogging` survives as the hot per-event guard read across the gameplay
 -- scripts and handed to the native bridge. It now means "the level is Debug".

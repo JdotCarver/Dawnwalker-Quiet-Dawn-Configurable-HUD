@@ -8,7 +8,7 @@ The menu runs from General through Player status, Combat, Exploration and Contro
 
 | Category | Controls |
 | --- | --- |
-| General | Enabled |
+| General | Enabled, fade elements in and out, and the fade in/out durations |
 | Player status: Active buffs | Hide player combat effects, Hide player effect icons, Active buffs mode, opacity and size |
 | Player status: Experience | Experience bar opacity |
 | Player status: Health and stamina | Human and vampire panel opacity, health/blood and stamina thresholds, and their hold durations |
@@ -26,7 +26,7 @@ The menu runs from General through Player status, Combat, Exploration and Contro
 | Exploration: Time of day | Panel opacity and reveal duration |
 | Controls: Action prompts | Hide sprint/haste prompt |
 | Controls: Controls legend | Controls legend opacity |
-| Controls: HUD peek | Show HUD on hold and its duration |
+| Controls: HUD peek | Show HUD trigger and its duration |
 | Diagnostics | Logging |
 
 Each player-panel category has a mode picker, an opacity slider visible only in Fixed opacity mode, and an independent size slider. The 17 size sliders use 25% to 200%, in 5% steps, with a 100% default.
@@ -107,6 +107,9 @@ Missing existing settings, duplicate or invalid settings stop configuration load
 | Group | Setting | Choices or range |
 | --- | --- | --- |
 | General | Enabled | Off, On |
+| General | Fade elements in and out | Off (default), On |
+| General | Fade in duration | 0 to 2 seconds (default 0.22); shown only when fading is on |
+| General | Fade out duration | 0 to 2 seconds (default 0.45); shown only when fading is on |
 | Player status: Active buffs | Hide player combat effects | Off, On (default Off) |
 | Player status: Active buffs | Hide player effect icons | Off, On (default Off) |
 | Player status: Active buffs | Active buffs mode | Vanilla, Quiet Dawn (default), Fixed opacity |
@@ -161,7 +164,7 @@ Missing existing settings, duplicate or invalid settings stop configuration load
 | Controls: Action prompts | Hide sprint/haste prompt | Off, On (default On) |
 | Controls: Controls legend | Controls legend mode | Vanilla, Quiet Dawn (default), Fixed opacity |
 | Controls: Controls legend | Controls legend opacity | 0% to 100% in 5-point steps |
-| Controls: HUD peek | Show HUD on hold | Off, On |
+| Controls: HUD peek | Show HUD trigger | Off, Hold controls legend (default), After leaving Focus mode |
 | Controls: HUD peek | Show HUD duration | 0 to 10 seconds in 0.5-second steps |
 | Diagnostics | Logging | Off, On |
 
@@ -226,7 +229,10 @@ All entries below belong under `[Settings]`. Defaults apply to a fresh install w
 | Health / blood hold duration | `healthHoldSeconds` | `4` | 0 to 10, step 0.5 |
 | Stamina hold duration | `staminaHoldSeconds` | `1.5` | 0 to 10, step 0.5 |
 | Show HUD duration | `manualPeekSeconds` | `3` | 0 to 10, step 0.5 |
-| Show HUD on hold | `manualPeek` | `1` | 0 = Off, 1 = On |
+| Fade elements in and out | `fadeTransitions` | `0` | 0 = Off, 1 = On |
+| Fade in duration | `fadeInSeconds` | `0.22` | 0 to 2 seconds, step 0.01 |
+| Fade out duration | `fadeOutSeconds` | `0.45` | 0 to 2 seconds, step 0.01 |
+| Show HUD trigger | `manualPeek` | `1` | 0 = Off, 1 = Hold controls legend, 2 = After leaving Focus mode |
 | Hide sprint/haste prompt | `hideSprintPrompt` | `1` | 0 = Off, 1 = On |
 | Time of day mode | `mode_WBP_HudTimer` | `1` | 0 = Vanilla, 1 = Quiet Dawn, 2 = Fixed opacity |
 | Time of day opacity | `opacity_WBP_HudTimer` | `0` | 0 to 100, step 5 |

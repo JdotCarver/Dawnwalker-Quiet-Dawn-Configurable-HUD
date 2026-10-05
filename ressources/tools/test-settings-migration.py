@@ -199,6 +199,34 @@ def main():
         f"got values={values is not None} error={error!r}",
     )
 
+    # --- HUD peek trigger (item 6) ---------------------------------------
+    # manualPeek widened from {0,1} to {0,1,2}. Both old values must keep
+    # their exact meaning, which is what makes this safe without a migration
+    # step: an existing file already holds a value the new schema accepts.
+    peek = rows["manualPeek"]
+    accepted = sorted(peek["values"].values())
+    check("the peek trigger offers three options", accepted == [0, 1, 2], f"got {accepted}")
+    check("its default is unchanged", peek["default"] == 1, f"got {peek['default']}")
+
+    for legacy in (0, 1):
+        text = settings_file(include_log_level=True).replace(
+            "manualPeek = 1", f"manualPeek = {legacy}"
+        )
+        values, error = parse(text, schema)
+        check(
+            f"an existing settings.ini with manualPeek={legacy} is still accepted",
+            values is not None,
+            f"error={error!r}",
+        )
+
+    text = settings_file(include_log_level=True).replace("manualPeek = 1", "manualPeek = 3")
+    _, error = parse(text, schema)
+    check(
+        "manualPeek=3 is rejected",
+        error == "Invalid setting: manualPeek",
+        f"got {error!r}",
+    )
+
     # --- Fading (item 7) ------------------------------------------------
     # The three keys must exist in the schema with behaviour-preserving
     # defaults, so an existing settings.ini that gains them does not suddenly
