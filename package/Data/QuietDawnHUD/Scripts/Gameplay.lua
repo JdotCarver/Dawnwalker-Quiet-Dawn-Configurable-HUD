@@ -1093,6 +1093,25 @@ local function panelStep(name)
     end
     return true
 end
+-- Start every panel that is waiting to fade, inside this one worker call, so
+-- they share a start moment and move together from then on. Defined here
+-- because it needs panelStep, which is declared just above.
+runtime.maxFadeWaveWait = 24
+function runtime.flushFadeWave()
+    local wave=runtime.fadeWave
+    runtime.fadeWave,runtime.fadeWaveSize,runtime.fadeWaveAge={},0,0
+    runtime.fadeFlushing=true
+    local started=0
+    for name in pairs(wave) do
+        if panels[name] then started=started+1 end
+        pcall(panelStep,name)
+    end
+    runtime.fadeFlushing=false
+    if D.debugLogging and started>0 then
+        D.count("panelFadeWaves")
+        D.event("panelFade","%d panel(s) began fading together",started)
+    end
+end
 do
     local updatePanel=panelStep
     panelStep=function(name)
@@ -1136,7 +1155,12 @@ local function step()
     -- Discovery, hook registration, state reads and transforms remain sliced.
     -- Every third slice is reserved for this work even under resource bursts.
     if runtime.panelsSettled and playerEffects and playerEffects.pending() then playerEffects.step();return false end
-    if runtime.panelsSettled and clawMarks and clawMarks.pending() then
+    -- Claw mark preparation costs 17 to 34 ms a call: two or three frames.
+    -- Running it while panels are mid-fade puts a visible hitch in the one
+    -- animation the player is looking at. It is a combat cosmetic and
+    -- nothing needs it during a load, so it waits for the HUD to be still.
+    if runtime.fadeWaveSize==0 and not fade.pending()
+        and runtime.panelsSettled and clawMarks and clawMarks.pending() then
         clawMarks.step()
         return false
     end
@@ -1295,29 +1319,27 @@ local function step()
         return false
     end
     if cursor <= #jobNames then
+        -- Advance every fading panel on THIS call, then take one step of the
+        -- discovery pass. The lockstep branch above only runs once the pass
+        -- has finished and nothing is dirty, and the once-a-second audit
+        -- sets dirty -- so during a load the fade was being driven by the
+        -- pass instead: one panel per worker call, sixteen calls per visual
+        -- frame. That is the stutter. The two jobs now share a call rather
+        -- than taking turns.
+        if fade.pending() then fade.forEach(panelStep) end
+        -- Do not let an identified group wait out a slow pass. During a load
+        -- the pass is interleaved with hook registration and took about
+        -- 1.5 s, so panels sat visible that whole time waiting for a group
+        -- that had already been worked out. Two waves beat one late one.
+        if runtime.fadeWaveSize>0 then
+            runtime.fadeWaveAge=(runtime.fadeWaveAge or 0)+1
+            if runtime.fadeWaveAge>=runtime.maxFadeWaveWait then runtime.flushFadeWave() end
+        end
         if panelStep(jobNames[cursor]) then cursor=cursor+1 end
         return false
     end
     cursor=0
-    -- Every panel that wants to start fading has now been identified. Start
-    -- them all here, in this one worker call, so they share a start moment
-    -- and thereafter move together under fade.forEach.
-    if runtime.fadeWaveSize>0 then
-        local wave=runtime.fadeWave
-        runtime.fadeWave,runtime.fadeWaveSize=({}),0
-        runtime.fadeFlushing=true
-        local started=0
-        for name in pairs(wave) do
-            if panels[name] then started=started+1 end
-            pcall(panelStep,name)
-        end
-        runtime.fadeFlushing=false
-        if D.debugLogging and started>0 then
-            D.count("panelFadeWaves")
-            D.event("panelFade","%d panel(s) began fading together",started)
-        end
-        return false
-    end
+    if runtime.fadeWaveSize>0 then runtime.flushFadeWave(); return false end
     -- The panels have had a full pass, so the deferred startup work may run.
     -- Only a full job counts: the short stat-only sweeps do not hide
     -- everything and must not release the preloads early.
@@ -1440,6 +1462,13 @@ function runtime.auditPanels()
     -- worker only sets a flag, so this is cheap. A fade is the one case where
     -- a panel is supposed to differ from its target.
     if not valid(hud) then return end
+    -- Say nothing while the HUD is already being corrected. A panel that is
+    -- mid-fade, queued for one, or still being walked by the pass is
+    -- supposed to differ from its target. Reporting it anyway woke the
+    -- worker every second, and each wake reset the pass and knocked the
+    -- fade out of lockstep: the audit was re-triggering the very work it
+    -- was waiting on, sixteen panels at a time.
+    if fade.pending() or runtime.fadeWaveSize>0 or cursor>0 or dirty then return end
     -- Collect every drifted panel, not just the first. One wake fixes them
     -- all, but naming them all is what makes the log worth reading.
     local ok, drifted = pcall(function()
