@@ -1,6 +1,9 @@
 -- Prepare the menu file once at startup; gameplay snapshots still wait for a save load.
 local directory = assert(debug.getinfo(1, 'S').source:sub(2):match('^(.*[/\\])'))
-local function report(message) print('[Save Settings] '..message..'\n') end
+-- Every line must name the mod it came from. This said "[Save Settings]",
+-- a leftover from the mod this bootstrap was adapted from, which attributed
+-- Quiet Dawn's session and settings messages to somebody else's mod.
+local function report(message) print('[Quiet Dawn - Configurable HUD] '..message..'\n') end
 -- Discard this snapshot so menu edits are read afresh by the save-load session.
 local model=dofile(directory..'SettingsModel.lua')
 local live=dofile(directory..'LiveSettings.lua').new(directory,report)
