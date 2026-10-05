@@ -1019,7 +1019,14 @@ local function writePanel(name,entry,target)
     local wrote=panelOpacity.apply(entry.lease,value)
     if wrote then
         entry.opacityOwned=true
-        if D.debugLogging then D.count("panelWrites");D.event("panel","name=%s opacity=%.3f target=%.3f",name,value,target) end
+        if D.debugLogging then
+            D.count("panelWrites")
+            -- Intermediate fade frames are counted, not narrated: at ~50 of
+            -- them per second per panel they would drown the log and trip the
+            -- events-per-second limiter. Only the settled value is reported.
+            if math.abs(value-target)<=1e-5 then D.event("panel","name=%s opacity=%.3f",name,target)
+            else D.count("panelFadeFrames") end
+        end
     end
     return wrote
 end
@@ -1292,12 +1299,12 @@ local function step()
         cursor=1
         return false
     end
-    -- A transition in flight still owes frames. Revisit only the panels that
-    -- are mid fade, rather than sweeping all of them, then let the worker
-    -- terminate as usual once the last one lands.
+    -- A transition in flight still owes frames. Advance every fading panel
+    -- inside THIS call rather than one per call: a fade must not run at the
+    -- worker's rate divided by the number of panels, and the panels have to
+    -- move together. Panels that are not fading are left alone.
     if cursor==0 and not dirty and fade.pending() then
-        jobNames=fade.names()
-        cursor=1
+        fade.forEach(panelStep)
         return false
     end
     if cursor==0 and not dirty and next(panelRetries) then
