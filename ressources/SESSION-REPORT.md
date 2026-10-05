@@ -12,6 +12,53 @@ commits* below.
 
 ---
 
+## Licensing and portability (researched 2026-10-06)
+
+Recorded because it determines what can be built on what, and the answer is
+the opposite of what was assumed.
+
+### Quiet Dawn - Configurable HUD: MIT
+
+`LICENSE` is MIT, "Copyright (c) 2026 my-mods", and the Nexus page repeats it.
+That grants use, copy, modify, merge, publish, distribute, sublicense and
+sell, with one obligation: preserve the copyright and permission notice.
+
+**There is no legal red tape here.** The conventions this session has
+followed -- untouched vendored modules, `ue4ss-common.lock.json` kept in
+sync, atomic cherry-pickable commits -- are *contribution* conventions. They
+exist only so Camille can take individual commits. A private fork owes none
+of them.
+
+### Dynamic HUD (Nexus mod 344, by Koriik): all rights reserved
+
+The Nexus permissions are explicit:
+
+* **Modification permission** -- *"You must get permission from me before you
+  are allowed to modify my files to improve it"*
+* **Asset use permission** -- *"You must get permission from me before you
+  are allowed to use any of the assets in this file"*
+* Conversion to other games: forbidden outright.
+
+No licence file ships with it, so the default is all rights reserved.
+Publishing a patched Dynamic HUD requires Koriik's permission first.
+
+### It is also not abandonware
+
+* Original upload **8 September 2026**, last updated **11 September 2026**.
+* Three releases (1.1, 1.2, 1.3) within four days.
+* 79 forum posts, 1 open bug report, 1,910 unique downloads.
+
+A quiet month after a burst of releases is weak evidence of abandonment for a
+mod barely a month old. The local copy in `ressources/` is **1.0**; upstream
+is **1.3**, and 1.3's changelog covers a health fade fallback, config auto
+population, and an ability cooldown toggle.
+
+### Consequence
+
+The direction of least friction runs the other way. Reusing Quiet Dawn's
+MIT-licensed modules needs only an attribution notice; modifying Dynamic HUD
+needs a person to say yes first.
+
 ## Bugs fixed
 
 ### Fading stuttered because of the clock, not the algorithm
