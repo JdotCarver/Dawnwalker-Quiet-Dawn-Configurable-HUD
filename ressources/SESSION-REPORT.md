@@ -234,6 +234,30 @@ quickslot shortcut hints. Sentences conjugate for plural subjects.
 inside an entry", and the format defines no escape sequence. These values are
 single-line by design. Length was cut and ordering made consistent instead.
 
+### HUD peek can be triggered by leaving Focus mode
+
+The peek toggle became a three-way trigger: Off, Hold controls legend (the
+existing behaviour, still the default), or After leaving Focus mode.
+
+Focus exposes no event. Dynamic HUD reads `bIsInFocusMode` and polls; Quiet
+Dawn does not poll, so the trigger is `WBP_GameHUD` ubergraph entry **4026**
+-- on a graph the mod already hooks, so it costs no new hook.
+
+4026 is Focus being **left**, established rather than assumed: eight
+sightings logged with `bIsInFocusMode` sampled beside each, every reading
+`false`, none during unrelated HUD activity. Leaving is the useful half --
+the HUD should appear once the player is done with Focus.
+
+It fires **twice** per release, so repeats within 0.2 s of game time collapse
+into one reveal. A deliberate second press is far slower and still restarts
+the hold.
+
+Backwards compatible with no migration step: `manualPeek` widens `{0,1}` to
+`{0,1,2}` and both old values keep their exact meaning, so an existing file
+already holds a value the new schema accepts. The three-way value becomes
+named intent (`peekOnLegendHold`, `peekOnFocusExit`) in `SettingsModel`, so
+no gameplay code compares magic numbers.
+
 ### Optional fading when elements are shown and hidden
 
 Elements appeared and vanished instantly. They can now ease in and out, with
@@ -408,7 +432,7 @@ pinned to 5.4 deliberately.
 
 ## Still open
 
-### HUD peek selector (item 6)
+### HUD peek selector (item 6) -- DONE, awaiting in-game confirmation
 Agreed shape: `manualPeek` becomes a picker, `Off / Controls legend hold /
 Focus mode`.
 
