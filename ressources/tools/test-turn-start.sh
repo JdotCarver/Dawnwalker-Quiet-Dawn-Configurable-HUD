@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 # tools/test-turn-start.sh
 #
-# Self-test for tools/arena-turn-start.sh.
+# Self-test for ressources/tools/arena-turn-start.sh.
 #
-# Run after ANY edit to the turn-start script:   bash tools/test-turn-start.sh
+# Run after ANY edit to the turn-start script:   bash ressources/tools/test-turn-start.sh
 #
 # It builds a throwaway clone in a temp directory and feeds the script every state
 # it claims to handle. Safety properties, on purpose:
@@ -19,9 +19,31 @@
 set -uo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
-BRANCH="arena/01a1028a-qmk-adaptive-lighting"
-BASE_COMMIT="e489696390187ba4db902ecb3319171ad2b3489c"
+# The script lives at ressources/tools/, so the repository root is two levels
+# up, not one. It was one, which made every fixture clone target the
+# ressources directory and fail before a single scenario ran.
+REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
+
+# Derived from the repository rather than hard-coded. These were pinned to a
+# branch and commit belonging to an entirely different project, so the fixture
+# clone could never check them out -- and because the failure happened during
+# setup, no scenario ran and nothing reported a failure.
+# Path of the script under test, relative to the repository root. It lives
+# under ressources/, which is committed deliberately; the self-test used to
+# assume a top-level tools/ directory that has never existed here.
+TOOL_REL="ressources/tools/arena-turn-start.sh"
+
+BRANCH="$(git -C "$REPO_ROOT" rev-parse --abbrev-ref HEAD)"
+# Read out of the script under test rather than restated here. The re-clone
+# scenario works by rewinding the fixture to exactly the commit the script
+# treats as "this is a fresh clone", so the two must agree by construction --
+# a copy would silently stop matching the day the session base changes.
+BASE_COMMIT="$(sed -n 's/^BASE_COMMIT="\([0-9a-f]\{40\}\)"$/\1/p' "$REPO_ROOT/$TOOL_REL" | head -1)"
+
+if [ -z "$BRANCH" ] || [ "$BRANCH" = "HEAD" ] || [ -z "$BASE_COMMIT" ]; then
+    echo "!! cannot determine branch or base commit from $REPO_ROOT" >&2
+    exit 1
+fi
 
 PASS=0
 FAIL=0
@@ -43,8 +65,12 @@ setup_fixture() {
             echo "  (warning: real repo is shallow and could not be unshallowed — base-commit scenarios will fail)"
     fi
     rm -rf "$WORK/origin.git" "$WORK/repo"
-    git clone --quiet --bare "$REPO_ROOT" "$WORK/origin.git"
-    git clone --quiet --branch "$BRANCH" "$WORK/origin.git" "$WORK/repo"
+    # A failure here used to abort the run mid-setup, which printed a git
+    # error and then stopped -- looking far too much like a pass.
+    git clone --quiet --bare "$REPO_ROOT" "$WORK/origin.git" || {
+        echo "!! fixture: could not bare-clone $REPO_ROOT" >&2; exit 1; }
+    git clone --quiet --branch "$BRANCH" "$WORK/origin.git" "$WORK/repo" || {
+        echo "!! fixture: could not clone branch $BRANCH" >&2; exit 1; }
     cd "$WORK/repo" || exit 1
     git config user.email "harness-selftest@localhost"
     git config user.name "harness selftest"
@@ -61,7 +87,7 @@ clean_fixture() {
 # Run the script under test and assert its output contains $1. $2 = scenario label.
 expect() {
     local pattern="$1" label="$2" output
-    output="$(bash tools/arena-turn-start.sh 2>&1)"
+    output="$(bash "$TOOL_REL" 2>&1)"
     if grep -qF -- "$pattern" <<<"$output"; then
         printf 'PASS  %s\n' "$label"
         PASS=$((PASS + 1))
@@ -78,13 +104,14 @@ expect() {
 # sync with its remote. Anything less (e.g. copying the file without committing it)
 # leaves the fixture dirty and every later expectation about a clean tree is wrong.
 assert_script_present() {
-    if cmp -s "$REPO_ROOT/tools/arena-turn-start.sh" tools/arena-turn-start.sh; then
+    if cmp -s "$REPO_ROOT/$TOOL_REL" "$TOOL_REL"; then
         return
     fi
     echo "note: repository copy of the script differs (uncommitted edit) — installing it in the fixture"
-    cp "$REPO_ROOT/tools/arena-turn-start.sh" tools/arena-turn-start.sh
+    mkdir -p "$(dirname "$TOOL_REL")"
+    cp "$REPO_ROOT/$TOOL_REL" "$TOOL_REL"
     if [ "$(git rev-parse --abbrev-ref HEAD)" = "$BRANCH" ]; then
-        git add tools/arena-turn-start.sh
+        git add "$TOOL_REL"
         git commit -q -m "fixture: install script under test"
         # Push to the FIXTURE's origin (a temp bare clone) so the fixture still looks
         # in sync — but only when that is a fast-forward. A scenario that deliberately
@@ -98,7 +125,7 @@ assert_script_present() {
     fi
 }
 
-echo "== self-test: tools/arena-turn-start.sh"
+echo "== self-test: $TOOL_REL"
 echo "   fixture: $WORK"
 setup_fixture
 
@@ -141,9 +168,9 @@ fi
 # 6. No remote branch yet (first turn) -> info, not an abort.
 clean_fixture; assert_script_present
 git checkout -q -b arena/phantom
-sed -i "s|^BRANCH=.*|BRANCH=\"arena/phantom\"|" tools/arena-turn-start.sh
+sed -i "s|^BRANCH=.*|BRANCH=\"arena/phantom\"|" "$TOOL_REL"
 expect "no remote branch" "missing remote branch is reported, not fatal"
-git checkout -q -- tools/arena-turn-start.sh
+git checkout -q -- "$TOOL_REL"
 
 # 7. Wrong branch checked out, clean tree -> switch back automatically.
 clean_fixture
