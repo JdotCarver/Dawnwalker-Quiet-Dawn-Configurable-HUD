@@ -108,10 +108,13 @@ end
 local panelScaling=hasPanelScaling and require("QuietDawnPanelScale").new(panelScales,D,Session) or nil
 local function hasPeekPanels()
     for _,name in ipairs(names) do
-        if panelModes[name]==Modes.QUIET_DAWN and name~="CombatFocusPanel"
+        local quietDawnIncluded=panelModes[name]==Modes.QUIET_DAWN and name~="CombatFocusPanel"
             and name~="WBP_HUD_Quickslots_ChangePrompt" and name~="WBP_HUD_SpecialAttackCooldown"
             and name~="WBP_OpenFocusPrompt"
-            and (not config.showHUDPanels or config.showHUDPanels[name]~=false) then return true end
+            and (not config.showHUDPanels or config.showHUDPanels[name]~=false)
+        local fixedRaise=panelModes[name]==Modes.FIXED_OPACITY
+            and config.fixedPeekPanels and config.fixedPeekPanels[name]==true
+        if quietDawnIncluded or fixedRaise then return true end
     end
     return false
 end
@@ -811,6 +814,12 @@ end
 local function switchedQuickslots(context,entryParam)
     noteUbergraphEntry("WBP_GameHUD",entryParam)
     local entry=tonumber(unwrap(entryParam))
+    -- The latest combat probe recorded 3515 on both weapon draw and sheath.
+    -- It is a candidate only: collect the same bounded opacity evidence before
+    -- treating it as the stock Quickslot Abilities visibility route.
+    if entry==3515 and panelModes.WBP_AA_Quickslots==Modes.VANILLA then
+        queueVanillaQuickslotProbe("GameHUD graph 3515")
+    end
     -- 4026 is a confirmed Focus-release graph entry. It does not decide the
     -- reveal itself: it only wakes the normal pawn snapshot, which reads the
     -- authoritative bIsInFocusMode transition and starts the hold if needed.
@@ -1178,6 +1187,10 @@ local function panelTarget(name,entry,widget)
         else target=remaining and remaining>0 and remaining<math.huge and 1 or 0 end
     end
     if mode==Modes.QUIET_DAWN and switchVisible and (name=="WBP_HUD_Quickslots" or name=="WBP_AA_Quickslots") then target=1 end
+    -- A Fixed Opacity panel changes only when its player explicitly asked HUD
+    -- Peek to raise it. The default leaves the selected fixed level untouched.
+    if mode==Modes.FIXED_OPACITY and peekVisible
+        and config.fixedPeekPanels and config.fixedPeekPanels[name]==true then target=1 end
     -- The combat-focus radial selector keeps its own opacity setting;
     -- revealing it for a HUD peek overlays the ordinary player panels.
     if mode==Modes.QUIET_DAWN and peekVisible and name~="CombatFocusPanel" and name~="WBP_HUD_Quickslots_ChangePrompt" and name~="WBP_HUD_SpecialAttackCooldown"
@@ -1185,6 +1198,9 @@ local function panelTarget(name,entry,widget)
     return target
 end
 local function peekPanel(name)
+    if panelModes[name]==Modes.FIXED_OPACITY then
+        return config.fixedPeekPanels and config.fixedPeekPanels[name]==true
+    end
     return panelModes[name]==Modes.QUIET_DAWN and name~="CombatFocusPanel"
         and name~="WBP_HUD_Quickslots_ChangePrompt" and name~="WBP_HUD_SpecialAttackCooldown"
         and name~="WBP_OpenFocusPrompt"
@@ -1483,18 +1499,21 @@ local function step()
         local probe=runtime.quickslotProbe
         runtime.quickslotProbe,runtime.quickslotProbeNext=runtime.quickslotProbeNext,nil
         local widget=valid(hud) and hud.WBP_AA_Quickslots or nil
-        if panelModes.WBP_AA_Quickslots==Modes.VANILLA and valid(widget)
+        if D.debugLogging and panelModes.WBP_AA_Quickslots==Modes.VANILLA and valid(widget)
             and valid(controller) and sameObject(widget:GetOwningPlayer(),controller)
             and sameObject(widget:GetWorld(),world) then
             local current=widget:GetRenderOpacity()
             local previous=runtime.quickslotProbeOpacity
             runtime.quickslotProbeOpacity=current
-            D.event("vanillaQuickslots",
-                "source=%s phase=%s opacity=%.3f previous=%s changed=%s",
+            -- This two-sample route probe is already Debug-only and bounded.
+            -- Do not put either decisive sample through the general per-second
+            -- event limiter: a combat entry can legitimately emit many other
+            -- graph sightings in the same frame, as seen in the session log.
+            D.logInfo("vanillaQuickslots source=%s phase=%s opacity=%.3f previous=%s changed=%s",
                 probe.source,probe.phase,current,previous and string.format("%.3f",previous) or "none",
                 tostring(previous~=nil and math.abs(current-previous)>1e-5))
-        else
-            D.event("vanillaQuickslots","source=%s phase=%s panel=unavailable",probe.source,probe.phase)
+        elseif D.debugLogging then
+            D.logInfo("vanillaQuickslots source=%s phase=%s panel=unavailable",probe.source,probe.phase)
         end
         return false
     end
@@ -1999,12 +2018,19 @@ applyLiveSettings=function(run)
         panelOpacities[name]=updated.panelOpacities[name]
         panelScales[name]=updated.panelScales[name]
     end
-    local changedShowHUDCount=0
+    local changedPeekPanelCount=0
     config.showHUDPanels=config.showHUDPanels or {}
+    config.fixedPeekPanels=config.fixedPeekPanels or {}
     for name,include in pairs(updated.showHUDPanels or {}) do
         if config.showHUDPanels[name]~=include then
             config.showHUDPanels[name]=include
-            changedShowHUDCount=changedShowHUDCount+1
+            changedPeekPanelCount=changedPeekPanelCount+1
+        end
+    end
+    for name,raise in pairs(updated.fixedPeekPanels or {}) do
+        if config.fixedPeekPanels[name]~=raise then
+            config.fixedPeekPanels[name]=raise
+            changedPeekPanelCount=changedPeekPanelCount+1
         end
     end
     for key,value in pairs(updated) do if type(value)~='table' then config[key]=value end end
@@ -2033,7 +2059,7 @@ applyLiveSettings=function(run)
         -- Applying Focus mode while it is already held needs one immediate
         -- event-driven snapshot; it must not wait for a later resource change.
         if manualPeekEnabled and config.peekOnFocusMode then statsPending=true end
-    elseif changedShowHUDCount>0 and manualPeekEnabled and config.peekOnFocusMode then
+    elseif changedPeekPanelCount>0 and manualPeekEnabled and config.peekOnFocusMode then
         -- Re-including a panel while Focus is already active needs the same
         -- one-shot authoritative snapshot; no Focus polling is introduced.
         statsPending=true
@@ -2082,15 +2108,15 @@ applyLiveSettings=function(run)
     -- dynamic-stat pass race the individual changed-panel jobs. This is vital
     -- when both stat panels become Fixed Opacity: they no longer have resource
     -- handlers to produce a later corrective pass.
-    if changedPanelCount>0 or changedShowHUDCount>0 then
+    if changedPanelCount>0 or changedPeekPanelCount>0 then
         fullPending=true
         dirty=true
         if D.debugLogging then
             D.count("settingsPanelReconciliations")
             -- Apply is deliberate and infrequent, so preserve the exact mode
             -- and fixed-opacity values outside the ordinary event-rate limit.
-            D.logInfo("Settings reconciliation: changedPanels=%d changedShowHUD=%d human mode=%d opacity=%.2f vampire mode=%d opacity=%.2f",
-                changedPanelCount,changedShowHUDCount,panelModes.HumanStats,panelOpacities.HumanStats or 0,
+            D.logInfo("Settings reconciliation: changedPanels=%d changedPeekPanels=%d human mode=%d opacity=%.2f vampire mode=%d opacity=%.2f",
+                changedPanelCount,changedPeekPanelCount,panelModes.HumanStats,panelOpacities.HumanStats or 0,
                 panelModes.VampireStats,panelOpacities.VampireStats or 0)
         end
     end

@@ -131,8 +131,9 @@ def main():
             fail(f"{identifier.group(1)} declares Label before Group; keep Group above Label")
 
     # Always Hidden is the fourth stable panel mode. Its controls are a user
-    # interface contract, not just a picker label: opacity and size cannot
-    # affect it, while each Show HUD choice belongs beside its panel.
+    # interface contract, not just a picker label: opacity, size and HUD Peek
+    # behavior cannot affect it. Quiet Dawn and Fixed Opacity each expose only
+    # the panel-local behavior that can change their respective runtime policy.
     for identifier, fields in settings_by_id.items():
         if identifier.startswith("mode_"):
             if fields.get("PresetValues") != "0|1|2|3" or fields.get("PresetLabels") != "Vanilla|Quiet Dawn|Fixed Opacity|Always Hidden":
@@ -145,9 +146,32 @@ def main():
             panel = identifier.removeprefix("showHUD_")
             scale = settings_by_id.get(f"scale_{panel}", {})
             if fields.get("Label") != "HUD Peek Behaviour" or fields.get("PresetLabels") != "Exclude|Include":
-                fail(f"{identifier} must use the panel-local HUD Peek Behaviour control")
+                fail(f"{identifier} must use Quiet Dawn's panel-local Exclude/Include control")
             if fields.get("Group") != scale.get("Group"):
                 fail(f"{identifier} must share {panel}'s panel category")
+            if fields.get("VisibleWhen") != f"mode_{panel}" or fields.get("VisibleValues") != "1":
+                fail(f"{identifier} must appear only in Quiet Dawn mode")
+        if identifier.startswith("fixedPeek_"):
+            panel = identifier.removeprefix("fixedPeek_")
+            scale = settings_by_id.get(f"scale_{panel}", {})
+            if fields.get("Label") != "HUD Peek Behaviour" or fields.get("PresetLabels") != "Don't change|Raise opacity":
+                fail(f"{identifier} must use Fixed Opacity's Don't change/Raise opacity control")
+            if fields.get("Default") != "0":
+                fail(f"{identifier} must default to Don't change so existing fixed panels stay unchanged")
+            if fields.get("Group") != scale.get("Group"):
+                fail(f"{identifier} must share {panel}'s panel category")
+            if fields.get("VisibleWhen") != f"mode_{panel}" or fields.get("VisibleValues") != "2":
+                fail(f"{identifier} must appear only in Fixed Opacity mode")
+
+    for identifier in settings_by_id:
+        if identifier.startswith("showHUD_"):
+            panel = identifier.removeprefix("showHUD_")
+            if f"fixedPeek_{panel}" not in settings_by_id:
+                fail(f"{identifier} has no matching Fixed Opacity HUD Peek Behaviour control")
+        if identifier.startswith("fixedPeek_"):
+            panel = identifier.removeprefix("fixedPeek_")
+            if f"showHUD_{panel}" not in settings_by_id:
+                fail(f"{identifier} has no matching Quiet Dawn HUD Peek Behaviour control")
 
     # Conditional visibility must point at a setting that exists.
     for name, fields in settings:

@@ -90,6 +90,22 @@ return {
     {key="showHUD_WBP_HUD_FocusCharge_Bar", default=1, values={0,1}},
     {key="showHUD_XPBar", default=1, values={0,1}},
     {key="showHUD_WBP_HudTimer", default=1, values={0,1}},
+    -- Fixed panels normally ignore Show HUD. A separate default-off choice
+    -- lets the player explicitly raise one to full opacity during a peek
+    -- without changing any existing fixed-panel behavior.
+    {key="fixedPeek_HumanStats", default=0, values={0,1}},
+    {key="fixedPeek_VampireStats", default=0, values={0,1}},
+    {key="fixedPeek_WBP_Compass", default=0, values={0,1}},
+    {key="fixedPeek_WBP_HUD_QuestInfo", default=0, values={0,1}},
+    {key="fixedPeek_WBP_HUD_Quickslots", default=0, values={0,1}},
+    {key="fixedPeek_Crosshair", default=0, values={0,1}},
+    {key="fixedPeek_WBP_AA_Quickslots", default=0, values={0,1}},
+    {key="fixedPeek_WBP_ControlsLegend", default=0, values={0,1}},
+    {key="fixedPeek_WBP_BuffContainer", default=0, values={0,1}},
+    {key="fixedPeek_WBP_HUD_AbilityCooldownsContainer", default=0, values={0,1}},
+    {key="fixedPeek_WBP_HUD_FocusCharge_Bar", default=0, values={0,1}},
+    {key="fixedPeek_XPBar", default=0, values={0,1}},
+    {key="fixedPeek_WBP_HudTimer", default=0, values={0,1}},
     -- Fading defaults to off so an existing settings.ini keeps its exact
     -- current behaviour; `ensure` simply adds the three missing keys.
     {key="fadeTransitions", default=0, values={0,1}},

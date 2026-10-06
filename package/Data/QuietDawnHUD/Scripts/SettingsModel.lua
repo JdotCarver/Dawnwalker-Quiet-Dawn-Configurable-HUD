@@ -15,8 +15,16 @@ local newestSchema = Timers.compatibleSchema(schema)
 -- its schema declares but the file lacks, so a schema naming a retired key
 -- would write that key back into an already-current file.
 local SHOW_HUD_PREFIX = "showHUD_"
-local preShowHUDSchema = {}
+local FIXED_PEEK_PREFIX = "fixedPeek_"
+-- Fixed-panel Show HUD behavior is the newest generation. Keep a strict
+-- predecessor so an existing current settings.ini can receive its explicit
+-- default-off choices without changing its former fixed-opacity behavior.
+local preFixedPeekSchema = {}
 for _,row in ipairs(newestSchema) do
+    if not row.key:match("^"..FIXED_PEEK_PREFIX) then preFixedPeekSchema[#preFixedPeekSchema+1]=row end
+end
+local preShowHUDSchema = {}
+for _,row in ipairs(preFixedPeekSchema) do
     if not row.key:match("^"..SHOW_HUD_PREFIX) then preShowHUDSchema[#preShowHUDSchema+1]=row end
 end
 local FADE_KEYS = {fadeTransitions=true, fadeInSeconds=true, fadeOutSeconds=true}
@@ -108,9 +116,15 @@ local values, err = Store.load(directory, newestSchema, function()
     for key,value in pairs(effectDefaults) do result[key]=value end
     return result, nil, sources
 end)
--- The per-panel Show HUD controls are newest. A file from the immediately
--- preceding release has every earlier key, so parse that strict predecessor
--- first; the final upgrade below then adds only these default-on inclusions.
+-- Fixed-panel Show HUD choices are newest. Parse the strict predecessor first,
+-- then add their default-off values only after every older migration succeeds.
+if not values and err and err:match('^Missing setting: fixedPeek_') then
+    local text=Store.read(Store.path(directory))
+    if text then values,err=Store.parse(text,preFixedPeekSchema) end
+end
+-- The per-panel Quiet Dawn inclusion controls precede fixed-panel choices. A
+-- file from that release has every earlier key, so parse its strict predecessor
+-- first; the final upgrade below then adds its default-on inclusions.
 if not values and err and err:match('^Missing setting: showHUD_') then
     local text=Store.read(Store.path(directory))
     if text then values,err=Store.parse(text,preShowHUDSchema) end
@@ -253,7 +267,15 @@ if values then
         if row.key:match("^"..SHOW_HUD_PREFIX) then defaults[row.key]=row.default end
     end
     values,err=dofile(directory..'UE4SSCommonSettingsUpgrade.lua').ensure(
-        Store,Store.path(directory),newestSchema,defaults,'show-hud-inclusions')
+        Store,Store.path(directory),preFixedPeekSchema,defaults,'show-hud-inclusions')
+end
+if values then
+    local defaults={}
+    for _,row in ipairs(newestSchema) do
+        if row.key:match("^"..FIXED_PEEK_PREFIX) then defaults[row.key]=row.default end
+    end
+    values,err=dofile(directory..'UE4SSCommonSettingsUpgrade.lua').ensure(
+        Store,Store.path(directory),newestSchema,defaults,'fixed-hud-peek')
 end
 if values then
     -- Fixed Opacity at exactly zero already means "never show". Preserve that
@@ -301,6 +323,7 @@ values.panelModes={}
 values.panelOpacities={}
 values.panelScales={}
 values.showHUDPanels={}
+values.fixedPeekPanels={}
 for _, p in ipairs(panels) do
     values.panelScales[p]=values['scale_'..p]/100
     values.panelModes[p]=values['mode_'..p]
@@ -309,6 +332,8 @@ for _, p in ipairs(panels) do
         or (p=='WBP_Compass' and values.compassOpacity or values['opacity_'..p]/100)
     local include=values['showHUD_'..p]
     if include~=nil then values.showHUDPanels[p]=include==1 end
+    local raise=values['fixedPeek_'..p]
+    if raise~=nil then values.fixedPeekPanels[p]=raise==1 end
 end
 -- Override only the runtime panel policy. Saved mode/opacity/size remain intact
 -- and resume when the player-effect toggle is turned off.

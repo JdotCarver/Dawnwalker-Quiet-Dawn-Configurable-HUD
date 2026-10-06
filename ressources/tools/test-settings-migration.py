@@ -202,36 +202,80 @@ def main():
 
     # A settings.ini from before per-panel Show HUD inclusion: all existing
     # settings must parse under the strict predecessor, then add thirteen
-    # default-on choices without changing any established peek behavior.
+    # default-on Quiet Dawn choices without changing established behavior.
+    # Fixed Opacity choices are later and default off for the same reason.
     rows = {row["key"]: row for row in schema.values()}
     show_hud_keys = tuple(key for key in rows if key.startswith("showHUD_"))
+    fixed_peek_keys = tuple(key for key in rows if key.startswith("fixedPeek_"))
     pre_show_hud = "[Settings]\n" + "".join(
-        f"{key} = {row['default']}\n" for key, row in rows.items() if key not in show_hud_keys
+        f"{key} = {row['default']}\n"
+        for key, row in rows.items()
+        if key not in show_hud_keys and key not in fixed_peek_keys
     )
-    pre_show_schema = lua.table_from([row for row in schema.values() if not row["key"].startswith("showHUD_")])
+    pre_show_schema = lua.table_from([
+        row for row in schema.values()
+        if not row["key"].startswith("showHUD_") and not row["key"].startswith("fixedPeek_")
+    ])
+    pre_fixed_peek_schema = lua.table_from([
+        row for row in schema.values() if not row["key"].startswith("fixedPeek_")
+    ])
     values, error = parse(pre_show_hud, pre_show_schema)
     check(
         "a pre-Show-HUD settings.ini parses under the strict predecessor",
         values is not None,
         f"error={error!r}",
     )
-    values, error = ensure_dry_run(pre_show_hud, schema, {key: 1 for key in show_hud_keys})
+    values, error = ensure_dry_run(pre_show_hud, pre_fixed_peek_schema, {key: 1 for key in show_hud_keys})
     check(
         "default-on Show HUD inclusions upgrade instead of rejecting existing settings",
         values is not None,
         f"error={error!r}",
     )
+    pre_fixed_peek = "[Settings]\n" + "".join(
+        f"{key} = {row['default']}\n" for key, row in rows.items() if key not in fixed_peek_keys
+    )
+    values, error = ensure_dry_run(pre_fixed_peek, schema, {key: 0 for key in fixed_peek_keys})
+    check(
+        "default-off Fixed Opacity HUD Peek choices preserve existing fixed-panel behavior",
+        values is not None,
+        f"error={error!r}",
+    )
     settings_model = (SCRIPTS / "SettingsModel.lua").read_text()
     check(
-        "SettingsModel starts the final upgrade from the strict pre-Show-HUD generation",
+        "SettingsModel starts the Show HUD upgrade from the strict pre-Show-HUD generation",
         "err and err:match('^Missing setting: showHUD_')" in settings_model
         and "Store.parse(text,preShowHUDSchema)" in settings_model
         and "'show-hud-inclusions'" in settings_model,
     )
     check(
-        "Show HUD inclusion defaults preserve every existing peek target",
+        "SettingsModel starts the Fixed Opacity HUD Peek upgrade from its strict predecessor",
+        "err and err:match('^Missing setting: fixedPeek_')" in settings_model
+        and "Store.parse(text,preFixedPeekSchema)" in settings_model
+        and "'fixed-hud-peek'" in settings_model,
+    )
+    check(
+        "Show HUD inclusion defaults preserve every existing Quiet Dawn peek target",
         len(show_hud_keys) == 13 and all(rows[key]["default"] == 1 for key in show_hud_keys),
         f"keys={show_hud_keys!r}",
+    )
+    check(
+        "Fixed Opacity raise choices are default-off for every eligible panel",
+        len(fixed_peek_keys) == 13 and all(rows[key]["default"] == 0 for key in fixed_peek_keys),
+        f"keys={fixed_peek_keys!r}",
+    )
+    model = load_module(str(SCRIPTS / "SettingsModel.lua"))
+    numeric_defaults = lua.table_from({key: row["default"] for key, row in rows.items()})
+    converted = model.convert(numeric_defaults)
+    check(
+        "SettingsModel exposes default Fixed Opacity HUD Peek policy without enabling it",
+        converted["fixedPeekPanels"]["HumanStats"] is False,
+    )
+    numeric_raise = lua.table_from({key: row["default"] for key, row in rows.items()})
+    numeric_raise["fixedPeek_HumanStats"] = 1
+    converted = model.convert(numeric_raise)
+    check(
+        "SettingsModel exposes an explicit Fixed Opacity raise choice",
+        converted["fixedPeekPanels"]["HumanStats"] is True,
     )
     check(
         "SettingsModel preserves Fixed 0% output through the final Always Hidden upgrade",
