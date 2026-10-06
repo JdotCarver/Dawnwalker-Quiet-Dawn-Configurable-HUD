@@ -56,8 +56,8 @@ set -uo pipefail
 # (It sat in tools/ in the previous project; a stale "/.." silently rooted every
 # check at ressources/ and made the integrity checks pass against nothing.)
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-BRANCH="arena/01a10d4b-dawnwalker-quiet-dawn-configur"
-BASE_COMMIT="a2b34300fb553b1a7849aacd64192701c67c6353"
+BRANCH="arena/8dd537f7-dawnwalker-quiet-dawn-configur"
+BASE_COMMIT="49d0f635849b114fb6f353f76baa6156006d05ae"
 
 # Files whose absence means "the snapshot restore is incomplete".
 # Keep this in sync when load-bearing files appear.

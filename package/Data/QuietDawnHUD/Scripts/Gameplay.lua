@@ -1086,6 +1086,7 @@ local function panelStep(name)
         -- The panels these transitions referred to are gone with the world.
         fade.reset()
         runtime.fadeWave,runtime.fadeWaveSize={},0
+        runtime.fadeInFlight=false
         panelRetries,livePanels={},{}
         hudAddress=nil
         peekWidgetAddress,peekControllerAddress=nil,nil
@@ -1386,18 +1387,22 @@ end
 -- hard ceiling of 200 locals per chunk.
 runtime.workerIdleMs, runtime.workerFadeMs = 16, 1
 -- Consecutive wakeups that found the same frame before we stop believing
--- the game is still drawing. Four is comfortably more than any scheduling
--- jitter at 1 ms, and well under a frame at any sane refresh rate.
+-- the game is still drawing. The backoff protects a paused or backgrounded
+-- game from a 1 ms wake loop. It may be too eager on a high-refresh display,
+-- so Debug counts every fade that reaches it instead of treating the threshold
+-- as an unexamined performance fact.
 runtime.stalledFrameLimit = 4
 function runtime.workerDelay()
     -- Frames have stopped: the console is open, or the window is in the
     -- background. Spinning at 1 ms cannot advance a fade that is waiting on
     -- a frame counter which is not moving.
     if (runtime.sameFrameStreak or 0) >= runtime.stalledFrameLimit then
+        if runtime.fadeInFlight and D.debugLogging then D.count("fadeFrameGateBackoffs") end
         return runtime.workerIdleMs
     end
     local ok,fading = pcall(fade.pending)
-    return (ok and fading) and runtime.workerFadeMs or runtime.workerIdleMs
+    runtime.fadeInFlight=ok and fading or false
+    return runtime.fadeInFlight and runtime.workerFadeMs or runtime.workerIdleMs
 end
 wake = function(statsOnly)
     if not statsOnly then
@@ -1455,8 +1460,11 @@ wake = function(statsOnly)
                 D.count("fadeSteps")
                 local skipped = frame - lastFrame - 1
                 if skipped > 0 then
-                    D.count("fadeFramesSkipped")
-                    D.event("fadeGap","%d frame(s) passed without a fade step",skipped)
+                    -- Keep exact aggregate evidence in the periodic summary.
+                    -- A per-gap event would flood the rate-limited event log
+                    -- during the very stutter this diagnostic investigates.
+                    D.count("fadeFrameGaps")
+                    D.count("fadeFramesSkipped",skipped)
                 end
             end
             lastFrame=frame
