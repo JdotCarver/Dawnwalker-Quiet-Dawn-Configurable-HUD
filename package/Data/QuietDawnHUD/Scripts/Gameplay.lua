@@ -180,7 +180,7 @@ local frameClock, lastFrame
 -- at one per frame and preloading claw mark assets (observed at up to 137 ms
 -- a slice) while the HUD sat fully visible. Elements only disappeared at the
 -- first refresh afterwards, which is exactly what it looked like.
-local runtime = {panelsSettled = false, peekFocusExitAt = nil}
+local runtime = {panelsSettled = false, peekFocusExitAt = nil, startupPanels = {}}
 -- Panels whose fade has been deferred so the whole group can start together.
 -- See writePanel and the flush in step(). On the runtime table rather than as
 -- locals because this file sits near Lua's 200-local ceiling.
@@ -745,6 +745,17 @@ local function accept(object)
     if not sameObject(object,hud) or not sameObject(objectWorld,world) then
         hud, world, panels, absent = object, objectWorld, {}, {}
         panelRetries={}
+        -- A newly adopted HUD should never wait for a decorative fade before
+        -- honouring Quiet Dawn's baseline rules. Each managed panel stays in
+        -- this set until its first successful write, so widgets the game
+        -- constructs late during the same load also hide immediately.
+        runtime.panelsSettled=false
+        runtime.startupPanels={}
+        for _,name in ipairs(names) do runtime.startupPanels[name]=true end
+        fade.reset()
+        runtime.fadeWave,runtime.fadeWaveSize={},0
+        runtime.fadeWaveLast,runtime.fadeWaveIdle=0,0
+        runtime.fadeInFlight=false
         peekDirty,statDirty,refreshDirty=false,false,false
         if timeWatcher then timeWatcher.reset() end
         lastPawnAddress, lastCombatAddress, previousHealth, previousStamina = nil, nil, nil, nil
@@ -928,6 +939,23 @@ local function peekPanel(name)
         and name~="WBP_OpenFocusPrompt"
 end
 local function writePanel(name,entry,target)
+    -- A HUD can keep constructing named panels after Quiet Dawn has accepted
+    -- its root. The user chose immediate baseline hiding on load, so each
+    -- first-seen panel lands on its rule-derived target without entering a
+    -- fade wave. Normal reveals and all later visibility changes still fade.
+    if runtime.startupPanels[name] then
+        fade.forget(name)
+        local wrote=panelOpacity.apply(entry.lease,target)
+        runtime.startupPanels[name]=nil
+        if wrote then
+            entry.opacityOwned=true
+            if D.debugLogging then
+                D.count("startupPanelHides")
+                D.count("panelWrites")
+            end
+        end
+        return wrote
+    end
     -- Panels are visited one per worker call, so a transition started inline
     -- here would start at a different moment for every panel: on the last
     -- load they began about 50 ms apart and the HUD dissolved raggedly, one
@@ -1045,6 +1073,7 @@ local function panelStep(name)
                 panels[name]=entry
             end
             if mode==0 then
+                runtime.startupPanels[name]=nil
                 if entry.opacityOwned then
                     local restored=panelOpacity.restore(entry.lease)
                     entry.opacityOwned=false
@@ -1061,6 +1090,10 @@ local function panelStep(name)
                 peekWidgetAddress,peekControllerAddress=object:GetAddress(),controllerAddress
             end
             local target=panelTarget(name,entry,widget)
+            if runtime.startupPanels[name] and math.abs(current-target)<=1e-5 then
+                -- The game already landed on this panel's initial target.
+                runtime.startupPanels[name]=nil
+            end
             -- UWidget stores float opacity: e.g. 0.4 returns 0.400000006.
             -- Match the session journal's tolerance over the opacity range.
             local wroteOpacity=false

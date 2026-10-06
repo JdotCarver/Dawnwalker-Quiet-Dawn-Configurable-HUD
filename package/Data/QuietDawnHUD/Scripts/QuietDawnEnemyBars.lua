@@ -46,8 +46,10 @@ local function settingFor(field)
     return "hideEnemyHealthBars"
 end
 
--- How many times a single field waits for its widget before being reported.
-local MAX_READINESS_ATTEMPTS = 120
+-- How many frames a child may need to appear after its owning bar fires a
+-- lifecycle event. More retries merely recheck a permanently absent widget,
+-- delaying every other HUD job without making that widget more likely to exist.
+local MAX_READINESS_ATTEMPTS = 8
 -- Retries for a lifecycle hook that will not register.
 local MAX_HOOK_ATTEMPTS = 12
 -- Queue bound, and the per-spec cache of recently seen bars.
@@ -81,8 +83,8 @@ function M.new(context)
     end
 
     local specs = {
-        {path=CHARACTER_BAR, fields=fieldsFor(1), events={"Construct","UpdateTarget"}},
-        {path=BOSS_BAR, fields=fieldsFor(2), events={"Update Owner"}},
+        {path=CHARACTER_BAR, className="WBP_CombatCharacterBar_C", fields=fieldsFor(1), events={"Construct","UpdateTarget"}},
+        {path=BOSS_BAR, className="WBP_Combat_BossBar_C", fields=fieldsFor(2), events={"Update Owner"}},
     }
 
     local queue, queued, first, last = {}, {}, 1, 0
@@ -143,6 +145,18 @@ function M.new(context)
         if object==nil then return "<nil>" end
         local named,name = pcall(function() return object:GetFullName() end)
         return named and tostring(name) or "<name unavailable>"
+    end
+
+    -- UE4SS can deliver an object from an unrelated Blueprint while a class
+    -- construction notification is still being routed. A valid UObject is not
+    -- necessarily a UserWidget: a waypoint, for example, has no callable
+    -- GetOwningPlayer method. Verify the exact generated widget class before
+    -- any UMG-specific calls, then drop the job rather than retrying it.
+    local function belongsToSpec(object, spec)
+        local ok,className = pcall(function()
+            return object:GetClass():GetFName():ToString()
+        end)
+        return ok and className==spec.className
     end
 
     local api = {}
@@ -250,6 +264,10 @@ function M.new(context)
         local keep = false
         local success,reason = pcall(function()
             if not valid(object) then return end
+            if not belongsToSpec(object,spec) then
+                if D.debugLogging then D.count("enemyHealthForeignObjectSkipped") end
+                return
+            end
             -- A class default object is not a live widget: no world, no
             -- owning player, so the readiness checks below can never pass
             -- and it would burn its whole retry budget on every field.
