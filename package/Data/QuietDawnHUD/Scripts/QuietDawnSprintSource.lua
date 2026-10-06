@@ -34,7 +34,12 @@ function M.new(api,D,session)
     end
     function self.classify(object)
         if not ready then return nil end
-        return api._QDNIsSprintPrompt(object:GetFullName(),object:GetAddress())
+        local address=object:GetAddress()
+        if type(api._QDNCachedSprintPrompt)=='function' then
+            local result=api._QDNCachedSprintPrompt(address)
+            if result>=0 then return result==1 end
+        end
+        return api._QDNIsSprintPrompt(object:GetFullName(),address)
     end
     session.onClose(function()
         pending=false;ready=false

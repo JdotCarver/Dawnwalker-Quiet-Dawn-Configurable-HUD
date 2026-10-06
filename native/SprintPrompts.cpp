@@ -19,6 +19,7 @@
 #include <algorithm>
 #include <cstring>
 #include <stdexcept>
+#include <optional>
 
 namespace QuietDawn::SprintPrompts {
 namespace {
@@ -107,12 +108,22 @@ struct State final:FUObjectDeleteListener {
     std::array<FProperty*,4> queryFields{};
     FProperty *text{},*table{},*key{};FBoolProperty* result{};
     std::array<ObjectIdentity,4> owners{};
+    struct Prompt { ObjectIdentity widget,owner;FProperty* text{}; };
+    std::array<Prompt,8> prompts{};size_t nextPrompt{};
     ObjectInterest interest;
     std::array<Frame,8> frames{};size_t depth{},overflow{};
     uint64_t calls{},hidden{},restored{},failures{},nanos{};
+    void clearPrompt(Prompt& prompt) {
+        if(prompt.widget.address) interest.remove(prompt.widget.index);
+        if(prompt.owner.address) interest.remove(prompt.owner.index);
+        prompt={};
+    }
+    void clearPrompts() { for(auto& prompt:prompts) clearPrompt(prompt);nextPrompt=0; }
     void NotifyUObjectDeleted(const UObjectBase* object,int32 index) override {
         if(!interest.contains(index)) return;
         std::lock_guard lock(mutex);
+        for(auto& prompt:prompts) if((prompt.widget.index==index && prompt.widget.address==reinterpret_cast<uintptr_t>(object)) ||
+            (prompt.owner.index==index && prompt.owner.address==reinterpret_cast<uintptr_t>(object))) clearPrompt(prompt);
         for(auto& owner:owners) if(owner.invalidate(index,reinterpret_cast<uintptr_t>(object))) {
             ready=false;enabled=false;
         }
@@ -244,15 +255,20 @@ void prepare() {
     state.show=show;state.ready=true;
 }
 
-bool match(std::string_view fullName,uintptr_t expectedAddress) {
+std::optional<State::Prompt> cachedPrompt(uintptr_t address) {
+    std::lock_guard lock(state.mutex);
+    for(auto& prompt:state.prompts) if(prompt.widget.address==address && address) {
+        auto widget=resolve(prompt.widget);auto owner=resolve(prompt.owner);
+        if(widget && owner && widget->GetClassPrivate()==owner) return prompt;
+        state.clearPrompt(prompt);
+    }
+    return {};
+}
+bool queryPrompt(const State::Prompt& prompt) {
     require(state.ready.load(),"Native prompt identity is not ready");
-    const auto space=fullName.find(' ');require(space!=std::string_view::npos,"Expected full prompt object name");
-    const auto path=fullName.substr(space+1);const StringType wide=to_wstring(path);
-    auto widget=UObjectGlobals::StaticFindObject<UObject*>(nullptr,nullptr,wide);
-    if(!identify(widget).address || reinterpret_cast<uintptr_t>(widget)!=expectedAddress) return false;
-    if(widget->GetClassPrivate()->GetPathName()!=widgetPath) return false;
-    auto property=field(widget->GetClassPrivate(),L"Prompt Text");bounds(property,widget->GetClassPrivate()->GetPropertiesSize());
-    require(type(property)==STR("TextProperty") && property->GetSize()==state.text->GetSize(),"Unexpected widget prompt text layout");
+    auto widget=resolve(prompt.widget);auto owner=resolve(prompt.owner);
+    if(!widget || !owner || widget->GetClassPrivate()!=owner) return false;
+    auto property=prompt.text;
     for(const auto& identity:state.owners) require(resolve(identity),"Native prompt metadata is no longer valid");
     alignas(16) std::array<uint8_t,256> params{};
     size_t initialized=0;
@@ -272,6 +288,26 @@ bool match(std::string_view fullName,uintptr_t expectedAddress) {
         cleanup();return found;
     } catch(...) { cleanup();throw; }
 }
+bool match(std::string_view fullName,uintptr_t expectedAddress) {
+    require(state.ready.load(),"Native prompt identity is not ready");
+    if(auto prompt=cachedPrompt(expectedAddress)) return queryPrompt(*prompt);
+    const auto space=fullName.find(' ');require(space!=std::string_view::npos,"Expected full prompt object name");
+    const auto path=fullName.substr(space+1);const StringType wide=to_wstring(path);
+    auto widget=UObjectGlobals::StaticFindObject<UObject*>(nullptr,nullptr,wide);
+    auto identity=identify(widget);
+    if(!identity.address || identity.address!=expectedAddress) return false;
+    auto owner=widget->GetClassPrivate();auto ownerIdentity=identify(owner);
+    if(!ownerIdentity.address || owner->GetPathName()!=widgetPath) return false;
+    auto property=field(owner,L"Prompt Text");bounds(property,owner->GetPropertiesSize());
+    require(type(property)==STR("TextProperty") && property->GetSize()==state.text->GetSize(),"Unexpected widget prompt text layout");
+    State::Prompt prompt{identity,ownerIdentity,property};
+    {
+        std::lock_guard lock(state.mutex);
+        auto& entry=state.prompts[state.nextPrompt++%state.prompts.size()];state.clearPrompt(entry);
+        entry=prompt;state.interest.add(identity.index);state.interest.add(ownerIdentity.index);
+    }
+    return queryPrompt(prompt);
+}
 }
 
 void registerLua(RC::LuaMadeSimple::Lua& lua) {
@@ -284,12 +320,17 @@ void registerLua(RC::LuaMadeSimple::Lua& lua) {
             Output::send(STR("[Quiet Dawn native] Sprint prompts: calls={} suppressed={} restored={} failures={} preMs={}\n"),
                 state.calls,state.hidden,state.restored,state.failures,state.nanos/1e6);
         }
-        if(!enabled) { state.calls=state.hidden=state.restored=state.failures=state.nanos=0;state.warned=false; }
+        if(!enabled) { std::lock_guard lock(state.mutex);state.clearPrompts();state.calls=state.hidden=state.restored=state.failures=state.nanos=0;state.warned=false; }
         return 0;
     });
     lua.register_function("_QDNIsSprintPrompt",[](const Lua& l) {
         gameThread();const auto name=l.get_string();const auto address=l.get_integer();
         l.set_bool(match(name,static_cast<uintptr_t>(address)));return 1;
+    });
+    lua.register_function("_QDNCachedSprintPrompt",[](const Lua& l) {
+        gameThread();const auto address=l.get_integer();
+        const auto prompt=state.ready.load() ? cachedPrompt(static_cast<uintptr_t>(address)) : std::nullopt;
+        l.set_integer(prompt ? (queryPrompt(*prompt) ? 1 : 0) : -1);return 1;
     });
 }
 void stop() noexcept { state.enabled=false; }

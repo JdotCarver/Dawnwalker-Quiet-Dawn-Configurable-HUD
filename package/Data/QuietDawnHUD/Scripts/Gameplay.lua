@@ -579,7 +579,8 @@ end
 healthStep=D.wrap("enemyHealth",healthStep)
 local healthTurn=false
 local sprintSource=require("QuietDawnSprintSource").new({
-    _QDNSprintConfigure=_QDNSprintConfigure,_QDNIsSprintPrompt=_QDNIsSprintPrompt},D,Session)
+    _QDNSprintConfigure=_QDNSprintConfigure,_QDNIsSprintPrompt=_QDNIsSprintPrompt,
+    _QDNCachedSprintPrompt=_QDNCachedSprintPrompt},D,Session)
 sprintSource.configure(config.hideSprintPrompt)
 local sprintPrompts=config.hideSprintPrompt and require("QuietDawnSprintPrompt").new({
     StaticFindObject=StaticFindObject,FName=FName,opacity=opacity,D=D,source=sprintSource}) or nil

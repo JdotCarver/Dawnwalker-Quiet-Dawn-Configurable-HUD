@@ -137,3 +137,9 @@ Settings are prepared when the game starts and are available from the main menu 
 Only affected panels, resource reveals, combat cues, enemy visuals or prompts are queued. Repeated size changes use the original scale and pivot; returning to 100% restores them. Widget caches and native event bindings remain in place for ordinary changes.
 
 Logging is the final, sole diagnostic control. It changes immediately; verbose logging is Off by default. Logs are written to `Dawnwalker/Binaries/Win64/ue4ss/UE4SS.log`. Settings are never polled.
+
+## Performance and diagnostics
+
+Sprint/Haste filtering reuses validated widget bindings and still checks the current text on each relevant update. Bindings are discarded when widgets or their classes are deleted and when filtering stops.
+
+Enable the final **Logging** setting for diagnostics in `Dawnwalker/Binaries/Win64/ue4ss/UE4SS.log`. Leave it Off for normal play. Timings and offline checks do not establish an in-game frame-rate improvement.

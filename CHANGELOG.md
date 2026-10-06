@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Reuse validated sprint-prompt widgets instead of repeatedly searching for them, while continuing to recognize changing Sprint, Haste and interaction text.
 - Hide red scratch marks from ordinary vampire claw attacks, including cases missed by the previous claw-mark filter.
 - Give vampire claw hit marks and Shredded Touch marks separate settings.
 - Add Hide Crimson Rush effect to hide Crimson Rush's bright red arm effect in both forms.
