@@ -14,14 +14,14 @@
   },
   "runtimeSources": {
     "package/Data/QuietDawnHUD/Scripts/dmm_api.lua": "6bb667bffc543d1c5c1b36ab6da66c621d6c81c9ee46f94f0f6339cae9cc884c",
-    "package/Data/QuietDawnHUD/Scripts/Gameplay.lua": "2fb125c337b23ba9563a484c9e60fa350b6d28e18d4d8a73a572a3786b6fbb64",
+    "package/Data/QuietDawnHUD/Scripts/Gameplay.lua": "aa45f5f7eb145ed3658dc310f0cfc21bb9d2a707208b409a0c16264fad10d034",
     "package/Data/QuietDawnHUD/Scripts/LiveSettings.lua": "5f8caee2cd0c537fdc8077b3ad4db6a0a7a02626b418039e3ae476c5d4a44e3d",
     "package/Data/QuietDawnHUD/Scripts/main.lua": "e28c50a36ada47dbb21a2fe1aa2a4cd478fdc77fd490bae8019b253b0b1a04fd",
     "package/Data/QuietDawnHUD/Scripts/MenuSettings.lua": "944cc45747f5f8ca5b562b5830c29df7593307349609c6907a4db89bb2d15451",
-    "package/Data/QuietDawnHUD/Scripts/QuietDawnClawMarks.lua": "1d7698a2ffc89fdb0c608746df3669bc90365ed649d1e924709069eca6e7fce7",
+    "package/Data/QuietDawnHUD/Scripts/QuietDawnClawMarks.lua": "2cf90638acab4952790dfcc862d8cfce565ee89dbd1b5c15f1e94fe7f95b246e",
     "package/Data/QuietDawnHUD/Scripts/QuietDawnCombatCues.lua": "9fdc729e563dca0c113af62a10df963ad0e39485d7a4a18ed0543093e041de85",
     "package/Data/QuietDawnHUD/Scripts/QuietDawnDefaults.lua": "8c7a3715b394e9c782fbb8c8e680333498a54e922ee073287c8c303650e9ed5d",
-    "package/Data/QuietDawnHUD/Scripts/QuietDawnDiagnostics.lua": "aa56a06debb779fa3f811e51df792d633a90fa56a1d8aa91b91e4dc4f694aaa4",
+    "package/Data/QuietDawnHUD/Scripts/QuietDawnDiagnostics.lua": "103909c23ac0460af7f1c9fb824b2844b2e7262f76139af56f7cd4aa98a068b8",
     "package/Data/QuietDawnHUD/Scripts/QuietDawnNative.lua": "a3afdcfc07c7658930ca1fe631118de000a7a4ff344830f907d09de7b9117073",
     "package/Data/QuietDawnHUD/Scripts/QuietDawnPanelScale.lua": "295c319cccbfbd952c301e46c1675b1ca1c89377ed69d3564ca85eb856f35bf2",
     "package/Data/QuietDawnHUD/Scripts/QuietDawnSprintPrompt.lua": "6fadb34612163f7577fc61f1ed7f81b27202c9439e82da1630ebf4ae01e258c5",
@@ -38,7 +38,8 @@
     "package/Data/QuietDawnHUD/Scripts/QuietDawnSprintSource.lua": "6396524baf031641178ca5105f0a7658268263aa5de230382a9caef1b317ede5",
     "package/Data/QuietDawnHUD/Scripts/QuietDawnPanelOpacity.lua": "7738a50cfeeab23af774fe2a98a5d1012c4dd8e0961889a0f51e48222f120e75",
     "package/Data/QuietDawnHUD/Scripts/QuietDawnMarkerOwner.lua": "46fca96986d98bc2110c75b506f49a70d3b88ba482d5ac396934a3c48e817351",
-    "package/Data/QuietDawnHUD/Scripts/QuietDawnPlayerEffects.lua": "592f28e7a33b584ac139b6721e4f13ce85fd00a7b652af68a276a089f600cfb8"
+    "package/Data/QuietDawnHUD/Scripts/QuietDawnPlayerEffects.lua": "592f28e7a33b584ac139b6721e4f13ce85fd00a7b652af68a276a089f600cfb8",
+    "package/Data/QuietDawnHUD/Scripts/QuietDawnClawHits.lua": "c9312fe6ab122cea821698976eceaa2def3b0c9a65f96e112528d9d96d29f55d"
   },
   "nativeSources": {
     "native/BUILD.md": "2cb0ee5018f20d0eb6d57b3876fb58f6d88fcc1540e73c3dd928baf4e8d34f79",

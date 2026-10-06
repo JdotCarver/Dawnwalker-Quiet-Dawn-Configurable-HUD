@@ -64,7 +64,7 @@ Older settings gain missing mode keys without changing opacity values, comments,
 
 ## Claw slash marks
 
-**Hide claw slash marks** hides the red Shredded Touch slash effects on enemies, including the sword variant. It defaults to On and changes only these visuals; damage, bleeding and ordinary blood effects keep their game behavior. Turn it Off under **Combat / Enemies**, or set `hideClawSlashMarks = 0` in `settings.ini`, to show the marks again. Apply to save and update the active game.
+**Hide claw slash marks** hides the red scratch effects from ordinary vampire claw hits and Shredded Touch, including its sword variant. It defaults to On. Damage, bleeding, swing trails and separate hit sprays keep their game behavior. Turn it Off under **Combat / Enemies**, or set `hideClawSlashMarks = 0` in `settings.ini`, to show the marks again. Apply to save and update the active game.
 
 Existing settings gain only the missing `hideClawSlashMarks = 1` entry, with a `settings.ini.before-claw-slash-marks` backup. Existing preferences, comments and older backups are preserved.
 
@@ -180,7 +180,7 @@ When upgrading an older Quiet Dawn package, back up `Scripts/QuietDawnConfig.lua
 
 **Show HUD** uses the game's **Toggle Controls Legend** action. Hold **Menu (Xbox)**, **Options (PlayStation)**, or **L (keyboard)** by default. To change the controller button, edit **Toggle Controls Legend** in Controller Tweaks and Remap. For keyboard, change the game's Controls Legend binding. Quiet Dawn follows the remapped action. Show HUD duration controls the time the HUD remains visible after activation. Show HUD brings eligible panels up together and restores their automatic visibility together when the peek ends. Panels with an active resource alert, cooldown or other independent reveal keep their own visibility rules. Only panels in Quiet Dawn mode participate in peek. The combat-focus action wheel remains hidden in Quiet Dawn mode; Vanilla and Fixed opacity keep their own behavior.
 
-**Logging** is the final optional menu setting and the only diagnostic control; manually set `debugLogging` to `0` (Off) or `1` (On). Leave it Off for normal play; On writes troubleshooting details to `Dawnwalker/Binaries/Win64/ue4ss/UE4SS.log`. Slash-effect diagnostics include preparation, retention and restoration counts, bounded failures and `clawMarks` worker timings. Cached panel updates also report aggregate `visibility` timings and peek/resource/refresh commit counts. These timings overlap the main worker timing.
+**Logging** is the final optional menu setting and the only diagnostic control; manually set `debugLogging` to `0` (Off) or `1` (On). Leave it Off for normal play; On writes troubleshooting details to `Dawnwalker/Binaries/Win64/ue4ss/UE4SS.log`. Slash-effect diagnostics include preparation, retention and restoration counts, bounded failures and `clawMarks` worker timings. Ordinary claw hits additionally report hook readiness, visibility writes/restores and aggregate `clawHits` callback timings. Cached panel updates also report aggregate `visibility` timings and peek/resource/refresh commit counts. These timings overlap the main worker timing.
 
 With Logging On, marker diagnostics also report unavailable ownership and skipped marker updates. Readiness retries stop after eight attempts and resume on a later marker event; these messages remain quiet with Logging Off.
 

@@ -1404,7 +1404,9 @@ applyLiveSettings=function(run)
     end
     if changed.hideClawSlashMarks then
         if not clawMarks and config.hideClawSlashMarks then
-            clawMarks=require('QuietDawnClawMarks').new(D,Session,function()wake('clawMarks')end)
+            clawMarks=require('QuietDawnClawMarks').new(D,Session,function()wake('clawMarks')end,function()
+                if valid(controller) and valid(world) then return controller.Pawn,world end
+            end)
         end
         if clawMarks then clawMarks.configure(config.hideClawSlashMarks) end
     end
@@ -1439,7 +1441,9 @@ if config.hidePlayerCombatEffects then
     end)
 end
 if config.hideClawSlashMarks then
-    clawMarks=require('QuietDawnClawMarks').new(D,Session,function()wake('clawMarks')end)
+    clawMarks=require('QuietDawnClawMarks').new(D,Session,function()wake('clawMarks')end,function()
+        if valid(controller) and valid(world) then return controller.Pawn,world end
+    end)
 end
 local subscribed = pcall(NotifyOnNewObject, ROOT, function(object)
     candidate=object -- construction is not readiness: defer all object reads

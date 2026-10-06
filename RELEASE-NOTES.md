@@ -2,7 +2,7 @@
 
 ## Development changes
 
-- Improve hiding of red claw slash marks on enemies when combat cues were already loaded.
+- Hide red scratch marks from ordinary vampire claw attacks, including cases missed by the previous claw-mark filter.
 - Add Hide Crimson Rush effect to hide Crimson Rush's bright red arm effect in both forms.
 
 ## 1.1.3

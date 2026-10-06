@@ -1,8 +1,9 @@
 -- Quiet Dawn - Configurable HUD. MIT.
 -- Two exact cue classes, including cue objects created before the defaults
--- were changed. No per-hit hooks or recurring discovery.
+-- were changed. Direct weapon hit effects have their own scoped observer.
 local M = {}
-function M.new(D, session, wake)
+function M.new(D, session, wake, context)
+    local hits=require('QuietDawnClawHits').new(D,session,context)
     local root='/Game/_Dawnwalker/Stats/GameplayCues/Shred/'
     local effects='/Game/_Dawnwalker/VFX/03_ShreddedTouch/'
     local entries={
@@ -163,6 +164,7 @@ function M.new(D, session, wake)
     end
     local self={}
     function self.configure(value)
+        hits.configure(value)
         enabled=value==true
         instanceQueue={}
         for _,item in ipairs(instances) do item.restorePending=not enabled and item.record.owned or false end
@@ -173,12 +175,14 @@ function M.new(D, session, wake)
         end
     end
     function self.pending()
+        if hits.pending() then return true end
         for _,item in ipairs(instances) do if item.restorePending then return true end end
         if #instanceQueue>0 then return true end
         for _,entry in ipairs(entries) do if entry.discover or entry.restorePending or entry.pending then return true end end
         return false
     end
     function self.step()
+        if hits.pending() then hits.step();return end
         -- Restore instances before releasing the original asset's default lease.
         for _,item in ipairs(instances) do
             if item.restorePending then
