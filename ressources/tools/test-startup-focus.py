@@ -132,6 +132,8 @@ def main():
     check("live panel mode changes request one complete reconciliation", "if changedPanelCount>0 then\n        fullPending=true\n        dirty=true" in gameplay)
     check("the Focus prompt class is logged before its graph hook is added", "Focus probe: promptClass=" in gameplay)
     check("the verified Focus prompt graph wakes a pawn snapshot on entry", "runtime.focusPromptGraph" in gameplay and "function runtime.focusPromptEvent" in gameplay and "focusPromptWakes" in gameplay)
+    check("the Focus graph is queued for every enabled Show HUD trigger, not only Focus", "if manualPeekEnabled then\n    -- Register this verified graph" in gameplay)
+    check("Focus configuration and registration state are logged decisively", "Focus hook setup: Show HUD=%s manualPeek=%s eligible=%s registration=%s" in gameplay)
 
     print()
     if failures:

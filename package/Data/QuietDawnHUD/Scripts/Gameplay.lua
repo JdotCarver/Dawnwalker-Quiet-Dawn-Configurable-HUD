@@ -718,6 +718,17 @@ local knownSpecs={}
 for _,spec in ipairs(specs) do knownSpecs[spec.path]=true end
 local function ensureFeatureSpecs()
     local first=#specs+1
+    -- This line separates configuration eligibility from UE4SS registration in
+    -- one durable Debug record. It is deliberately not rate-limited: hook
+    -- registration runs only during startup or an Apply action, and a missing
+    -- Focus entry wake must be diagnosable from a single session log.
+    if D.debugLogging then
+        local trigger=config.peekOnFocusMode and "Focus" or (config.peekOnLegendHold and "Legend hold" or "Off")
+        local registration=hooks[runtime.focusPromptGraph] and "registered"
+            or (manualPeekEnabled and (knownSpecs[runtime.focusPromptGraph] and "queued" or "will queue") or "not eligible")
+        D.logInfo("Focus hook setup: Show HUD=%s manualPeek=%s eligible=%s registration=%s",
+            trigger,tostring(config.manualPeek),tostring(manualPeekEnabled),registration)
+    end
 if #statNames>0 then
     for _,entry in ipairs({
         {"WBP_HUD_HumanStats", "On HP changed", "health", "HumanStats"},
@@ -738,8 +749,11 @@ end
 if config.peekOnLegendHold and config.manualPeekSeconds>0 and hasPeekPanels() then
     specs[#specs+1]={path=LEGEND..":ExecuteUbergraph_WBP_ControlsLegend", callback=peekInput, optional="peek"}
 end
-if manualPeekEnabled and config.peekOnFocusMode then
-    specs[#specs+1]={path=runtime.focusPromptGraph, callback=runtime.focusPromptEvent, optional="peek"}
+if manualPeekEnabled then
+    -- Register this verified graph for every enabled Show HUD configuration.
+    -- The callback itself gates on Focus mode, so switching triggers live never
+    -- leaves entry detection dependent on a fresh mod/game restart.
+    specs[#specs+1]={path=runtime.focusPromptGraph, callback=runtime.focusPromptEvent, optional="focus"}
 end
 if sprintPrompts then
     specs[#specs+1]={path=ROOT..":OnSetInputPromptEnabled", callback=promptEvent, optional="prompt"}
@@ -796,6 +810,8 @@ local function registerOne()
                 if D.debugLogging then D.event("sprintPrompt","prompt hook unavailable: %s",spec.path) end
             elseif spec.optional=="peek" then
                 D.logWarning("Manual peek input unavailable; automatic health alerts remain enabled.")
+            elseif spec.optional=="focus" then
+                D.logWarning("Focus peek event unavailable; Focus entry will wait for another HUD update: %s",spec.path)
             else
                 statHookFailures=true
                 D.logWarning("Resource event hook unavailable; stat panels left to the game: %s",spec.path)
