@@ -189,7 +189,7 @@ local frameClock, lastFrame
 -- at one per frame and preloading claw mark assets (observed at up to 137 ms
 -- a slice) while the HUD sat fully visible. Elements only disappeared at the
 -- first refresh afterwards, which is exactly what it looked like.
-local runtime = {panelsSettled = false, startupPanels = {}}
+local runtime = {panelsSettled = false, startupPanels = {}, peekSettled = {}}
 -- Panels whose fade has been deferred so the whole group can start together.
 -- See writePanel and the flush in step(). On the runtime table rather than as
 -- locals because this file sits near Lua's 200-local ceiling.
@@ -287,7 +287,13 @@ function runtime.observeFocusPeek(pawn)
     if edge=="entered" then
         local changed=not peekVisible or peekStartPending
         peekVisible,peekStartPending,peekUntil=true,false,0
-        if changed then peekDirty=true end
+        -- A new visibility edge earns one configured fade. Once it lands,
+        -- stock Focus refreshes reassert its target directly rather than
+        -- starting the same wave over and over throughout the hold.
+        if changed then
+            runtime.peekSettled={}
+            peekDirty=true
+        end
         if D.debugLogging then D.count("focusPeekEntered") end
     elseif edge=="exited" and peekVisible then
         peekStartPending=true
@@ -748,13 +754,21 @@ local function promptRefreshed(context)
         wake("sprintPrompt")
     end
 end
-local function queueVanillaQuickslotProbe(source)
+local function queueVanillaQuickslotProbe(source,discoverWidget)
     -- Vanilla intentionally releases Quiet Dawn's opacity lease, so fading it
     -- needs the exact stock event that changes its target. Until that event is
     -- measured, record one post-hook sample and one next-frame verification;
     -- this is Debug-only and cannot become a poll.
     if not D.debugLogging or not config.fadeTransitions
         or panelModes.WBP_AA_Quickslots~=Modes.VANILLA then return end
+    -- Entry 3515 is only correlated with combat transitions. Limit its
+    -- class/visibility evidence to three paired samples per HUD instance;
+    -- an unproven graph entry must never turn into diagnostic event spam.
+    if discoverWidget then
+        local remaining=runtime.quickslotDiscoveryRemaining or 0
+        if remaining<=0 then return end
+        runtime.quickslotDiscoveryRemaining=remaining-1
+    end
     runtime.quickslotProbeVersion=(runtime.quickslotProbeVersion or 0)+1
     local version=runtime.quickslotProbeVersion
     runtime.quickslotProbe={source=source,phase="post"}
@@ -818,7 +832,7 @@ local function switchedQuickslots(context,entryParam)
     -- It is a candidate only: collect the same bounded opacity evidence before
     -- treating it as the stock Quickslot Abilities visibility route.
     if entry==3515 and panelModes.WBP_AA_Quickslots==Modes.VANILLA then
-        queueVanillaQuickslotProbe("GameHUD graph 3515")
+        queueVanillaQuickslotProbe("GameHUD graph 3515",true)
     end
     -- 4026 is a confirmed Focus-release graph entry. It does not decide the
     -- reveal itself: it only wakes the normal pawn snapshot, which reads the
@@ -992,6 +1006,7 @@ local function accept(object)
         runtime.hudAdoptionSource=candidateSource or "fallback"
         runtime.startupImmediateNoted=nil
         runtime.quickslotProbe,runtime.quickslotProbeNext,runtime.quickslotProbeOpacity=nil,nil,nil
+        runtime.quickslotDiscoveryRemaining=3
         panelRetries={}
         -- A newly adopted HUD should never wait for a decorative fade before
         -- honouring Quiet Dawn's baseline rules. Each managed panel stays in
@@ -1022,6 +1037,7 @@ local function accept(object)
         healthUntil, staminaUntil = 0, 0
         peekRequested,peekUntil,peekVisible=false,0,false
         peekStartPending=false
+        runtime.peekSettled={}
         runtime.focusPeekActive=nil
         runtime.focusPromptProbed=nil
         timeRequested,timeDirty,timeVisible,timeUntil=false,false,false,0
@@ -1062,6 +1078,7 @@ local function snapshot()
         if peekVisible then peekDirty=true end
         peekUntil,peekVisible=0,false
         peekStartPending=false
+        runtime.peekSettled={}
         runtime.focusPeekActive=nil
         if switchVisible then switchCursor=1 end
         switchUntil,switchVisible=0,false
@@ -1072,7 +1089,10 @@ local function snapshot()
     -- with both dynamic panels disabled or unavailable resource readings.
     if peekRequested then
         peekUntil=now+config.manualPeekSeconds
-        if not peekVisible then peekDirty,peekStartPending=true,true end
+        if not peekVisible then
+            runtime.peekSettled={}
+            peekDirty,peekStartPending=true,true
+        end
         peekVisible=true
         if D.debugLogging then D.event("manualPeek","player HUD visible for %.1fs",config.manualPeekSeconds) end
     end
@@ -1244,6 +1264,16 @@ local function writePanel(name,entry,target)
         end
         return wrote
     end
+    -- Every Show HUD visibility edge gets one configured transition. Once the
+    -- transition settles, stock HUD refreshes can write over the held target.
+    -- Reassert only that settled panel directly: creating another fade wave
+    -- made Focus and timed peeks pulse throughout the same held visibility.
+    if peekVisible and runtime.peekSettled[name] and peekPanel(name) then
+        fade.forget(name)
+        local wrote=panelOpacity.apply(entry.lease,target)
+        if wrote and D.debugLogging then D.count("panelWrites") end
+        return wrote
+    end
     -- Panels are visited one per worker call, so a transition started inline
     -- here would start at a different moment for every panel: on the last
     -- load they began about 50 ms apart and the HUD dissolved raggedly, one
@@ -1268,6 +1298,9 @@ local function writePanel(name,entry,target)
     -- off, or on the frame a transition lands, that is the target itself.
     local value=fade.step(name,entry.object:GetRenderOpacity(),target)
     local wrote=panelOpacity.apply(entry.lease,value)
+    if peekVisible and peekPanel(name) and math.abs(value-target)<=1e-5 then
+        runtime.peekSettled[name]=true
+    end
     if wrote then
         entry.opacityOwned=true
         if D.debugLogging then
@@ -1431,6 +1464,7 @@ local function panelStep(name)
         panelRetries,livePanels={},{}
         hudAddress=nil
         peekWidgetAddress,peekControllerAddress=nil,nil
+        runtime.peekSettled={}
         runtime.focusPeekActive=nil
         timeRequested,timeDirty,timeVisible,timeUntil=false,false,false,0
     end
@@ -1505,12 +1539,23 @@ local function step()
             local current=widget:GetRenderOpacity()
             local previous=runtime.quickslotProbeOpacity
             runtime.quickslotProbeOpacity=current
+            runtime.quickslotProbeClass="unavailable"
+            runtime.quickslotProbeVisibility="unavailable"
+            do
+                local readable,value=pcall(function() return widget:GetClass():GetFullName() end)
+                if readable and value then runtime.quickslotProbeClass=tostring(value) end
+            end
+            do
+                local readable,value=pcall(function() return widget:GetVisibility() end)
+                if readable and value~=nil then runtime.quickslotProbeVisibility=tostring(value) end
+            end
             -- This two-sample route probe is already Debug-only and bounded.
             -- Do not put either decisive sample through the general per-second
             -- event limiter: a combat entry can legitimately emit many other
             -- graph sightings in the same frame, as seen in the session log.
-            D.logInfo("vanillaQuickslots source=%s phase=%s opacity=%.3f previous=%s changed=%s",
-                probe.source,probe.phase,current,previous and string.format("%.3f",previous) or "none",
+            D.logInfo("vanillaQuickslots source=%s phase=%s class=%s rootVisibility=%s rootOpacity=%.3f previous=%s changed=%s",
+                probe.source,probe.phase,runtime.quickslotProbeClass,runtime.quickslotProbeVisibility,current,
+                previous and string.format("%.3f",previous) or "none",
                 tostring(previous~=nil and math.abs(current-previous)>1e-5))
         elseif D.debugLogging then
             D.logInfo("vanillaQuickslots source=%s phase=%s panel=unavailable",probe.source,probe.phase)
@@ -1568,6 +1613,7 @@ local function step()
             else
                 -- Focus still owns the active reveal at zero duration, but its
                 -- post-exit hold is intentionally immediate.
+                runtime.peekSettled={}
                 peekVisible,peekUntil,peekDirty=false,0,true
             end
         end
@@ -1995,6 +2041,10 @@ ExecuteInGameThreadWithDelay(runtime.auditIntervalMs, runtime.auditPanels)
 applyLiveSettings=function(run)
     if not run then wake('liveSettings');return end
     local values=livePending;livePending=nil
+    -- A menu Apply is a new visibility contract. Do not carry a settled
+    -- target from the previous configuration into its first Show HUD pass.
+    runtime.peekSettled={}
+    if peekVisible then peekDirty=true end
     local updated=require('SettingsModel').convert(values)
     local changed={}
     for key,value in pairs(updated) do
@@ -2055,6 +2105,7 @@ applyLiveSettings=function(run)
         if peekVisible then peekDirty=true end
         peekRequested,peekVisible,peekUntil=false,false,0
         peekStartPending=false
+        runtime.peekSettled={}
         runtime.focusPeekActive=nil
         -- Applying Focus mode while it is already held needs one immediate
         -- event-driven snapshot; it must not wait for a later resource change.
@@ -2216,6 +2267,7 @@ armExpiry = function()
         local endedPeek=peekVisible and peekUntil>0 and now>=peekUntil
         if endedPeek then
             peekVisible=false
+            runtime.peekSettled={}
             peekDirty=true
             if D.debugLogging then D.event("manualPeek","ended; automatic HUD visibility restored") end
         end

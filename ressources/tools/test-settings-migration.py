@@ -28,6 +28,7 @@ Usage:
 """
 
 import pathlib
+import re
 import sys
 
 REPOSITORY_ROOT = pathlib.Path(__file__).resolve().parents[2]
@@ -262,6 +263,15 @@ def main():
         "Fixed Opacity raise choices are default-off for every eligible panel",
         len(fixed_peek_keys) == 13 and all(rows[key]["default"] == 0 for key in fixed_peek_keys),
         f"keys={fixed_peek_keys!r}",
+    )
+    live_settings = (SCRIPTS / "LiveSettings.lua").read_text()
+    live_fixed_peek_ids = set(re.findall(
+        r'\["(fixedPeek_[^"]+)"\]="\1"', live_settings
+    ))
+    check(
+        "every Fixed Opacity HUD Peek choice is subscribed for live menu Apply",
+        live_fixed_peek_ids == set(fixed_peek_keys),
+        f"schema={sorted(fixed_peek_keys)!r} live={sorted(live_fixed_peek_ids)!r}",
     )
     model = load_module(str(SCRIPTS / "SettingsModel.lua"))
     numeric_defaults = lua.table_from({key: row["default"] for key, row in rows.items()})

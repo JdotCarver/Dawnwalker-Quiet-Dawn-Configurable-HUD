@@ -152,7 +152,13 @@ def main():
     check("Focus configuration and registration state are logged decisively", "Focus hook setup: Show HUD=%s manualPeek=%s eligible=%s registration=%s" in gameplay)
     check("a queued Focus fade keeps its worker alive until the wave flushes", "or runtime.fadeWaveSize>0 or timeRequested" in gameplay)
     check("mid-session fade investigation records the startup-immediate route at Info", "startupImmediateFadeBypass" in gameplay and "runtime.hudAdoptionSource" in gameplay and "if fade.enabled() and not runtime.startupImmediateNoted then" in gameplay)
+    check("each Show HUD edge resets the settled target before its one configured fade", "if changed then\n            runtime.peekSettled={}\n            peekDirty=true" in gameplay)
+    check("a stock refresh reasserts a settled held peek directly instead of starting another fade wave", "if peekVisible and runtime.peekSettled[name] and peekPanel(name) then\n        fade.forget(name)\n        local wrote=panelOpacity.apply(entry.lease,target)" in gameplay)
+    check("only a completed fade marks an active peek panel settled", "if peekVisible and peekPanel(name) and math.abs(value-target)<=1e-5 then\n        runtime.peekSettled[name]=true" in gameplay)
+    check("session, expiry and live-settings boundaries clear held-peek settlement", gameplay.count("runtime.peekSettled={}") >= 7, f"resets={gameplay.count('runtime.peekSettled={}')}")
+    check("the paused-fade pacing guard remains ahead of visibility work", "if pace==\"paused\" then" in gameplay and "holding fade" in gameplay)
     check("Vanilla Quickslot Abilities route discovery stays bounded, Debug-only and visible beside busy combat graph events", "queueVanillaQuickslotProbe" in gameplay and "phase=\"nextFrame\"" in gameplay and "runtime.quickslotProbeNext=nextFrame" in gameplay and "wake(\"quickslotProbe\")" in gameplay and "D.logInfo(\"vanillaQuickslots" in gameplay)
+    check("the 3515 Quickslot candidate collects only three paired class and root-visibility samples per HUD", "runtime.quickslotDiscoveryRemaining=3" in gameplay and "queueVanillaQuickslotProbe(\"GameHUD graph 3515\",true)" in gameplay and "widget:GetClass():GetFullName()" in gameplay and "widget:GetVisibility()" in gameplay)
     check("the observed GameHUD 3515 route is a probe candidate, not a behavior change", "entry==3515" in gameplay and "GameHUD graph 3515" in gameplay)
 
     print()
