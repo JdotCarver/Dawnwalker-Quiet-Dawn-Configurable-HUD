@@ -1,7 +1,12 @@
+<!-- CHANGELOG.md -->
 # Changelog
 
 ## Unreleased
 
+- Add the Always Hidden player-panel mode. Existing Fixed Opacity settings at 0% automatically migrate to it while retaining a recovery copy of the original settings file.
+- Fade initially hidden ordinary HUD panels together at startup, including Always Hidden and legacy Fixed Opacity 0% panels, rather than hiding them one at a time.
+- Move each panel's default-on HUD Peek Behaviour setting into that panel's category, with Exclude and Include choices for both Focus and Controls Legend Show HUD triggers.
+- Add a bounded Debug-only route probe for Vanilla Quickslot Abilities combat visibility, ready to identify the exact stock combat-entry event before any behavior change.
 - Improve hiding of red claw slash marks on enemies when combat cues were already loaded.
 - Add Hide player combat effects to hide Crimson Rush's bright red arm effect in both forms.
 - Replace the Logging on/off toggle with a level: Off, Error, Warning, Info or Debug. Warning is the default and matches what earlier versions printed; an existing On setting becomes Debug.

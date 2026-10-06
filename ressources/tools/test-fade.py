@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# test-fade.py
 """ressources/tools/test-fade.py
 
 Exercise QuietDawnFade against a controllable clock, without the game.

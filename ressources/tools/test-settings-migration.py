@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# test-settings-migration.py
 """ressources/tools/test-settings-migration.py
 
 Check the settings schema chain and the logLevel migration, without the game.
@@ -67,6 +68,7 @@ def main():
         return result, None
 
     levels = load_module(str(SCRIPTS / "QuietDawnLogLevels.lua"))
+    modes = load_module(str(SCRIPTS / "QuietDawnPanelModes.lua"))
     schema = load_module(str(SCRIPTS / "SettingsSchema.lua"))
     store = load_module(str(SCRIPTS / "SettingsStore.lua"))
 
@@ -74,6 +76,31 @@ def main():
 
     check("schema declares logLevel", "logLevel" in keys)
     check("schema no longer declares debugLogging", "debugLogging" not in keys)
+
+    mode_row = next(row for row in schema.values() if row["key"] == "mode_HumanStats")
+    check(
+        "panel modes accept explicit Always Hidden",
+        sorted(mode_row["values"].values()) == [0, 1, 2, 3],
+        f"values={list(mode_row['values'].values())!r}",
+    )
+    saved_modes = lua.table_from(
+        {
+            "mode_HumanStats": modes.FIXED_OPACITY,
+            "opacity_HumanStats": 0,
+            "mode_WBP_Compass": modes.FIXED_OPACITY,
+            "compassOpacity": 0,
+            "mode_WBP_AA_Quickslots": modes.FIXED_OPACITY,
+            "opacity_WBP_AA_Quickslots": 100,
+        }
+    )
+    changed = modes.upgradeValues(saved_modes)
+    check(
+        "existing Fixed 0% choices upgrade to Always Hidden without touching positive Fixed Opacity",
+        changed is True
+        and saved_modes["mode_HumanStats"] == modes.ALWAYS_HIDDEN
+        and saved_modes["mode_WBP_Compass"] == modes.ALWAYS_HIDDEN
+        and saved_modes["mode_WBP_AA_Quickslots"] == modes.FIXED_OPACITY,
+    )
 
     log_level_row = next(row for row in schema.values() if row["key"] == "logLevel")
     check(
@@ -205,6 +232,10 @@ def main():
         "Show HUD inclusion defaults preserve every existing peek target",
         len(show_hud_keys) == 13 and all(rows[key]["default"] == 1 for key in show_hud_keys),
         f"keys={show_hud_keys!r}",
+    )
+    check(
+        "SettingsModel preserves Fixed 0% output through the final Always Hidden upgrade",
+        "values,err=Modes.ensure(Store,Store.path(directory),schema)" in settings_model,
     )
 
     # A settings.ini from before fading: every key the newest schema has,

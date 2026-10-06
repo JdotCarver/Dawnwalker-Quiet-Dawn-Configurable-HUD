@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# check-mod-settings.py
 """ressources/tools/check-mod-settings.py
 
 Validate mod_settings.ini against the Dawnwalker Mod Menu rules.
@@ -80,6 +81,7 @@ def main():
             fail(f"[Mod] is missing the required field {required}")
 
     identifiers, groups = set(), set()
+    settings_by_id = {}
     for name, fields in settings:
         identifier = fields.get("Id")
         if not identifier:
@@ -88,6 +90,7 @@ def main():
         if identifier in identifiers:
             fail(f"duplicate setting Id: {identifier}")
         identifiers.add(identifier)
+        settings_by_id[identifier] = fields
 
         if "Group" in fields:
             groups.add(fields["Group"])
@@ -117,6 +120,34 @@ def main():
             default = fields.get("Default")
             if default is not None and default not in value_list:
                 fail(f"{identifier} default {default} is not one of its PresetValues ({values})")
+
+    # Keep every stanza in the same readable hierarchy as the menu itself.
+    # The parser above loses line order, so inspect raw setting sections here.
+    for block in re.findall(r"(?ms)^\[Setting\.[^\n]+\]\n.*?(?=^\[|\Z)", text):
+        identifier = re.search(r"^Id\s*=\s*(.+)$", block, re.M)
+        group = re.search(r"^Group\s*=", block, re.M)
+        label = re.search(r"^Label\s*=", block, re.M)
+        if identifier and group and label and group.start() > label.start():
+            fail(f"{identifier.group(1)} declares Label before Group; keep Group above Label")
+
+    # Always Hidden is the fourth stable panel mode. Its controls are a user
+    # interface contract, not just a picker label: opacity and size cannot
+    # affect it, while each Show HUD choice belongs beside its panel.
+    for identifier, fields in settings_by_id.items():
+        if identifier.startswith("mode_"):
+            if fields.get("PresetValues") != "0|1|2|3" or fields.get("PresetLabels") != "Vanilla|Quiet Dawn|Fixed Opacity|Always Hidden":
+                fail(f"{identifier} must offer Vanilla, Quiet Dawn, Fixed Opacity and Always Hidden")
+        if identifier.startswith("scale_"):
+            panel = identifier.removeprefix("scale_")
+            if fields.get("VisibleWhen") != f"mode_{panel}" or fields.get("VisibleValues") != "0|1|2":
+                fail(f"{identifier} must be hidden only for Always Hidden mode")
+        if identifier.startswith("showHUD_"):
+            panel = identifier.removeprefix("showHUD_")
+            scale = settings_by_id.get(f"scale_{panel}", {})
+            if fields.get("Label") != "HUD Peek Behaviour" or fields.get("PresetLabels") != "Exclude|Include":
+                fail(f"{identifier} must use the panel-local HUD Peek Behaviour control")
+            if fields.get("Group") != scale.get("Group"):
+                fail(f"{identifier} must share {panel}'s panel category")
 
     # Conditional visibility must point at a setting that exists.
     for name, fields in settings:

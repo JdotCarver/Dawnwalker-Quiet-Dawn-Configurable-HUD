@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# test-enemy-bars.py
 """ressources/tools/test-enemy-bars.py
 
 Exercise the two failure boundaries in QuietDawnEnemyBars without the game:

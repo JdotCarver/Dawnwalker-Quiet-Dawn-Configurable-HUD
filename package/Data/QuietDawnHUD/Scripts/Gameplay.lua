@@ -12,6 +12,7 @@ if not ok or type(config) ~= "table" then
     D.logError("Invalid configuration; HUD left to the game.")
     return
 end
+local Modes=require("QuietDawnPanelModes")
 local allowed = {HumanStats=true, VampireStats=true, WBP_Compass=true,
     WBP_HUD_QuestInfo=true, WBP_HUD_Quickslots=true, Crosshair=true,
     WBP_AA_Quickslots=true, WBP_OpenFocusPrompt=true,
@@ -83,7 +84,8 @@ local panelModes = config.panelModes or {}
 local panelScales = config.panelScales or {}
 local hasPanelScaling=false
 for _, name in ipairs(names) do
-    if panelModes[name]~=0 and panelModes[name]~=1 and panelModes[name]~=2 then
+    if panelModes[name]~=Modes.VANILLA and panelModes[name]~=Modes.QUIET_DAWN
+        and panelModes[name]~=Modes.FIXED_OPACITY and panelModes[name]~=Modes.ALWAYS_HIDDEN then
         D.logError("Invalid panel mode; disabled.")
         return
     end
@@ -106,7 +108,7 @@ end
 local panelScaling=hasPanelScaling and require("QuietDawnPanelScale").new(panelScales,D,Session) or nil
 local function hasPeekPanels()
     for _,name in ipairs(names) do
-        if panelModes[name]==1 and name~="CombatFocusPanel"
+        if panelModes[name]==Modes.QUIET_DAWN and name~="CombatFocusPanel"
             and name~="WBP_HUD_Quickslots_ChangePrompt" and name~="WBP_HUD_SpecialAttackCooldown"
             and name~="WBP_OpenFocusPrompt"
             and (not config.showHUDPanels or config.showHUDPanels[name]~=false) then return true end
@@ -114,12 +116,12 @@ local function hasPeekPanels()
     return false
 end
 local function hasSwitchPanels()
-    return panelModes.WBP_HUD_Quickslots==1 or panelModes.WBP_AA_Quickslots==1
+    return panelModes.WBP_HUD_Quickslots==Modes.QUIET_DAWN or panelModes.WBP_AA_Quickslots==Modes.QUIET_DAWN
 end
 -- A zero duration disables timed legend/exit holds, not the time the player
 -- actively remains in Focus. Focus itself is an untimed stateful reveal.
 local manualPeekEnabled=config.manualPeek and hasPeekPanels()
-local timeRevealEnabled=seen.WBP_HudTimer and panelModes.WBP_HudTimer==1 and config.timeHoldSeconds>0
+local timeRevealEnabled=seen.WBP_HudTimer and panelModes.WBP_HudTimer==Modes.QUIET_DAWN and config.timeHoldSeconds>0
 if type(ExecuteInGameThreadWithDelay) ~= "function" or type(CancelDelayedAction) ~= "function" then
     D.logError("Requires cancellable delayed game-thread callbacks; disabled.")
     return
@@ -197,7 +199,7 @@ runtime.focusPromptGraph="/Game/_Dawnwalker/UI/_Unified/HUD/CombatFocus/WBP_Open
 -- diagnostics and the shared fade wave.
 runtime.startupBarrierModel=require("QuietDawnStartupBarrier")
 function runtime.newStartupBarrier(startedAt)
-    return runtime.startupBarrierModel.new(panelModes,startedAt)
+    return runtime.startupBarrierModel.new(panelModes,panelOpacities,startedAt)
 end
 function runtime.resolveStartupGroup(name, outcome)
     local barrier=runtime.startupBarrier
@@ -743,9 +745,33 @@ local function promptRefreshed(context)
         wake("sprintPrompt")
     end
 end
-local function signal()
+local function queueVanillaQuickslotProbe(source)
+    -- Vanilla intentionally releases Quiet Dawn's opacity lease, so fading it
+    -- needs the exact stock event that changes its target. Until that event is
+    -- measured, record one post-hook sample and one next-frame verification;
+    -- this is Debug-only and cannot become a poll.
+    if not D.debugLogging or not config.fadeTransitions
+        or panelModes.WBP_AA_Quickslots~=Modes.VANILLA then return end
+    runtime.quickslotProbeVersion=(runtime.quickslotProbeVersion or 0)+1
+    local version=runtime.quickslotProbeVersion
+    runtime.quickslotProbe={source=source,phase="post"}
+    -- Take the post-callback sample before the delayed verifier can supersede
+    -- it. This is a non-dirty worker wake: it cannot reapply a Vanilla lease.
+    if wake then wake("quickslotProbe") end
+    pcall(ExecuteInGameThreadWithDelay,16,function()
+        if not D.debugLogging or runtime.quickslotProbeVersion~=version then return end
+        local nextFrame={source=source,phase="nextFrame"}
+        -- Keep both samples even when an unusually busy worker has not yet
+        -- consumed the post-hook record. A new source replaces this pair.
+        if runtime.quickslotProbe then runtime.quickslotProbeNext=nextFrame
+        else runtime.quickslotProbe=nextFrame end
+        wake("quickslotProbe")
+    end)
+end
+local function signal(source)
     if D.debugLogging then D.count("presetEvents") end
     if timeWatcher then timeWatcher.resume() end
+    queueVanillaQuickslotProbe(source or "HUD preset")
     refreshDirty=true
     wake()
 end
@@ -774,7 +800,7 @@ function runtime.focusPromptEvent(context,entryParam)
     wake("resource")
 end
 local function cooldownEvent(context)
-    if panelModes.WBP_HUD_SpecialAttackCooldown~=1 then return end
+    if panelModes.WBP_HUD_SpecialAttackCooldown~=Modes.QUIET_DAWN then return end
     if not currentPanelEvent(context,"WBP_HUD_SpecialAttackCooldown") then return end
     -- Setup/finish update the stock Remaining Time before post delivery.
     -- The existing panel slice reads it, including during initial acquisition.
@@ -795,8 +821,13 @@ local function switchedQuickslots(context,entryParam)
         end
         return
     end
-    -- Stock Toggle AA Quickslots delegate enters the graph at 4146.
+    -- Stock Toggle AA Quickslots delegate enters the graph at 4146. It is a
+    -- known manual-toggle source, recorded separately from combat presets
+    -- while the Vanilla-fade route is still being discovered.
     if entry~=4146 then return end
+    if panelModes.WBP_AA_Quickslots==Modes.VANILLA then
+        queueVanillaQuickslotProbe("Toggle AA Quickslots graph 4146")
+    end
     if config.switchRevealSeconds<=0 or not hasSwitchPanels() or not currentPanelEvent(context) then return end
     local focus=hud.CombatFocusPanel
     if valid(focus) and focus:IsActivated() then return end -- stock toggle guard
@@ -806,8 +837,8 @@ end
 -- Blueprint paths verified against the stock WBP_GameHUD export table.
 -- Native paths use an explicit post-hook; Blueprint callbacks are post-hooks.
 local specs = {
-    {path="/Script/DogwoodUI.HUDManagerSubsystem:PushHUDPreset", callback=signal, native=true},
-    {path="/Script/DogwoodUI.HUDManagerSubsystem:PopHUDPreset", callback=signal, native=true},
+    {path="/Script/DogwoodUI.HUDManagerSubsystem:PushHUDPreset", callback=function()signal("PushHUDPreset")end, native=true},
+    {path="/Script/DogwoodUI.HUDManagerSubsystem:PopHUDPreset", callback=function()signal("PopHUDPreset")end, native=true},
     {path="/Script/Engine.PlayerController:ClientRestart", callback=function(context)
         local pc = unwrap(context)
         if valid(pc) and pc:IsLocalController() then
@@ -874,12 +905,14 @@ if timeRevealEnabled then
     specs[#specs+1]={path=TIME..":ExecuteUbergraph_WBP_HudTimer", callback=timeChanged, optional="time"}
     specs[#specs+1]={path=TIME..":Update Time Display", callback=timeDisplayUpdated, optional="time"}
 end
-if seen.WBP_HUD_SpecialAttackCooldown and panelModes.WBP_HUD_SpecialAttackCooldown==1 then
+if seen.WBP_HUD_SpecialAttackCooldown and panelModes.WBP_HUD_SpecialAttackCooldown==Modes.QUIET_DAWN then
     specs[#specs+1]={path=SPECIAL..":SetupCooldownEffect", callback=cooldownEvent, optional="panel"}
     specs[#specs+1]={path=SPECIAL..":OnCooldownFinished", callback=cooldownEvent, optional="panel"}
 end
-if (config.switchRevealSeconds>0 and hasSwitchPanels()) or (manualPeekEnabled and config.peekOnFocusMode) then
-    -- The same graph provides quickslot switching and the Focus-release wake.
+if (config.switchRevealSeconds>0 and hasSwitchPanels()) or (manualPeekEnabled and config.peekOnFocusMode)
+    or (D.debugLogging and config.fadeTransitions and panelModes.WBP_AA_Quickslots==Modes.VANILLA) then
+    -- The same graph provides quickslot switching, the Focus-release wake and
+    -- one Debug-only Vanilla Quickslot Abilities route probe.
     specs[#specs+1]={path=ROOT..":ExecuteUbergraph_WBP_GameHUD", callback=switchedQuickslots, optional="panel"}
 end
     local last=#specs
@@ -949,6 +982,7 @@ local function accept(object)
         -- this diagnostic into an unexplained "unknown" startup path.
         runtime.hudAdoptionSource=candidateSource or "fallback"
         runtime.startupImmediateNoted=nil
+        runtime.quickslotProbe,runtime.quickslotProbeNext,runtime.quickslotProbeOpacity=nil,nil,nil
         panelRetries={}
         -- A newly adopted HUD should never wait for a decorative fade before
         -- honouring Quiet Dawn's baseline rules. Each managed panel stays in
@@ -1135,23 +1169,23 @@ local function panelTarget(name,entry,widget)
     if isStats and dynamicPanels[name] then
         target = desired == 1 and (stateReady and 1 or entry.original) or 0
     end
-    if mode==1 and name=="WBP_HudTimer" and timeVisible then target=1 end
-    if mode==1 and name=="WBP_HUD_SpecialAttackCooldown" then
+    if mode==Modes.QUIET_DAWN and name=="WBP_HudTimer" and timeVisible then target=1 end
+    if mode==Modes.QUIET_DAWN and name=="WBP_HUD_SpecialAttackCooldown" then
         local display=widget.WBP_CooldownDisplay
         local remaining=valid(display) and tonumber(display["Remaining Time"]) or nil
         if not hooks[SPECIAL..":SetupCooldownEffect"] or not hooks[SPECIAL..":OnCooldownFinished"] then
             target=entry.original -- unavailable events retain game control
         else target=remaining and remaining>0 and remaining<math.huge and 1 or 0 end
     end
-    if mode==1 and switchVisible and (name=="WBP_HUD_Quickslots" or name=="WBP_AA_Quickslots") then target=1 end
+    if mode==Modes.QUIET_DAWN and switchVisible and (name=="WBP_HUD_Quickslots" or name=="WBP_AA_Quickslots") then target=1 end
     -- The combat-focus radial selector keeps its own opacity setting;
     -- revealing it for a HUD peek overlays the ordinary player panels.
-    if mode==1 and peekVisible and name~="CombatFocusPanel" and name~="WBP_HUD_Quickslots_ChangePrompt" and name~="WBP_HUD_SpecialAttackCooldown"
+    if mode==Modes.QUIET_DAWN and peekVisible and name~="CombatFocusPanel" and name~="WBP_HUD_Quickslots_ChangePrompt" and name~="WBP_HUD_SpecialAttackCooldown"
         and name~="WBP_OpenFocusPrompt" and (not config.showHUDPanels or config.showHUDPanels[name]~=false) then target=1 end
     return target
 end
 local function peekPanel(name)
-    return panelModes[name]==1 and name~="CombatFocusPanel"
+    return panelModes[name]==Modes.QUIET_DAWN and name~="CombatFocusPanel"
         and name~="WBP_HUD_Quickslots_ChangePrompt" and name~="WBP_HUD_SpecialAttackCooldown"
         and name~="WBP_OpenFocusPrompt"
         and (not config.showHUDPanels or config.showHUDPanels[name]~=false)
@@ -1258,7 +1292,7 @@ local function cachedVisibility(kind)
         local dedicated=name=="WBP_HUD_Quickslots_ChangePrompt" or name=="WBP_HUD_SpecialAttackCooldown" or name=="WBP_OpenFocusPrompt"
         if kind=="refresh" and dedicated then
             livePanels[name]=true -- reacquire replaceable inner opacity containers
-        elseif panelModes[name]~=0 and (kind~="peek" or peekPanel(name)) and not absent[name] then
+        elseif panelModes[name]~=Modes.VANILLA and (kind~="peek" or peekPanel(name)) and not absent[name] then
             local entry=panels[name]
             local widget=hud[name]
             if entry and sameObject(entry.widget,widget) and valid(entry.object) then
@@ -1282,7 +1316,7 @@ cachedVisibility=D.wrap("visibility",cachedVisibility)
 local function panelStep(name)
     -- Vanilla panels need no opacity reads once the previous override is
     -- released. Size remains an independent preference in every mode.
-    if panelModes[name]==0 and not panelScaling
+    if panelModes[name]==Modes.VANILLA and not panelScaling
         and not (panels[name] and panels[name].opacityOwned) then
         -- A Vanilla alternate form can satisfy the stats startup group even
         -- though Quiet Dawn never writes that form's opacity.
@@ -1326,7 +1360,7 @@ local function panelStep(name)
                     lease=panelOpacity.bind(object)}
                 panels[name]=entry
             end
-            if mode==0 then
+            if mode==Modes.VANILLA then
                 runtime.startupPanels[name]=nil
                 if entry.opacityOwned then
                     local restored=panelOpacity.restore(entry.lease)
@@ -1445,6 +1479,25 @@ local timeTurn=false
 local timeSampleTurn=false
 local function step()
     if livePending then applyLiveSettings(true);return false end
+    if runtime.quickslotProbe then
+        local probe=runtime.quickslotProbe
+        runtime.quickslotProbe,runtime.quickslotProbeNext=runtime.quickslotProbeNext,nil
+        local widget=valid(hud) and hud.WBP_AA_Quickslots or nil
+        if panelModes.WBP_AA_Quickslots==Modes.VANILLA and valid(widget)
+            and valid(controller) and sameObject(widget:GetOwningPlayer(),controller)
+            and sameObject(widget:GetWorld(),world) then
+            local current=widget:GetRenderOpacity()
+            local previous=runtime.quickslotProbeOpacity
+            runtime.quickslotProbeOpacity=current
+            D.event("vanillaQuickslots",
+                "source=%s phase=%s opacity=%.3f previous=%s changed=%s",
+                probe.source,probe.phase,current,previous and string.format("%.3f",previous) or "none",
+                tostring(previous~=nil and math.abs(current-previous)>1e-5))
+        else
+            D.event("vanillaQuickslots","source=%s phase=%s panel=unavailable",probe.source,probe.phase)
+        end
+        return false
+    end
     if runtime.startupBarrier and runtime.startupBarrier.releasePending then
         runtime.flushStartupBarrier()
         return false
@@ -1771,7 +1824,7 @@ wake = function(statsOnly)
         panelRetries={}
         settingsPending,settingsAttempts=true,0
     end
-    if statsOnly~="marker" and statsOnly~="settings" and statsOnly~="resource" and statsOnly~="enemyHealth" and statsOnly~="time" and statsOnly~="sprintPrompt" and statsOnly~="clawMarks" and statsOnly~="playerEffects" and statsOnly~="liveSettings" then dirty=true end
+    if statsOnly~="marker" and statsOnly~="settings" and statsOnly~="resource" and statsOnly~="enemyHealth" and statsOnly~="time" and statsOnly~="sprintPrompt" and statsOnly~="clawMarks" and statsOnly~="playerEffects" and statsOnly~="liveSettings" and statsOnly~="quickslotProbe" then dirty=true end
     if worker then if D.debugLogging then D.count("workerCoalesced") end; return end
     worker=true
     if D.debugLogging then D.count("workerStarts") end
@@ -1888,7 +1941,7 @@ function runtime.auditPanels()
     local ok, drifted = pcall(function()
         local found, fading = {}, fade.pending()
         for _,name in ipairs(names) do
-            if panelModes[name]~=0 then
+            if panelModes[name]~=Modes.VANILLA then
                 local entry = panels[name]
                 if entry and valid(entry.object) then
                     if not fading then
@@ -1963,7 +2016,7 @@ applyLiveSettings=function(run)
     statNames={}
     for _,name in ipairs({'HumanStats','VampireStats'}) do if dynamicPanels[name] then statNames[#statNames+1]=name end end
     manualPeekEnabled=config.manualPeek and hasPeekPanels()
-    timeRevealEnabled=seen.WBP_HudTimer and panelModes.WBP_HudTimer==1 and config.timeHoldSeconds>0
+    timeRevealEnabled=seen.WBP_HudTimer and panelModes.WBP_HudTimer==Modes.QUIET_DAWN and config.timeHoldSeconds>0
     if changed.logLevel and QuietDawnNative then QuietDawnNative.setLogging(config.debugLogging) end
     if changed.healthThreshold or changed.staminaThreshold or changed.healthHoldSeconds or changed.staminaHoldSeconds
         or changed.mode_HumanStats or changed.mode_VampireStats
@@ -2027,7 +2080,7 @@ applyLiveSettings=function(run)
     -- A mode transition changes the interpretation of a cached opacity. Do one
     -- complete, ordered reconciliation after Apply instead of letting a stale
     -- dynamic-stat pass race the individual changed-panel jobs. This is vital
-    -- when both stat panels become Fixed opacity: they no longer have resource
+    -- when both stat panels become Fixed Opacity: they no longer have resource
     -- handlers to produce a later corrective pass.
     if changedPanelCount>0 or changedShowHUDCount>0 then
         fullPending=true

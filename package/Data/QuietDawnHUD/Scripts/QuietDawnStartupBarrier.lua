@@ -7,6 +7,7 @@
 -- readiness is defined by observed widgets, or by Gameplay's bounded failed
 -- field-read outcome.
 local Barrier = {}
+local QUIET_DAWN, FIXED_OPACITY, ALWAYS_HIDDEN = 1, 2, 3
 
 -- Human and vampire stats occupy one ordinary HUD position. Either live form
 -- proves that position is ready; every other position has one exact container.
@@ -20,11 +21,12 @@ local groups = {
     {"WBP_HudTimer"},
 }
 
-function Barrier.new(panelModes, startedAt)
+function Barrier.new(panelModes, panelOpacities, startedAt)
     local barrier = {
         active = true,
         startedAt = startedAt,
-        -- members are Quiet Dawn panels whose initial hide joins the wave.
+        -- members join the initial hide wave: Quiet Dawn, Fixed 0% and
+        -- Always Hidden ordinary baseline panels.
         members = {},
         -- watchers are all form candidates that can prove a group ready.
         watchers = {},
@@ -39,9 +41,14 @@ function Barrier.new(panelModes, startedAt)
     for groupIndex, names in ipairs(groups) do
         local enabled = false
         for _, name in ipairs(names) do
-            -- Fixed-opacity and Vanilla panels retain their own startup
-            -- visibility. Only a Quiet Dawn panel needs the shared dismissal.
-            if panelModes[name] == 1 then
+            -- Vanilla panels retain game ownership. Quiet Dawn and panels
+            -- explicitly hidden at startup join the shared dismissal, so a
+            -- saved Fixed 0% / Always Hidden setting never snaps away ahead
+            -- of the ordinary baseline wave.
+            local mode=panelModes[name]
+            local opacity=panelOpacities[name]
+            if mode == QUIET_DAWN or mode == ALWAYS_HIDDEN
+                or (mode == FIXED_OPACITY and opacity == 0) then
                 barrier.members[name] = groupIndex
                 enabled = true
             end

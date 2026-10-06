@@ -4,6 +4,7 @@ local directory = assert(debug.getinfo(1,'S').source:sub(2):match('^(.*[/\\])'))
 local Store = dofile(directory .. 'SettingsStore.lua')
 local schema = dofile(directory .. 'SettingsSchema.lua')
 local Timers = dofile(directory .. 'QuietDawnTimers.lua')
+local Modes = dofile(directory .. 'QuietDawnPanelModes.lua')
 local LogLevels = dofile(directory .. 'QuietDawnLogLevels.lua')
 local effectDefaults={hideEnemyEffectIcons=0,hidePlayerEffectIcons=0}
 local newestSchema = Timers.compatibleSchema(schema)
@@ -254,6 +255,12 @@ if values then
     values,err=dofile(directory..'UE4SSCommonSettingsUpgrade.lua').ensure(
         Store,Store.path(directory),newestSchema,defaults,'show-hud-inclusions')
 end
+if values then
+    -- Fixed Opacity at exactly zero already means "never show". Preserve that
+    -- output while promoting it to the explicit fourth Mode, which hides its
+    -- irrelevant opacity and size controls in the settings menu.
+    values,err=Modes.ensure(Store,Store.path(directory),schema)
+end
 if not values then error('Quiet Dawn settings rejected: '..tostring(err)) end
 return values
 
@@ -286,7 +293,7 @@ values.showLockIcon=values.showLockIcon==1
 values.hideSprintPrompt=values.hideSprintPrompt==1
 -- Menu percentages become fractions only at the gameplay boundary.
 for _, key in ipairs({'healthThreshold','staminaThreshold','compassOpacity'}) do values[key]=values[key]/100 end
--- Modes own opacity separately from size. Fixed zero means hidden; Quiet
+-- Modes own opacity separately from size. Always Hidden forces zero; Quiet
 -- Dawn ignores the saved fixed value and retains contextual reveals. Vanilla
 -- releases our opacity override while the game keeps its contextual rules.
 values.panels=panels
@@ -297,7 +304,8 @@ values.showHUDPanels={}
 for _, p in ipairs(panels) do
     values.panelScales[p]=values['scale_'..p]/100
     values.panelModes[p]=values['mode_'..p]
-    values.panelOpacities[p]=values.panelModes[p]==1 and 0
+    values.panelOpacities[p]=(values.panelModes[p]==Modes.QUIET_DAWN
+        or values.panelModes[p]==Modes.ALWAYS_HIDDEN) and 0
         or (p=='WBP_Compass' and values.compassOpacity or values['opacity_'..p]/100)
     local include=values['showHUD_'..p]
     if include~=nil then values.showHUDPanels[p]=include==1 end
@@ -308,7 +316,7 @@ if values.hidePlayerEffectIcons then
     values.panelModes.WBP_BuffContainer=2
     values.panelOpacities.WBP_BuffContainer=0
 end
-values.dynamicPanels={HumanStats=values.mode_HumanStats==1,VampireStats=values.mode_VampireStats==1}
+values.dynamicPanels={HumanStats=values.mode_HumanStats==Modes.QUIET_DAWN,VampireStats=values.mode_VampireStats==Modes.QUIET_DAWN}
 values.path=Store.path(directory)
 return values
 

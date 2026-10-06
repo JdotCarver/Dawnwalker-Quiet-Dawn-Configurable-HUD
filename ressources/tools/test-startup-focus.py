@@ -9,7 +9,8 @@ regressing:
 * a baseline is released only after every configured ordinary group resolves;
 * an alternate player form can prove the stats group ready without joining the
   Quiet Dawn dismissal wave itself;
-* no configured Quiet Dawn baseline means no waiting state; and
+* a Fixed 0% or Always Hidden ordinary panel joins that startup wave, while
+  positive Fixed Opacity still does not delay it; and
 * Focus entry holds the peek while its false transition requests one timed hold.
 
 Usage:
@@ -67,8 +68,13 @@ def main():
         result.update(overrides)
         return lua.table_from(result)
 
+    def opacities(value=1, **overrides):
+        result = {name: value for name in baseline_names}
+        result.update(overrides)
+        return lua.table_from(result)
+
     # --- Startup barrier -------------------------------------------------
-    barrier = barrier_model.new(modes(1), 12.5)
+    barrier = barrier_model.new(modes(1), opacities(), 12.5)
     check("all default Quiet Dawn baseline positions form seven groups", barrier["groups"] == 7)
     check("the barrier retains its real game-time starting point", barrier["startedAt"] == 12.5)
     check("an enabled baseline begins active", barrier["active"] is True)
@@ -94,15 +100,19 @@ def main():
     # Quiet Dawn for only one stats form must still recognise the player's
     # currently constructed alternate form. That alternate only watches; it
     # never joins the opacity wave and therefore keeps its own vanilla setting.
-    alternate = barrier_model.new(modes(0, HumanStats=1, VampireStats=0), 0)
+    alternate = barrier_model.new(modes(0, HumanStats=1, VampireStats=0), opacities(), 0)
     check("only the Quiet Dawn form is a startup fade member", alternate["members"]["HumanStats"] == 1 and alternate["members"]["VampireStats"] is None)
     check("the Vanilla alternate remains a readiness watcher", alternate["watchers"]["VampireStats"] == 1)
     check("the Vanilla alternate can resolve the shared stats position", barrier_model.resolve(alternate, "VampireStats") == 1)
     check("that alternate-form resolution requests the release", alternate["releasePending"] is True)
 
-    fixed_only = barrier_model.new(modes(2), 0)
-    check("Fixed-opacity baseline panels do not wait for a Quiet Dawn release", fixed_only["active"] is False)
-    check("a baseline model contains no guessed timeout field", fixed_only["timeout"] is None and fixed_only["deadline"] is None)
+    fixed_visible = barrier_model.new(modes(2), opacities(1), 0)
+    check("positive Fixed Opacity baseline panels do not wait for a Quiet Dawn release", fixed_visible["active"] is False)
+    fixed_hidden = barrier_model.new(modes(2), opacities(0), 0)
+    check("Fixed 0% baseline panels join the coordinated startup fade", fixed_hidden["active"] is True and fixed_hidden["members"]["XPBar"] is not None)
+    always_hidden = barrier_model.new(modes(3), opacities(1), 0)
+    check("Always Hidden baseline panels join the coordinated startup fade", always_hidden["active"] is True and always_hidden["members"]["WBP_Compass"] is not None)
+    check("a baseline model contains no guessed timeout field", fixed_hidden["timeout"] is None and fixed_hidden["deadline"] is None)
 
     # --- Focus state machine ---------------------------------------------
     state, edge = multiple(focus_model.transition(None, True))
@@ -121,6 +131,8 @@ def main():
     rows = {row["key"]: row for row in schema.values()}
     peek = rows["manualPeek"]
     check("the Show HUD selector still accepts Off, legend hold and Focus", sorted(peek["values"].values()) == [0, 1, 2])
+    mode = rows["mode_WBP_AA_Quickslots"]
+    check("panel modes include explicit Always Hidden", sorted(mode["values"].values()) == [0, 1, 2, 3])
 
     settings_model = (SCRIPTS / "SettingsModel.lua").read_text()
     gameplay = (SCRIPTS / "Gameplay.lua").read_text()
@@ -138,6 +150,7 @@ def main():
     check("Focus configuration and registration state are logged decisively", "Focus hook setup: Show HUD=%s manualPeek=%s eligible=%s registration=%s" in gameplay)
     check("a queued Focus fade keeps its worker alive until the wave flushes", "or runtime.fadeWaveSize>0 or timeRequested" in gameplay)
     check("mid-session fade investigation records the startup-immediate route at Info", "startupImmediateFadeBypass" in gameplay and "runtime.hudAdoptionSource" in gameplay and "if fade.enabled() and not runtime.startupImmediateNoted then" in gameplay)
+    check("Vanilla Quickslot Abilities route discovery stays bounded and Debug-only", "queueVanillaQuickslotProbe" in gameplay and "phase=\"nextFrame\"" in gameplay and "runtime.quickslotProbeNext=nextFrame" in gameplay and "wake(\"quickslotProbe\")" in gameplay and "vanillaQuickslots" in gameplay)
 
     print()
     if failures:

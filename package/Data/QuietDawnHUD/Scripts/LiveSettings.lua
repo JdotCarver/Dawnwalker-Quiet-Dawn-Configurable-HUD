@@ -1,3 +1,4 @@
+-- LiveSettings.lua
 -- MIT. Persistent menu subscription; no work is performed when this module loads.
 local M={}
 function M.new(directory, report)
