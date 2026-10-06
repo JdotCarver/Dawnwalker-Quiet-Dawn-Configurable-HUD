@@ -427,6 +427,9 @@ local markerSpecs = {"Construct", "OnObservedStubIconTypeChanged",
     "NotifyIndicatorCleared", "EnableHardLock", "RefreshIndicatorsVisibility",
     "ToggleShowOnlyMiddleIndicator", "Display Icon State Directionally",
     "Display Icon State Non-Directionally"}
+-- This broad graph is only for one-off lock-input discovery. Do not retain it
+-- outside a Debug run once the entry number has been measured.
+if D.debugLogging then markerSpecs[#markerSpecs+1]="ExecuteUbergraph_WBP_CombatTargetIndicator" end
 local markerHookIndex, markerHookAttempts, markerSeen = 1, 0, false
 local markerQueue, markerPending, markerFirst, markerLast = {}, {}, 1, 0
 local markerCache, markerSlots, markerCount, markerPrune = {}, {}, 0, 1
@@ -532,7 +535,12 @@ local function markerHooksStep()
     -- The post-hook only records its source. UObject reads remain in the
     -- shared game-thread worker, where the coalesced job can safely inspect
     -- the final stock state produced by this Blueprint event.
-    local success, pre, post=pcall(RegisterHook, path, function(context)
+    local success, pre, post=pcall(RegisterHook, path, function(context,entryParam)
+        if source=="ExecuteUbergraph_WBP_CombatTargetIndicator" then
+            -- EnableHardLock did not fire in the reproduced lock action. The
+            -- event graph's entry number is the safe next discovery boundary.
+            noteUbergraphEntry("WBP_CombatTargetIndicator",entryParam)
+        end
         markerEvent(context,source)
     end)
     markerHookAttempts=markerHookAttempts+1
@@ -1490,6 +1498,19 @@ local function step()
         settingsStep()
         return false
     end
+    -- A stock Display Icon event can temporarily restore the forbidden dot.
+    -- Give one queued marker job the next fair worker slice, before prompts,
+    -- time sampling and enemy bars, so it cannot sit visibly stale for many
+    -- unrelated jobs. Alternation still gives every other subsystem a turn.
+    markerTurn=not markerTurn
+    if markersReady() and (markerTurn or (cursor==0 and not dirty)) then
+        local success, reason=pcall(markerStep)
+        if not success and D.debugLogging then
+            D.count("markerFailures")
+            D.event("markerFailure","Marker update skipped: %s",tostring(reason))
+        end
+        return false
+    end
     promptTurn=not promptTurn
     if promptsReady() and promptTurn then
         if valid(controller) and sameObject(hud:GetWorld(),world) and sameObject(controller:GetWorld(),world)
@@ -1546,15 +1567,6 @@ local function step()
     local changedPanel=next(livePanels)
     if changedPanel and candidate==nil then
         if panelStep(changedPanel) then livePanels[changedPanel]=nil end
-        return false
-    end
-    markerTurn=not markerTurn
-    if markersReady() and (markerTurn or (cursor==0 and not dirty)) then
-        local success, reason=pcall(markerStep)
-        if not success and D.debugLogging then
-            D.count('markerFailures')
-            D.event('markerFailure','Marker update skipped: %s',tostring(reason))
-        end
         return false
     end
     if cursor==0 and not dirty and timeDirty then

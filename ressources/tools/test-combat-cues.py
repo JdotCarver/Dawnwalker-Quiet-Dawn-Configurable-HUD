@@ -56,6 +56,17 @@ def main():
         and "entry.cueHardLock,entry.cueHideDirections=hardLock,hideDirections" in combat_cues
         and "entry.cueShown=arrow~=nil or unblockable or lock or marker" in combat_cues,
     )
+    check(
+        "the target-indicator graph reports lock-button entry numbers at Debug",
+        'if D.debugLogging then markerSpecs[#markerSpecs+1]="ExecuteUbergraph_WBP_CombatTargetIndicator" end' in gameplay
+        and 'noteUbergraphEntry("WBP_CombatTargetIndicator",entryParam)' in gameplay,
+    )
+    check(
+        "queued marker corrections run before prompts and time sampling",
+        gameplay.index("if markersReady() and (markerTurn or (cursor==0 and not dirty)) then")
+        < gameplay.index("if promptsReady() and promptTurn then")
+        < gameplay.index("if timeSampleTurn and timeWatcher"),
+    )
 
     print()
     if failures:
