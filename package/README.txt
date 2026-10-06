@@ -25,9 +25,9 @@ Health and blood gains of at least 0.2% of the bar reveal the stat panel and ref
 
 The time-of-day panel is hidden by default. It appears at full opacity when an activity advances time, including shrine restoration, then hides after the configured duration (4 seconds by default). If the activity hides the HUD, the reveal starts when the HUD returns. Time of day reveal duration adjusts from 0 to 10 seconds in 0.5-second steps; 0 disables automatic reveals. Fixed opacity keeps the selected value, including 0% to hide it. Vanilla follows the game. HUD peek reveals it only in Quiet Dawn mode.
 
-## Player combat effects
+## Crimson Rush effect
 
-**Hide player combat effects**, under Player status / Active buffs, hides Crimson Rush's bright red arm effect in human and vampire form. It defaults to Off and is separate from effect icons and enemy claw slash marks. Buff strength, duration and sound stay unchanged. Apply updates effects already active on the player; Off restores their visibility.
+**Hide Crimson Rush effect**, under Player status / Combat effects, hides Crimson Rush's bright red arm effect in human and vampire form. It defaults to Off and is separate from effect icons and enemy claw slash marks. Buff strength, duration and sound stay unchanged. Apply updates effects already active on the player; Off restores their visibility.
 
 ## Effect icons
 
