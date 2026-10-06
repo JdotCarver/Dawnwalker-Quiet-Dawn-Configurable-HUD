@@ -354,6 +354,40 @@ function runtime.captureVanillaCombatPanels(probe)
                 D.logInfo("vanillaCombatPanel source=%s entry=%s phase=%s panel=%s presentation=%s class=%s visibility=%s opacity=%s previous=%s changed=%s",
                     probe.source,tostring(probe.entry),probe.phase,name,presentation,className,visibility,opacityValue,
                     previous or "none",tostring(previous~=nil and previous~=state))
+                if probe.parents then
+                    runtime.vanillaCombatParentStates=runtime.vanillaCombatParentStates or {}
+                    local parent=object:GetParent()
+                    local parentNodes,parentChanges=0,0
+                    for level=1,8 do
+                        if not valid(parent) then break end
+                        parentNodes=parentNodes+1
+                        local parentClass="unavailable"
+                        local parentVisibility="unavailable"
+                        local parentOpacity="unavailable"
+                        readable,value=pcall(function() return parent:GetClass():GetFullName() end)
+                        if readable and value then parentClass=tostring(value) end
+                        readable,value=pcall(function() return parent:GetVisibility() end)
+                        if readable and value~=nil then parentVisibility=tostring(value) end
+                        readable,value=pcall(function() return parent:GetRenderOpacity() end)
+                        if readable and type(value)=="number" then parentOpacity=string.format("%.3f",value) end
+                        local address=parent:GetAddress()
+                        local parentState=parentClass.."|"..parentVisibility.."|"..parentOpacity
+                        local parentKey=name..":"..tostring(address)
+                        local before=runtime.vanillaCombatParentStates[parentKey]
+                        runtime.vanillaCombatParentStates[parentKey]=parentState
+                        if not before or before~=parentState then
+                            parentChanges=parentChanges+1
+                            D.logInfo("vanillaCombatParent source=%s entry=%s phase=%s panel=%s level=%d node=%s class=%s visibility=%s opacity=%s previous=%s changed=%s",
+                                probe.source,tostring(probe.entry),probe.phase,name,level,tostring(address),parentClass,
+                                parentVisibility,parentOpacity,before or "none",tostring(before~=nil and before~=parentState))
+                        end
+                        local parentOK,nextParent=pcall(function() return parent:GetParent() end)
+                        if not parentOK then break end
+                        parent=nextParent
+                    end
+                    D.logInfo("vanillaCombatParent source=%s entry=%s phase=%s panel=%s nodes=%d changed=%d depthLimit=8",
+                        probe.source,tostring(probe.entry),probe.phase,name,parentNodes,parentChanges)
+                end
             else
                 D.logInfo("vanillaCombatPanel source=%s entry=%s phase=%s panel=%s presentation=unavailable",
                     probe.source,tostring(probe.entry),probe.phase,name)
@@ -902,6 +936,31 @@ local function queueVanillaCombatProbe(entry)
         end)
     end
 end
+local function queueVanillaCombatParentProbe(source,entry)
+    if not D.debugLogging or not config.fadeTransitions then return end
+    local targets={"WBP_AA_Quickslots","WBP_HUD_FocusCharge_Bar","WBP_HUD_SpecialAttackCooldown"}
+    local eligible=false
+    for _,name in ipairs(targets) do
+        if panelModes[name]==Modes.VANILLA then eligible=true;break end
+    end
+    if not eligible then return end
+    runtime.vanillaCombatParentProbeSeen=runtime.vanillaCombatParentProbeSeen or {}
+    local key=source..":"..tostring(entry)
+    if runtime.vanillaCombatParentProbeSeen[key] then return end
+    local remaining=runtime.vanillaCombatParentProbeRemaining or 0
+    if remaining<=0 then return end
+    runtime.vanillaCombatParentProbeSeen[key]=true
+    runtime.vanillaCombatParentProbeRemaining=remaining-1
+    runtime.enqueueVanillaCombatProbe({source=source,entry=entry,phase="post",parents=true})
+    for _,sample in ipairs({{16,"nextFrame"},{96,"after100ms"},{240,"after250ms"}}) do
+        local delay,phase=sample[1],sample[2]
+        pcall(ExecuteInGameThreadWithDelay,delay,function()
+            if D.debugLogging then
+                runtime.enqueueVanillaCombatProbe({source=source,entry=entry,phase=phase,parents=true})
+            end
+        end)
+    end
+end
 local function queueVanillaQuickslotProbe(source,discoverWidget)
     -- Vanilla intentionally releases Quiet Dawn's opacity lease, so fading it
     -- needs the exact stock event that changes its target. Until that event is
@@ -938,7 +997,14 @@ end
 local function signal(source)
     if D.debugLogging then D.count("presetEvents") end
     if timeWatcher then timeWatcher.resume() end
-    queueVanillaQuickslotProbe(source or "HUD preset")
+    source=source or "HUD preset"
+    -- Push/Pop are the confirmed combat presentation boundaries. Compare them
+    -- against the earlier weapon-state baseline before deciding how a Vanilla
+    -- fade can preserve the game's WHEN without guessing an owner.
+    if source=="PushHUDPreset" or source=="PopHUDPreset" then
+        queueVanillaCombatParentProbe(source,nil)
+    end
+    queueVanillaQuickslotProbe(source)
     refreshDirty=true
     wake()
 end
@@ -981,7 +1047,13 @@ local function switchedQuickslots(context,entryParam)
     -- Measure the actual combat presentation source before changing Vanilla
     -- behavior. This applies only to the locally owned GameHUD and is bounded
     -- to eight distinct entries for the requested one-session investigation.
-    if entry and currentPanelEvent(context) then queueVanillaCombatProbe(entry) end
+    if entry and currentPanelEvent(context) then
+        queueVanillaCombatProbe(entry)
+        -- This baseline precedes the later confirmed HUD-preset boundary in
+        -- the observed combat sequence, so Push/Pop can compare ancestor
+        -- ownership without a recurring poll or unsafe native pre-hook read.
+        if entry==3515 then queueVanillaCombatParentProbe("GameHUD graph 3515 baseline",entry) end
+    end
     -- The latest combat probe recorded 3515 on both weapon draw and sheath.
     -- It is a candidate only: collect the same bounded opacity evidence before
     -- treating it as the stock Quickslot Abilities visibility route.
@@ -1167,6 +1239,8 @@ local function accept(object)
         runtime.vanillaCombatProbe,runtime.vanillaCombatProbeQueue=nil,{}
         runtime.vanillaCombatProbeSeen,runtime.vanillaCombatPanelStates={},{}
         runtime.vanillaCombatProbeRemaining=8
+        runtime.vanillaCombatParentProbeSeen,runtime.vanillaCombatParentStates={},{}
+        runtime.vanillaCombatParentProbeRemaining=3
         panelRetries={}
         -- A newly adopted HUD should never wait for a decorative fade before
         -- honouring Quiet Dawn's baseline rules. Each managed panel stays in
