@@ -426,14 +426,14 @@ local MARKER = "/Game/_Dawnwalker/UI/_Unified/Combat/WBP_CombatTargetIndicator.W
 local markerSpecs = {"Construct", "OnObservedStubIconTypeChanged",
     "NotifyIndicatorCleared", "EnableHardLock", "RefreshIndicatorsVisibility",
     "ToggleShowOnlyMiddleIndicator", "Display Icon State Directionally",
-    "Display Icon State Non-Directionally"}
--- This broad graph is only for one-off lock-input discovery. Do not retain it
--- outside a Debug run once the entry number has been measured.
-if D.debugLogging then markerSpecs[#markerSpecs+1]="ExecuteUbergraph_WBP_CombatTargetIndicator" end
+    "Display Icon State Non-Directionally", "ExecuteUbergraph_WBP_CombatTargetIndicator"}
+-- Verified in a live controller run: this one graph entry occurs on both lock
+-- and unlock. Every other entry is ignored in normal play.
+local markerHardLockEntry=1370
 local markerHookIndex, markerHookAttempts, markerSeen = 1, 0, false
 local markerQueue, markerPending, markerFirst, markerLast = {}, {}, 1, 0
 local markerCache, markerSlots, markerCount, markerPrune = {}, {}, 0, 1
-local markerCacheWorld, markerCacheController, markerTurn
+local markerCacheWorld, markerCacheController, markerTurn, markerUrgent
 -- Steam build 25129649: ERebelSetting::Game_Difficulty_CombatDirectionMarkers=71.
 -- This menu setting is distinct from the widget's internal Hide Directions flag.
 local settingsFactory, settingsObject, directionsEnabled
@@ -458,7 +458,7 @@ local function markerSourceList(sources)
     for _,name in ipairs(markerSpecs) do
         if sources[name] then names[#names+1]=name end
     end
-    for _,name in ipairs({"settings","lifecycle"}) do
+    for _,name in ipairs({"settings","lifecycle","HardLockToggle"}) do
         if sources[name] then names[#names+1]=name end
     end
     return #names>0 and table.concat(names," + ") or "internal"
@@ -537,9 +537,14 @@ local function markerHooksStep()
     -- the final stock state produced by this Blueprint event.
     local success, pre, post=pcall(RegisterHook, path, function(context,entryParam)
         if source=="ExecuteUbergraph_WBP_CombatTargetIndicator" then
-            -- EnableHardLock did not fire in the reproduced lock action. The
-            -- event graph's entry number is the safe next discovery boundary.
-            noteUbergraphEntry("WBP_CombatTargetIndicator",entryParam)
+            -- The graph covers many ordinary indicator paths. Entry 1370 alone
+            -- is the verified lock toggle, so ignore every other call before
+            -- it can create marker work. Debug retains their entry evidence.
+            if D.debugLogging then noteUbergraphEntry("WBP_CombatTargetIndicator",entryParam) end
+            if tonumber(unwrap(entryParam))~=markerHardLockEntry then return end
+            markerUrgent=true
+            markerEvent(context,"HardLockToggle")
+            return
         end
         markerEvent(context,source)
     end)
@@ -939,6 +944,7 @@ local function accept(object)
         runtime.fadeWave,runtime.fadeWaveSize={},0
         runtime.fadeWaveLast,runtime.fadeWaveIdle=0,0
         runtime.fadeInFlight=false
+        markerUrgent=false
         peekDirty,statDirty,refreshDirty=false,false,false
         if timeWatcher then timeWatcher.reset() end
         lastPawnAddress, lastCombatAddress, previousHealth, previousStamina = nil, nil, nil, nil
@@ -1503,7 +1509,11 @@ local function step()
     -- time sampling and enemy bars, so it cannot sit visibly stale for many
     -- unrelated jobs. Alternation still gives every other subsystem a turn.
     markerTurn=not markerTurn
-    if markersReady() and (markerTurn or (cursor==0 and not dirty)) then
+    if markersReady() and (markerUrgent or markerTurn or (cursor==0 and not dirty)) then
+        -- A verified lock toggle is a presentation boundary: service it on
+        -- the next rendered worker frame, without making ordinary cue traffic
+        -- outrank every other subsystem.
+        markerUrgent=false
         local success, reason=pcall(markerStep)
         if not success and D.debugLogging then
             D.count("markerFailures")
@@ -1700,6 +1710,10 @@ function runtime.workerDelay()
         if runtime.fadeInFlight and D.debugLogging then D.count("fadeFrameGateBackoffs") end
         return runtime.fadeInFlight and runtime.workerPausedFadeMs or runtime.workerIdleMs
     end
+    -- A 1370 hard-lock transition has one queued presentation correction.
+    -- Re-arm promptly until that finite job is consumed; the frame gate above
+    -- still prevents a busy loop when rendering has stopped.
+    if markerUrgent then return runtime.workerFadeMs end
     local ok,fading = pcall(fade.pending)
     runtime.fadeInFlight=ok and fading or false
     if not runtime.fadeInFlight then runtime.fadePacing.reset() end
