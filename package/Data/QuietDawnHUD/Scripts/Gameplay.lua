@@ -1497,7 +1497,11 @@ local function step()
         return false
     end
     if cursor==0 and not dirty then
-        if statsPending or peekDirty or statDirty or refreshDirty or switchCursor>0 or timeRequested or (timeWatcher and timeWatcher.pending()) or markersReady() or enemyBars.ready() or promptsReady() then return false end
+        -- A deferred fade wave needs two quiet worker calls to prove that no
+        -- more panels are joining it, then a third to flush the whole group.
+        -- Stopping here stranded a completed Focus peek: the next unrelated
+        -- HUD event was the only thing that could restart the worker and hide it.
+        if statsPending or peekDirty or statDirty or refreshDirty or switchCursor>0 or runtime.fadeWaveSize>0 or timeRequested or (timeWatcher and timeWatcher.pending()) or markersReady() or enemyBars.ready() or promptsReady() then return false end
         worker=false
         armExpiry()
         return true

@@ -134,6 +134,7 @@ def main():
     check("the verified Focus prompt graph wakes a pawn snapshot on entry", "runtime.focusPromptGraph" in gameplay and "function runtime.focusPromptEvent" in gameplay and "focusPromptWakes" in gameplay)
     check("the Focus graph is queued for every enabled Show HUD trigger, not only Focus", "if manualPeekEnabled then\n    -- Register this verified graph" in gameplay)
     check("Focus configuration and registration state are logged decisively", "Focus hook setup: Show HUD=%s manualPeek=%s eligible=%s registration=%s" in gameplay)
+    check("a queued Focus fade keeps its worker alive until the wave flushes", "or runtime.fadeWaveSize>0 or timeRequested" in gameplay)
 
     print()
     if failures:
