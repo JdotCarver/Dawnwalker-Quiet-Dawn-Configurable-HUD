@@ -187,6 +187,9 @@ local runtime = {panelsSettled = false, startupPanels = {}}
 -- See writePanel and the flush in step(). On the runtime table rather than as
 -- locals because this file sits near Lua's 200-local ceiling.
 runtime.fadeWave, runtime.fadeWaveSize = {}, 0
+-- Verified by the Focus prompt probe in a live Steam build. Keep this exact
+-- generated Blueprint path: it provides a Focus-entry wake without polling.
+runtime.focusPromptGraph="/Game/_Dawnwalker/UI/_Unified/HUD/CombatFocus/WBP_OpenFocusPrompt.WBP_OpenFocusPrompt_C:ExecuteUbergraph_WBP_OpenFocusPrompt"
 -- The readiness model is isolated so its form alternatives and no-timeout
 -- contract are deterministic outside the game; Gameplay owns actual widgets,
 -- diagnostics and the shared fade wave.
@@ -648,6 +651,17 @@ local function currentPanelEvent(context,field)
     return valid(hud) and valid(controller) and sameObject(field and hud[field] or hud,object)
         and sameObject(object:GetOwningPlayer(),controller) and sameObject(object:GetWorld(),world)
 end
+function runtime.focusPromptEvent(context,entryParam)
+    noteUbergraphEntry("WBP_OpenFocusPrompt",entryParam)
+    if not manualPeekEnabled or not config.peekOnFocusMode then return end
+    -- Unlike GameHUD entry 4026, this graph also runs when Focus is entered.
+    -- It only asks the existing snapshot to read the pawn's authoritative flag;
+    -- the transition model remains the sole place that changes HUD visibility.
+    if not currentPanelEvent(context,"WBP_OpenFocusPrompt") then return end
+    statsPending=true
+    if D.debugLogging then D.count("focusPromptWakes") end
+    wake("resource")
+end
 local function cooldownEvent(context)
     if panelModes.WBP_HUD_SpecialAttackCooldown~=1 then return end
     if not currentPanelEvent(context,"WBP_HUD_SpecialAttackCooldown") then return end
@@ -723,6 +737,9 @@ if #statNames>0 then
 end
 if config.peekOnLegendHold and config.manualPeekSeconds>0 and hasPeekPanels() then
     specs[#specs+1]={path=LEGEND..":ExecuteUbergraph_WBP_ControlsLegend", callback=peekInput, optional="peek"}
+end
+if manualPeekEnabled and config.peekOnFocusMode then
+    specs[#specs+1]={path=runtime.focusPromptGraph, callback=runtime.focusPromptEvent, optional="peek"}
 end
 if sprintPrompts then
     specs[#specs+1]={path=ROOT..":OnSetInputPromptEnabled", callback=promptEvent, optional="prompt"}
