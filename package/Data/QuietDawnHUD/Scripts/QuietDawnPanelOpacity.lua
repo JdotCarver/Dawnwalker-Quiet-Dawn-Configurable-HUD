@@ -49,6 +49,14 @@ function M.new(Session, D)
         assert(equal(object:GetRenderOpacity(),value),'Panel opacity write readback failed')
         return true
     end
+    -- A completed mediated Vanilla transition has reached the stock target.
+    -- Treat that target as the stable external value, rather than restoring an
+    -- intermediate stock animation sample if the session later closes.
+    function api.commit(entry,value)
+        assert(entry and identity(entry),'Panel opacity owner changed')
+        entry.original=value
+        entry.last=value
+    end
     api.restore=restore
     return api
 end
