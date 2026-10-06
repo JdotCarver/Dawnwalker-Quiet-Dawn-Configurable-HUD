@@ -1,5 +1,6 @@
-local D = require("QuietDawnDiagnostics")
+-- Gameplay.lua
 -- Quiet Dawn - Configurable HUD | MIT License
+local D = require("QuietDawnDiagnostics")
 -- Event-driven panel opacity. No widget-tree walks, animation hooks or Lua
 -- coroutines. Claw marks discover two exact cue classes once per enablement.
 -- Resource reads run only on resource-change and HUD/player lifecycle events.
@@ -439,23 +440,52 @@ local function markersReady()
     -- Missing HUD readiness sleeps until a lifecycle event, without polling.
     return markerFirst<=markerLast and candidate==nil and world~=nil and controller~=nil
 end
-local function queueMarker(object, retries)
+local function rememberMarkerSource(job, source)
+    if source==nil then return end
+    job.sources=job.sources or {}
+    if type(source)=="string" then
+        job.sources[source]=true
+    else
+        for name in pairs(source) do job.sources[name]=true end
+    end
+end
+local function markerSourceList(sources)
+    if not sources then return "unknown" end
+    local names={}
+    for _,name in ipairs(markerSpecs) do
+        if sources[name] then names[#names+1]=name end
+    end
+    for _,name in ipairs({"settings","lifecycle"}) do
+        if sources[name] then names[#names+1]=name end
+    end
+    return #names>0 and table.concat(names," + ") or "internal"
+end
+local function queueMarker(object, retries, source)
     if object == nil then return end
     -- Capture only the wrapper here: construction may not be on the game
     -- thread. Pointer/property reads happen in the shared game-thread worker.
     local pending=markerPending[object]
-    if pending then pending.object=object; if D.debugLogging then D.count("markerCoalesced") end; return end
+    if pending then
+        pending.object=object
+        rememberMarkerSource(pending,source)
+        if D.debugLogging then D.count("markerCoalesced") end
+        return
+    end
     -- Excess objects remain under game control. No unbounded queues or scans.
     if markerLast-markerFirst+1 >= 64 then if D.debugLogging then D.count("markerQueueFull") end; return end
     local job={object=object, retries=retries or 0}
+    rememberMarkerSource(job,source)
     markerLast=markerLast+1
     markerQueue[markerLast]=job
     markerPending[object]=job
     if wake then wake("marker") end
 end
-local function markerEvent(context)
-    if D.debugLogging then D.count("markerEvents") end
-    queueMarker(unwrap(context))
+local function markerEvent(context, source)
+    if D.debugLogging then
+        D.count("markerEvents")
+        D.count("markerEvent_"..source)
+    end
+    queueMarker(unwrap(context),nil,source)
 end
 local function refreshSettings(context, setting)
     if setting and tonumber(unwrap(setting))~=71 then return end
@@ -491,14 +521,20 @@ local function settingsStep()
     if directionsEnabled~=value then
         directionsEnabled=value
         -- Fixed-size plain Lua cache traversal; native work stays in marker slices.
-        for _,entry in pairs(markerCache) do queueMarker(entry.object) end
+        for _,entry in pairs(markerCache) do queueMarker(entry.object,nil,"settings") end
     end
     if D.debugLogging then D.event("directions","menuEnabled=%s readSuccess=%s attempts=%d",tostring(value),tostring(success),settingsAttempts) end
 end
 settingsStep=D.wrap("directions",settingsStep)
 local function markerHooksStep()
-    local path=MARKER..":"..markerSpecs[markerHookIndex]
-    local success, pre, post=pcall(RegisterHook, path, markerEvent)
+    local source=markerSpecs[markerHookIndex]
+    local path=MARKER..":"..source
+    -- The post-hook only records its source. UObject reads remain in the
+    -- shared game-thread worker, where the coalesced job can safely inspect
+    -- the final stock state produced by this Blueprint event.
+    local success, pre, post=pcall(RegisterHook, path, function(context)
+        markerEvent(context,source)
+    end)
     markerHookAttempts=markerHookAttempts+1
     if success and type(pre)=="number" and type(post)=="number" then
         hooks[path]={pre,post}
@@ -507,6 +543,47 @@ local function markerHooksStep()
     else
         reportHookError(path, success, pre, post)
     end
+end
+-- Debug-only, one-frame verification for the shared lock/dot indicator. This
+-- distinguishes a stale post-hook state from stock UMG writing over our value
+-- after the worker has applied it; it is intentionally not a recurring poll.
+local function probeCombatCue(entry, object, job, icon, before, target, wrote)
+    if not D.debugLogging then return end
+    local sources=job.sources
+    local source=markerSourceList(sources)
+    local hardLock=entry.cueHardLock==true
+    local hideDirections=entry.cueHideDirections==true
+    local changed=entry.cueProbeIcon~=icon or entry.cueProbeHardLock~=hardLock
+        or entry.cueProbeHideDirections~=hideDirections or entry.cueProbeTarget~=target
+    local lockLifecycle=sources and (sources.EnableHardLock or sources.NotifyIndicatorCleared
+        or sources["Display Icon State Directionally"] or sources["Display Icon State Non-Directionally"])
+    entry.cueProbeIcon,entry.cueProbeHardLock=icon,hardLock
+    entry.cueProbeHideDirections,entry.cueProbeTarget=hideDirections,target
+    if not changed and not lockLifecycle then return end
+    D.logInfo("combatCue probe event=%s icon=%s hardLock=%s hideDirections=%s beforeOpacity=%.3f targetOpacity=%d wrote=%s shown=%s arrow=%s lock=%s marker=%s",
+        source,tostring(icon),tostring(hardLock),tostring(hideDirections),before,target,tostring(wrote),
+        tostring(entry.cueShown),tostring(entry.cueArrow),tostring(entry.cueLock),tostring(entry.cueMarker))
+    entry.cueProbeVersion=(entry.cueProbeVersion or 0)+1
+    local version,address=entry.cueProbeVersion,entry.address
+    pcall(ExecuteInGameThreadWithDelay,16,function()
+        -- A later event supersedes this one. One final read is enough to catch
+        -- a stock animation overwrite without turning combat cues into a tick.
+        if not D.debugLogging or entry.cueProbeVersion~=version or not valid(object)
+            or object:GetAddress()~=address then return end
+        local ok,root,reticle,far,nowIcon,nowHardLock=pcall(function()
+            local reticleWidget,farWidget=object.Reticle,object.FarAwayReticle
+            return object:GetRenderOpacity(),
+                valid(reticleWidget) and tostring(reticleWidget:GetVisibility()) or "unavailable",
+                valid(farWidget) and tostring(farWidget:GetVisibility()) or "unavailable",
+                tonumber(object["Currently Displayed Icon Type"]),object.bHardLockEnabled==true
+        end)
+        if ok then
+            D.logInfo("combatCue verify event=%s icon=%s hardLock=%s rootOpacity=%.3f reticleVisibility=%s farVisibility=%s",
+                source,tostring(nowIcon),tostring(nowHardLock),root,reticle,far)
+        else
+            D.event("combatCueProbe","verification unavailable: %s",tostring(root))
+        end
+    end)
 end
 local function markerStep()
     local job=markerQueue[markerFirst]
@@ -527,7 +604,7 @@ local function markerStep()
                 D.event("marker","id=%s ownership unavailable; attempt=%d/8",tostring(job.address),job.retries+1)
             end
         end
-        if job.retries<7 then queueMarker(object,job.retries+1) end
+        if job.retries<7 then queueMarker(object,job.retries+1,job.sources) end
         return
     end
     if not sameObject(objectWorld,world) or not sameObject(owner,controller) then
@@ -550,7 +627,7 @@ local function markerStep()
             markerCache[old.address]=nil
             markerSlots[slot]=nil
             markerCount=markerCount-1
-            queueMarker(object,job.retries+1)
+            queueMarker(object,job.retries+1,job.sources)
         end
         return
     end
@@ -566,7 +643,7 @@ local function markerStep()
     if not applied then
         if entry.lastOpacity~=nil and current==entry.lastOpacity then opacity(object,entry.original) end
         entry.lastOpacity=nil
-        if job.retries<8 then queueMarker(object,job.retries+1) end
+        if job.retries<8 then queueMarker(object,job.retries+1,job.sources) end
         if D.debugLogging and (job.retries==0 or job.retries==8) then
             D.event("combatCueReadiness","id=%s icon=%s attempt=%d/9",tostring(job.address),tostring(icon),job.retries+1)
         end
@@ -574,10 +651,12 @@ local function markerStep()
     end
     if entry.lastOpacity==nil or current~=entry.lastOpacity then entry.original=current end
     local target=shown and 1 or 0
-    if current~=target then
+    local wrote=current~=target
+    if wrote then
         opacity(object,target)
         if D.debugLogging then D.count("markerWrites") end
     end
+    probeCombatCue(entry,object,job,icon,current,target,wrote)
     entry.lastOpacity=target
 end
 markerStep=D.wrap("marker",markerStep)
@@ -1866,7 +1945,7 @@ applyLiveSettings=function(run)
     end
     if changed.showCounterattackDirection or changed.showUnblockableWarning or changed.showDirectionalParry
         or changed.showEnemyMarker or changed.showLockIcon or changed.combatCueSize then
-        for _,entry in pairs(markerCache) do queueMarker(entry.object) end
+        for _,entry in pairs(markerCache) do queueMarker(entry.object,nil,"settings") end
     end
     ensureFeatureSpecs()
     -- A mode transition changes the interpretation of a cached opacity. Do one
@@ -1929,7 +2008,7 @@ end
 local markerSubscribed=pcall(NotifyOnNewObject, MARKER, function(object)
     markerSeen=true
     markerHookAttempts=0
-    queueMarker(object)
+    queueMarker(object,nil,"lifecycle")
 end)
 if not markerSubscribed then
     D.logWarning("Marker lifecycle notification unavailable; marker left to the game.")

@@ -1,3 +1,4 @@
+-- QuietDawnCombatCues.lua
 -- Independent combat marker presentation. Stock events supply the current state.
 local M = {}
 function M.new(config, diagnostics, session)
@@ -156,7 +157,9 @@ function M.new(config, diagnostics, session)
         if config.showCounterattackDirection then arrow=counter[icon] end
         if not arrow and config.showDirectionalParry then arrow=attack[icon] end
         local unblockable=icon==9 and config.showUnblockableWarning
-        local lock=config.showLockIcon and object.bHardLockEnabled==true and not arrow and not unblockable
+        local hardLock=object.bHardLockEnabled==true
+        local hideDirections=object['Hide Directions']==true
+        local lock=config.showLockIcon and hardLock and not arrow and not unblockable
         local marker=config.showEnemyMarker==true and not arrow and not unblockable and not lock
         if unblockable and not valid(skull) then
             skull=StaticFindObject('/Game/_Dawnwalker/UI/_Unified/Combat/Atlas/Frames/T_Combat_Icon_SkullRed.T_Combat_Icon_SkullRed')
@@ -207,11 +210,13 @@ function M.new(config, diagnostics, session)
         entry.cueScale=scale(children.Indicator,factor,entry.cueScale)
         entry.farCueScale=scale(children.FarAwayReticle,factor,entry.farCueScale)
         if diagnostics.debugLogging and (entry.cueIcon~=icon or entry.cueArrow~=arrow or entry.cueLock~=lock or entry.cueMarker~=marker) then
-            diagnostics.event('combatCue','icon=%s arrow=%s unblockable=%s lock=%s marker=%s size=%s',
-                tostring(icon),tostring(arrow),tostring(unblockable),tostring(lock),tostring(marker),tostring(config.combatCueSize or 100))
+            diagnostics.event('combatCue','icon=%s arrow=%s unblockable=%s hardLock=%s lock=%s marker=%s size=%s',
+                tostring(icon),tostring(arrow),tostring(unblockable),tostring(hardLock),tostring(lock),tostring(marker),tostring(config.combatCueSize or 100))
         end
         entry.cueIcon,entry.cueArrow,entry.cueLock,entry.cueMarker=icon,arrow,lock,marker
-        return true,arrow~=nil or unblockable or lock or marker
+        entry.cueHardLock,entry.cueHideDirections=hardLock,hideDirections
+        entry.cueShown=arrow~=nil or unblockable or lock or marker
+        return true,entry.cueShown
     end
 end
 return M
