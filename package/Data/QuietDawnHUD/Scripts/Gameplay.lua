@@ -389,11 +389,21 @@ function runtime.captureVanillaCombatPanels(probe)
                         local parentKey=name..":"..tostring(address)
                         local before=runtime.vanillaCombatParentStates[parentKey]
                         runtime.vanillaCombatParentStates[parentKey]=parentState
-                        if not before or before~=parentState then
+                        local changed=before~=nil and before~=parentState
+                        if name=="WBP_AA_Quickslots" and activeIndex~="not-switcher" then
+                            -- The Switcher may remain exactly the same at an
+                            -- edge. Its selected child is still the evidence
+                            -- we need, so log this bounded read every phase,
+                            -- not only when a general parent property changed.
+                            D.logInfo("vanillaQuickslotSwitcher source=%s entry=%s phase=%s level=%d node=%s activeIndex=%s activeChild=%s previous=%s changed=%s",
+                                probe.source,tostring(probe.entry),probe.phase,level,tostring(address),activeIndex,activeChild,
+                                before or "none",tostring(changed))
+                        end
+                        if not before or changed then
                             parentChanges=parentChanges+1
                             D.logInfo("vanillaCombatParent source=%s entry=%s phase=%s panel=%s level=%d node=%s class=%s visibility=%s opacity=%s activeIndex=%s activeChild=%s previous=%s changed=%s",
                                 probe.source,tostring(probe.entry),probe.phase,name,level,tostring(address),parentClass,
-                                parentVisibility,parentOpacity,activeIndex,activeChild,before or "none",tostring(before~=nil and before~=parentState))
+                                parentVisibility,parentOpacity,activeIndex,activeChild,before or "none",tostring(changed))
                         end
                         local parentOK,nextParent=pcall(function() return parent:GetParent() end)
                         if not parentOK then break end
