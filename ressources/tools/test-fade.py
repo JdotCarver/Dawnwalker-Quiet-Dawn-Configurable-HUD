@@ -311,6 +311,12 @@ def main():
     check("a wave always starts within a few idle calls", bool(wave["flushed"]),
           f"never flushed after {calls} calls")
 
+    gameplay = (REPOSITORY_ROOT / "package/Data/QuietDawnHUD/Scripts/Gameplay.lua").read_text()
+    check(
+        "background enemy-bar work yields while a player-HUD fade is active",
+        "if not fade.pending() and enemyBars.ready()" in gameplay,
+    )
+
     print()
     if failures:
         print(f"!! {len(failures)} check(s) failed")

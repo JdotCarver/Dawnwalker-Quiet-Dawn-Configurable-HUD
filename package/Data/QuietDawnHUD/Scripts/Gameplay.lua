@@ -1601,9 +1601,14 @@ local function step()
         return false
     end
     -- Alternate with existing work: one health child operation per frame,
-    -- sharing the same one-shot worker and its native frame gate.
+    -- sharing the same one-shot worker and its native frame gate. A failed
+    -- enemy field may still have its bounded readiness work queued; never let
+    -- that background work take an intermediate frame away from an active
+    -- player-HUD fade. The fade pass below advances it in this same worker
+    -- call, so this changes priority rather than adding another tick.
     healthTurn=not healthTurn
-    if enemyBars.ready() and (healthTurn or (cursor==0 and not dirty and not statsPending and not markersReady())) then
+    if not fade.pending() and enemyBars.ready()
+        and (healthTurn or (cursor==0 and not dirty and not statsPending and not markersReady())) then
         enemyBars.step()
         return false
     end

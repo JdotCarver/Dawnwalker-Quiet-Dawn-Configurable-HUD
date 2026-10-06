@@ -5,9 +5,9 @@ Exercise the two failure boundaries in QuietDawnEnemyBars without the game:
 
 * UE4SS must never let a non-widget object reach a UMG-only method such as
   GetOwningPlayer; the worker drops that job after checking its exact class.
-* A missing named child gets a short, finite readiness window. Retrying a
-  permanently absent field hundreds of times delays unrelated HUD work without
-  helping the widget appear.
+* A missing named child gets a short, finite readiness window. One later owner
+  update may rearm it, but a permanently absent field then becomes dormant for
+  that widget so recurring lifecycle events cannot starve unrelated HUD work.
 
 Usage:
     python3 ressources/tools/test-enemy-bars.py
@@ -143,7 +143,8 @@ def main():
     update_hook = character_spec["path"] + ":UpdateTarget"
     hooks[construct_hook] = lua.table()
     hooks[update_hook] = lua.table()
-    bars.queue(bar, character_spec, lua.table_from(["SegmentedHealthBar"]))
+    missing_health = lua.table_from(["SegmentedHealthBar"])
+    bars.queue(bar, character_spec, missing_health, "construction")
     # The two lifecycle hooks are registered first, one per worker slice;
     # then the single requested child receives its eight readiness attempts.
     for _ in range(10):
@@ -157,6 +158,60 @@ def main():
         "readiness exhaustion reports one warning",
         len(warnings) == 1,
         f"warnings={len(warnings)}",
+    )
+
+    # An ordinary repeat cannot reopen a failed field's readiness budget.
+    bars.queue(bar, character_spec, missing_health)
+    bars.step()
+    check(
+        "ordinary repeat events skip an exhausted child without another tree lookup",
+        child_calls["value"] == 8,
+        f"GetWidgetFromName calls={child_calls['value']}",
+    )
+
+    # UpdateTarget / Update Owner is the one event allowed to prove the child
+    # arrived just after construction. It receives exactly one fresh budget.
+    bars.queue(bar, character_spec, missing_health, "ownerUpdate")
+    for _ in range(8):
+        bars.step()
+    check(
+        "one owner update receives one bounded late-readiness rearm",
+        child_calls["value"] == 16 and counts.get("enemyHealthReadinessRearmed") == 1,
+        f"GetWidgetFromName calls={child_calls['value']} rearms={counts.get('enemyHealthReadinessRearmed')}",
+    )
+    check(
+        "an exhausted rearm makes the field dormant for this widget",
+        counts.get("enemyHealthDormantFields") == 1,
+        f"dormant fields={counts.get('enemyHealthDormantFields')}",
+    )
+
+    bars.queue(bar, character_spec, missing_health, "ownerUpdate")
+    bars.step()
+    check(
+        "recurring owner updates cannot reopen a dormant field",
+        child_calls["value"] == 16,
+        f"GetWidgetFromName calls={child_calls['value']}",
+    )
+
+    # NotifyOnNewObject and the Blueprint Construct hook can both mention the
+    # same object. That duplicate construction notice cannot reset its fuse.
+    bars.queue(bar, character_spec, missing_health, "construction")
+    bars.step()
+    check(
+        "a duplicate construction notice cannot reopen the same widget",
+        child_calls["value"] == 16,
+        f"GetWidgetFromName calls={child_calls['value']}",
+    )
+
+    # A truly new widget starts with a fresh cache.
+    _, _, replacement_bar, replacement_calls = objects(world, controller)
+    bars.queue(replacement_bar, character_spec, missing_health, "construction")
+    for _ in range(8):
+        bars.step()
+    check(
+        "a replacement construction receives its own readiness window",
+        child_calls["value"] == 16 and replacement_calls["value"] == 8,
+        f"original={child_calls['value']} replacement={replacement_calls['value']}",
     )
 
     print()

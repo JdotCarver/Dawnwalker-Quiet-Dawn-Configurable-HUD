@@ -83,12 +83,65 @@ function M.new(context)
     end
 
     local specs = {
-        {path=CHARACTER_BAR, className="WBP_CombatCharacterBar_C", fields=fieldsFor(1), events={"Construct","UpdateTarget"}},
-        {path=BOSS_BAR, className="WBP_Combat_BossBar_C", fields=fieldsFor(2), events={"Update Owner"}},
+        {path=CHARACTER_BAR, className="WBP_CombatCharacterBar_C", fields=fieldsFor(1), events={"Construct","UpdateTarget"}, unavailable={}, constructed={}},
+        {path=BOSS_BAR, className="WBP_Combat_BossBar_C", fields=fieldsFor(2), events={"Update Owner"}, unavailable={}, constructed={}},
     }
 
     local queue, queued, first, last = {}, {}, 1, 0
     local failures = {seen={}, count=0}
+
+    -- A boss widget can expose a reflected field that never becomes a usable
+    -- UMG child. Its Update Owner event can fire repeatedly while the same
+    -- widget stays alive, so eight bounded readiness reads per event were
+    -- still unbounded work in practice. State 1 preserves one later owner
+    -- update as a genuine late-construction rearm; state 2 is dormant until a
+    -- new widget is constructed. The cache is per object, never global: a
+    -- replacement bar always receives its own normal readiness window.
+    local function combineSource(previous, incoming)
+        if previous=="construction" or incoming=="construction" then return "construction" end
+        if previous=="ownerUpdate" or incoming=="ownerUpdate" then return "ownerUpdate" end
+        return incoming or previous or "direct"
+    end
+
+    local function prepareFields(job)
+        local object,spec=job.object,job.spec
+        if job.source=="construction" then
+            -- NotifyOnNewObject and the Blueprint Construct hook can both
+            -- describe the same construction. They are one generation, not
+            -- two chances to reopen a known-missing field.
+            if spec.constructed[object] then
+                job.fields,job.field,job.attempts,job.prepared={},1,0,true
+                return
+            end
+            spec.constructed[object]=true
+            spec.unavailable[object]=nil
+        end
+        local unavailable=spec.unavailable[object]
+        local fields={}
+        for _,field in ipairs(job.fields) do
+            local state=unavailable and unavailable[field]
+            if state==nil then
+                fields[#fields+1]=field
+            elseif state==1 and job.source=="ownerUpdate" then
+                -- Give one post-construction owner update a full bounded
+                -- window. Reserve it now so another event cannot open a
+                -- second window before this job reaches the worker.
+                unavailable[field]=2
+                fields[#fields+1]=field
+                if D.debugLogging then D.count("enemyHealthReadinessRearmed") end
+            elseif D.debugLogging then
+                D.count("enemyHealthDormantSkipped")
+            end
+        end
+        job.fields,job.field,job.attempts,job.prepared=fields,1,0,true
+    end
+
+    local function clearUnavailable(object, spec, field)
+        local unavailable=spec.unavailable[object]
+        if not unavailable then return end
+        unavailable[field]=nil
+        if next(unavailable)==nil then spec.unavailable[object]=nil end
+    end
 
     local function reportOnce(signature, format, ...)
         if failures.seen[signature] or failures.count>=MAX_REPORTED_FAILURES then return end
@@ -118,18 +171,14 @@ function M.new(context)
 
     -- Resolve a named child of a widget.
     --
-    -- `object[field]` only works when the Blueprint marked that widget "Is
-    -- Variable", because that is what promotes it to a property on the
-    -- generated class. WBP_CombatCharacterBar does; WBP_Combat_BossBar does
-    -- not -- walking its class reports exactly one property, UberGraphFrame
-    -- -- so no amount of retrying could ever resolve its HealthBar. That is
-    -- the boss health bar never being hidden.
+    -- A reflected property name is not proof of a usable live widget: the
+    -- generated class can list HealthBar while its runtime reference is null
+    -- or stale. Try both the direct property and the widget tree. The latter
+    -- also covers Blueprint children that are not exposed as variables.
     --
-    -- GetWidgetFromName searches the widget tree instead and does not care
-    -- about the flag. It also answers the other half of the question: the
-    -- tree is only populated once the widget is actually built, so a bar
-    -- that does not exist until a boss appears simply returns nil here and
-    -- is retried, rather than being mistaken for a missing name.
+    -- The tree is populated only after the widget is built, so a bar that
+    -- does not exist until a boss appears returns nil here and receives the
+    -- bounded readiness policy below rather than being mistaken for a typo.
     local function findChild(object, field)
         local child = object[field]
         if valid(child) then return child end
@@ -167,18 +216,25 @@ function M.new(context)
         return first<=last and context.idle() and valid(context.hud())
     end
 
-    function api.queue(object, spec, requestedFields)
+    function api.queue(object, spec, requestedFields, source)
         if object==nil then return end
+        source=source or "direct"
         spec.recent,spec.recentSet = spec.recent or {}, spec.recentSet or {}
         if not spec.recentSet[object] then
-            if #spec.recent>=MAX_RECENT_OBJECTS then spec.recentSet[table.remove(spec.recent,1)]=nil end
+            if #spec.recent>=MAX_RECENT_OBJECTS then
+                local evicted=table.remove(spec.recent,1)
+                spec.recentSet[evicted]=nil
+                spec.unavailable[evicted],spec.constructed[evicted]=nil,nil
+            end
             spec.recent[#spec.recent+1]=object
             spec.recentSet[object]=true
         end
         local fields = requestedFields or spec.fields
         if #fields==0 then return end
         -- This bar is already in the queue. Rather than queue it twice, fold
-        -- the newly requested fields into the job's next pass.
+        -- the newly requested fields into the job's next pass. The source is
+        -- retained too: an owner change is the one allowed rearm after an
+        -- exhausted construction window.
         if queued[object] then
             local job = queued[object]
             job.again = true
@@ -189,6 +245,7 @@ function M.new(context)
                 end
             end
             job.nextFields = merged
+            job.nextSource=combineSource(job.nextSource,source)
             return
         end
         if last-first+1>=MAX_QUEUED_JOBS then
@@ -196,7 +253,7 @@ function M.new(context)
             return
         end
         last=last+1
-        queue[last] = {object=object, spec=spec, fields=fields, field=1, attempts=0}
+        queue[last] = {object=object, spec=spec, fields=fields, source=source, field=1, attempts=0}
         queued[object] = queue[last]
         wake("enemyHealth")
     end
@@ -211,15 +268,26 @@ function M.new(context)
         local function retry()
             job.attempts = job.attempts+1
             if job.attempts < MAX_READINESS_ATTEMPTS then return true end
+            local field=job.fields[job.field]
+            local unavailable=spec.unavailable[object]
+            if not unavailable then unavailable={};spec.unavailable[object]=unavailable end
+            if unavailable[field]==2 then
+                -- The allowed owner-update rearm also exhausted. Do not let
+                -- recurring Update Owner events spend another eight lookups.
+                if D.debugLogging then D.count("enemyHealthDormantFields") end
+            else
+                unavailable[field]=1
+                if D.debugLogging then D.count("enemyHealthReadinessExhausted") end
+            end
             -- Giving up means that child never appeared. The usual cause is
             -- a name that moved in a game update, and the message alone
             -- cannot tell that apart from a widget that is simply empty
             -- right now. So report it once per path+field, and list the
             -- widget's actual children alongside, which names the real field.
-            reportOnce("readiness:"..spec.path.."#"..tostring(job.fields[job.field]),
-                "Enemy HUD child never appeared: %s field=%s. "
-                .."Not a class variable and not in the widget tree. Class properties: %s",
-                spec.path, tostring(job.fields[job.field]), childNames(object))
+            reportOnce("readiness:"..spec.path.."#"..tostring(field),
+                "Enemy HUD child never resolved: %s field=%s source=%s object=%s. "
+                .."Property and widget-tree lookup both returned no valid widget. Reflected class properties: %s",
+                spec.path, tostring(field),job.source,describe(object),childNames(object))
             return false
         end
 
@@ -228,9 +296,10 @@ function M.new(context)
             job.attempts = 0
             if job.field<=#job.fields then return true end
             if job.again then
-                job.field = 1
                 job.fields = job.nextFields or spec.fields
-                job.nextFields, job.again = nil, false
+                job.source=job.nextSource or "direct"
+                job.nextFields,job.nextSource,job.again=nil,nil,false
+                job.prepared=false
                 return #job.fields>0
             end
             return false
@@ -241,10 +310,12 @@ function M.new(context)
         local function registerNextEvent()
             local eventIndex = spec.eventIndex or 1
             if eventIndex>#spec.events then return false end
-            local path = spec.path..":"..spec.events[eventIndex]
+            local event=spec.events[eventIndex]
+            local path = spec.path..":"..event
             if hooks[path] then spec.eventIndex=eventIndex+1; return true end
+            local source=(event=="UpdateTarget" or event=="Update Owner") and "ownerUpdate" or "construction"
             local ok,pre,post = pcall(registerHook, path, function(hookContext)
-                api.queue(unwrap(hookContext), spec)
+                api.queue(unwrap(hookContext), spec, nil, source)
             end)
             spec.hookAttempts = (spec.hookAttempts or 0)+1
             if ok and type(pre)=="number" and type(post)=="number" then
@@ -289,15 +360,21 @@ function M.new(context)
             if not sameObject(objectWorld,world) or not sameObject(player,controller)
                 or not sameObject(controller:GetWorld(),world) then return end
 
+            if not job.prepared then
+                prepareFields(job)
+                if #job.fields==0 then return end
+            end
             local field = job.fields[job.field]
             local child = findChild(object, field)
             if not valid(child) then
                 -- A missing bar or label must not block independent
-                -- children. Each field gets finite readiness, and later
-                -- target events retry it.
+                -- children. Each field gets finite readiness; one later owner
+                -- update may rearm it, after which it stays dormant until a
+                -- replacement widget is constructed.
                 keep = retry() or nextField()
                 return
             end
+            clearUnavailable(object,spec,field)
             if hidden(field) then
                 if child:GetRenderOpacity()~=0 then
                     opacity(child,0)
@@ -358,7 +435,7 @@ function M.new(context)
                 if spec.failedEvent then
                     spec.eventIndex, spec.failedEvent, spec.hookAttempts = spec.failedEvent, nil, 0
                 end
-                api.queue(object, spec)
+                api.queue(object, spec, nil, "construction")
             end)
             if not ok then D.logWarning("Enemy health notification unavailable: %s", spec.path) end
         end
