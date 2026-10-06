@@ -130,6 +130,7 @@ def main():
     check("the confirmed Focus-release event wakes a snapshot rather than revealing directly", "statsPending=true\n            wake(\"resource\")" in gameplay)
     check("an active Focus reveal has no timed expiry deadline", "peekVisible and not peekStartPending and peekUntil>0 and peekUntil" in gameplay)
     check("live panel mode changes request one complete reconciliation", "if changedPanelCount>0 then\n        fullPending=true\n        dirty=true" in gameplay)
+    check("the Focus prompt class is logged before its graph hook is added", "Focus probe: promptClass=" in gameplay)
 
     print()
     if failures:

@@ -232,6 +232,20 @@ local function unwrap(param)
     if param == nil then return nil end
     return param:get()
 end
+-- Focus is a pawn property, but its entry has not appeared on the already
+-- observed GameHUD graph. Log the prompt's generated class once at Debug so a
+-- future graph hook can use a verified function path rather than a guess.
+function runtime.noteFocusPrompt(widget)
+    if runtime.focusPromptProbed or not D.debugLogging or not valid(widget) then return end
+    runtime.focusPromptProbed=true
+    local className="unavailable"
+    local classPath="unavailable"
+    local named,full=pcall(function() return widget:GetClass():GetFullName() end)
+    if named and full then className=tostring(full) end
+    local pathed,path=pcall(function() return widget:GetClass():GetPathName() end)
+    if pathed and path then classPath=tostring(path) end
+    D.logInfo("Focus probe: promptClass=%s promptPath=%s; use this verified class path for the entry-hook probe",className,classPath)
+end
 -- Fading resolves a show or hide target into a per frame opacity. It owns no
 -- timer: the panel worker already ticks while work remains, and keeps itself
 -- awake for as long as fade.pending() is true.
@@ -816,6 +830,7 @@ local function accept(object)
         peekRequested,peekUntil,peekVisible=false,0,false
         peekStartPending=false
         runtime.focusPeekActive=nil
+        runtime.focusPromptProbed=nil
         timeRequested,timeDirty,timeVisible,timeUntil=false,false,false,0
         switchRequested,switchUntil,switchVisible=false,0,false
         switchCursor=0
@@ -1138,6 +1153,7 @@ local function panelStep(name)
                 object=valid(content) and content:GetParent() or nil
             elseif name=="WBP_OpenFocusPrompt" then
                 -- Its Show animation writes the root opacity on entering Focus.
+                runtime.noteFocusPrompt(widget)
                 local content=widget.ButtonImage
                 object=valid(content) and content:GetParent() or nil
             end
