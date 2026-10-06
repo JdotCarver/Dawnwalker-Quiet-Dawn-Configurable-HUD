@@ -1,8 +1,10 @@
 -- Gameplay.lua
 -- Quiet Dawn - Configurable HUD | MIT License
 local D = require("QuietDawnDiagnostics")
--- Event-driven panel opacity. No widget-tree walks, animation hooks or Lua
--- coroutines. Claw marks discover two exact cue classes once per enablement.
+-- Event-driven panel opacity. The normal path has no widget-tree walks,
+-- animation hooks or Lua coroutines. A separately bounded Debug-only
+-- Quickslot probe may inspect one known widget tree while discovering a stock
+-- combat route. Claw marks discover two exact cue classes once per enablement.
 -- Resource reads run only on resource-change and HUD/player lifecycle events.
 local ok, config = pcall(require, "MenuSettings")
 if SaveLoadDiagnostics and ok and type(config)=="table" then
@@ -255,6 +257,65 @@ function runtime.noteFocusPrompt(widget)
     local pathed,path=pcall(function() return widget:GetClass():GetPathName() end)
     if pathed and path then classPath=tostring(path) end
     D.logInfo("Focus probe: promptClass=%s promptPath=%s; use this verified class path for the entry-hook probe",className,classPath)
+end
+-- Entry 3515 did not change the Quickslot Abilities root. Its fade may instead
+-- belong to a child animation, so take a small, read-only visual-tree snapshot
+-- around that candidate. This never searches global objects, registers a hook,
+-- or writes a widget: it walks only this already-owned widget, at most 64 nodes
+-- eight levels deep, and only during the explicitly bounded Debug probe.
+function runtime.captureQuickslotProbeTree(widget,probe)
+    if not probe.tree or not D.debugLogging or not valid(widget) then return end
+    runtime.quickslotProbeTrees=runtime.quickslotProbeTrees or {}
+    local prior=runtime.quickslotProbeTrees[probe.version]
+    local treeState,seen={},{}
+    local nodes,changed=0,0
+    local function walk(node,path,depth)
+        if not valid(node) or nodes>=64 or depth>8 then return end
+        local address=node:GetAddress()
+        if seen[address] then return end
+        seen[address]=true
+        nodes=nodes+1
+        local className="unavailable"
+        local visibility="unavailable"
+        local opacityValue="unavailable"
+        local readable,value=pcall(function() return node:GetClass():GetFullName() end)
+        if readable and value then className=tostring(value) end
+        readable,value=pcall(function() return node:GetVisibility() end)
+        if readable and value~=nil then visibility=tostring(value) end
+        readable,value=pcall(function() return node:GetRenderOpacity() end)
+        if readable and type(value)=="number" then opacityValue=string.format("%.3f",value) end
+        local state=path.."|"..className.."|"..visibility.."|"..opacityValue
+        treeState[address]=state
+        if not prior or prior[address]~=state then
+            changed=changed+1
+            D.logInfo("vanillaQuickslotsTree source=%s phase=%s node=%s path=%s class=%s visibility=%s opacity=%s",
+                probe.source,probe.phase,tostring(address),path,className,visibility,opacityValue)
+        end
+        local treeOK,tree=pcall(function() return node.WidgetTree end)
+        if treeOK and valid(tree) then
+            local rootOK,root=pcall(function() return tree.RootWidget end)
+            if rootOK then walk(root,path..".WidgetTree.RootWidget",depth+1) end
+        end
+        local countOK,count=pcall(function() return node:GetChildrenCount() end)
+        if countOK and type(count)=="number" then
+            for index=0,math.min(count,64)-1 do
+                local childOK,child=pcall(function() return node:GetChildAt(index) end)
+                if childOK then walk(child,path..".Child["..index.."]",depth+1) end
+            end
+        end
+    end
+    walk(widget,"QuickslotAbilities",0)
+    if prior then
+        for address in pairs(prior) do
+            if not treeState[address] then
+                changed=changed+1
+                D.logInfo("vanillaQuickslotsTree source=%s phase=%s node=%s removed",probe.source,probe.phase,tostring(address))
+            end
+        end
+    end
+    runtime.quickslotProbeTrees[probe.version]=treeState
+    D.logInfo("vanillaQuickslotsTree source=%s phase=%s nodes=%d changed=%d nodeLimit=64 depthLimit=8",
+        probe.source,probe.phase,nodes,changed)
 end
 -- Fading resolves a show or hide target into a per frame opacity. It owns no
 -- timer: the panel worker already ticks while work remains, and keeps itself
@@ -754,6 +815,15 @@ local function promptRefreshed(context)
         wake("sprintPrompt")
     end
 end
+function runtime.enqueueQuickslotProbe(probe)
+    runtime.quickslotProbeQueue=runtime.quickslotProbeQueue or {}
+    if runtime.quickslotProbe then
+        runtime.quickslotProbeQueue[#runtime.quickslotProbeQueue+1]=probe
+    else
+        runtime.quickslotProbe=probe
+    end
+    if wake then wake("quickslotProbe") end
+end
 local function queueVanillaQuickslotProbe(source,discoverWidget)
     -- Vanilla intentionally releases Quiet Dawn's opacity lease, so fading it
     -- needs the exact stock event that changes its target. Until that event is
@@ -762,7 +832,7 @@ local function queueVanillaQuickslotProbe(source,discoverWidget)
     if not D.debugLogging or not config.fadeTransitions
         or panelModes.WBP_AA_Quickslots~=Modes.VANILLA then return end
     -- Entry 3515 is only correlated with combat transitions. Limit its
-    -- class/visibility evidence to three paired samples per HUD instance;
+    -- detailed class/visual-tree capture to three sightings per HUD instance;
     -- an unproven graph entry must never turn into diagnostic event spam.
     if discoverWidget then
         local remaining=runtime.quickslotDiscoveryRemaining or 0
@@ -771,19 +841,21 @@ local function queueVanillaQuickslotProbe(source,discoverWidget)
     end
     runtime.quickslotProbeVersion=(runtime.quickslotProbeVersion or 0)+1
     local version=runtime.quickslotProbeVersion
-    runtime.quickslotProbe={source=source,phase="post"}
-    -- Take the post-callback sample before the delayed verifier can supersede
-    -- it. This is a non-dirty worker wake: it cannot reapply a Vanilla lease.
+    -- Supersede an unrelated older source so the post sample belongs to this
+    -- graph entry. Later samples queue rather than overwrite each other when
+    -- a busy worker takes more than one rendered frame to consume them.
+    runtime.quickslotProbe={source=source,phase="post",tree=discoverWidget,version=version}
+    runtime.quickslotProbeQueue={}
     if wake then wake("quickslotProbe") end
-    pcall(ExecuteInGameThreadWithDelay,16,function()
-        if not D.debugLogging or runtime.quickslotProbeVersion~=version then return end
-        local nextFrame={source=source,phase="nextFrame"}
-        -- Keep both samples even when an unusually busy worker has not yet
-        -- consumed the post-hook record. A new source replaces this pair.
-        if runtime.quickslotProbe then runtime.quickslotProbeNext=nextFrame
-        else runtime.quickslotProbe=nextFrame end
-        wake("quickslotProbe")
-    end)
+    local samples=discoverWidget and {{16,"nextFrame"},{96,"after100ms"},{240,"after250ms"}}
+        or {{16,"nextFrame"}}
+    for _,sample in ipairs(samples) do
+        local delay,phase=sample[1],sample[2]
+        pcall(ExecuteInGameThreadWithDelay,delay,function()
+            if not D.debugLogging or runtime.quickslotProbeVersion~=version then return end
+            runtime.enqueueQuickslotProbe({source=source,phase=phase,tree=discoverWidget,version=version})
+        end)
+    end
 end
 local function signal(source)
     if D.debugLogging then D.count("presetEvents") end
@@ -1005,7 +1077,8 @@ local function accept(object)
         -- this diagnostic into an unexplained "unknown" startup path.
         runtime.hudAdoptionSource=candidateSource or "fallback"
         runtime.startupImmediateNoted=nil
-        runtime.quickslotProbe,runtime.quickslotProbeNext,runtime.quickslotProbeOpacity=nil,nil,nil
+        runtime.quickslotProbe,runtime.quickslotProbeOpacity=nil,nil
+        runtime.quickslotProbeQueue,runtime.quickslotProbeTrees={},{}
         runtime.quickslotDiscoveryRemaining=3
         panelRetries={}
         -- A newly adopted HUD should never wait for a decorative fade before
@@ -1345,8 +1418,22 @@ local function cachedVisibility(kind)
             local entry=panels[name]
             local widget=hud[name]
             if entry and sameObject(entry.widget,widget) and valid(entry.object) then
-                local ok,err=pcall(writePanel,name,entry,panelTarget(name,entry,widget))
-                if not ok then panelFailure(name,err) end
+                local target=panelTarget(name,entry,widget)
+                local current=entry.object:GetRenderOpacity()
+                -- Refresh callbacks arrive even while the game has left this
+                -- panel exactly where its active rule wants it. Queuing a
+                -- wave before checking that fact made every no-op refresh
+                -- look like a new Focus fade in the Debug log.
+                if math.abs(current-target)>1e-5 then
+                    local ok,err=pcall(writePanel,name,entry,target)
+                    if not ok then panelFailure(name,err) end
+                elseif fade.active(name) then
+                    -- The game has already reached the active target. Retire
+                    -- the old transition instead of leaving it pending until
+                    -- orphan cleanup; this neither writes nor snaps opacity.
+                    fade.forget(name)
+                    if D.debugLogging then D.count("panelFadeSatisfiedByStock") end
+                end
             else
                 -- Late/replaced fields are discovered separately. Never hold
                 -- the visible cohort behind an unavailable widget.
@@ -1507,13 +1594,19 @@ function runtime.flushFadeWave()
     runtime.fadeFlushing=true
     local started=0
     for name in pairs(wave) do
-        if panels[name] then started=started+1 end
+        local wasActive=fade.active(name)
         pcall(panelStep,name)
+        -- A queued name is not proof of a transition: stock code can land on
+        -- the same target between the refresh callback and this batched pass.
+        -- Count only the fade that panelStep really began.
+        if not wasActive and fade.active(name) then started=started+1 end
     end
     runtime.fadeFlushing=false
     if D.debugLogging and started>0 then
         D.count("panelFadeWaves")
         D.event("panelFade","%d panel(s) began fading together",started)
+    elseif D.debugLogging then
+        D.count("panelFadeNoopWaves")
     end
 end
 do
@@ -1531,7 +1624,8 @@ local function step()
     if livePending then applyLiveSettings(true);return false end
     if runtime.quickslotProbe then
         local probe=runtime.quickslotProbe
-        runtime.quickslotProbe,runtime.quickslotProbeNext=runtime.quickslotProbeNext,nil
+        local queue=runtime.quickslotProbeQueue or {}
+        runtime.quickslotProbe=table.remove(queue,1)
         local widget=valid(hud) and hud.WBP_AA_Quickslots or nil
         if D.debugLogging and panelModes.WBP_AA_Quickslots==Modes.VANILLA and valid(widget)
             and valid(controller) and sameObject(widget:GetOwningPlayer(),controller)
@@ -1549,14 +1643,15 @@ local function step()
                 local readable,value=pcall(function() return widget:GetVisibility() end)
                 if readable and value~=nil then runtime.quickslotProbeVisibility=tostring(value) end
             end
-            -- This two-sample route probe is already Debug-only and bounded.
-            -- Do not put either decisive sample through the general per-second
-            -- event limiter: a combat entry can legitimately emit many other
-            -- graph sightings in the same frame, as seen in the session log.
+            -- This bounded route probe is Debug-only. Do not put decisive
+            -- samples through the general per-second event limiter: a combat
+            -- entry can legitimately emit many other graph sightings in the
+            -- same frame, as seen in the session log.
             D.logInfo("vanillaQuickslots source=%s phase=%s class=%s rootVisibility=%s rootOpacity=%.3f previous=%s changed=%s",
                 probe.source,probe.phase,runtime.quickslotProbeClass,runtime.quickslotProbeVisibility,current,
                 previous and string.format("%.3f",previous) or "none",
                 tostring(previous~=nil and math.abs(current-previous)>1e-5))
+            runtime.captureQuickslotProbeTree(widget,probe)
         elseif D.debugLogging then
             D.logInfo("vanillaQuickslots source=%s phase=%s panel=unavailable",probe.source,probe.phase)
         end
