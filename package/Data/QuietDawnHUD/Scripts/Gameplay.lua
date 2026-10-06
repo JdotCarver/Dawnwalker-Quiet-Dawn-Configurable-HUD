@@ -801,6 +801,7 @@ local function accept(object)
         -- baseline hiding during load.
         for name in pairs(runtime.startupBarrier.members) do runtime.startupPanels[name]=nil end
         fade.reset()
+        if runtime.fadePacing then runtime.fadePacing.reset() end
         runtime.fadeWave,runtime.fadeWaveSize={},0
         runtime.fadeWaveLast,runtime.fadeWaveIdle=0,0
         runtime.fadeInFlight=false
@@ -1198,6 +1199,7 @@ local function panelStep(name)
         hud, world, panels = nil, nil, {}
         -- The panels these transitions referred to are gone with the world.
         fade.reset()
+        if runtime.fadePacing then runtime.fadePacing.reset() end
         runtime.fadeWave,runtime.fadeWaveSize={},0
         runtime.fadeInFlight=false
         runtime.startupBarrier=nil
@@ -1537,23 +1539,26 @@ local function repeatUntilDone(delay,fn)
 end
 -- On the runtime table rather than as locals: Gameplay.lua sits on Lua's
 -- hard ceiling of 200 locals per chunk.
-runtime.workerIdleMs, runtime.workerFadeMs = 16, 1
+runtime.workerIdleMs, runtime.workerFadeMs, runtime.workerPausedFadeMs = 16, 1, 50
 -- Consecutive wakeups that found the same frame before we stop believing
--- the game is still drawing. The backoff protects a paused or backgrounded
--- game from a 1 ms wake loop. It may be too eager on a high-refresh display,
--- so Debug counts every fade that reaches it instead of treating the threshold
--- as an unexamined performance fact.
+-- rendering is advancing. The same four-frame evidence also distinguishes a
+-- real pause (frames advancing, game time frozen) from surplus 1 ms callbacks.
 runtime.stalledFrameLimit = 4
+runtime.fadePacing=require("QuietDawnFadePacing").new(runtime.stalledFrameLimit)
 function runtime.workerDelay()
-    -- Frames have stopped: the console is open, or the window is in the
-    -- background. Spinning at 1 ms cannot advance a fade that is waiting on
-    -- a frame counter which is not moving.
+    -- A pause menu keeps drawing while game time is frozen. Keep one very
+    -- small, temporary 50 ms heartbeat so the held transition resumes within
+    -- a few visual frames after unpausing, but do not revisit panel opacity.
+    if runtime.fadePacing.paused() then return runtime.workerPausedFadeMs end
+    -- Frames can also stop altogether while the console is open or the window
+    -- is backgrounded. This is likewise a dormant fade, never a 1 ms loop.
     if (runtime.sameFrameStreak or 0) >= runtime.stalledFrameLimit then
         if runtime.fadeInFlight and D.debugLogging then D.count("fadeFrameGateBackoffs") end
-        return runtime.workerIdleMs
+        return runtime.fadeInFlight and runtime.workerPausedFadeMs or runtime.workerIdleMs
     end
     local ok,fading = pcall(fade.pending)
     runtime.fadeInFlight=ok and fading or false
+    if not runtime.fadeInFlight then runtime.fadePacing.reset() end
     return runtime.fadeInFlight and runtime.workerFadeMs or runtime.workerIdleMs
 end
 wake = function(statsOnly)
@@ -1591,19 +1596,38 @@ wake = function(statsOnly)
                 -- mechanism, not waste: we deliberately over-arm the timer
                 -- and let this guard collapse it down to one step per frame.
                 --
-                -- Unless frames have stopped entirely. Opening the console,
-                -- alt-tabbing or pausing freezes both the frame counter and
-                -- game time, so a fade can never finish and never expires on
-                -- a clock that is also frozen. The worker then re-arms at
-                -- 1 ms forever, doing nothing but re-reading the frame
-                -- counter a thousand times a second -- which is the hitch
-                -- whenever the console is open. Count the streak so the
-                -- re-arm can back off to its idle rate.
+                -- Unless frames have stopped entirely. Opening the console or
+                -- backgrounding can freeze the frame counter, so a fade cannot
+                -- advance. (The pause menu is different: it keeps rendering,
+                -- and is handled by the game-time check below.) Count the
+                -- streak so the re-arm uses the dormant-fade heartbeat rather
+                -- than a busy 1 ms loop.
                 runtime.sameFrameStreak=(runtime.sameFrameStreak or 0)+1
                 if D.debugLogging then D.count("workerSameFrame") end
                 return false
             end
             runtime.sameFrameStreak=0
+            -- Frame count alone is not a pause detector: Dawnwalker's pause
+            -- menu continues rendering. A frozen game clock across several
+            -- *different* frames is the decisive signal. Preserve the fade's
+            -- state, but avoid panel work until simulation moves again.
+            if runtime.fadeInFlight and valid(controller) then
+                local gameTime=frameClock:GetGameTimeInSeconds(controller)
+                local wasPaused=runtime.fadePacing.paused()
+                local pace=runtime.fadePacing.observe(frame,gameTime,true)
+                if pace=="paused" then
+                    lastFrame=frame
+                    if not wasPaused and D.debugLogging then
+                        D.count("fadeGameTimePaused")
+                        D.event("fadePause","game time frozen while frames advanced; holding fade")
+                    end
+                    if D.debugLogging then D.count("fadePausedChecks") end
+                    return false
+                elseif pace=="resumed" and D.debugLogging then
+                    D.count("fadeGameTimeResumed")
+                    D.event("fadePause","game time advanced; resuming held fade")
+                end
+            end
             -- Whether a fade is actually getting every frame is invisible
             -- from the outside, so measure it. steps == frames drawn means
             -- we are matching the display; a non-zero skip count means the
@@ -1708,14 +1732,20 @@ applyLiveSettings=function(run)
     for key,value in pairs(updated) do
         if type(value)~='table' and config[key]~=value then changed[key]=true end
     end
+    local changedPanelCount=0
     for _,name in ipairs(names) do
-        if panelModes[name]~=updated.panelModes[name] or panelOpacities[name]~=updated.panelOpacities[name] then
-            livePanels[name]=true;absent[name]=nil
+        local panelChanged=panelModes[name]~=updated.panelModes[name]
+            or panelOpacities[name]~=updated.panelOpacities[name]
+            or panelScales[name]~=updated.panelScales[name]
+        if panelChanged then
+            changedPanelCount=changedPanelCount+1
+            livePanels[name]=true
+            absent[name]=nil
         end
         panelModes[name]=updated.panelModes[name]
         if panelScales[name]~=updated.panelScales[name] then
             if not panelScaling then panelScaling=require('QuietDawnPanelScale').new(panelScales,D,Session) end
-            panelScaling.configure(name,updated.panelScales[name]);livePanels[name]=true;absent[name]=nil
+            panelScaling.configure(name,updated.panelScales[name])
         end
         panelOpacities[name]=updated.panelOpacities[name]
         panelScales[name]=updated.panelScales[name]
@@ -1723,6 +1753,7 @@ applyLiveSettings=function(run)
     for key,value in pairs(updated) do if type(value)~='table' then config[key]=value end end
     if changed.fadeTransitions or changed.fadeInSeconds or changed.fadeOutSeconds then
         fade.configure(config.fadeTransitions,config.fadeInSeconds,config.fadeOutSeconds)
+        runtime.fadePacing.reset()
     end
     dynamicPanels.HumanStats,dynamicPanels.VampireStats=updated.dynamicPanels.HumanStats,updated.dynamicPanels.VampireStats
     statNames={}
@@ -1785,6 +1816,23 @@ applyLiveSettings=function(run)
         for _,entry in pairs(markerCache) do queueMarker(entry.object) end
     end
     ensureFeatureSpecs()
+    -- A mode transition changes the interpretation of a cached opacity. Do one
+    -- complete, ordered reconciliation after Apply instead of letting a stale
+    -- dynamic-stat pass race the individual changed-panel jobs. This is vital
+    -- when both stat panels become Fixed opacity: they no longer have resource
+    -- handlers to produce a later corrective pass.
+    if changedPanelCount>0 then
+        fullPending=true
+        dirty=true
+        if D.debugLogging then
+            D.count("settingsPanelReconciliations")
+            -- Apply is deliberate and infrequent, so preserve the exact mode
+            -- and fixed-opacity values outside the ordinary event-rate limit.
+            D.logInfo("Settings reconciliation: changedPanels=%d human mode=%d opacity=%.2f vampire mode=%d opacity=%.2f",
+                changedPanelCount,panelModes.HumanStats,panelOpacities.HumanStats or 0,
+                panelModes.VampireStats,panelOpacities.VampireStats or 0)
+        end
+    end
     -- Existing reveal expiry owns its one deadline; changes cancel/rearm it.
     if changed.healthThreshold or changed.staminaThreshold or changed.healthHoldSeconds or changed.staminaHoldSeconds
         or changed.manualPeek or changed.manualPeekSeconds or changed.timeHoldSeconds or changed.switchRevealSeconds

@@ -51,7 +51,9 @@ def main():
         return 2
 
     lua = lua54.LuaRuntime()
-    module = lua.eval("function(path) return dofile(path) end")(str(SCRIPTS / "QuietDawnFade.lua"))
+    load_module = lua.eval("function(path) return dofile(path) end")
+    module = load_module(str(SCRIPTS / "QuietDawnFade.lua"))
+    pacing_module = load_module(str(SCRIPTS / "QuietDawnFadePacing.lua"))
 
     clock = {"now": 100.0}
 
@@ -200,6 +202,26 @@ def main():
     fade.configure(True, 0.2, 0.4)
     check("without a clock the target is applied immediately", fade.step("p", 0.0, 1.0) == 1.0)
     check("without a clock nothing is left pending", not fade.pending())
+
+    # --- Pause pacing: frames can advance while game time is frozen ------
+    # Dawnwalker's pause menu continues rendering, so frame count alone cannot
+    # prove that a game-time fade is progressing. The worker must hold the
+    # transition after several independent rendered frames at the same game
+    # time, then continue it without a target jump when the clock moves again.
+    pacing = pacing_module.new(4)
+    state = pacing.observe(100, 50.0, True)
+    check("the first active fade frame is not treated as paused", state == "active")
+    for frame in (101, 102, 103):
+        state = pacing.observe(frame, 50.0, True)
+    check("a few same-time rendered frames are tolerated", state == "active")
+    state = pacing.observe(104, 50.0, True)
+    check("four rendered frames with frozen game time hold the fade", state == "paused" and pacing.paused())
+    state = pacing.observe(105, 50.0, True)
+    check("the held fade stays paused without advancing its transition", state == "paused")
+    state = pacing.observe(106, 50.01, True)
+    check("game time advancing resumes the held fade", state == "resumed" and not pacing.paused())
+    state = pacing.observe(107, 50.02, False)
+    check("a finished fade clears pause pacing state", state == "inactive" and not pacing.paused())
 
     # --- Lockstep: a group started in one call moves as one -------------
     # The symptom this guards against is panels dissolving raggedly, one

@@ -129,6 +129,7 @@ def main():
     check("Gameplay samples the Focus model from the pawn snapshot", "runtime.observeFocusPeek(pawn)" in gameplay)
     check("the confirmed Focus-release event wakes a snapshot rather than revealing directly", "statsPending=true\n            wake(\"resource\")" in gameplay)
     check("an active Focus reveal has no timed expiry deadline", "peekVisible and not peekStartPending and peekUntil>0 and peekUntil" in gameplay)
+    check("live panel mode changes request one complete reconciliation", "if changedPanelCount>0 then\n        fullPending=true\n        dirty=true" in gameplay)
 
     print()
     if failures:
