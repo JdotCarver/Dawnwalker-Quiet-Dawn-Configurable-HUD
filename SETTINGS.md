@@ -15,7 +15,7 @@ The menu runs from General through Player status, Combat, Exploration and Contro
 | Player status / Health and stamina | Human and vampire panel opacity, health/blood and stamina thresholds, and their hold durations |
 | Combat / Ability cooldowns | Ability cooldowns opacity |
 | Combat / Crosshair | Crosshair opacity |
-| Combat / Enemies | Enemy health bars, names, difficulty icons, effect icons and claw slash marks |
+| Combat / Enemies | Enemy health bars, names, difficulty icons, effect icons, Shredded Touch marks and vampire claw hit marks |
 | Combat / Focus activation prompt | Toggle abilities hint opacity |
 | Combat / Focus charge | Focus charge bar opacity |
 | Combat / Focus panel | Combat focus panel opacity |
@@ -48,7 +48,7 @@ The setting is `hidePlayerCombatEffects` (0 = Off, 1 = On). Older INIs receive t
 
 ## Effect icons
 
-**Hide enemy effect icons** under Combat / Enemies hides effect icons and timers, including bleeding, on ordinary enemies and bosses. It is independent of enemy health bars, names, difficulty icons, combat warnings and Hide claw slash marks.
+**Hide enemy effect icons** under Combat / Enemies hides effect icons and timers, including bleeding, on ordinary enemies and bosses. It is independent of enemy health bars, names, difficulty icons, combat warnings and the two claw-mark settings.
 
 **Hide player effect icons** under Player status / Active buffs hides the player's buff/debuff icons and their timers, including during Show HUD. While On it overrides Active buffs mode and opacity; turning it Off resumes those saved settings. Size preferences are retained.
 
@@ -64,9 +64,9 @@ Older settings gain missing mode keys without changing opacity values, comments,
 
 ## Claw slash marks
 
-**Hide claw slash marks** hides the red scratch effects from ordinary vampire claw hits and Shredded Touch, including its sword variant. It defaults to On. Damage, bleeding, swing trails and separate hit sprays keep their game behavior. Turn it Off under **Combat / Enemies**, or set `hideClawSlashMarks = 0` in `settings.ini`, to show the marks again. Apply to save and update the active game.
+**Hide vampire claw hit marks** hides the red scratch effects from ordinary vampire claw hits. **Hide Shredded Touch marks** independently hides Shredded Touch slash effects, including its sword variant. Both are under **Combat / Enemies** and default to On. Damage, bleeding, swing trails and separate hit sprays keep their game behavior. Apply to save and update the active game.
 
-Existing settings gain only the missing `hideClawSlashMarks = 1` entry, with a `settings.ini.before-claw-slash-marks` backup. Existing preferences, comments and older backups are preserved.
+The Shredded Touch setting retains `hideClawSlashMarks`. On upgrade, missing `hideVampireClawHitMarks` inherits that saved value, retaining the previous combined preference. The original INI is backed up as `settings.ini.before-vampire-claw-hit-marks`; existing preferences, comments and older backups are preserved. Afterwards, the two settings are independent.
 
 ## Panel size
 
@@ -130,7 +130,8 @@ Missing existing settings, duplicate or invalid settings stop configuration load
 | Combat / Enemies | Hide enemy names | Off, On |
 | Combat / Enemies | Hide enemy difficulty icons | Off, On |
 | Combat / Enemies | Hide enemy effect icons | Off, On (default Off) |
-| Combat / Enemies | Hide claw slash marks | Off, On (default On) |
+| Combat / Enemies | Hide Shredded Touch marks | Off, On (default On) |
+| Combat / Enemies | Hide vampire claw hit marks | Off, On (default On) |
 | Combat / Focus activation prompt | Focus activation prompt mode | Vanilla, Quiet Dawn (default), Fixed opacity |
 | Combat / Focus activation prompt | Focus activation prompt opacity | 0% to 100% in 5-point steps |
 | Combat / Focus charge | Focus charge mode | Vanilla, Quiet Dawn (default), Fixed opacity |
@@ -215,7 +216,8 @@ All entries below belong under `[Settings]`. Defaults apply to a fresh install w
 | Hide Crimson Rush effect | `hidePlayerCombatEffects` | `0` | 0 = Off, 1 = On |
 | Hide enemy names | `hideEnemyNames` | `1` | 0 = Off, 1 = On |
 | Hide enemy difficulty icons | `hideEnemyDifficultyIcons` | `1` | 0 = Off, 1 = On |
-| Hide claw slash marks | `hideClawSlashMarks` | `1` | 0 = Off, 1 = On |
+| Hide Shredded Touch marks | `hideClawSlashMarks` | `1` | 0 = Off, 1 = On |
+| Hide vampire claw hit marks | `hideVampireClawHitMarks` | `1` | 0 = Off, 1 = On |
 | Show counterattack direction | `showCounterattackDirection` | `0` | 0 = Off, 1 = On |
 | Show unblockable warning | `showUnblockableWarning` | `0` | 0 = Off, 1 = On |
 | Show directional parry cues | `showDirectionalParry` | `0` | 0 = Off, 1 = On |

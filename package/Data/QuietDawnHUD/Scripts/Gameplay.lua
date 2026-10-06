@@ -53,7 +53,7 @@ for _, key in ipairs({"healthHoldSeconds", "staminaHoldSeconds", "manualPeekSeco
         return
     end
 end
-local playerEffects
+local playerEffects,clawHits
 local livePending,applyLiveSettings
 local livePanels={}
 Session.onSettings(function(values)
@@ -1126,6 +1126,7 @@ local function step()
     -- Discovery, hook registration, state reads and transforms remain sliced.
     -- Every third slice is reserved for this work even under resource bursts.
     if playerEffects and playerEffects.pending() then playerEffects.step();return false end
+    if clawHits and clawHits.pending() then clawHits.step();return false end
     if clawMarks and clawMarks.pending() then
         clawMarks.step()
         return false
@@ -1404,11 +1405,17 @@ applyLiveSettings=function(run)
     end
     if changed.hideClawSlashMarks then
         if not clawMarks and config.hideClawSlashMarks then
-            clawMarks=require('QuietDawnClawMarks').new(D,Session,function()wake('clawMarks')end,function()
+            clawMarks=require('QuietDawnClawMarks').new(D,Session,function()wake('clawMarks')end)
+        end
+        if clawMarks then clawMarks.configure(config.hideClawSlashMarks) end
+    end
+    if changed.hideVampireClawHitMarks then
+        if not clawHits and config.hideVampireClawHitMarks then
+            clawHits=require('QuietDawnClawHits').new(D,Session,function()
                 if valid(controller) and valid(world) then return controller.Pawn,world end
             end)
         end
-        if clawMarks then clawMarks.configure(config.hideClawSlashMarks) end
+        if clawHits then clawHits.configure(config.hideVampireClawHitMarks) end
     end
     if changed.hideEnemyHealthBars or changed.hideEnemyNames or changed.hideEnemyDifficultyIcons or changed.showEnemyMarker or changed.hideEnemyEffectIcons then
         local fields={{'SegmentedHealthBar','HealthBarLeftCap','HealthBarRightCap','LevelIndicator','HelperAttackIndicator','WBP_NPCWoundContainer'},
@@ -1441,7 +1448,10 @@ if config.hidePlayerCombatEffects then
     end)
 end
 if config.hideClawSlashMarks then
-    clawMarks=require('QuietDawnClawMarks').new(D,Session,function()wake('clawMarks')end,function()
+    clawMarks=require('QuietDawnClawMarks').new(D,Session,function()wake('clawMarks')end)
+end
+if config.hideVampireClawHitMarks then
+    clawHits=require('QuietDawnClawHits').new(D,Session,function()
         if valid(controller) and valid(world) then return controller.Pawn,world end
     end)
 end

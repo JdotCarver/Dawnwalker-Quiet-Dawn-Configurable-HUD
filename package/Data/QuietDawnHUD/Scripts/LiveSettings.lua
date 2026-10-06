@@ -47,6 +47,7 @@ function M.new(directory, report)
         ["hideEnemyNames"]="hideEnemyNames",
         ["hideEnemyDifficultyIcons"]="hideEnemyDifficultyIcons",
         ["hideClawSlashMarks"]="hideClawSlashMarks",
+        ["hideVampireClawHitMarks"]="hideVampireClawHitMarks",
         ["opacity_WBP_OpenFocusPrompt"]="opacity_WBP_OpenFocusPrompt",
         ["scale_WBP_OpenFocusPrompt"]="scale_WBP_OpenFocusPrompt",
         ["opacity_WBP_HUD_FocusCharge_Bar"]="opacity_WBP_HUD_FocusCharge_Bar",

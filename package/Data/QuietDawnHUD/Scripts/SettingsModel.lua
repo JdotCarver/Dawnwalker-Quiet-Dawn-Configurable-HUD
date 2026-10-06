@@ -5,8 +5,12 @@ local schema = dofile(directory .. 'SettingsSchema.lua')
 local Timers = dofile(directory .. 'QuietDawnTimers.lua')
 local effectDefaults={hideEnemyEffectIcons=0,hidePlayerEffectIcons=0}
 local newestSchema = Timers.compatibleSchema(schema)
-local fullCompatibleSchema = {}
+local playerEffectsSchema = {}
 for _,row in ipairs(newestSchema) do
+    if row.key~='hideVampireClawHitMarks' then playerEffectsSchema[#playerEffectsSchema+1]=row end
+end
+local fullCompatibleSchema = {}
+for _,row in ipairs(playerEffectsSchema) do
     if row.key~="hidePlayerCombatEffects" then fullCompatibleSchema[#fullCompatibleSchema+1]=row end
 end
 local compatibleSchema = {}
@@ -85,6 +89,10 @@ local values, err = Store.load(directory, newestSchema, function()
 end)
 -- Validate any saved effect choices before older migrations can write. Missing
 -- keys are added only after the prior schema has passed its own upgrade rules.
+if not values and err=='Missing setting: hideVampireClawHitMarks' then
+    local text=Store.read(Store.path(directory))
+    if text then values,err=Store.parse(text,playerEffectsSchema) end
+end
 if not values and err=='Missing setting: hidePlayerCombatEffects' then
     local text=Store.read(Store.path(directory))
     if text then values,err=Store.parse(text,fullCompatibleSchema) end
@@ -93,7 +101,7 @@ if not values and err and err:match('^Missing setting:') then
     local text=Store.read(Store.path(directory))
     if text then
         for _,row in ipairs(newestSchema) do
-            if effectDefaults[row.key]~=nil or row.key=='hidePlayerCombatEffects' then
+            if effectDefaults[row.key]~=nil or row.key=='hidePlayerCombatEffects' or row.key=='hideVampireClawHitMarks' then
                 local _,effectError=Store.parse(text,{row})
                 if effectError and not effectError:match('^Missing setting:') then
                     error('Quiet Dawn settings rejected: '..effectError)
@@ -170,7 +178,11 @@ if values then
 end
 if values then
     values, err = dofile(directory..'UE4SSCommonSettingsUpgrade.lua').ensure(
-        Store, Store.path(directory), newestSchema, {hidePlayerCombatEffects=0}, 'player-combat-effects')
+        Store, Store.path(directory), playerEffectsSchema, {hidePlayerCombatEffects=0}, 'player-combat-effects')
+end
+if values then
+    values, err = dofile(directory..'UE4SSCommonSettingsUpgrade.lua').ensure(
+        Store, Store.path(directory), newestSchema, {hideVampireClawHitMarks=values.hideClawSlashMarks}, 'vampire-claw-hit-marks')
 end
 if values then
     local needsUpgrade=false
@@ -192,6 +204,7 @@ values.hideEnemyEffectIcons=values.hideEnemyEffectIcons==1
 values.hidePlayerEffectIcons=values.hidePlayerEffectIcons==1
 values.hidePlayerCombatEffects=values.hidePlayerCombatEffects==1
 values.hideClawSlashMarks=values.hideClawSlashMarks==1
+values.hideVampireClawHitMarks=values.hideVampireClawHitMarks==1
 values.hideEnemyNames=values.hideEnemyNames==1
 values.hideEnemyDifficultyIcons=values.hideEnemyDifficultyIcons==1
 values.showCounterattackDirection=values.showCounterattackDirection==1
