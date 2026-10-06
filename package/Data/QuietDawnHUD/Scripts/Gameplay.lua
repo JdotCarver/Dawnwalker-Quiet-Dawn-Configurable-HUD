@@ -1096,10 +1096,10 @@ end
 -- Start every panel that is waiting to fade, inside this one worker call, so
 -- they share a start moment and move together from then on. Defined here
 -- because it needs panelStep, which is declared just above.
-runtime.maxFadeWaveWait = 24
 function runtime.flushFadeWave()
     local wave=runtime.fadeWave
-    runtime.fadeWave,runtime.fadeWaveSize,runtime.fadeWaveAge={},0,0
+    runtime.fadeWave,runtime.fadeWaveSize={},0
+    runtime.fadeWaveLast,runtime.fadeWaveIdle=0,0
     runtime.fadeFlushing=true
     local started=0
     for name in pairs(wave) do
@@ -1125,6 +1125,27 @@ local timeTurn=false
 local timeSampleTurn=false
 local function step()
     if livePending then applyLiveSettings(true);return false end
+    -- Start a deferred fade group once it has stopped growing.
+    --
+    -- This lives at the top of step() because the two previous flush sites
+    -- were both inside the discovery pass, and a manual peek never runs that
+    -- pass -- it has its own branch and returns early. So a peek deferred
+    -- its panels, nothing ever started them, and the HUD stayed hidden for
+    -- good. Flushing from here means no branch can swallow a group.
+    --
+    -- "Stopped growing" rather than a fixed delay: the whole point of
+    -- batching is to catch every panel that belongs to the same visual
+    -- change, and only the group itself knows when it is complete. A pass
+    -- adds one panel per call, so the wave grows and waits; when a call adds
+    -- nothing, the group is done and starts together on the next one.
+    if runtime.fadeWaveSize>0 then
+        if runtime.fadeWaveSize>(runtime.fadeWaveLast or 0) then
+            runtime.fadeWaveLast,runtime.fadeWaveIdle=runtime.fadeWaveSize,0
+        else
+            runtime.fadeWaveIdle=(runtime.fadeWaveIdle or 0)+1
+            if runtime.fadeWaveIdle>=2 then runtime.flushFadeWave() end
+        end
+    end
     priorityTurn=(priorityTurn+1)%3
     -- Coalesce resource events; no timer requests resource reads.
     if statsPending and candidate==nil and priorityTurn~=0 and not (peekDirty or statDirty) then
@@ -1327,14 +1348,6 @@ local function step()
         -- frame. That is the stutter. The two jobs now share a call rather
         -- than taking turns.
         if fade.pending() then fade.forEach(panelStep) end
-        -- Do not let an identified group wait out a slow pass. During a load
-        -- the pass is interleaved with hook registration and took about
-        -- 1.5 s, so panels sat visible that whole time waiting for a group
-        -- that had already been worked out. Two waves beat one late one.
-        if runtime.fadeWaveSize>0 then
-            runtime.fadeWaveAge=(runtime.fadeWaveAge or 0)+1
-            if runtime.fadeWaveAge>=runtime.maxFadeWaveWait then runtime.flushFadeWave() end
-        end
         if panelStep(jobNames[cursor]) then cursor=cursor+1 end
         return false
     end
@@ -1372,7 +1385,17 @@ end
 -- On the runtime table rather than as locals: Gameplay.lua sits on Lua's
 -- hard ceiling of 200 locals per chunk.
 runtime.workerIdleMs, runtime.workerFadeMs = 16, 1
+-- Consecutive wakeups that found the same frame before we stop believing
+-- the game is still drawing. Four is comfortably more than any scheduling
+-- jitter at 1 ms, and well under a frame at any sane refresh rate.
+runtime.stalledFrameLimit = 4
 function runtime.workerDelay()
+    -- Frames have stopped: the console is open, or the window is in the
+    -- background. Spinning at 1 ms cannot advance a fade that is waiting on
+    -- a frame counter which is not moving.
+    if (runtime.sameFrameStreak or 0) >= runtime.stalledFrameLimit then
+        return runtime.workerIdleMs
+    end
     local ok,fading = pcall(fade.pending)
     return (ok and fading) and runtime.workerFadeMs or runtime.workerIdleMs
 end
@@ -1410,9 +1433,20 @@ wake = function(statsOnly)
                 -- A surplus wakeup during a fade is expected and is the
                 -- mechanism, not waste: we deliberately over-arm the timer
                 -- and let this guard collapse it down to one step per frame.
+                --
+                -- Unless frames have stopped entirely. Opening the console,
+                -- alt-tabbing or pausing freezes both the frame counter and
+                -- game time, so a fade can never finish and never expires on
+                -- a clock that is also frozen. The worker then re-arms at
+                -- 1 ms forever, doing nothing but re-reading the frame
+                -- counter a thousand times a second -- which is the hitch
+                -- whenever the console is open. Count the streak so the
+                -- re-arm can back off to its idle rate.
+                runtime.sameFrameStreak=(runtime.sameFrameStreak or 0)+1
                 if D.debugLogging then D.count("workerSameFrame") end
                 return false
             end
+            runtime.sameFrameStreak=0
             -- Whether a fade is actually getting every frame is invisible
             -- from the outside, so measure it. steps == frames drawn means
             -- we are matching the display; a non-zero skip count means the

@@ -241,6 +241,54 @@ def main():
     check("fading reports itself as disabled once switched off", not fade.enabled())
     check("disabled fading leaves nothing active", not fade.active("a"))
 
+    # --- The deferred-wave rule ----------------------------------------
+    # A model of the batching rule in Gameplay.step(), not the code itself.
+    # It is here because this rule has now been got wrong twice: first the
+    # flush lived only at the end of the discovery pass, so a manual peek --
+    # which never runs that pass -- deferred its panels and never started
+    # them, leaving the HUD hidden permanently. The invariant worth pinning
+    # is simply: a non-empty wave always starts within a bounded number of
+    # calls, whatever the caller is doing.
+    lua = module  # reuse the same runtime
+    del lua
+    wave = {"size": 0, "last": 0, "idle": 0, "flushed": []}
+
+    def tick(added):
+        wave["size"] += added
+        if wave["size"] > 0:
+            if wave["size"] > wave["last"]:
+                wave["last"], wave["idle"] = wave["size"], 0
+            else:
+                wave["idle"] += 1
+                if wave["idle"] >= 2:
+                    wave["flushed"].append(wave["size"])
+                    wave["size"], wave["last"], wave["idle"] = 0, 0, 0
+
+    # A discovery pass adds one panel per call, then stops.
+    for _ in range(16):
+        tick(1)
+    check("a growing wave does not start early", wave["flushed"] == [])
+    tick(0); tick(0)
+    check("the group starts once it stops growing", wave["flushed"] == [16],
+          f"got {wave['flushed']}")
+
+    # A peek defers everything in one call and never runs the pass.
+    wave.update(size=0, last=0, idle=0, flushed=[])
+    tick(9)
+    for _ in range(4):
+        tick(0)
+    check("a peek's group starts without any pass running", wave["flushed"] == [9],
+          f"got {wave['flushed']}")
+
+    # Bounded: whatever happens, an idle wave cannot outlive a few calls.
+    wave.update(size=0, last=0, idle=0, flushed=[])
+    tick(1)
+    calls = 0
+    while not wave["flushed"] and calls < 10:
+        tick(0); calls += 1
+    check("a wave always starts within a few idle calls", bool(wave["flushed"]),
+          f"never flushed after {calls} calls")
+
     print()
     if failures:
         print(f"!! {len(failures)} check(s) failed")
