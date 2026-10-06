@@ -8,7 +8,7 @@
 - Make panel-local HUD Peek Behaviour mode-aware: Quiet Dawn offers default Include/Exclude, Fixed Opacity offers default Don't change/Raise opacity, and Vanilla/Always Hidden hide the irrelevant control.
 - Fix Mod Settings Apply so every Fixed Opacity Raise opacity choice immediately reaches the active HUD.
 - Fade a Show HUD visibility edge once, then hold its settled target steady when the game refreshes the HUD instead of visibly restarting the fade during Focus or a timed peek.
-- Add a bounded Debug-only route probe for Vanilla Quickslot Abilities combat visibility. The observed GameHUD entry 3515 remains candidate-only, now collecting three four-phase class, root-visibility, root-opacity and child-tree timelines per HUD before any behavior change.
+- Add bounded Debug-only route probes for Vanilla combat presentation. The observed GameHUD entry 3515 remains candidate-only; it collects three four-phase Quickslot class, root-visibility, root-opacity and child-tree timelines, while the next probe compares Quickslot Abilities, Activation Charges and Weapon Arts cooldown across eight distinct GameHUD entries before any behavior change.
 - Improve hiding of red claw slash marks on enemies when combat cues were already loaded.
 - Add Hide player combat effects to hide Crimson Rush's bright red arm effect in both forms.
 - Replace the Logging on/off toggle with a level: Off, Error, Warning, Info or Debug. Warning is the default and matches what earlier versions printed; an existing On setting becomes Debug.

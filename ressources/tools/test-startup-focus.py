@@ -161,6 +161,7 @@ def main():
     check("the paused-fade pacing guard remains ahead of visibility work", "if pace==\"paused\" then" in gameplay and "holding fade" in gameplay)
     check("Vanilla Quickslot Abilities route discovery stays bounded, Debug-only and visible beside busy combat graph events", "queueVanillaQuickslotProbe" in gameplay and '"nextFrame"' in gameplay and "runtime.enqueueQuickslotProbe" in gameplay and "wake(\"quickslotProbe\")" in gameplay and "D.logInfo(\"vanillaQuickslots" in gameplay)
     check("the 3515 Quickslot candidate captures three bounded four-phase visual-tree timelines per HUD", "runtime.quickslotDiscoveryRemaining=3" in gameplay and "queueVanillaQuickslotProbe(\"GameHUD graph 3515\",true)" in gameplay and "{96,\"after100ms\"},{240,\"after250ms\"}" in gameplay and "node.WidgetTree" in gameplay and "node:GetChildrenCount()" in gameplay and "nodes>=64" in gameplay)
+    check("the combat investigation compares the three named Vanilla presentation targets across eight distinct GameHUD entries", "runtime.vanillaCombatProbeRemaining=8" in gameplay and "entry and currentPanelEvent(context) then queueVanillaCombatProbe(entry)" in gameplay and "WBP_HUD_FocusCharge_Bar" in gameplay and "WBP_HUD_SpecialAttackCooldown" in gameplay and "vanillaCombatPanel source=" in gameplay)
     check("the observed GameHUD 3515 route is a probe candidate, not a behavior change", "entry==3515" in gameplay and "GameHUD graph 3515" in gameplay)
 
     print()

@@ -317,6 +317,50 @@ function runtime.captureQuickslotProbeTree(widget,probe)
     D.logInfo("vanillaQuickslotsTree source=%s phase=%s nodes=%d changed=%d nodeLimit=64 depthLimit=8",
         probe.source,probe.phase,nodes,changed)
 end
+-- 3515 is a weapon-state callback, not a Quickslot presentation callback.
+-- The next bounded probe therefore compares the three combat-only Vanilla
+-- panels around every distinct GameHUD graph entry during one test. It reads
+-- the same dedicated Weapon Arts container that normal panel ownership uses,
+-- but never writes, fades, changes a lease, or installs a new widget hook.
+function runtime.captureVanillaCombatPanels(probe)
+    if not D.debugLogging or not config.fadeTransitions or not valid(hud)
+        or not valid(controller) or not sameObject(hud:GetWorld(),world)
+        or not sameObject(controller:GetWorld(),world)
+        or not sameObject(hud:GetOwningPlayer(),controller) then return end
+    runtime.vanillaCombatPanelStates=runtime.vanillaCombatPanelStates or {}
+    for _,name in ipairs({"WBP_AA_Quickslots","WBP_HUD_FocusCharge_Bar","WBP_HUD_SpecialAttackCooldown"}) do
+        if panelModes[name]==Modes.VANILLA then
+            local widget=hud[name]
+            local object=widget
+            local presentation="root"
+            if name=="WBP_HUD_SpecialAttackCooldown" and valid(widget) then
+                local content=widget.WBP_SpecialAttack
+                object=valid(content) and content:GetParent() or nil
+                presentation="WBP_SpecialAttack parent"
+            end
+            if valid(object) then
+                local className="unavailable"
+                local visibility="unavailable"
+                local opacityValue="unavailable"
+                local readable,value=pcall(function() return object:GetClass():GetFullName() end)
+                if readable and value then className=tostring(value) end
+                readable,value=pcall(function() return object:GetVisibility() end)
+                if readable and value~=nil then visibility=tostring(value) end
+                readable,value=pcall(function() return object:GetRenderOpacity() end)
+                if readable and type(value)=="number" then opacityValue=string.format("%.3f",value) end
+                local state=presentation.."|"..className.."|"..visibility.."|"..opacityValue
+                local previous=runtime.vanillaCombatPanelStates[name]
+                runtime.vanillaCombatPanelStates[name]=state
+                D.logInfo("vanillaCombatPanel source=%s entry=%s phase=%s panel=%s presentation=%s class=%s visibility=%s opacity=%s previous=%s changed=%s",
+                    probe.source,tostring(probe.entry),probe.phase,name,presentation,className,visibility,opacityValue,
+                    previous or "none",tostring(previous~=nil and previous~=state))
+            else
+                D.logInfo("vanillaCombatPanel source=%s entry=%s phase=%s panel=%s presentation=unavailable",
+                    probe.source,tostring(probe.entry),probe.phase,name)
+            end
+        end
+    end
+end
 -- Fading resolves a show or hide target into a per frame opacity. It owns no
 -- timer: the panel worker already ticks while work remains, and keeps itself
 -- awake for as long as fade.pending() is true.
@@ -824,6 +868,40 @@ function runtime.enqueueQuickslotProbe(probe)
     end
     if wake then wake("quickslotProbe") end
 end
+function runtime.enqueueVanillaCombatProbe(probe)
+    runtime.vanillaCombatProbeQueue=runtime.vanillaCombatProbeQueue or {}
+    if runtime.vanillaCombatProbe then
+        runtime.vanillaCombatProbeQueue[#runtime.vanillaCombatProbeQueue+1]=probe
+    else
+        runtime.vanillaCombatProbe=probe
+    end
+    if wake then wake("vanillaCombatProbe") end
+end
+local function queueVanillaCombatProbe(entry)
+    if not D.debugLogging or not config.fadeTransitions then return end
+    local targets={"WBP_AA_Quickslots","WBP_HUD_FocusCharge_Bar","WBP_HUD_SpecialAttackCooldown"}
+    local eligible=false
+    for _,name in ipairs(targets) do
+        if panelModes[name]==Modes.VANILLA then eligible=true;break end
+    end
+    if not eligible then return end
+    runtime.vanillaCombatProbeSeen=runtime.vanillaCombatProbeSeen or {}
+    if runtime.vanillaCombatProbeSeen[entry] then return end
+    local remaining=runtime.vanillaCombatProbeRemaining or 0
+    if remaining<=0 then return end
+    runtime.vanillaCombatProbeSeen[entry]=true
+    runtime.vanillaCombatProbeRemaining=remaining-1
+    local source="GameHUD combat candidate"
+    runtime.enqueueVanillaCombatProbe({source=source,entry=entry,phase="post"})
+    for _,sample in ipairs({{16,"nextFrame"},{96,"after100ms"},{240,"after250ms"}}) do
+        local delay,phase=sample[1],sample[2]
+        pcall(ExecuteInGameThreadWithDelay,delay,function()
+            if D.debugLogging then
+                runtime.enqueueVanillaCombatProbe({source=source,entry=entry,phase=phase})
+            end
+        end)
+    end
+end
 local function queueVanillaQuickslotProbe(source,discoverWidget)
     -- Vanilla intentionally releases Quiet Dawn's opacity lease, so fading it
     -- needs the exact stock event that changes its target. Until that event is
@@ -900,6 +978,10 @@ end
 local function switchedQuickslots(context,entryParam)
     noteUbergraphEntry("WBP_GameHUD",entryParam)
     local entry=tonumber(unwrap(entryParam))
+    -- Measure the actual combat presentation source before changing Vanilla
+    -- behavior. This applies only to the locally owned GameHUD and is bounded
+    -- to eight distinct entries for the requested one-session investigation.
+    if entry and currentPanelEvent(context) then queueVanillaCombatProbe(entry) end
     -- The latest combat probe recorded 3515 on both weapon draw and sheath.
     -- It is a candidate only: collect the same bounded opacity evidence before
     -- treating it as the stock Quickslot Abilities visibility route.
@@ -1005,9 +1087,11 @@ if seen.WBP_HUD_SpecialAttackCooldown and panelModes.WBP_HUD_SpecialAttackCooldo
     specs[#specs+1]={path=SPECIAL..":OnCooldownFinished", callback=cooldownEvent, optional="panel"}
 end
 if (config.switchRevealSeconds>0 and hasSwitchPanels()) or (manualPeekEnabled and config.peekOnFocusMode)
-    or (D.debugLogging and config.fadeTransitions and panelModes.WBP_AA_Quickslots==Modes.VANILLA) then
+    or (D.debugLogging and config.fadeTransitions and (panelModes.WBP_AA_Quickslots==Modes.VANILLA
+        or panelModes.WBP_HUD_FocusCharge_Bar==Modes.VANILLA
+        or panelModes.WBP_HUD_SpecialAttackCooldown==Modes.VANILLA)) then
     -- The same graph provides quickslot switching, the Focus-release wake and
-    -- one Debug-only Vanilla Quickslot Abilities route probe.
+    -- the bounded Debug-only Vanilla combat-panel presentation probe.
     specs[#specs+1]={path=ROOT..":ExecuteUbergraph_WBP_GameHUD", callback=switchedQuickslots, optional="panel"}
 end
     local last=#specs
@@ -1080,6 +1164,9 @@ local function accept(object)
         runtime.quickslotProbe,runtime.quickslotProbeOpacity=nil,nil
         runtime.quickslotProbeQueue,runtime.quickslotProbeTrees={},{}
         runtime.quickslotDiscoveryRemaining=3
+        runtime.vanillaCombatProbe,runtime.vanillaCombatProbeQueue=nil,{}
+        runtime.vanillaCombatProbeSeen,runtime.vanillaCombatPanelStates={},{}
+        runtime.vanillaCombatProbeRemaining=8
         panelRetries={}
         -- A newly adopted HUD should never wait for a decorative fade before
         -- honouring Quiet Dawn's baseline rules. Each managed panel stays in
@@ -1622,6 +1709,13 @@ local timeTurn=false
 local timeSampleTurn=false
 local function step()
     if livePending then applyLiveSettings(true);return false end
+    if runtime.vanillaCombatProbe then
+        local probe=runtime.vanillaCombatProbe
+        local queue=runtime.vanillaCombatProbeQueue or {}
+        runtime.vanillaCombatProbe=table.remove(queue,1)
+        runtime.captureVanillaCombatPanels(probe)
+        return false
+    end
     if runtime.quickslotProbe then
         local probe=runtime.quickslotProbe
         local queue=runtime.quickslotProbeQueue or {}
@@ -1984,7 +2078,7 @@ wake = function(statsOnly)
         panelRetries={}
         settingsPending,settingsAttempts=true,0
     end
-    if statsOnly~="marker" and statsOnly~="settings" and statsOnly~="resource" and statsOnly~="enemyHealth" and statsOnly~="time" and statsOnly~="sprintPrompt" and statsOnly~="clawMarks" and statsOnly~="playerEffects" and statsOnly~="liveSettings" and statsOnly~="quickslotProbe" then dirty=true end
+    if statsOnly~="marker" and statsOnly~="settings" and statsOnly~="resource" and statsOnly~="enemyHealth" and statsOnly~="time" and statsOnly~="sprintPrompt" and statsOnly~="clawMarks" and statsOnly~="playerEffects" and statsOnly~="liveSettings" and statsOnly~="quickslotProbe" and statsOnly~="vanillaCombatProbe" then dirty=true end
     if worker then if D.debugLogging then D.count("workerCoalesced") end; return end
     worker=true
     if D.debugLogging then D.count("workerStarts") end
