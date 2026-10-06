@@ -114,7 +114,9 @@ end
 local function hasSwitchPanels()
     return panelModes.WBP_HUD_Quickslots==1 or panelModes.WBP_AA_Quickslots==1
 end
-local manualPeekEnabled=config.manualPeek and config.manualPeekSeconds>0 and hasPeekPanels()
+-- A zero duration disables timed legend/exit holds, not the time the player
+-- actively remains in Focus. Focus itself is an untimed stateful reveal.
+local manualPeekEnabled=config.manualPeek and hasPeekPanels()
 local timeRevealEnabled=seen.WBP_HudTimer and panelModes.WBP_HudTimer==1 and config.timeHoldSeconds>0
 if type(ExecuteInGameThreadWithDelay) ~= "function" or type(CancelDelayedAction) ~= "function" then
     D.logError("Requires cancellable delayed game-thread callbacks; disabled.")
@@ -180,11 +182,39 @@ local frameClock, lastFrame
 -- at one per frame and preloading claw mark assets (observed at up to 137 ms
 -- a slice) while the HUD sat fully visible. Elements only disappeared at the
 -- first refresh afterwards, which is exactly what it looked like.
-local runtime = {panelsSettled = false, peekFocusExitAt = nil, startupPanels = {}}
+local runtime = {panelsSettled = false, startupPanels = {}}
 -- Panels whose fade has been deferred so the whole group can start together.
 -- See writePanel and the flush in step(). On the runtime table rather than as
 -- locals because this file sits near Lua's 200-local ceiling.
 runtime.fadeWave, runtime.fadeWaveSize = {}, 0
+-- The readiness model is isolated so its form alternatives and no-timeout
+-- contract are deterministic outside the game; Gameplay owns actual widgets,
+-- diagnostics and the shared fade wave.
+runtime.startupBarrierModel=require("QuietDawnStartupBarrier")
+function runtime.newStartupBarrier(startedAt)
+    return runtime.startupBarrierModel.new(panelModes,startedAt)
+end
+function runtime.resolveStartupGroup(name, outcome)
+    local barrier=runtime.startupBarrier
+    local group=runtime.startupBarrierModel.resolve(barrier,name)
+    if not group then return end
+    if D.debugLogging then
+        D.count(outcome=="arrived" and "startupBarrierPanels" or "startupBarrierUnavailable")
+        -- This is at most one line per ordinary group, so do not put it behind
+        -- Diagnostics' general event-rate limiter: arrival order is exactly
+        -- what the startup investigation needs to retain.
+        D.logInfo("Startup barrier %s: group=%d panel=%s remaining=%d",
+            outcome,group,name,barrier.remaining)
+    end
+end
+function runtime.observeStartupPanel(name)
+    runtime.resolveStartupGroup(name,"arrived")
+end
+function runtime.skipStartupPanel(name)
+    -- A verified missing field must not strand the visible baseline forever.
+    -- This is a bounded readiness outcome, not a guessed time limit.
+    runtime.resolveStartupGroup(name,"unavailable")
+end
 local wake, armExpiry, clawMarks
 local function valid(object)
     return object ~= nil and object:IsValid()
@@ -216,6 +246,32 @@ local fade=require("QuietDawnFade").new(D,function()
     return frameClock:GetGameTimeInSeconds(controller)
 end)
 fade.configure(config.fadeTransitions,config.fadeInSeconds,config.fadeOutSeconds)
+-- Focus has no dedicated UFunction. Resource and HUD events already wake the
+-- existing worker many times during normal play, so sample the pawn only while
+-- Focus is selected as the peek trigger; no permanent Focus polling loop is
+-- introduced. Entering holds the peek open, and leaving starts its duration.
+runtime.focusPeekModel=require("QuietDawnFocusPeek")
+function runtime.observeFocusPeek(pawn)
+    if not manualPeekEnabled or not config.peekOnFocusMode then
+        runtime.focusPeekActive=nil
+        return
+    end
+    local readable,active=pcall(function() return pawn.bIsInFocusMode end)
+    if not readable then return end
+    local state,edge=runtime.focusPeekModel.transition(runtime.focusPeekActive,active)
+    runtime.focusPeekActive=state
+    if edge=="entered" then
+        local changed=not peekVisible or peekStartPending
+        peekVisible,peekStartPending,peekUntil=true,false,0
+        if changed then peekDirty=true end
+        if D.debugLogging then D.count("focusPeekEntered") end
+    elseif edge=="exited" and peekVisible then
+        peekStartPending=true
+        peekDirty=true
+        if D.debugLogging then D.count("focusPeekExited") end
+    end
+    if armExpiry then armExpiry() end
+end
 -- These are actual Blueprint delegate handlers, not delegate signatures.
 -- Stock OnInitialized binds VampireStats to OnStaminaChanged in both forms.
 local STAT_ROOT = "/Game/_Dawnwalker/UI/_Unified/HUD/PlayerStatPanel/"
@@ -317,7 +373,7 @@ end
 local LEGEND="/Game/_Dawnwalker/UI/_Unified/HUD/ControlsLegend/WBP_ControlsLegend.WBP_ControlsLegend_C"
 local function peekInput(context,entryParam)
     noteUbergraphEntry("WBP_ControlsLegend",entryParam)
-    if not manualPeekEnabled or not config.peekOnLegendHold then return end
+    if not manualPeekEnabled or not config.peekOnLegendHold or config.manualPeekSeconds<=0 then return end
     if tonumber(unwrap(entryParam))~=850 then return end
     local object=unwrap(context)
     -- The accepted HUD owns this cached widget. The worker revalidates the
@@ -590,32 +646,17 @@ end
 local function switchedQuickslots(context,entryParam)
     noteUbergraphEntry("WBP_GameHUD",entryParam)
     local entry=tonumber(unwrap(entryParam))
-    -- Entry 4026 is Focus mode being LEFT (Steam build 25191761). Confirmed
-    -- by sampling bIsInFocusMode beside it over eight sightings: every one
-    -- read false, and it never fired during unrelated HUD activity. Focus
-    -- exposes no event of its own, which is why an ubergraph entry is used.
-    --
-    -- Leaving is the useful half: the HUD is revealed once the player is
-    -- DONE with Focus, so the hold also starts counting from there.
+    -- 4026 is a confirmed Focus-release graph entry. It does not decide the
+    -- reveal itself: it only wakes the normal pawn snapshot, which reads the
+    -- authoritative bIsInFocusMode transition and starts the hold if needed.
     if entry==4026 then
-        if not manualPeekEnabled or not config.peekOnFocusExit then return end
-        if not currentPanelEvent(context) then return end
-        -- The entry fires twice per release, so brief repeats collapse into
-        -- one reveal. A deliberate second press is far slower than this and
-        -- still restarts the hold, which is what intermittent tapping needs.
-        -- A game time that has gone backwards means a new world; accept it.
-        local now=valid(frameClock) and valid(controller)
-            and frameClock:GetGameTimeInSeconds(controller) or nil
-        local last=runtime.peekFocusExitAt
-        if now and last and now>=last and now-last<0.2 then return end
-        runtime.peekFocusExitAt=now
-        peekRequested,statsPending=true,true
-        if D.debugLogging then D.count("manualPeekFocusExits") end
-        wake("resource")
+        if manualPeekEnabled and config.peekOnFocusMode and currentPanelEvent(context) then
+            statsPending=true
+            wake("resource")
+        end
         return
     end
     -- Stock Toggle AA Quickslots delegate enters the graph at 4146.
-    -- Observe that entry directly, also covering calls that bypass its stub.
     if entry~=4146 then return end
     if config.switchRevealSeconds<=0 or not hasSwitchPanels() or not currentPanelEvent(context) then return end
     local focus=hud.CombatFocusPanel
@@ -666,7 +707,7 @@ if #statNames>0 then
             callback=statUpdate(entry[3]), optional="resource"}
     end
 end
-if manualPeekEnabled then
+if config.peekOnLegendHold and config.manualPeekSeconds>0 and hasPeekPanels() then
     specs[#specs+1]={path=LEGEND..":ExecuteUbergraph_WBP_ControlsLegend", callback=peekInput, optional="peek"}
 end
 if sprintPrompts then
@@ -681,7 +722,8 @@ if seen.WBP_HUD_SpecialAttackCooldown and panelModes.WBP_HUD_SpecialAttackCooldo
     specs[#specs+1]={path=SPECIAL..":SetupCooldownEffect", callback=cooldownEvent, optional="panel"}
     specs[#specs+1]={path=SPECIAL..":OnCooldownFinished", callback=cooldownEvent, optional="panel"}
 end
-if config.switchRevealSeconds>0 and hasSwitchPanels() then
+if (config.switchRevealSeconds>0 and hasSwitchPanels()) or (manualPeekEnabled and config.peekOnFocusMode) then
+    -- The same graph provides quickslot switching and the Focus-release wake.
     specs[#specs+1]={path=ROOT..":ExecuteUbergraph_WBP_GameHUD", callback=switchedQuickslots, optional="panel"}
 end
     local last=#specs
@@ -752,6 +794,12 @@ local function accept(object)
         runtime.panelsSettled=false
         runtime.startupPanels={}
         for _,name in ipairs(names) do runtime.startupPanels[name]=true end
+        local startedAt=valid(frameClock) and frameClock:GetGameTimeInSeconds(pc) or nil
+        runtime.startupBarrier=runtime.newStartupBarrier(startedAt)
+        -- Baseline panels stay visible until every ordinary group is ready,
+        -- then fade in a single wave. Combat-only panels retain immediate
+        -- baseline hiding during load.
+        for name in pairs(runtime.startupBarrier.members) do runtime.startupPanels[name]=nil end
         fade.reset()
         runtime.fadeWave,runtime.fadeWaveSize={},0
         runtime.fadeWaveLast,runtime.fadeWaveIdle=0,0
@@ -766,6 +814,7 @@ local function accept(object)
         healthUntil, staminaUntil = 0, 0
         peekRequested,peekUntil,peekVisible=false,0,false
         peekStartPending=false
+        runtime.focusPeekActive=nil
         timeRequested,timeDirty,timeVisible,timeUntil=false,false,false,0
         switchRequested,switchUntil,switchVisible=false,0,false
         switchCursor=0
@@ -780,7 +829,7 @@ local function accept(object)
     if timeWatcher then timeWatcher.resume() end
     hudAddress, controllerAddress = object:GetAddress(), pc:GetAddress()
     if sprintPrompts then sprintPrompts.queue(object) end
-    if manualPeekEnabled then
+    if config.peekOnLegendHold and config.manualPeekSeconds>0 then
         local legend=object.WBP_ControlsLegend
         peekWidgetAddress=valid(legend) and legend:GetAddress() or nil
         peekControllerAddress=controllerAddress
@@ -804,10 +853,12 @@ local function snapshot()
         if peekVisible then peekDirty=true end
         peekUntil,peekVisible=0,false
         peekStartPending=false
+        runtime.focusPeekActive=nil
         if switchVisible then switchCursor=1 end
         switchUntil,switchVisible=0,false
         lastPawnAddress=pawnAddress
     end
+    runtime.observeFocusPeek(pawn)
     -- Peeking only needs a current player and the game clock. It also works
     -- with both dynamic panels disabled or unavailable resource readings.
     if peekRequested then
@@ -939,10 +990,22 @@ local function peekPanel(name)
         and name~="WBP_OpenFocusPrompt"
 end
 local function writePanel(name,entry,target)
+    local barrier=runtime.startupBarrier
+    if barrier and barrier.active and barrier.members[name] then
+        -- The ordinary HUD is allowed to finish assembling before it moves.
+        -- The release path below starts every collected baseline panel inside
+        -- one worker call, so there is no per-widget dismissal cascade.
+        if barrier.wave[name]==nil then
+            barrier.wave[name]=true
+            barrier.waveSize=barrier.waveSize+1
+            if D.debugLogging then D.count("startupBarrierDeferred") end
+        end
+        return false
+    end
     -- A HUD can keep constructing named panels after Quiet Dawn has accepted
-    -- its root. The user chose immediate baseline hiding on load, so each
-    -- first-seen panel lands on its rule-derived target without entering a
-    -- fade wave. Normal reveals and all later visibility changes still fade.
+    -- its root. Combat-only panels retain immediate baseline hiding on load;
+    -- ordinary baseline panels are held by the barrier above. Normal reveals
+    -- and all later visibility changes still fade.
     if runtime.startupPanels[name] then
         fade.forget(name)
         local wrote=panelOpacity.apply(entry.lease,target)
@@ -997,7 +1060,11 @@ local function panelFailure(name,err)
     panels[name]=nil
     local tries=(panelRetries[name] or 0)+1
     if tries<8 then panelRetries[name]=tries
-    else panelRetries[name]=nil;absent[name]=true end
+    else
+        panelRetries[name]=nil
+        absent[name]=true
+        runtime.skipStartupPanel(name)
+    end
     if D.debugLogging and (tries==1 or tries==8) then
         D.event("panelFailure","name=%s attempt=%d/8 error=%s",name,tries,tostring(err))
     end
@@ -1041,7 +1108,17 @@ local function panelStep(name)
     -- Vanilla panels need no opacity reads once the previous override is
     -- released. Size remains an independent preference in every mode.
     if panelModes[name]==0 and not panelScaling
-        and not (panels[name] and panels[name].opacityOwned) then panelRetries[name]=nil;return true end
+        and not (panels[name] and panels[name].opacityOwned) then
+        -- A Vanilla alternate form can satisfy the stats startup group even
+        -- though Quiet Dawn never writes that form's opacity.
+        local barrier=runtime.startupBarrier
+        local widget=valid(hud) and hud[name] or nil
+        if barrier and barrier.active and barrier.watchers[name] and valid(widget) then
+            runtime.observeStartupPanel(name)
+        end
+        panelRetries[name]=nil
+        return true
+    end
     -- Revalidate ownership inside every deferred operation, including a still
     -- valid HUD left over from the previous world.
     if valid(hud) and valid(controller) and sameObject(hud:GetWorld(),world)
@@ -1065,6 +1142,7 @@ local function panelStep(name)
             end
         end
         if valid(object) then
+            runtime.observeStartupPanel(name)
             local mode=panelModes[name]
             local entry = panels[name]
             if not entry or not sameObject(entry.object,object) then
@@ -1086,7 +1164,7 @@ local function panelStep(name)
             end
             local current=object:GetRenderOpacity()
             if entry.original==nil then entry.original=current end
-            if manualPeekEnabled and name=="WBP_ControlsLegend" then
+            if config.peekOnLegendHold and config.manualPeekSeconds>0 and name=="WBP_ControlsLegend" then
                 peekWidgetAddress,peekControllerAddress=object:GetAddress(),controllerAddress
             end
             local target=panelTarget(name,entry,widget)
@@ -1110,7 +1188,9 @@ local function panelStep(name)
             local tries=(panelRetries[name] or 0)+1
             if tries<8 then panelRetries[name]=tries
             else
-                panelRetries[name]=nil;absent[name]=true
+                panelRetries[name]=nil
+                absent[name]=true
+                runtime.skipStartupPanel(name)
                 if D.debugLogging then D.event("missing","panel=%s; retries exhausted",name) end
             end
         end
@@ -1120,9 +1200,11 @@ local function panelStep(name)
         fade.reset()
         runtime.fadeWave,runtime.fadeWaveSize={},0
         runtime.fadeInFlight=false
+        runtime.startupBarrier=nil
         panelRetries,livePanels={},{}
         hudAddress=nil
         peekWidgetAddress,peekControllerAddress=nil,nil
+        runtime.focusPeekActive=nil
         timeRequested,timeDirty,timeVisible,timeUntil=false,false,false,0
     end
     return true
@@ -1130,6 +1212,33 @@ end
 -- Start every panel that is waiting to fade, inside this one worker call, so
 -- they share a start moment and move together from then on. Defined here
 -- because it needs panelStep, which is declared just above.
+function runtime.flushStartupBarrier()
+    local barrier=runtime.startupBarrier
+    if not barrier or not barrier.releasePending then return end
+    barrier.active,barrier.releasePending=false,false
+    local wave=barrier.wave
+    barrier.wave,barrier.waveSize={},0
+    runtime.fadeFlushing=true
+    local started=0
+    for name in pairs(wave) do
+        if panels[name] then started=started+1 end
+        pcall(panelStep,name)
+    end
+    runtime.fadeFlushing=false
+    if D.debugLogging then
+        local elapsedMs=nil
+        if type(barrier.startedAt)=="number" and valid(frameClock) and valid(controller) then
+            elapsedMs=math.max(0,(frameClock:GetGameTimeInSeconds(controller)-barrier.startedAt)*1000)
+        end
+        D.count("startupBarrierReleases")
+        if elapsedMs then
+            D.count("startupBarrierWaitMs",math.floor(elapsedMs+0.5))
+            D.logInfo("Startup barrier released: groups=%d panels=%d waitMs=%.0f",barrier.groups,started,elapsedMs)
+        else
+            D.logInfo("Startup barrier released: groups=%d panels=%d waitMs=unavailable",barrier.groups,started)
+        end
+    end
+end
 function runtime.flushFadeWave()
     local wave=runtime.fadeWave
     runtime.fadeWave,runtime.fadeWaveSize={},0
@@ -1159,6 +1268,10 @@ local timeTurn=false
 local timeSampleTurn=false
 local function step()
     if livePending then applyLiveSettings(true);return false end
+    if runtime.startupBarrier and runtime.startupBarrier.releasePending then
+        runtime.flushStartupBarrier()
+        return false
+    end
     -- Start a deferred fade group once it has stopped growing.
     --
     -- This lives at the top of step() because the two previous flush sites
@@ -1201,7 +1314,13 @@ local function step()
         cachedVisibility(kind)
         if peekVisible and peekStartPending then
             peekStartPending=false
-            peekUntil=frameClock:GetGameTimeInSeconds(controller)+config.manualPeekSeconds
+            if config.manualPeekSeconds>0 then
+                peekUntil=frameClock:GetGameTimeInSeconds(controller)+config.manualPeekSeconds
+            else
+                -- Focus still owns the active reveal at zero duration, but its
+                -- post-exit hold is intentionally immediate.
+                peekVisible,peekUntil,peekDirty=false,0,true
+            end
         end
         armExpiry()
         return false
@@ -1359,7 +1478,7 @@ local function step()
         jobNames = fullJob and names or statNames
         -- Resource events already supplied a fresh snapshot; only lifecycle jobs read again.
         if fullJob then
-            if statsRefresh and (#statNames > 0 or peekRequested or switchRequested) then
+            if statsRefresh and (#statNames > 0 or peekRequested or switchRequested or config.peekOnFocusMode) then
                 statsRefresh=false
                 local success, value = pcall(snapshot)
                 peekRequested,switchRequested=false,false
@@ -1608,7 +1727,7 @@ applyLiveSettings=function(run)
     dynamicPanels.HumanStats,dynamicPanels.VampireStats=updated.dynamicPanels.HumanStats,updated.dynamicPanels.VampireStats
     statNames={}
     for _,name in ipairs({'HumanStats','VampireStats'}) do if dynamicPanels[name] then statNames[#statNames+1]=name end end
-    manualPeekEnabled=config.manualPeek and config.manualPeekSeconds>0 and hasPeekPanels()
+    manualPeekEnabled=config.manualPeek and hasPeekPanels()
     timeRevealEnabled=seen.WBP_HudTimer and panelModes.WBP_HudTimer==1 and config.timeHoldSeconds>0
     if changed.logLevel and QuietDawnNative then QuietDawnNative.setLogging(config.debugLogging) end
     if changed.healthThreshold or changed.staminaThreshold or changed.healthHoldSeconds or changed.staminaHoldSeconds
@@ -1622,6 +1741,10 @@ applyLiveSettings=function(run)
         if peekVisible then peekDirty=true end
         peekRequested,peekVisible,peekUntil=false,false,0
         peekStartPending=false
+        runtime.focusPeekActive=nil
+        -- Applying Focus mode while it is already held needs one immediate
+        -- event-driven snapshot; it must not wait for a later resource change.
+        if manualPeekEnabled and config.peekOnFocusMode then statsPending=true end
     end
     if changed.timeHoldSeconds or changed.mode_WBP_HudTimer or changed.opacity_WBP_HudTimer then
         timeWatcher=timeRevealEnabled and require("QuietDawnTime").new(D) or nil
@@ -1722,7 +1845,7 @@ armExpiry = function()
         and previousHealth>=config.healthThreshold and previousStamina>=config.staminaThreshold
     local remaining=eligible and math.max(healthUntil,staminaUntil)-now or 0
     -- One deadline serves resource alerts, manual peek and switching.
-    for _,deadline in ipairs({peekVisible and not peekStartPending and peekUntil or false,switchVisible and switchUntil or false,timeVisible and timeUntil or false}) do
+    for _,deadline in ipairs({peekVisible and not peekStartPending and peekUntil>0 and peekUntil or false,switchVisible and switchUntil or false,timeVisible and timeUntil or false}) do
         if deadline and now then
             local delay=math.max(0.016,deadline-now)
             remaining=remaining>0 and math.min(remaining,delay) or delay
@@ -1754,7 +1877,7 @@ armExpiry = function()
             timeDirty=true
             if D.debugLogging then D.event("timeReveal","time-change reveal ended") end
         end
-        local endedPeek=peekVisible and now>=peekUntil
+        local endedPeek=peekVisible and peekUntil>0 and now>=peekUntil
         if endedPeek then
             peekVisible=false
             peekDirty=true

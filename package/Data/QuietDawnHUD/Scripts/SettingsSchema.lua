@@ -71,7 +71,7 @@ return {
     {key="staminaHoldSeconds", default=1.5, values=durations},
     {key="manualPeekSeconds", default=3, values=durations},
     {key="switchRevealSeconds", default=3, values=durations},
-    -- HUD peek trigger: 0 off, 1 controls-legend hold, 2 after leaving Focus.
+    -- HUD peek trigger: 0 off, 1 controls-legend hold, 2 Focus mode.
     -- Widened from {0,1}; both old values keep their exact meaning, so an
     -- existing settings.ini needs no migration.
     {key="manualPeek", default=1, values={0,1,2}},

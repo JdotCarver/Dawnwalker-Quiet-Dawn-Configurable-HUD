@@ -292,7 +292,7 @@ fi
 bash "$(dirname "$0")/setup.sh" >/dev/null 2>&1 || true
 
 suite_failed=0
-for test in check-lua.py check-mod-settings.py test-settings-migration.py test-fade.py test-enemy-bars.py; do
+for test in check-lua.py check-mod-settings.py test-settings-migration.py test-fade.py test-enemy-bars.py test-startup-focus.py; do
     output="$(python3 "$(dirname "$0")/$test" 2>&1)" || suite_failed=1
     printf '%s\n' "$output" | tail -1 | sed 's/^/   /'
     if printf '%s\n' "$output" | grep -q '^FAIL\|^!!'; then
