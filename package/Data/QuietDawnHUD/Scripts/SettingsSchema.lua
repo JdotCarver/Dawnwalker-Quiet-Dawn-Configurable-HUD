@@ -75,6 +75,21 @@ return {
     -- Widened from {0,1}; both old values keep their exact meaning, so an
     -- existing settings.ini needs no migration.
     {key="manualPeek", default=1, values={0,1,2}},
+    -- Every eligible panel remains included by default, preserving existing
+    -- Show HUD behavior until the player deliberately excludes it.
+    {key="showHUD_HumanStats", default=1, values={0,1}},
+    {key="showHUD_VampireStats", default=1, values={0,1}},
+    {key="showHUD_WBP_Compass", default=1, values={0,1}},
+    {key="showHUD_WBP_HUD_QuestInfo", default=1, values={0,1}},
+    {key="showHUD_WBP_HUD_Quickslots", default=1, values={0,1}},
+    {key="showHUD_Crosshair", default=1, values={0,1}},
+    {key="showHUD_WBP_AA_Quickslots", default=1, values={0,1}},
+    {key="showHUD_WBP_ControlsLegend", default=1, values={0,1}},
+    {key="showHUD_WBP_BuffContainer", default=1, values={0,1}},
+    {key="showHUD_WBP_HUD_AbilityCooldownsContainer", default=1, values={0,1}},
+    {key="showHUD_WBP_HUD_FocusCharge_Bar", default=1, values={0,1}},
+    {key="showHUD_XPBar", default=1, values={0,1}},
+    {key="showHUD_WBP_HudTimer", default=1, values={0,1}},
     -- Fading defaults to off so an existing settings.ini keeps its exact
     -- current behaviour; `ensure` simply adds the three missing keys.
     {key="fadeTransitions", default=0, values={0,1}},

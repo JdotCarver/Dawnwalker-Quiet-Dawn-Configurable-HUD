@@ -129,12 +129,15 @@ def main():
     check("Gameplay samples the Focus model from the pawn snapshot", "runtime.observeFocusPeek(pawn)" in gameplay)
     check("the confirmed Focus-release event wakes a snapshot rather than revealing directly", "statsPending=true\n            wake(\"resource\")" in gameplay)
     check("an active Focus reveal has no timed expiry deadline", "peekVisible and not peekStartPending and peekUntil>0 and peekUntil" in gameplay)
-    check("live panel mode changes request one complete reconciliation", "if changedPanelCount>0 then\n        fullPending=true\n        dirty=true" in gameplay)
+    check("live panel mode and Show HUD changes request one complete reconciliation", "if changedPanelCount>0 or changedShowHUDCount>0 then\n        fullPending=true\n        dirty=true" in gameplay)
     check("the Focus prompt class is logged before its graph hook is added", "Focus probe: promptClass=" in gameplay)
     check("the verified Focus prompt graph wakes a pawn snapshot on entry", "runtime.focusPromptGraph" in gameplay and "function runtime.focusPromptEvent" in gameplay and "focusPromptWakes" in gameplay)
     check("the Focus graph is queued for every enabled Show HUD trigger, not only Focus", "if manualPeekEnabled then\n    -- Register this verified graph" in gameplay)
+    check("per-panel Show HUD inclusion defaults preserve every eligible panel", rows["showHUD_HumanStats"]["default"] == 1 and "values.showHUDPanels={}" in settings_model)
+    check("an excluded panel retains its Quiet Dawn target during Show HUD", "config.showHUDPanels[name]~=false" in gameplay)
     check("Focus configuration and registration state are logged decisively", "Focus hook setup: Show HUD=%s manualPeek=%s eligible=%s registration=%s" in gameplay)
     check("a queued Focus fade keeps its worker alive until the wave flushes", "or runtime.fadeWaveSize>0 or timeRequested" in gameplay)
+    check("mid-session fade investigation records the startup-immediate route at Info", "startupImmediateFadeBypass" in gameplay and "runtime.hudAdoptionSource" in gameplay and "if fade.enabled() and not runtime.startupImmediateNoted then" in gameplay)
 
     print()
     if failures:

@@ -51,6 +51,15 @@ def main():
         and "it is intentionally not a recurring poll" in gameplay,
     )
     check(
+        "no-op cue events no longer create Debug verification work",
+        "if not changed and not wrote then return end" in gameplay,
+    )
+    check(
+        "all-disabled combat cues use root-only suppression",
+        "if not combatCueRequested() then" in gameplay
+        and "markerSuppressedOnly" in gameplay,
+    )
+    check(
         "the cue classifier exposes raw hard-lock state without changing its decision",
         "local hardLock=object.bHardLockEnabled==true" in combat_cues
         and "entry.cueHardLock,entry.cueHideDirections=hardLock,hideDirections" in combat_cues

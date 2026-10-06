@@ -13,9 +13,14 @@ local newestSchema = Timers.compatibleSchema(schema)
 -- They must stay STRICT SUBSETS of the newest schema. `ensure` adds every key
 -- its schema declares but the file lacks, so a schema naming a retired key
 -- would write that key back into an already-current file.
+local SHOW_HUD_PREFIX = "showHUD_"
+local preShowHUDSchema = {}
+for _,row in ipairs(newestSchema) do
+    if not row.key:match("^"..SHOW_HUD_PREFIX) then preShowHUDSchema[#preShowHUDSchema+1]=row end
+end
 local FADE_KEYS = {fadeTransitions=true, fadeInSeconds=true, fadeOutSeconds=true}
 local preFadeSchema = {}
-for _,row in ipairs(newestSchema) do
+for _,row in ipairs(preShowHUDSchema) do
     if not FADE_KEYS[row.key] then preFadeSchema[#preFadeSchema+1]=row end
 end
 local preLogLevelSchema = {}
@@ -102,9 +107,17 @@ local values, err = Store.load(directory, newestSchema, function()
     for key,value in pairs(effectDefaults) do result[key]=value end
     return result, nil, sources
 end)
--- logLevel is the newest key, so a settings.ini from any earlier release stops
--- here. Re-parse against the schema that predates it, leaving the older
--- upgrades below free to run in their original order.
+-- The per-panel Show HUD controls are newest. A file from the immediately
+-- preceding release has every earlier key, so parse that strict predecessor
+-- first; the final upgrade below then adds only these default-on inclusions.
+if not values and err and err:match('^Missing setting: showHUD_') then
+    local text=Store.read(Store.path(directory))
+    if text then values,err=Store.parse(text,preShowHUDSchema) end
+end
+-- logLevel is the newest key in the generation before Show HUD, so a
+-- settings.ini from any still earlier release stops here. Re-parse against
+-- the schema that predates it, leaving the older upgrades below free to run
+-- in their original order.
 if not values and err=='Missing setting: logLevel' then
     local text=Store.read(Store.path(directory))
     if text then values,err=Store.parse(text,preLogLevelSchema) end
@@ -224,14 +237,22 @@ if values then
         if FADE_KEYS[row.key] then fadeDefaults[row.key]=row.default end
     end
     values, err = dofile(directory..'UE4SSCommonSettingsUpgrade.lua').ensure(
-        Store, Store.path(directory), newestSchema, fadeDefaults, 'fade-transitions')
+        Store, Store.path(directory), preShowHUDSchema, fadeDefaults, 'fade-transitions')
 end
 if values then
     local needsUpgrade=false
     for _, key in ipairs({'healthHoldSeconds','staminaHoldSeconds','manualPeekSeconds','timeHoldSeconds','switchRevealSeconds'}) do
         if values[key]>10 or values[key]*2%1~=0 then needsUpgrade=true;break end
     end
-    if needsUpgrade then values,err=Timers.ensure(Store,Store.path(directory),schema) end
+    if needsUpgrade then values,err=Timers.ensure(Store,Store.path(directory),preShowHUDSchema) end
+end
+if values then
+    local defaults={}
+    for _,row in ipairs(newestSchema) do
+        if row.key:match("^"..SHOW_HUD_PREFIX) then defaults[row.key]=row.default end
+    end
+    values,err=dofile(directory..'UE4SSCommonSettingsUpgrade.lua').ensure(
+        Store,Store.path(directory),newestSchema,defaults,'show-hud-inclusions')
 end
 if not values then error('Quiet Dawn settings rejected: '..tostring(err)) end
 return values
@@ -272,11 +293,14 @@ values.panels=panels
 values.panelModes={}
 values.panelOpacities={}
 values.panelScales={}
+values.showHUDPanels={}
 for _, p in ipairs(panels) do
     values.panelScales[p]=values['scale_'..p]/100
     values.panelModes[p]=values['mode_'..p]
     values.panelOpacities[p]=values.panelModes[p]==1 and 0
         or (p=='WBP_Compass' and values.compassOpacity or values['opacity_'..p]/100)
+    local include=values['showHUD_'..p]
+    if include~=nil then values.showHUDPanels[p]=include==1 end
 end
 -- Override only the runtime panel policy. Saved mode/opacity/size remain intact
 -- and resume when the player-effect toggle is turned off.

@@ -173,9 +173,42 @@ def main():
             text += f"{key} = {dry_defaults[key]}\n"
         return None, error
 
+    # A settings.ini from before per-panel Show HUD inclusion: all existing
+    # settings must parse under the strict predecessor, then add thirteen
+    # default-on choices without changing any established peek behavior.
+    rows = {row["key"]: row for row in schema.values()}
+    show_hud_keys = tuple(key for key in rows if key.startswith("showHUD_"))
+    pre_show_hud = "[Settings]\n" + "".join(
+        f"{key} = {row['default']}\n" for key, row in rows.items() if key not in show_hud_keys
+    )
+    pre_show_schema = lua.table_from([row for row in schema.values() if not row["key"].startswith("showHUD_")])
+    values, error = parse(pre_show_hud, pre_show_schema)
+    check(
+        "a pre-Show-HUD settings.ini parses under the strict predecessor",
+        values is not None,
+        f"error={error!r}",
+    )
+    values, error = ensure_dry_run(pre_show_hud, schema, {key: 1 for key in show_hud_keys})
+    check(
+        "default-on Show HUD inclusions upgrade instead of rejecting existing settings",
+        values is not None,
+        f"error={error!r}",
+    )
+    settings_model = (SCRIPTS / "SettingsModel.lua").read_text()
+    check(
+        "SettingsModel starts the final upgrade from the strict pre-Show-HUD generation",
+        "err and err:match('^Missing setting: showHUD_')" in settings_model
+        and "Store.parse(text,preShowHUDSchema)" in settings_model
+        and "'show-hud-inclusions'" in settings_model,
+    )
+    check(
+        "Show HUD inclusion defaults preserve every existing peek target",
+        len(show_hud_keys) == 13 and all(rows[key]["default"] == 1 for key in show_hud_keys),
+        f"keys={show_hud_keys!r}",
+    )
+
     # A settings.ini from before fading: every key the newest schema has,
     # except the three fading added.
-    rows = {row["key"]: row for row in schema.values()}
     fade_keys = ("fadeTransitions", "fadeInSeconds", "fadeOutSeconds")
     pre_fade = "[Settings]\n" + "".join(
         f"{key} = {row['default']}\n" for key, row in rows.items() if key not in fade_keys

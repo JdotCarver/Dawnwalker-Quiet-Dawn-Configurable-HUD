@@ -108,7 +108,8 @@ local function hasPeekPanels()
     for _,name in ipairs(names) do
         if panelModes[name]==1 and name~="CombatFocusPanel"
             and name~="WBP_HUD_Quickslots_ChangePrompt" and name~="WBP_HUD_SpecialAttackCooldown"
-            and name~="WBP_OpenFocusPrompt" then return true end
+            and name~="WBP_OpenFocusPrompt"
+            and (not config.showHUDPanels or config.showHUDPanels[name]~=false) then return true end
     end
     return false
 end
@@ -127,7 +128,7 @@ end
 D.logInfo("active: managing %d panel(s), manual peek %s",#names,config.manualPeek and "on" or "off")
 if D.debugLogging then D.event("config","healthThreshold=%.3f staminaThreshold=%.3f healthHold=%.3fs staminaHold=%.3fs panels=%d",config.healthThreshold,config.staminaThreshold,config.healthHoldSeconds,config.staminaHoldSeconds,#names) end
 local ROOT = "/Game/_Dawnwalker/UI/_Unified/HUD/WBP_GameHUD.WBP_GameHUD_C"
-local hud, candidate, controller, world
+local hud, candidate, candidateSource, controller, world
 local hudAddress, controllerAddress
 local worker, dirty, stateReady = false, false, false
 local statsPending, expiryPending = false, false
@@ -434,6 +435,10 @@ local markerHookIndex, markerHookAttempts, markerSeen = 1, 0, false
 local markerQueue, markerPending, markerFirst, markerLast = {}, {}, 1, 0
 local markerCache, markerSlots, markerCount, markerPrune = {}, {}, 0, 1
 local markerCacheWorld, markerCacheController, markerTurn, markerUrgent
+local function combatCueRequested()
+    return config.showCounterattackDirection or config.showUnblockableWarning
+        or config.showDirectionalParry or config.showEnemyMarker or config.showLockIcon
+end
 -- Steam build 25129649: ERebelSetting::Game_Difficulty_CombatDirectionMarkers=71.
 -- This menu setting is distinct from the widget's internal Hide Directions flag.
 local settingsFactory, settingsObject, directionsEnabled
@@ -568,11 +573,11 @@ local function probeCombatCue(entry, object, job, icon, before, target, wrote)
     local hideDirections=entry.cueHideDirections==true
     local changed=entry.cueProbeIcon~=icon or entry.cueProbeHardLock~=hardLock
         or entry.cueProbeHideDirections~=hideDirections or entry.cueProbeTarget~=target
-    local lockLifecycle=sources and (sources.EnableHardLock or sources.NotifyIndicatorCleared
-        or sources["Display Icon State Directionally"] or sources["Display Icon State Non-Directionally"])
     entry.cueProbeIcon,entry.cueProbeHardLock=icon,hardLock
     entry.cueProbeHideDirections,entry.cueProbeTarget=hideDirections,target
-    if not changed and not lockLifecycle then return end
+    -- Discovery is complete. A stock display callback that left both its
+    -- state and root opacity alone needs neither a log line nor a verifier.
+    if not changed and not wrote then return end
     D.logInfo("combatCue probe event=%s icon=%s hardLock=%s hideDirections=%s beforeOpacity=%.3f targetOpacity=%d wrote=%s shown=%s arrow=%s lock=%s marker=%s",
         source,tostring(icon),tostring(hardLock),tostring(hideDirections),before,target,tostring(wrote),
         tostring(entry.cueShown),tostring(entry.cueArrow),tostring(entry.cueLock),tostring(entry.cueMarker))
@@ -644,7 +649,6 @@ local function markerStep()
         end
         return
     end
-    local readable,icon=pcall(function() return tonumber(object["Currently Displayed Icon Type"]) end)
     local current=object:GetRenderOpacity()
     if not entry then
         entry={object=object,address=job.address,original=current}
@@ -652,6 +656,20 @@ local function markerStep()
         for slot=1,64 do if not markerSlots[slot] then markerSlots[slot]=entry;break end end
         markerCount=markerCount+1
     end
+    -- With every combat cue disabled, the only remaining responsibility is
+    -- correcting a stock root-opacity write. Avoid child-widget reads,
+    -- visibility updates, scale work and Debug probe timers on this hot path.
+    if not combatCueRequested() then
+        if entry.lastOpacity==nil or current~=entry.lastOpacity then entry.original=current end
+        if current~=0 then
+            opacity(object,0)
+            if D.debugLogging then D.count("markerWrites") end
+        end
+        entry.lastOpacity=0
+        if D.debugLogging then D.count("markerSuppressedOnly") end
+        return
+    end
+    local readable,icon=pcall(function() return tonumber(object["Currently Displayed Icon Type"]) end)
     local applied,shown=applyCombatCue(object,entry,readable and icon or nil)
     if not applied then
         if entry.lastOpacity~=nil and current==entry.lastOpacity then opacity(object,entry.original) end
@@ -735,6 +753,7 @@ local function capture(context)
     sprintSource.recover()
     statsRefresh=true
     candidate = unwrap(context)
+    candidateSource="GameHUD lifecycle hook"
     wake()
 end
 local SPECIAL="/Game/_Dawnwalker/UI/_Unified/HUD/AbilityCooldowns/WBP_HUD_SpecialAttackCooldown.WBP_HUD_SpecialAttackCooldown_C"
@@ -925,6 +944,11 @@ local function accept(object)
     if valid(controller) and not sameObject(controller,pc) then return false, "controller mismatch" end
     if not sameObject(object,hud) or not sameObject(objectWorld,world) then
         hud, world, panels, absent = object, objectWorld, {}, {}
+        -- A direct object notification and the GameHUD hook are preferred.
+        -- Keep the fallback named too: a future lifecycle route must not turn
+        -- this diagnostic into an unexplained "unknown" startup path.
+        runtime.hudAdoptionSource=candidateSource or "fallback"
+        runtime.startupImmediateNoted=nil
         panelRetries={}
         -- A newly adopted HUD should never wait for a decorative fade before
         -- honouring Quiet Dawn's baseline rules. Each managed panel stays in
@@ -1123,13 +1147,14 @@ local function panelTarget(name,entry,widget)
     -- The combat-focus radial selector keeps its own opacity setting;
     -- revealing it for a HUD peek overlays the ordinary player panels.
     if mode==1 and peekVisible and name~="CombatFocusPanel" and name~="WBP_HUD_Quickslots_ChangePrompt" and name~="WBP_HUD_SpecialAttackCooldown"
-        and name~="WBP_OpenFocusPrompt" then target=1 end
+        and name~="WBP_OpenFocusPrompt" and (not config.showHUDPanels or config.showHUDPanels[name]~=false) then target=1 end
     return target
 end
 local function peekPanel(name)
     return panelModes[name]==1 and name~="CombatFocusPanel"
         and name~="WBP_HUD_Quickslots_ChangePrompt" and name~="WBP_HUD_SpecialAttackCooldown"
         and name~="WBP_OpenFocusPrompt"
+        and (not config.showHUDPanels or config.showHUDPanels[name]~=false)
 end
 local function writePanel(name,entry,target)
     local barrier=runtime.startupBarrier
@@ -1154,9 +1179,17 @@ local function writePanel(name,entry,target)
         runtime.startupPanels[name]=nil
         if wrote then
             entry.opacityOwned=true
+            -- This is intentionally Info rather than Debug: a player can
+            -- collect the real startup route without enabling per-event logs.
+            if fade.enabled() and not runtime.startupImmediateNoted then
+                runtime.startupImmediateNoted=true
+                D.logInfo("Startup immediate baseline: source=%s panel=%s target=%.3f",
+                    runtime.hudAdoptionSource or "fallback",name,target)
+            end
             if D.debugLogging then
                 D.count("startupPanelHides")
                 D.count("panelWrites")
+                if fade.enabled() then D.count("startupImmediateFadeBypass") end
             end
         end
         return wrote
@@ -1908,6 +1941,14 @@ applyLiveSettings=function(run)
         panelOpacities[name]=updated.panelOpacities[name]
         panelScales[name]=updated.panelScales[name]
     end
+    local changedShowHUDCount=0
+    config.showHUDPanels=config.showHUDPanels or {}
+    for name,include in pairs(updated.showHUDPanels or {}) do
+        if config.showHUDPanels[name]~=include then
+            config.showHUDPanels[name]=include
+            changedShowHUDCount=changedShowHUDCount+1
+        end
+    end
     for key,value in pairs(updated) do if type(value)~='table' then config[key]=value end end
     if changed.fadeTransitions or changed.fadeInSeconds or changed.fadeOutSeconds then
         fade.configure(config.fadeTransitions,config.fadeInSeconds,config.fadeOutSeconds)
@@ -1934,6 +1975,10 @@ applyLiveSettings=function(run)
         -- Applying Focus mode while it is already held needs one immediate
         -- event-driven snapshot; it must not wait for a later resource change.
         if manualPeekEnabled and config.peekOnFocusMode then statsPending=true end
+    elseif changedShowHUDCount>0 and manualPeekEnabled and config.peekOnFocusMode then
+        -- Re-including a panel while Focus is already active needs the same
+        -- one-shot authoritative snapshot; no Focus polling is introduced.
+        statsPending=true
     end
     if changed.timeHoldSeconds or changed.mode_WBP_HudTimer or changed.opacity_WBP_HudTimer then
         timeWatcher=timeRevealEnabled and require("QuietDawnTime").new(D) or nil
@@ -1979,15 +2024,15 @@ applyLiveSettings=function(run)
     -- dynamic-stat pass race the individual changed-panel jobs. This is vital
     -- when both stat panels become Fixed opacity: they no longer have resource
     -- handlers to produce a later corrective pass.
-    if changedPanelCount>0 then
+    if changedPanelCount>0 or changedShowHUDCount>0 then
         fullPending=true
         dirty=true
         if D.debugLogging then
             D.count("settingsPanelReconciliations")
             -- Apply is deliberate and infrequent, so preserve the exact mode
             -- and fixed-opacity values outside the ordinary event-rate limit.
-            D.logInfo("Settings reconciliation: changedPanels=%d human mode=%d opacity=%.2f vampire mode=%d opacity=%.2f",
-                changedPanelCount,panelModes.HumanStats,panelOpacities.HumanStats or 0,
+            D.logInfo("Settings reconciliation: changedPanels=%d changedShowHUD=%d human mode=%d opacity=%.2f vampire mode=%d opacity=%.2f",
+                changedPanelCount,changedShowHUDCount,panelModes.HumanStats,panelOpacities.HumanStats or 0,
                 panelModes.VampireStats,panelOpacities.VampireStats or 0)
         end
     end
@@ -2008,6 +2053,7 @@ if config.hideClawSlashMarks then
 end
 local subscribed = pcall(NotifyOnNewObject, ROOT, function(object)
     candidate=object -- construction is not readiness: defer all object reads
+    candidateSource="NotifyOnNewObject"
     sprintSource.recover()
     wake()
 end)
