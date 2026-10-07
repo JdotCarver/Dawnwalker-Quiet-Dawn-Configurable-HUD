@@ -167,6 +167,7 @@ def main():
     check("Activation Charges retains completely untouched Vanilla behavior until its visible owner is measured", "function runtime.beginVanillaFocusFade" not in gameplay and "vanillaFade source=" not in gameplay and "vanillaFocusFadeSource" not in gameplay)
     check("the nonvisual Focus Charge root result expands only to a bounded owned child-tree probe", "function runtime.captureFocusChargeProbeTree(widget,probe)" in gameplay and "vanillaFocusChargeTree source=" in gameplay and "focusTree=true" in gameplay and "nodes>=64" in gameplay and "depth>8" in gameplay)
     check("the Focus Charge child probe uses the existing three-source Push/Pop budget", "runtime.vanillaCombatParentProbeRemaining=3" in gameplay and "parents=true,focusTree=true" in gameplay)
+    check("the visual locator is explicit, finite and confined to DynamicEntryBox runtime entries", "config.debugFocusChargeLocator" in gameplay and "box:GetAllEntries()" in gameplay and "runtime.focusChargeLocatorHideMs=2000" in gameplay and "runtime.focusChargeLocatorGapMs=1000" in gameplay and "runtime.focusChargeLocatorArmed=false" in gameplay and "Session.onClose(function() runtime.stopFocusChargeLocator" in gameplay)
     check("the observed GameHUD 3515 route is a probe candidate, not a behavior change", "entry==3515" in gameplay and "GameHUD graph 3515" in gameplay)
 
     print()

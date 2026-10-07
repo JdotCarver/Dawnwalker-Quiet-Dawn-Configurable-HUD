@@ -8,6 +8,14 @@ local Modes = dofile(directory .. 'QuietDawnPanelModes.lua')
 local LogLevels = dofile(directory .. 'QuietDawnLogLevels.lua')
 local effectDefaults={hideEnemyEffectIcons=0,hidePlayerEffectIcons=0}
 local newestSchema = Timers.compatibleSchema(schema)
+-- The visual locator is an explicitly opt-in Debug helper introduced after
+-- all normal HUD policies. Keep a strict predecessor so current installs gain
+-- its inert default without being rejected at startup.
+local FOCUS_CHARGE_LOCATOR_KEY = "debugFocusChargeLocator"
+local preFocusChargeLocatorSchema = {}
+for _,row in ipairs(newestSchema) do
+    if row.key~=FOCUS_CHARGE_LOCATOR_KEY then preFocusChargeLocatorSchema[#preFocusChargeLocatorSchema+1]=row end
+end
 -- Each schema below describes one older generation of settings.ini, so the
 -- upgrades further down can run in the order the keys were introduced.
 --
@@ -116,6 +124,13 @@ local values, err = Store.load(directory, newestSchema, function()
     for key,value in pairs(effectDefaults) do result[key]=value end
     return result, nil, sources
 end)
+-- A settings.ini from the preceding release has every former setting but no
+-- visual-locator key. Parse that strict predecessor, then add the inert 0 at
+-- the dedicated upgrade stage below.
+if not values and err=="Missing setting: "..FOCUS_CHARGE_LOCATOR_KEY then
+    local text=Store.read(Store.path(directory))
+    if text then values,err=Store.parse(text,preFocusChargeLocatorSchema) end
+end
 -- Fixed-panel Show HUD choices are newest. Parse the strict predecessor first,
 -- then add their default-off values only after every older migration succeeds.
 if not values and err and err:match('^Missing setting: fixedPeek_') then
@@ -278,6 +293,14 @@ if values then
         Store,Store.path(directory),newestSchema,defaults,'fixed-hud-peek')
 end
 if values then
+    -- The locator is off until the player deliberately enables it from the
+    -- Debug menu. Give its addition a dedicated transaction so it can never
+    -- change an existing HUD's normal presentation.
+    values,err=dofile(directory..'UE4SSCommonSettingsUpgrade.lua').ensure(
+        Store,Store.path(directory),newestSchema,
+        {[FOCUS_CHARGE_LOCATOR_KEY]=0},'focus-charge-locator')
+end
+if values then
     -- Fixed Opacity at exactly zero already means "never show". Preserve that
     -- output while promoting it to the explicit fourth Mode, which hides its
     -- irrelevant opacity and size controls in the settings menu.
@@ -297,6 +320,7 @@ values.peekOnLegendHold=values.manualPeek==1
 values.peekOnFocusMode=values.manualPeek==2
 values.manualPeek=values.manualPeek~=0
 values.fadeTransitions=values.fadeTransitions==1
+values.debugFocusChargeLocator=values.debugFocusChargeLocator==1
 -- `debugLogging` survives as the hot per-event guard read across the gameplay
 -- scripts and handed to the native bridge. It now means "the level is Debug".
 values.debugLogging=values.logLevel>=LogLevels.DEBUG

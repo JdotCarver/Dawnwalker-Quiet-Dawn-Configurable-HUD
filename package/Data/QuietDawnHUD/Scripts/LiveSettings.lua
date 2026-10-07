@@ -110,6 +110,7 @@ function M.new(directory, report)
         ["fadeTransitions"]="fadeTransitions",
         ["fadeInSeconds"]="fadeInSeconds",
         ["fadeOutSeconds"]="fadeOutSeconds",
+        ["debugFocusChargeLocator"]="debugFocusChargeLocator",
         ["logLevel"]="logLevel"
         }})
     live.start(function(id,callback)

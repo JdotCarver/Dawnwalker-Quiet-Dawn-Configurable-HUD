@@ -77,6 +77,8 @@ def main():
 
     check("schema declares logLevel", "logLevel" in keys)
     check("schema no longer declares debugLogging", "debugLogging" not in keys)
+    locator_row = next(row for row in schema.values() if row["key"] == "debugFocusChargeLocator")
+    check("the Debug Activation Charges visual locator defaults safely off", locator_row["default"] == 0 and sorted(locator_row["values"].values()) == [0, 1])
 
     mode_row = next(row for row in schema.values() if row["key"] == "mode_HumanStats")
     check(
@@ -160,6 +162,21 @@ def main():
     values, error = parse(settings_file(include_log_level=True), schema)
     check("a current settings.ini parses cleanly", values is not None, f"error={error!r}")
 
+    # The explicit visual locator was added after all ordinary HUD settings.
+    # A preceding-release file must parse under its strict predecessor before
+    # SettingsModel adds only the inert default-off value.
+    pre_locator_text = "[Settings]\n" + "".join(
+        f"{row['key']} = {row['default']}\n"
+        for row in schema.values() if row["key"] != "debugFocusChargeLocator"
+    )
+    _, error = parse(pre_locator_text, schema)
+    check("a prior settings.ini reports the missing visual-locator key", error == "Missing setting: debugFocusChargeLocator", f"got {error!r}")
+    pre_locator_schema = lua.table_from([row for row in schema.values() if row["key"] != "debugFocusChargeLocator"])
+    values, error = parse(pre_locator_text, pre_locator_schema)
+    check("the visual-locator strict predecessor parses the prior settings.ini", values is not None, f"error={error!r}")
+    settings_model_source = (SCRIPTS / "SettingsModel.lua").read_text()
+    check("SettingsModel adds the visual locator through a dedicated default-off upgrade", "FOCUS_CHARGE_LOCATOR_KEY" in settings_model_source and "'focus-charge-locator'" in settings_model_source)
+
     # A stale debugLogging line left behind by the migration must be ignored.
     values, error = parse(
         settings_file(include_log_level=True, legacy_toggle=1), schema
@@ -200,6 +217,13 @@ def main():
                 return None, error
             text += f"{key} = {dry_defaults[key]}\n"
         return None, error
+
+    values, error = ensure_dry_run(pre_locator_text, schema, {"debugFocusChargeLocator": 0})
+    check(
+        "the visual-locator upgrade writes only its safe default",
+        values is not None and values["debugFocusChargeLocator"] == 0,
+        f"error={error!r}",
+    )
 
     # A settings.ini from before per-panel Show HUD inclusion: all existing
     # settings must parse under the strict predecessor, then add thirteen
@@ -265,6 +289,7 @@ def main():
         f"keys={fixed_peek_keys!r}",
     )
     live_settings = (SCRIPTS / "LiveSettings.lua").read_text()
+    check("the visual locator is subscribed for live Debug-menu Apply", '["debugFocusChargeLocator"]="debugFocusChargeLocator"' in live_settings)
     live_fixed_peek_ids = set(re.findall(
         r'\["(fixedPeek_[^"]+)"\]="\1"', live_settings
     ))
@@ -276,10 +301,15 @@ def main():
     model = load_module(str(SCRIPTS / "SettingsModel.lua"))
     numeric_defaults = lua.table_from({key: row["default"] for key, row in rows.items()})
     converted = model.convert(numeric_defaults)
+    check("SettingsModel exposes the visual locator as disabled by default", converted["debugFocusChargeLocator"] is False)
     check(
         "SettingsModel exposes default Fixed Opacity HUD Peek policy without enabling it",
         converted["fixedPeekPanels"]["HumanStats"] is False,
     )
+    numeric_locator = lua.table_from({key: row["default"] for key, row in rows.items()})
+    numeric_locator["debugFocusChargeLocator"] = 1
+    converted = model.convert(numeric_locator)
+    check("SettingsModel exposes an explicitly enabled visual locator", converted["debugFocusChargeLocator"] is True)
     numeric_raise = lua.table_from({key: row["default"] for key, row in rows.items()})
     numeric_raise["fixedPeek_HumanStats"] = 1
     converted = model.convert(numeric_raise)

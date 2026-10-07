@@ -5,7 +5,7 @@ Required: [Mod Setting Menu 1.0.6 or later](https://www.nexusmods.com/thebloodof
 
 ## Menu categories
 
-The menu runs from General through Player status, Combat, Exploration and Controls, ending with Diagnostics. Categories are alphabetical within each group, using headings such as Combat: Crosshair and Exploration: Compass. Each panel keeps its mode, conditional opacity and size together, followed by related thresholds or reveal durations. Combat: Indicators contains counterattack directions, parry cues, unblockable warnings, the enemy dot/diamond, the lock icon and cue size. Logging remains the final entry.
+The menu runs from General through Player status, Combat, Exploration and Controls, ending with Diagnostics. Categories are alphabetical within each group, using headings such as Combat: Crosshair and Exploration: Compass. Each panel keeps its mode, conditional opacity and size together, followed by related thresholds or reveal durations. Combat: Indicators contains counterattack directions, parry cues, unblockable warnings, the enemy dot/diamond, the lock icon and cue size. Diagnostics contains Logging and the Debug-only Activation Charges visual locator.
 
 | Category | Controls |
 | --- | --- |
@@ -28,7 +28,7 @@ The menu runs from General through Player status, Combat, Exploration and Contro
 | Controls: Action prompts | Hide sprint/haste prompt |
 | Controls: Controls legend | Controls legend opacity |
 | Controls: HUD peek | Show HUD trigger and duration; each eligible panel category carries its HUD Peek Behaviour |
-| Diagnostics | Logging |
+| Diagnostics | Logging; Find visible Activation Charges widget (Debug only) |
 
 Each player-panel category has a mode picker, an opacity slider visible only in Fixed Opacity mode, and a size slider in every mode except Always Hidden. Its HUD Peek Behaviour appears only when it can affect that selected mode: Exclude/Include in Quiet Dawn, or Don't change/Raise opacity in Fixed Opacity. The 17 size sliders use 25% to 200%, in 5% steps, with a 100% default.
 
@@ -170,6 +170,7 @@ Missing existing settings, duplicate or invalid settings stop configuration load
 | Each eligible Quiet Dawn player-panel category | HUD Peek Behaviour | Exclude, Include (default) |
 | Each eligible Fixed Opacity player-panel category | HUD Peek Behaviour | Don't change (default), Raise opacity |
 | Diagnostics | Logging | Off, Error, Warning (default), Info, Debug |
+| Diagnostics | Find visible Activation Charges widget | Off (default), On; shown only when Logging is Debug |
 
 Turn off **Hide enemy health bars** to restore ordinary enemy and boss health bars, end caps and boss health-phase indicators. Turn off **Hide enemy names** to restore name labels (boss names), or **Hide enemy difficulty icons** to restore difficulty indicators. All three choices are independent and restore the game's normal visibility for that information. Apply to save and update the active game. The player HUD peek keeps these choices in effect. A named child gets a short construction readiness window and one later target/owner rearm; if it remains unavailable, that field is dormant for the current bar rather than repeatedly searching on every event. A newly constructed bar receives a fresh window. At startup, older settings files receive any missing enemy-information options, set to On. Existing preferences and comments are preserved, with a backup before adding missing options.
 
@@ -185,7 +186,9 @@ When upgrading an older Quiet Dawn package, back up `Scripts/QuietDawnConfig.lua
 
 **Show HUD** has three trigger choices. **Off** disables it. **Hold controls legend** (the default) uses the game's **Toggle Controls Legend** action: hold **Menu (Xbox)**, **Options (PlayStation)**, or **L (keyboard)** by default. To change the controller button, edit **Toggle Controls Legend** in Controller Tweaks and Remap; for keyboard, change the game's Controls Legend binding. **Focus mode** keeps participating panels visible for the complete time Focus is active, then begins the configured Show HUD duration when Focus ends. Show HUD duration controls each timed reveal after its trigger. A Quiet Dawn panel's **HUD Peek Behaviour** offers default-on **Include** or **Exclude**, which keeps it under its normal Quiet Rule during both triggers. A Fixed Opacity panel instead offers default **Don't change** or **Raise opacity**, which temporarily raises it to 100%. Always Hidden and Vanilla expose no HUD Peek Behaviour because it cannot affect them. Show HUD brings participating panels up together and restores their automatic visibility together when the peek ends. Panels with an active resource alert, cooldown or other independent reveal keep their own visibility rules. The combat-focus action wheel remains hidden in Quiet Dawn mode; Vanilla, Fixed Opacity and Always Hidden keep their own behavior.
 
-**Logging** is the final optional menu setting and the only diagnostic control; manually set `logLevel` to `0` (Off), `1` (Error), `2` (Warning), `3` (Info) or `4` (Debug). Each level also includes the ones above it, and everything is written to `Dawnwalker/Binaries/Win64/ue4ss/UE4SS.log`. Warning is the default and suits normal play: it reports failures and features that could not start, without per-event noise. Debug is the troubleshooting level and the only one with a measurable cost. Logging replaced the earlier `debugLogging` toggle; on first run the old value is carried over, with On becoming Debug and Off becoming Warning, and the retired key is then ignored. Slash-effect diagnostics include preparation, retention and restoration counts, bounded failures and `clawMarks` worker timings. Cached panel updates also report aggregate `visibility` timings and peek/resource/refresh commit counts. These timings overlap the main worker timing.
+**Logging** accepts `0` (Off), `1` (Error), `2` (Warning), `3` (Info) or `4` (Debug). Each level also includes the ones above it, and everything is written to `Dawnwalker/Binaries/Win64/ue4ss/UE4SS.log`. Warning is the default and suits normal play: it reports failures and features that could not start, without per-event noise. Debug is the troubleshooting level and the only one with a measurable cost. Logging replaced the earlier `debugLogging` toggle; on first run the old value is carried over, with On becoming Debug and Off becoming Warning, and the retired key is then ignored. Slash-effect diagnostics include preparation, retention and restoration counts, bounded failures and `clawMarks` worker timings. Cached panel updates also report aggregate `visibility` timings and peek/resource/refresh commit counts. These timings overlap the main worker timing.
+
+**Find visible Activation Charges widget** appears only while Logging is Debug. Turn it On, Apply, then enter combat once with Activation Charges in Vanilla mode. After a short settle delay the locator asks the owned Focus Charge `DynamicEntryBox` for its runtime entries, hides each entry for two seconds, restores it, and leaves one visible second before testing the next. The log identifies each candidate by ordinal, class and native address. The cycle runs once per HUD session; Apply Off then On to arm it again. It performs no global widget search, does not run during ordinary gameplay, restores entries after every test and at session close, and never changes the normal Fade contract.
 
 With Logging On, marker diagnostics also report unavailable ownership and skipped marker updates. Readiness retries stop after eight attempts and resume on a later marker event; these messages remain quiet with Logging Off.
 
@@ -291,6 +294,7 @@ All entries below belong under `[Settings]`. Defaults apply to a fresh install w
 | Experience bar size | `scale_XPBar` | `100` | 25 to 200, step 5 |
 | Show quickslots after switching | `switchRevealSeconds` | `3` | 0 to 10, step 0.5 |
 | Logging | `logLevel` | `2` | 0 = Off, 1 = Error, 2 = Warning, 3 = Info, 4 = Debug |
+| Find visible Activation Charges widget | `debugFocusChargeLocator` | `0` | 0 = Off, 1 = one Debug-only visual locator cycle on the next combat entry |
 
 Each `mode_<panel>` accepts 0 = Vanilla, 1 = Quiet Dawn, 2 = Fixed Opacity or 3 = Always Hidden. The saved opacity percentage is used only in Fixed Opacity mode. Always Hidden forces 0% and hides the saved Opacity, Size and HUD Peek Behaviour controls. For eligible panels, `showHUD_<panel>` uses 0 = Exclude and 1 = Include in Quiet Dawn mode; `fixedPeek_<panel>` uses 0 = Don't change and 1 = Raise opacity in Fixed Opacity mode. Timers accept 0 to 10 seconds in 0.5-second steps and apply only to Quiet Dawn reveals. Opacity and threshold percentages use a 0 to 100 scale. Panel sizes accept 25 to 200 in 5-point steps; combat cue size accepts 10 to 200 in 10-point steps.
 

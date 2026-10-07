@@ -136,4 +136,7 @@ return {
     {key="timeHoldSeconds", default=4, values=durations},
     {key="opacity_WBP_HudTimer", default=0, values=opacities},
     {key="opacity_XPBar", default=0, values=opacities},
+    -- Explicit Debug-only visual locator for the unowned runtime entries in
+    -- Vanilla Activation Charges. It defaults off and is never gameplay UI.
+    {key="debugFocusChargeLocator", default=0, values={0,1}},
 }

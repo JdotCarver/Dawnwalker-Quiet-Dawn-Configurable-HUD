@@ -376,6 +376,159 @@ function runtime.captureFocusChargeProbeTree(widget,probe)
     D.logInfo("vanillaFocusChargeTree source=%s phase=%s nodes=%d changed=%d nodeLimit=64 depthLimit=8",
         probe.source,probe.phase,nodes,changed)
 end
+-- The visible charge widgets are runtime entries of the owned DynamicEntryBox,
+-- not ordinary WidgetTree children. A player-visible locator is therefore more
+-- useful than further guesses: it asks this box for its current entries, hides
+-- each entry once for two seconds, and restores it before moving on. It is
+-- Debug-only, opt-in, bounded to one Push per HUD session, and never searches
+-- outside the already-owned Focus Charge widget.
+runtime.focusChargeLocatorDelayMs=350
+runtime.focusChargeLocatorHideMs=2000
+runtime.focusChargeLocatorGapMs=1000
+function runtime.stopFocusChargeLocator(reason)
+    runtime.focusChargeLocatorVersion=(runtime.focusChargeLocatorVersion or 0)+1
+    runtime.focusChargeLocatorStartVersion=nil
+    runtime.focusChargeLocatorStartSource=nil
+    runtime.focusChargeLocatorAdvanceVersion=nil
+    local state=runtime.focusChargeLocator
+    runtime.focusChargeLocator=nil
+    if state and state.active and state.active.lease then
+        local restoredOK,restored=pcall(panelOpacity.restore,state.active.lease)
+        if D.debugLogging then
+            D.event("focusChargeLocator","source=%s phase=cancel reason=%s ordinal=%d restored=%s",
+                state.source,tostring(reason),state.index,tostring(restoredOK and restored))
+        end
+    end
+end
+function runtime.collectFocusChargeLocatorEntries()
+    if not valid(hud) or not valid(hud.WBP_HUD_FocusCharge_Bar) then return nil,"Focus Charge unavailable" end
+    local treeOK,tree=pcall(function() return hud.WBP_HUD_FocusCharge_Bar.WidgetTree end)
+    if not treeOK or not valid(tree) then return nil,"Focus Charge WidgetTree unavailable" end
+    local rootOK,box=pcall(function() return tree.RootWidget end)
+    if not rootOK or not valid(box) then return nil,"Focus Charge DynamicEntryBox unavailable" end
+    local entriesOK,entries=pcall(function() return box:GetAllEntries() end)
+    if not entriesOK or entries==nil then return nil,"DynamicEntryBox GetAllEntries unavailable" end
+    local collected,seen={},{}
+    local function add(object)
+        local readable,live=pcall(valid,object)
+        if not readable or not live then return end
+        local address=object:GetAddress()
+        if seen[address] then return end
+        seen[address]=true
+        local className="unavailable"
+        local classOK,class=pcall(function() return object:GetClass():GetFullName() end)
+        if classOK and class then className=tostring(class) end
+        collected[#collected+1]={object=object,address=address,className=className}
+    end
+    if type(entries)=="table" then
+        for _,entry in pairs(entries) do add(entry) end
+    else
+        local enumerated=false
+        local countOK,count=pcall(function() return entries:GetArrayNum() end)
+        if countOK and type(count)=="number" then
+            enumerated=true
+            for index=0,math.min(count,16)-1 do
+                local entryOK,entry=pcall(function() return entries[index] end)
+                if entryOK then add(entry) end
+            end
+        end
+        if not enumerated or #collected==0 then
+            local walked=pcall(function()
+                entries:ForEach(function(first,second) add(second or first) end)
+            end)
+            if not walked then return nil,"DynamicEntryBox entry array is not enumerable" end
+        end
+    end
+    return collected
+end
+function runtime.advanceFocusChargeLocator(version)
+    local state=runtime.focusChargeLocator
+    if not state or state.version~=version then return end
+    if state.active then
+        local active=state.active
+        state.active=nil
+        local restoredOK,restored=pcall(panelOpacity.restore,active.lease)
+        if D.debugLogging then
+            D.event("focusChargeLocator","source=%s phase=restore ordinal=%d class=%s node=%s restored=%s",
+                state.source,state.index,active.className,tostring(active.address),tostring(restoredOK and restored))
+        end
+        state.index=state.index+1
+        -- Keep one visible second between candidates. The user can therefore
+        -- match a plainly isolated two-second disappearance to its log line.
+        pcall(ExecuteInGameThreadWithDelay,runtime.focusChargeLocatorGapMs,function()
+            local current=runtime.focusChargeLocator
+            if not current or current.version~=version then return end
+            runtime.focusChargeLocatorAdvanceVersion=version
+            wake("focusChargeLocator")
+        end)
+        return
+    end
+    local candidate=state.candidates[state.index]
+    if not candidate then
+        runtime.focusChargeLocator=nil
+        if D.debugLogging then D.event("focusChargeLocator","source=%s phase=complete candidates=%d",state.source,#state.candidates) end
+        return
+    end
+    local leaseOK,lease=pcall(panelOpacity.bind,candidate.object)
+    if not leaseOK or not lease then
+        if D.debugLogging then D.event("focusChargeLocator","source=%s phase=skip ordinal=%d reason=entry-unavailable",state.source,state.index) end
+        state.index=state.index+1
+        runtime.advanceFocusChargeLocator(version)
+        return
+    end
+    local wroteOK,wrote=pcall(panelOpacity.apply,lease,0)
+    if not wroteOK then
+        if D.debugLogging then D.event("focusChargeLocator","source=%s phase=skip ordinal=%d reason=opacity-write-failed",state.source,state.index) end
+        state.index=state.index+1
+        runtime.advanceFocusChargeLocator(version)
+        return
+    end
+    state.active={lease=lease,address=candidate.address,className=candidate.className}
+    if D.debugLogging then
+        D.event("focusChargeLocator","source=%s phase=hide ordinal=%d/%d class=%s node=%s wrote=%s holdMs=%d",
+            state.source,state.index,#state.candidates,candidate.className,tostring(candidate.address),tostring(wrote),runtime.focusChargeLocatorHideMs)
+    end
+    pcall(ExecuteInGameThreadWithDelay,runtime.focusChargeLocatorHideMs,function()
+        local current=runtime.focusChargeLocator
+        if not current or current.version~=version then return end
+        runtime.focusChargeLocatorAdvanceVersion=version
+        wake("focusChargeLocator")
+    end)
+end
+function runtime.startFocusChargeLocator(source,version)
+    if not config.debugFocusChargeLocator or not D.debugLogging
+        or panelModes.WBP_HUD_FocusCharge_Bar~=Modes.VANILLA then return end
+    local candidates,reason=runtime.collectFocusChargeLocatorEntries()
+    if not candidates then
+        if D.debugLogging then D.event("focusChargeLocator","source=%s phase=unavailable reason=%s",source,reason) end
+        return
+    end
+    if #candidates==0 then
+        if D.debugLogging then D.event("focusChargeLocator","source=%s phase=unavailable reason=no-runtime-entries",source) end
+        return
+    end
+    runtime.focusChargeLocator={source=source,version=version,candidates=candidates,index=1}
+    if D.debugLogging then D.event("focusChargeLocator","source=%s phase=begin candidates=%d",source,#candidates) end
+    runtime.advanceFocusChargeLocator(version)
+end
+function runtime.queueFocusChargeLocator(source)
+    if source~="PushHUDPreset" or not runtime.focusChargeLocatorArmed
+        or not config.debugFocusChargeLocator or not D.debugLogging
+        or panelModes.WBP_HUD_FocusCharge_Bar~=Modes.VANILLA then return end
+    runtime.focusChargeLocatorArmed=false
+    runtime.focusChargeLocatorVersion=(runtime.focusChargeLocatorVersion or 0)+1
+    runtime.focusChargeLocatorStartSource=source
+    local version=runtime.focusChargeLocatorVersion
+    if D.debugLogging then
+        D.event("focusChargeLocator","source=%s phase=queued delayMs=%d",source,runtime.focusChargeLocatorDelayMs)
+    end
+    pcall(ExecuteInGameThreadWithDelay,runtime.focusChargeLocatorDelayMs,function()
+        if runtime.focusChargeLocatorVersion~=version then return end
+        runtime.focusChargeLocatorStartVersion=version
+        wake("focusChargeLocator")
+    end)
+end
+Session.onClose(function() runtime.stopFocusChargeLocator("session close") end)
 -- 3515 is a weapon-state callback, not a Quickslot presentation callback.
 -- The next bounded probe therefore compares the three combat-only Vanilla
 -- panels around every distinct GameHUD graph entry during one test. It reads
@@ -1089,6 +1242,11 @@ local function signal(source)
     if source=="PushHUDPreset" or source=="PopHUDPreset" then
         queueVanillaCombatParentProbe(source,nil)
     end
+    if source=="PushHUDPreset" then
+        runtime.queueFocusChargeLocator(source)
+    elseif source=="PopHUDPreset" then
+        runtime.stopFocusChargeLocator("PopHUDPreset")
+    end
     queueVanillaQuickslotProbe(source)
     refreshDirty=true
     wake()
@@ -1312,6 +1470,7 @@ local function accept(object)
     if not sameObject(objectWorld,pc:GetWorld()) then return false, "world mismatch" end
     if valid(controller) and not sameObject(controller,pc) then return false, "controller mismatch" end
     if not sameObject(object,hud) or not sameObject(objectWorld,world) then
+        runtime.stopFocusChargeLocator("HUD replacement")
         hud, world, panels, absent = object, objectWorld, {}, {}
         -- A direct object notification and the GameHUD hook are preferred.
         -- Keep the fallback named too: a future lifecycle route must not turn
@@ -1327,6 +1486,8 @@ local function accept(object)
         runtime.vanillaCombatParentProbeSeen,runtime.vanillaCombatParentStates={},{}
         runtime.vanillaCombatParentProbeRemaining=3
         runtime.focusChargeProbeTrees={}
+        runtime.focusChargeLocatorArmed=config.debugFocusChargeLocator and D.debugLogging
+            and panelModes.WBP_HUD_FocusCharge_Bar==Modes.VANILLA
         panelRetries={}
         -- A newly adopted HUD should never wait for a decorative fade before
         -- honouring Quiet Dawn's baseline rules. Each managed panel stays in
@@ -1788,6 +1949,7 @@ local function panelStep(name)
             end
         end
     else
+        runtime.stopFocusChargeLocator("HUD unavailable")
         hud, world, panels = nil, nil, {}
         -- The panels these transitions referred to are gone with the world.
         fade.reset()
@@ -1869,6 +2031,19 @@ local timeTurn=false
 local timeSampleTurn=false
 local function step()
     if livePending then applyLiveSettings(true);return false end
+    if runtime.focusChargeLocatorStartVersion then
+        local version,source=runtime.focusChargeLocatorStartVersion,runtime.focusChargeLocatorStartSource
+        runtime.focusChargeLocatorStartVersion=nil
+        runtime.focusChargeLocatorStartSource=nil
+        runtime.startFocusChargeLocator(source,version)
+        return false
+    end
+    if runtime.focusChargeLocatorAdvanceVersion then
+        local version=runtime.focusChargeLocatorAdvanceVersion
+        runtime.focusChargeLocatorAdvanceVersion=nil
+        runtime.advanceFocusChargeLocator(version)
+        return false
+    end
     if runtime.vanillaCombatProbe then
         local probe=runtime.vanillaCombatProbe
         local queue=runtime.vanillaCombatProbeQueue or {}
@@ -2238,7 +2413,7 @@ wake = function(statsOnly)
         panelRetries={}
         settingsPending,settingsAttempts=true,0
     end
-    if statsOnly~="marker" and statsOnly~="settings" and statsOnly~="resource" and statsOnly~="enemyHealth" and statsOnly~="time" and statsOnly~="sprintPrompt" and statsOnly~="clawMarks" and statsOnly~="playerEffects" and statsOnly~="liveSettings" and statsOnly~="quickslotProbe" and statsOnly~="vanillaCombatProbe" then dirty=true end
+    if statsOnly~="marker" and statsOnly~="settings" and statsOnly~="resource" and statsOnly~="enemyHealth" and statsOnly~="time" and statsOnly~="sprintPrompt" and statsOnly~="clawMarks" and statsOnly~="playerEffects" and statsOnly~="liveSettings" and statsOnly~="quickslotProbe" and statsOnly~="vanillaCombatProbe" and statsOnly~="focusChargeLocator" then dirty=true end
     if worker then if D.debugLogging then D.count("workerCoalesced") end; return end
     worker=true
     if D.debugLogging then D.count("workerStarts") end
@@ -2436,6 +2611,11 @@ applyLiveSettings=function(run)
     if changed.fadeTransitions or changed.fadeInSeconds or changed.fadeOutSeconds then
         fade.configure(config.fadeTransitions,config.fadeInSeconds,config.fadeOutSeconds)
         runtime.fadePacing.reset()
+    end
+    if changed.debugFocusChargeLocator or changed.logLevel or changed.mode_WBP_HUD_FocusCharge_Bar then
+        runtime.stopFocusChargeLocator("settings applied")
+        runtime.focusChargeLocatorArmed=config.debugFocusChargeLocator and D.debugLogging
+            and panelModes.WBP_HUD_FocusCharge_Bar==Modes.VANILLA
     end
     dynamicPanels.HumanStats,dynamicPanels.VampireStats=updated.dynamicPanels.HumanStats,updated.dynamicPanels.VampireStats
     statNames={}
