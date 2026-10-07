@@ -266,124 +266,6 @@ function runtime.noteFocusPrompt(widget)
     if pathed and path then classPath=tostring(path) end
     D.logInfo("Focus probe: promptClass=%s promptPath=%s; use this verified class path for the entry-hook probe",className,classPath)
 end
--- Entry 3515 did not change the Quickslot Abilities root. Its fade may instead
--- belong to a child animation, so take a small, read-only visual-tree snapshot
--- around that candidate. This never searches global objects, registers a hook,
--- or writes a widget: it walks only this already-owned widget, at most 64 nodes
--- eight levels deep, and only during the explicitly bounded Debug probe.
-function runtime.captureQuickslotProbeTree(widget,probe)
-    if not probe.tree or not D.debugLogging or not valid(widget) then return end
-    runtime.quickslotProbeTrees=runtime.quickslotProbeTrees or {}
-    local prior=runtime.quickslotProbeTrees[probe.version]
-    local treeState,seen={},{}
-    local nodes,changed=0,0
-    local function walk(node,path,depth)
-        if not valid(node) or nodes>=64 or depth>8 then return end
-        local address=node:GetAddress()
-        if seen[address] then return end
-        seen[address]=true
-        nodes=nodes+1
-        local className="unavailable"
-        local visibility="unavailable"
-        local opacityValue="unavailable"
-        local readable,value=pcall(function() return node:GetClass():GetFullName() end)
-        if readable and value then className=tostring(value) end
-        readable,value=pcall(function() return node:GetVisibility() end)
-        if readable and value~=nil then visibility=tostring(value) end
-        readable,value=pcall(function() return node:GetRenderOpacity() end)
-        if readable and type(value)=="number" then opacityValue=string.format("%.3f",value) end
-        local state=path.."|"..className.."|"..visibility.."|"..opacityValue
-        treeState[address]=state
-        if not prior or prior[address]~=state then
-            changed=changed+1
-            D.logInfo("vanillaQuickslotsTree source=%s phase=%s node=%s path=%s class=%s visibility=%s opacity=%s",
-                probe.source,probe.phase,tostring(address),path,className,visibility,opacityValue)
-        end
-        local treeOK,tree=pcall(function() return node.WidgetTree end)
-        if treeOK and valid(tree) then
-            local rootOK,root=pcall(function() return tree.RootWidget end)
-            if rootOK then walk(root,path..".WidgetTree.RootWidget",depth+1) end
-        end
-        local countOK,count=pcall(function() return node:GetChildrenCount() end)
-        if countOK and type(count)=="number" then
-            for index=0,math.min(count,64)-1 do
-                local childOK,child=pcall(function() return node:GetChildAt(index) end)
-                if childOK then walk(child,path..".Child["..index.."]",depth+1) end
-            end
-        end
-    end
-    walk(widget,"QuickslotAbilities",0)
-    if prior then
-        for address in pairs(prior) do
-            if not treeState[address] then
-                changed=changed+1
-                D.logInfo("vanillaQuickslotsTree source=%s phase=%s node=%s removed",probe.source,probe.phase,tostring(address))
-            end
-        end
-    end
-    runtime.quickslotProbeTrees[probe.version]=treeState
-    D.logInfo("vanillaQuickslotsTree source=%s phase=%s nodes=%d changed=%d nodeLimit=64 depthLimit=8",
-        probe.source,probe.phase,nodes,changed)
-end
--- Run 8 proved that the Focus Charge outer root follows a configured two-second
--- opacity fade without changing the player-visible element. Before another
--- interception, inspect only its owned child tree at the same bounded preset
--- phases. This is read-only and follows no global widgets or animations.
-function runtime.captureFocusChargeProbeTree(widget,probe)
-    if not probe.focusTree or not D.debugLogging or not valid(widget) then return end
-    runtime.focusChargeProbeTrees=runtime.focusChargeProbeTrees or {}
-    local key=probe.source..":"..tostring(probe.entry)
-    local prior=runtime.focusChargeProbeTrees[key]
-    local treeState,seen={},{}
-    local nodes,changed=0,0
-    local function walk(node,path,depth)
-        if not valid(node) or nodes>=64 or depth>8 then return end
-        local address=node:GetAddress()
-        if seen[address] then return end
-        seen[address]=true
-        nodes=nodes+1
-        local className="unavailable"
-        local visibility="unavailable"
-        local opacityValue="unavailable"
-        local readable,value=pcall(function() return node:GetClass():GetFullName() end)
-        if readable and value then className=tostring(value) end
-        readable,value=pcall(function() return node:GetVisibility() end)
-        if readable and value~=nil then visibility=tostring(value) end
-        readable,value=pcall(function() return node:GetRenderOpacity() end)
-        if readable and type(value)=="number" then opacityValue=string.format("%.3f",value) end
-        local state=path.."|"..className.."|"..visibility.."|"..opacityValue
-        treeState[address]=state
-        if not prior or prior[address]~=state then
-            changed=changed+1
-            D.logInfo("vanillaFocusChargeTree source=%s phase=%s node=%s path=%s class=%s visibility=%s opacity=%s",
-                probe.source,probe.phase,tostring(address),path,className,visibility,opacityValue)
-        end
-        local treeOK,tree=pcall(function() return node.WidgetTree end)
-        if treeOK and valid(tree) then
-            local rootOK,root=pcall(function() return tree.RootWidget end)
-            if rootOK then walk(root,path..".WidgetTree.RootWidget",depth+1) end
-        end
-        local countOK,count=pcall(function() return node:GetChildrenCount() end)
-        if countOK and type(count)=="number" then
-            for index=0,math.min(count,64)-1 do
-                local childOK,child=pcall(function() return node:GetChildAt(index) end)
-                if childOK then walk(child,path..".Child["..index.."]",depth+1) end
-            end
-        end
-    end
-    walk(widget,"FocusChargeBar",0)
-    if prior then
-        for address in pairs(prior) do
-            if not treeState[address] then
-                changed=changed+1
-                D.logInfo("vanillaFocusChargeTree source=%s phase=%s node=%s removed",probe.source,probe.phase,tostring(address))
-            end
-        end
-    end
-    runtime.focusChargeProbeTrees[key]=treeState
-    D.logInfo("vanillaFocusChargeTree source=%s phase=%s nodes=%d changed=%d nodeLimit=64 depthLimit=8",
-        probe.source,probe.phase,nodes,changed)
-end
 -- The visible charge widgets are runtime entries of the owned DynamicEntryBox,
 -- not ordinary WidgetTree children. The outer bar was not a visual owner, so
 -- test the actual common DynamicEntryBox container once before its up-to-four
@@ -555,194 +437,63 @@ function runtime.queueFocusChargeLocator(source)
         wake("focusChargeLocator")
     end)
 end
-function runtime.resetFocusChargeSlotProbe()
-    runtime.focusChargeSlotProbe,runtime.focusChargeSlotProbeQueue=nil,{}
-    runtime.focusChargeSlotTreeProbe,runtime.focusChargeSlotTreeProbeQueue=nil,{}
-    runtime.focusChargeSlotProbeVersions={}
-    runtime.focusChargeSlotWriteProbeVersions={}
-    runtime.focusChargeSlotTreeStates={}
-    runtime.focusChargeSlotTreeVersion=0
-    runtime.focusChargeSlotTreeBaselineReady=false
-    runtime.focusChargeSlotTreeBaselinePending=false
-    runtime.focusChargeSlotProbeMembers={}
-    runtime.focusChargeSlotProbeOwned,runtime.focusChargeSlotProbeRejected={},{}
-    runtime.focusChargeSlotProbeRemaining=0
-    runtime.focusChargeSlotWriteProbeRemaining=0
-    runtime.focusChargeSlotTreeProbeRemaining=0
-end
--- Fade-in proved the common DynamicEntryBox renders the complete display. A
--- single pre/post Pop timeline now answers the remaining exit question without
--- guessing a Clear/Remove native call: do the box's runtime entries disappear,
--- become hidden, or survive while another ancestor suppresses them?
-function runtime.resetFocusChargePopTrace()
-    runtime.focusChargePopTrace=nil
-    runtime.focusChargePopTraceRemaining=0
-end
-function runtime.captureFocusChargePopTrace(phase,delayed)
-    local state=runtime.focusChargePopTrace
-    if not state then return end
-    state.captures=state.captures+1
-    local box,reason=runtime.focusChargeLocatorContainer()
-    if not valid(box) then
-        D.logInfo("focusChargePopTrace phase=%s container=unavailable reason=%s",phase,tostring(reason))
-    else
-        local visibility,opacityValue="unavailable","unavailable"
-        local readable,value=pcall(function() return box:GetVisibility() end)
-        if readable and value~=nil then visibility=tostring(value) end
-        readable,value=pcall(function() return box:GetRenderOpacity() end)
-        if readable and type(value)=="number" then opacityValue=string.format("%.3f",value) end
-        local entries,entryReason=runtime.collectFocusChargeLocatorEntries()
-        local entryCount=entries and #entries or 0
-        state.containerAddress=box:GetAddress()
-        D.logInfo("focusChargePopTrace phase=%s container=%s visibility=%s opacity=%s entries=%s reason=%s",
-            phase,tostring(state.containerAddress),visibility,opacityValue,
-            entries and tostring(entryCount) or "unavailable",tostring(entryReason or "none"))
-        local seen={}
-        for ordinal,candidate in ipairs(entries or {}) do
-            local object=candidate.object
-            local entryVisibility,entryOpacity="unavailable","unavailable"
-            readable,value=pcall(function() return object:GetVisibility() end)
-            if readable and value~=nil then entryVisibility=tostring(value) end
-            readable,value=pcall(function() return object:GetRenderOpacity() end)
-            if readable and type(value)=="number" then entryOpacity=string.format("%.3f",value) end
-            seen[candidate.address]=true
-            state.known[candidate.address]={className=candidate.className,ordinal=ordinal}
-            D.logInfo("focusChargePopTrace phase=%s entry=%d node=%s class=%s visibility=%s opacity=%s collection=present",
-                phase,ordinal,tostring(candidate.address),candidate.className,entryVisibility,entryOpacity)
-        end
-        for address,known in pairs(state.known) do
-            if not seen[address] then
-                D.logInfo("focusChargePopTrace phase=%s entry=%s node=%s class=%s collection=absent",
-                    phase,tostring(known.ordinal),tostring(address),known.className)
-            end
-        end
-    end
-    if delayed then
-        state.pending=state.pending-1
-        if state.pending<=0 then
-            D.logInfo("focusChargePopTrace phase=complete captures=%d",state.captures)
-            runtime.focusChargePopTrace=nil
+-- Activation Charges has a confirmed visual owner and reverse proxy route.
+-- The three remaining combat HUD elements are not assumed to share either;
+-- Debug records only their first distinct proxy calls, with no widget-tree
+-- walk, visibility probe, timer trace, or ongoing watcher.
+local COMBAT_HUD_FADE_PANELS={
+    "WBP_AA_Quickslots",
+    "WBP_HUD_Quickslots_ChangePrompt",
+    "WBP_HUD_SpecialAttackCooldown",
+}
+function runtime.resetCombatHudAnimationTrace()
+    runtime.combatHudAnimationTraceSeen={}
+    runtime.combatHudAnimationTraceRemaining=0
+    if not D.debugLogging or not config.fadeTransitions or not valid(hud) then return end
+    for _,name in ipairs(COMBAT_HUD_FADE_PANELS) do
+        if panelModes[name]==Modes.VANILLA then
+            -- At most forward/reverse observations for a few named animations.
+            runtime.combatHudAnimationTraceRemaining=12
+            return
         end
     end
 end
-function runtime.beginFocusChargePopTrace()
-    if (runtime.focusChargePopTraceRemaining or 0)<=0 or not D.debugLogging
-        or not config.fadeTransitions or config.debugFocusChargeLocator
-        or panelModes.WBP_HUD_FocusCharge_Bar~=Modes.VANILLA then return end
-    local box=runtime.focusChargeLocatorContainer()
-    local bar=valid(hud) and hud.WBP_HUD_FocusCharge_Bar or nil
-    if not valid(box) or not valid(bar) then return end
-    runtime.focusChargePopTraceRemaining=runtime.focusChargePopTraceRemaining-1
-    local state={known={},queue={},pending=5,captures=0,barAddress=bar:GetAddress()}
-    runtime.focusChargePopTrace=state
-    runtime.captureFocusChargePopTrace("pre",false)
-    for _,sample in ipairs({{16,"nextFrame"},{96,"after100ms"},{240,"after250ms"},{490,"after500ms"},{1490,"after1500ms"}}) do
-        local delay,phase=sample[1],sample[2]
-        pcall(ExecuteInGameThreadWithDelay,delay,function()
-            if runtime.focusChargePopTrace~=state then return end
-            state.queue[#state.queue+1]=phase
-            wake("focusChargePopTrace")
-        end)
-    end
+local function combatHudProxyValue(param)
+    local readable,value=pcall(unwrap,param)
+    if not readable then return "unavailable" end
+    if type(value)=="number" then return string.format("%.3f",value) end
+    return tostring(value)
 end
-function runtime.focusChargePopTraceWriteEvent(context,method)
-    local state=runtime.focusChargePopTrace
-    if not state or not D.debugLogging then return end
-    local object=unwrap(context)
-    if not valid(object) then return end
-    local readable,address=pcall(function() return object:GetAddress() end)
-    if not readable or (address~=state.containerAddress and not state.known[address]) then return end
-    D.logInfo("focusChargePopTrace phase=write method=%s node=%s target=%s",
-        method,tostring(address),address==state.containerAddress and "container" or "entry")
-end
--- Entries vanished together between the 100 ms and 250 ms samples without an
--- entry visibility write. Reset and RemoveEntry are DynamicEntryBox's two
--- documented Blueprint-facing removal APIs; trace only those two candidates,
--- only while the one Pop timeline is active, before attempting any mediation.
-function runtime.focusChargePopTraceEntryBoxEvent(context,method)
-    local state=runtime.focusChargePopTrace
-    if not state or not D.debugLogging then return end
-    local box=unwrap(context)
-    if not valid(box) then return end
-    local readable,address=pcall(function() return box:GetAddress() end)
-    if not readable or address~=state.containerAddress then return end
-    D.logInfo("focusChargePopTrace phase=entryBox method=%s node=%s",method,tostring(address))
-end
--- Reset is the terminal clear, not the short presentation the player sees
--- immediately before it. Record the exact UMG animation object played by the
--- bar or one of its owned slots during this one Pop interval; that gives us a
--- configurable stock presentation target before considering native deferral.
-function runtime.focusChargePopTraceAnimationEvent(context,animationParam)
-    local state=runtime.focusChargePopTrace
-    if not state or not D.debugLogging then return end
-    local widget=unwrap(context)
-    if not valid(widget) then return end
-    local readable,address=pcall(function() return widget:GetAddress() end)
-    if not readable or (address~=state.barAddress and not state.known[address]) then return end
-    local animation=unwrap(animationParam)
-    local animationName="unavailable"
-    local named,name=pcall(function() return animation:GetFullName() end)
-    if named and name then animationName=tostring(name) end
-    D.logInfo("focusChargePopTrace phase=animation target=%s node=%s animation=%s",
-        address==state.barAddress and "bar" or "entry",tostring(address),animationName)
-end
--- No owned UUserWidget PlayAnimation ProcessEvent accompanied the terminal
--- Reset. The exported bar asset shows that Blueprint uses its callback-proxy
--- factory instead, while its FadeIn MovieScene lasts exactly 0.2 seconds.
--- Keep the older scheduler observations bounded, then read this proxy's actual
--- reflected argument order before altering its playback rate.
-function runtime.focusChargePopTraceDelayEvent(worldParam,durationParam,kind)
-    local state=runtime.focusChargePopTrace
-    if not state or not D.debugLogging then return end
-    local object=unwrap(worldParam)
-    if not valid(object) or object:GetAddress()~=state.barAddress then return end
-    local duration=unwrap(durationParam)
-    D.logInfo("focusChargePopTrace phase=delay kind=%s target=bar node=%s duration=%s",
-        kind,tostring(state.barAddress),type(duration)=="number" and string.format("%.3f",duration) or tostring(duration))
-end
-function runtime.focusChargePopTraceBarGraphEvent(context,entryParam)
-    local state=runtime.focusChargePopTrace
-    if not state or not D.debugLogging then return end
-    local bar=unwrap(context)
-    if not valid(bar) or bar:GetAddress()~=state.barAddress then return end
-    D.logInfo("focusChargePopTrace phase=barGraph node=%s entry=%s",
-        tostring(state.barAddress),tostring(unwrap(entryParam)))
-end
--- The asset exports a FadeIn WidgetAnimation via
--- CreatePlayAnimationProxyObject, whose Finished callback is the route that
--- calls Reset. This Debug pre-hook records the factory's live parameter order
--- for the owned bar; the production hook below uses that verified order.
-function runtime.focusChargePopTraceAnimationProxyEvent(_, ...)
-    local state=runtime.focusChargePopTrace
-    if not state or not D.debugLogging then return end
-    local values,owned={},false
-    for index=1,select("#",...) do
-        local parameter=select(index,...)
-        local readable,value=pcall(unwrap,parameter)
-        local detail="unavailable"
-        if readable then
-            if type(value)=="number" then
-                detail=string.format("number:%.3f",value)
-            elseif type(value)=="boolean" or type(value)=="string" then
-                detail=type(value)..":"..tostring(value)
-            else
-                local live=false
-                local liveOK=pcall(function() live=valid(value) end)
-                if liveOK and live then
-                    local address=value:GetAddress()
-                    if address==state.barAddress then owned=true end
-                    local nameOK,name=pcall(function() return value:GetFullName() end)
-                    detail="object:"..(nameOK and tostring(name) or tostring(address))
-                elseif value~=nil then
-                    detail=type(value)..":"..tostring(value)
-                end
-            end
+function runtime.traceCombatHudAnimationProxy(_,_,widgetParam,animationParam,startParam,loopsParam,playModeParam,playbackSpeedParam)
+    local remaining=runtime.combatHudAnimationTraceRemaining or 0
+    if remaining<=0 or not D.debugLogging or not config.fadeTransitions or not valid(hud) then return end
+    local widgetOK,widget=pcall(unwrap,widgetParam)
+    if not widgetOK or not valid(widget) then return end
+    local panel=nil
+    for _,name in ipairs(COMBAT_HUD_FADE_PANELS) do
+        if panelModes[name]==Modes.VANILLA then
+            local ownerOK,owner=pcall(function() return hud[name] end)
+            if ownerOK and sameObject(widget,owner) then panel=name;break end
         end
-        values[#values+1]=string.format("%d=%s",index,detail)
     end
-    if owned then
-        D.logInfo("focusChargePopTrace phase=animationProxy args=%s",table.concat(values,";"))
-    end
+    if not panel then return end
+    local animationOK,animation=pcall(unwrap,animationParam)
+    if not animationOK or not valid(animation) then return end
+    local named,animationName=pcall(function() return animation:GetFullName() end)
+    if not named or not animationName then return end
+    local playMode=combatHudProxyValue(playModeParam)
+    local signature=panel.."|"..tostring(animationName).."|"..playMode
+    local seen=runtime.combatHudAnimationTraceSeen or {}
+    runtime.combatHudAnimationTraceSeen=seen
+    if seen[signature] then return end
+    seen[signature]=true
+    runtime.combatHudAnimationTraceRemaining=remaining-1
+    local duration="unavailable"
+    local durationOK,endTime=pcall(function() return animation:GetEndTime() end)
+    if durationOK and type(endTime)=="number" then duration=string.format("%.3f",endTime) end
+    D.logInfo("combatHudAnimationTrace panel=%s animation=%s duration=%s start=%s loops=%s playMode=%s playbackSpeed=%s remaining=%d",
+        panel,tostring(animationName),duration,combatHudProxyValue(startParam),combatHudProxyValue(loopsParam),playMode,
+        combatHudProxyValue(playbackSpeedParam),runtime.combatHudAnimationTraceRemaining)
 end
 -- Live factory arguments are: WorldContextObject, Widget, Animation,
 -- StartAtTime, NumLoops, PlayMode, PlaybackSpeed. Only the exact reverse
@@ -777,285 +528,16 @@ function runtime.mediateFocusChargeFadeOut(_,_,widgetParam,animationParam,_,_,pl
         D.event("focusChargeFade","stockReverse=FadeIn playbackSpeed=%.4f duration=%.3f",rate,fadeOutSeconds)
     end
 end
--- Retain the bounded Debug trace before any production write, so the captured
--- values always show the stock call. Fade-off returns before either unwrap or
--- RemoteUnrealParam:set, leaving the game call entirely unchanged.
+-- The compact, finite trace is intentionally read-only and runs before the
+-- one confirmed production write. Fade off returns before any proxy unwrap.
 function runtime.focusChargeAnimationProxyEvent(context,...)
-    runtime.focusChargePopTraceAnimationProxyEvent(context,...)
+    runtime.traceCombatHudAnimationProxy(context,...)
     runtime.mediateFocusChargeFadeOut(context,...)
-end
--- Entry 3348 precedes the Reset route 2867 by about 0.2 seconds, while the
--- ordinary Delay nodes were absent. Blueprint Set Timer is the remaining
--- stock scheduler family. Log the bar-owned function timer directly; delegate
--- timers have no exposed owner here, so keep their one-shot diagnostic budget
--- at sixteen observations rather than turning a global engine function into a
--- combat poll.
-function runtime.focusChargePopTraceTimerEvent(objectParam,durationParam,kind)
-    local state=runtime.focusChargePopTrace
-    if not state or not D.debugLogging then return end
-    if kind=="function" then
-        local object=unwrap(objectParam)
-        if not valid(object) or object:GetAddress()~=state.barAddress then return end
-    elseif (state.delegateTimerCalls or 0)>=16 then
-        return
-    else
-        state.delegateTimerCalls=(state.delegateTimerCalls or 0)+1
-    end
-    local duration=unwrap(durationParam)
-    D.logInfo("focusChargePopTrace phase=timer kind=%s target=%s duration=%s",
-        kind,kind=="function" and "bar" or "delegate-unknown",
-        type(duration)=="number" and string.format("%.3f",duration) or tostring(duration))
 end
 Session.onClose(function()
     runtime.stopFocusChargeLocator("session close")
-    runtime.resetFocusChargeSlotProbe()
-    runtime.resetFocusChargePopTrace()
+    runtime.resetCombatHudAnimationTrace()
 end)
--- The locator established the user-visible slot class. Its individual
--- enable/disable timing is still owned by the game, so observe a small,
--- latest-event-only timeline for the exact slot graph before fading it.
-function runtime.focusChargeSlotIsOwned(object)
-    local owned=false
-    local ok=pcall(function()
-        if not valid(object) or not valid(hud) or not valid(controller)
-            or not sameObject(object:GetOwningPlayer(),controller)
-            or not sameObject(object:GetWorld(),world) then return end
-        local candidates=runtime.collectFocusChargeLocatorEntries()
-        for _,candidate in ipairs(candidates or {}) do
-            if sameObject(candidate.object,object) then owned=true;return end
-        end
-    end)
-    return ok and owned
-end
-function runtime.focusChargeSlotAddressIsOwned(object,address)
-    runtime.focusChargeSlotProbeOwned=runtime.focusChargeSlotProbeOwned or {}
-    runtime.focusChargeSlotProbeRejected=runtime.focusChargeSlotProbeRejected or {}
-    if runtime.focusChargeSlotProbeRejected[address] then return false end
-    if not runtime.focusChargeSlotProbeOwned[address] then
-        if not runtime.focusChargeSlotIsOwned(object) then
-            runtime.focusChargeSlotProbeRejected[address]=true
-            return false
-        end
-        runtime.focusChargeSlotProbeOwned[address]=true
-    end
-    return true
-end
-function runtime.captureFocusChargeSlotProbe(probe)
-    local object=probe.object
-    local address=probe.address
-    if not D.debugLogging or not valid(object) or not address then return end
-    local members=runtime.focusChargeSlotProbeMembers or {}
-    if not (runtime.focusChargeSlotProbeOwned or {})[address] and not members[address] then return end
-    local versionField=probe.versionField or "focusChargeSlotProbeVersions"
-    if probe.version and (runtime[versionField] or {})[address]~=probe.version then return end
-    local className="unavailable"
-    local visibility="unavailable"
-    local opacityValue="unavailable"
-    local readable,value=pcall(function() return object:GetClass():GetFullName() end)
-    if readable and value then className=tostring(value) end
-    readable,value=pcall(function() return object:GetVisibility() end)
-    if readable and value~=nil then visibility=tostring(value) end
-    readable,value=pcall(function() return object:GetRenderOpacity() end)
-    if readable and type(value)=="number" then opacityValue=string.format("%.3f",value) end
-    D.logInfo("focusChargeSlot source=%s entry=%s phase=%s address=%s class=%s visibility=%s opacity=%s",
-        probe.source,tostring(probe.entry),probe.phase,tostring(address),className,visibility,opacityValue)
-end
--- The DynamicEntryBox hides its runtime entries from the outer WidgetTree, but
--- each measured slot owns an ordinary WidgetTree. Read it only at the exact
--- depleted-charge route: this identifies skeleton, fill and animation children
--- without scanning the pool during gameplay.
-function runtime.captureFocusChargeSlotTreeProbe(probe)
-    if probe.phase=="baseline" and probe.version~=runtime.focusChargeSlotTreeVersion then
-        runtime.focusChargeSlotTreeBaselinePending=false
-    end
-    if not D.debugLogging or not config.fadeTransitions
-        or panelModes.WBP_HUD_FocusCharge_Bar~=Modes.VANILLA
-        or probe.version~=runtime.focusChargeSlotTreeVersion then return end
-    local prior=runtime.focusChargeSlotTreeStates or {}
-    local treeState,seen={},{}
-    local nodes,changed,slots=0,0,0
-    local function walk(node,path,slot,depth)
-        if not valid(node) or nodes>=128 or depth>8 then return end
-        local addressOK,address=pcall(function() return node:GetAddress() end)
-        if not addressOK or seen[address] then return end
-        seen[address]=true
-        runtime.focusChargeSlotProbeMembers=runtime.focusChargeSlotProbeMembers or {}
-        runtime.focusChargeSlotProbeMembers[address]=true
-        nodes=nodes+1
-        local className="unavailable"
-        local visibility="unavailable"
-        local opacityValue="unavailable"
-        local readable,value=pcall(function() return node:GetClass():GetFullName() end)
-        if readable and value then className=tostring(value) end
-        readable,value=pcall(function() return node:GetVisibility() end)
-        if readable and value~=nil then visibility=tostring(value) end
-        readable,value=pcall(function() return node:GetRenderOpacity() end)
-        if readable and type(value)=="number" then opacityValue=string.format("%.3f",value) end
-        -- A charge fill can be a brush/material or tint change with unchanged
-        -- widget visibility and opacity. Record those Image presentation inputs
-        -- alongside the ordinary state without guessing their meaning.
-        local visual="not-image"
-        if className:find("/Script/UMG.Image",1,true) then
-            local resource="none"
-            local resourceOK,resourceValue=pcall(function() return node.Brush.ResourceObject end)
-            if resourceOK and resourceValue~=nil then
-                local nameOK,name=pcall(function() return resourceValue:GetFullName() end)
-                resource=nameOK and tostring(name) or tostring(resourceValue)
-            end
-            local colour="unavailable"
-            local colourOK,colourValue=pcall(function() return node:GetColorAndOpacity() end)
-            if colourOK and colourValue~=nil then
-                local rgbaOK,rgba=pcall(function()
-                    return string.format("%.3f,%.3f,%.3f,%.3f",colourValue.R,colourValue.G,colourValue.B,colourValue.A)
-                end)
-                colour=rgbaOK and rgba or tostring(colourValue)
-            end
-            visual="brush="..resource.." tint="..colour
-        end
-        local state=path.."|"..className.."|"..visibility.."|"..opacityValue.."|"..visual
-        treeState[address]=state
-        if prior[address]~=state then
-            changed=changed+1
-            D.logInfo("focusChargeSlotTree source=%s entry=%s phase=%s slot=%d node=%s path=%s class=%s visibility=%s opacity=%s visual=%s",
-                probe.source,tostring(probe.entry),probe.phase,slot,tostring(address),path,className,visibility,opacityValue,visual)
-        end
-        local treeOK,tree=pcall(function() return node.WidgetTree end)
-        if treeOK and valid(tree) then
-            local rootOK,root=pcall(function() return tree.RootWidget end)
-            if rootOK then walk(root,path..".WidgetTree.RootWidget",slot,depth+1) end
-        end
-        local countOK,count=pcall(function() return node:GetChildrenCount() end)
-        if countOK and type(count)=="number" then
-            for index=0,math.min(count,32)-1 do
-                local childOK,child=pcall(function() return node:GetChildAt(index) end)
-                if childOK then walk(child,path..".Child["..index.."]",slot,depth+1) end
-            end
-        end
-    end
-    for ordinal,candidate in ipairs(probe.slots or {}) do
-        if valid(candidate.object) then
-            slots=slots+1
-            walk(candidate.object,"FocusChargeSlot["..ordinal.."]",ordinal,0)
-        end
-    end
-    for address in pairs(prior) do
-        if not treeState[address] then
-            changed=changed+1
-            D.logInfo("focusChargeSlotTree source=%s entry=%s phase=%s node=%s removed",
-                probe.source,tostring(probe.entry),probe.phase,tostring(address))
-        end
-    end
-    runtime.focusChargeSlotTreeStates=treeState
-    if probe.phase=="baseline" then
-        runtime.focusChargeSlotTreeBaselineReady=true
-        runtime.focusChargeSlotTreeBaselinePending=false
-    end
-    D.logInfo("focusChargeSlotTree source=%s entry=%s phase=%s slots=%d nodes=%d changed=%d nodeLimit=128 depthLimit=8",
-        probe.source,tostring(probe.entry),probe.phase,slots,nodes,changed)
-end
--- 3515 is a weapon-state callback, not a Quickslot presentation callback.
--- The next bounded probe therefore compares the three combat-only Vanilla
--- panels around every distinct GameHUD graph entry during one test. It reads
--- the same dedicated Weapon Arts container that normal panel ownership uses,
--- but never writes, fades, changes a lease, or installs a new widget hook.
-function runtime.captureVanillaCombatPanels(probe)
-    if not D.debugLogging or not config.fadeTransitions or not valid(hud)
-        or not valid(controller) or not sameObject(hud:GetWorld(),world)
-        or not sameObject(controller:GetWorld(),world)
-        or not sameObject(hud:GetOwningPlayer(),controller) then return end
-    runtime.vanillaCombatPanelStates=runtime.vanillaCombatPanelStates or {}
-    for _,name in ipairs({"WBP_AA_Quickslots","WBP_HUD_FocusCharge_Bar","WBP_HUD_SpecialAttackCooldown"}) do
-        if panelModes[name]==Modes.VANILLA then
-            local widget=hud[name]
-            local object=widget
-            local presentation="root"
-            if name=="WBP_HUD_SpecialAttackCooldown" and valid(widget) then
-                local content=widget.WBP_SpecialAttack
-                object=valid(content) and content:GetParent() or nil
-                presentation="WBP_SpecialAttack parent"
-            end
-            if valid(object) then
-                local className="unavailable"
-                local visibility="unavailable"
-                local opacityValue="unavailable"
-                local readable,value=pcall(function() return object:GetClass():GetFullName() end)
-                if readable and value then className=tostring(value) end
-                readable,value=pcall(function() return object:GetVisibility() end)
-                if readable and value~=nil then visibility=tostring(value) end
-                readable,value=pcall(function() return object:GetRenderOpacity() end)
-                if readable and type(value)=="number" then opacityValue=string.format("%.3f",value) end
-                local state=presentation.."|"..className.."|"..visibility.."|"..opacityValue
-                local previous=runtime.vanillaCombatPanelStates[name]
-                runtime.vanillaCombatPanelStates[name]=state
-                D.logInfo("vanillaCombatPanel source=%s entry=%s phase=%s panel=%s presentation=%s class=%s visibility=%s opacity=%s previous=%s changed=%s",
-                    probe.source,tostring(probe.entry),probe.phase,name,presentation,className,visibility,opacityValue,
-                    previous or "none",tostring(previous~=nil and previous~=state))
-                if name=="WBP_HUD_FocusCharge_Bar" then runtime.captureFocusChargeProbeTree(widget,probe) end
-                if probe.parents then
-                    runtime.vanillaCombatParentStates=runtime.vanillaCombatParentStates or {}
-                    local parent=object:GetParent()
-                    local parentNodes,parentChanges=0,0
-                    for level=1,8 do
-                        if not valid(parent) then break end
-                        parentNodes=parentNodes+1
-                        local parentClass="unavailable"
-                        local parentVisibility="unavailable"
-                        local parentOpacity="unavailable"
-                        readable,value=pcall(function() return parent:GetClass():GetFullName() end)
-                        if readable and value then parentClass=tostring(value) end
-                        readable,value=pcall(function() return parent:GetVisibility() end)
-                        if readable and value~=nil then parentVisibility=tostring(value) end
-                        readable,value=pcall(function() return parent:GetRenderOpacity() end)
-                        if readable and type(value)=="number" then parentOpacity=string.format("%.3f",value) end
-                        local activeIndex="not-switcher"
-                        local activeChild="not-switcher"
-                        if parentClass:find("WidgetSwitcher",1,true) then
-                            readable,value=pcall(function() return parent:GetActiveWidgetIndex() end)
-                            if readable and value~=nil then activeIndex=tostring(value)
-                            else activeIndex="unavailable" end
-                            local childOK,child=pcall(function() return parent:GetActiveWidget() end)
-                            if childOK and valid(child) then
-                                local childClass="unavailable"
-                                local classOK,classValue=pcall(function() return child:GetClass():GetFullName() end)
-                                if classOK and classValue then childClass=tostring(classValue) end
-                                activeChild=childClass.."@"..tostring(child:GetAddress())
-                            else activeChild="unavailable" end
-                        end
-                        local address=parent:GetAddress()
-                        local parentState=parentClass.."|"..parentVisibility.."|"..parentOpacity.."|"..activeIndex.."|"..activeChild
-                        local parentKey=name..":"..tostring(address)
-                        local before=runtime.vanillaCombatParentStates[parentKey]
-                        runtime.vanillaCombatParentStates[parentKey]=parentState
-                        local changed=before~=nil and before~=parentState
-                        if name=="WBP_AA_Quickslots" and activeIndex~="not-switcher" then
-                            -- The Switcher may remain exactly the same at an
-                            -- edge. Its selected child is still the evidence
-                            -- we need, so log this bounded read every phase,
-                            -- not only when a general parent property changed.
-                            D.logInfo("vanillaQuickslotSwitcher source=%s entry=%s phase=%s level=%d node=%s activeIndex=%s activeChild=%s previous=%s changed=%s",
-                                probe.source,tostring(probe.entry),probe.phase,level,tostring(address),activeIndex,activeChild,
-                                before or "none",tostring(changed))
-                        end
-                        if not before or changed then
-                            parentChanges=parentChanges+1
-                            D.logInfo("vanillaCombatParent source=%s entry=%s phase=%s panel=%s level=%d node=%s class=%s visibility=%s opacity=%s activeIndex=%s activeChild=%s previous=%s changed=%s",
-                                probe.source,tostring(probe.entry),probe.phase,name,level,tostring(address),parentClass,
-                                parentVisibility,parentOpacity,activeIndex,activeChild,before or "none",tostring(changed))
-                        end
-                        local parentOK,nextParent=pcall(function() return parent:GetParent() end)
-                        if not parentOK then break end
-                        parent=nextParent
-                    end
-                    D.logInfo("vanillaCombatParent source=%s entry=%s phase=%s panel=%s nodes=%d changed=%d depthLimit=8",
-                        probe.source,tostring(probe.entry),probe.phase,name,parentNodes,parentChanges)
-                end
-            else
-                D.logInfo("vanillaCombatPanel source=%s entry=%s phase=%s panel=%s presentation=unavailable",
-                    probe.source,tostring(probe.entry),probe.phase,name)
-            end
-        end
-    end
-end
 -- Fading resolves a show or hide target into a per frame opacity. It owns no
 -- timer: the panel worker already ticks while work remains, and keeps itself
 -- awake for as long as fade.pending() is true.
@@ -1653,257 +1135,21 @@ local function promptRefreshed(context)
         wake("sprintPrompt")
     end
 end
-function runtime.enqueueQuickslotProbe(probe)
-    runtime.quickslotProbeQueue=runtime.quickslotProbeQueue or {}
-    if runtime.quickslotProbe then
-        runtime.quickslotProbeQueue[#runtime.quickslotProbeQueue+1]=probe
-    else
-        runtime.quickslotProbe=probe
-    end
-    if wake then wake("quickslotProbe") end
-end
-function runtime.enqueueVanillaCombatProbe(probe)
-    runtime.vanillaCombatProbeQueue=runtime.vanillaCombatProbeQueue or {}
-    if runtime.vanillaCombatProbe then
-        runtime.vanillaCombatProbeQueue[#runtime.vanillaCombatProbeQueue+1]=probe
-    else
-        runtime.vanillaCombatProbe=probe
-    end
-    if wake then wake("vanillaCombatProbe") end
-end
-function runtime.enqueueFocusChargeSlotProbe(probe)
-    runtime.focusChargeSlotProbeQueue=runtime.focusChargeSlotProbeQueue or {}
-    if runtime.focusChargeSlotProbe then
-        runtime.focusChargeSlotProbeQueue[#runtime.focusChargeSlotProbeQueue+1]=probe
-    else
-        runtime.focusChargeSlotProbe=probe
-    end
-    if wake then wake("focusChargeSlotProbe") end
-end
-function runtime.enqueueFocusChargeSlotTreeProbe(probe)
-    runtime.focusChargeSlotTreeProbeQueue=runtime.focusChargeSlotTreeProbeQueue or {}
-    if runtime.focusChargeSlotTreeProbe then
-        runtime.focusChargeSlotTreeProbeQueue[#runtime.focusChargeSlotTreeProbeQueue+1]=probe
-    else
-        runtime.focusChargeSlotTreeProbe=probe
-    end
-    if wake then wake("focusChargeSlotTreeProbe") end
-end
-function runtime.scheduleFocusChargeSlotProbe(source,entry,object,address,version,versionField)
-    local function queue(phase)
-        runtime.enqueueFocusChargeSlotProbe({source=source,entry=entry,phase=phase,
-            object=object,address=address,version=version,versionField=versionField})
-    end
-    queue("post")
-    for _,sample in ipairs({{16,"nextFrame"},{96,"after100ms"},{240,"after250ms"}}) do
-        local delay,phase=sample[1],sample[2]
-        pcall(ExecuteInGameThreadWithDelay,delay,function()
-            if D.debugLogging and (runtime[versionField] or {})[address]==version then queue(phase) end
-        end)
-    end
-end
-function runtime.queueFocusChargeSlotTreeBaseline(source)
-    if not D.debugLogging or not config.fadeTransitions
-        or panelModes.WBP_HUD_FocusCharge_Bar~=Modes.VANILLA
-        or runtime.focusChargeSlotTreeBaselineReady or runtime.focusChargeSlotTreeBaselinePending then return end
-    -- Entry construction calls the slot's setter before every runtime entry is
-    -- exposed by DynamicEntryBox. Let that finite construction burst settle so
-    -- the baseline includes all four supported slot positions, not only slot 1.
-    runtime.focusChargeSlotTreeVersion=(runtime.focusChargeSlotTreeVersion or 0)+1
-    runtime.focusChargeSlotTreeBaselinePending=true
-    local version,ownedHUD=runtime.focusChargeSlotTreeVersion,hudAddress
-    local scheduled=pcall(ExecuteInGameThreadWithDelay,runtime.focusChargeLocatorDelayMs,function()
-        if version~=runtime.focusChargeSlotTreeVersion or ownedHUD~=hudAddress then return end
-        local slots,reason=runtime.collectFocusChargeLocatorEntries()
-        if not slots then
-            runtime.focusChargeSlotTreeBaselinePending=false
-            if D.debugLogging then D.event("focusChargeSlotTree","source=%s phase=unavailable reason=%s",source,tostring(reason)) end
-            return
-        end
-        runtime.enqueueFocusChargeSlotTreeProbe({source=source,phase="baseline",slots=slots,version=version})
-    end)
-    if not scheduled then runtime.focusChargeSlotTreeBaselinePending=false end
-end
-function runtime.queueFocusChargeSlotTreeProbe(source,entry)
-    if not D.debugLogging or not config.fadeTransitions or entry~=573
-        or panelModes.WBP_HUD_FocusCharge_Bar~=Modes.VANILLA then return end
-    local remaining=runtime.focusChargeSlotTreeProbeRemaining or 0
-    if remaining<=0 then return end
-    local slots,reason=runtime.collectFocusChargeLocatorEntries()
-    if not slots then
-        if D.debugLogging then D.event("focusChargeSlotTree","source=%s entry=%d phase=unavailable reason=%s",source,entry,tostring(reason)) end
-        return
-    end
-    runtime.focusChargeSlotTreeProbeRemaining=remaining-1
-    runtime.focusChargeSlotTreeVersion=(runtime.focusChargeSlotTreeVersion or 0)+1
-    local version=runtime.focusChargeSlotTreeVersion
-    local function queue(phase)
-        runtime.enqueueFocusChargeSlotTreeProbe({source=source,entry=entry,phase=phase,slots=slots,version=version})
-    end
-    queue("post")
-    -- A fill animation can outlast the old 250 ms diagnostic window. This is
-    -- still one finite, user-triggered timeline, never a watcher or poll.
-    for _,sample in ipairs({{16,"nextFrame"},{96,"after100ms"},{240,"after250ms"},{500,"after500ms"},{1000,"after1000ms"}}) do
-        local delay,phase=sample[1],sample[2]
-        pcall(ExecuteInGameThreadWithDelay,delay,function()
-            if D.debugLogging and runtime.focusChargeSlotTreeVersion==version then queue(phase) end
-        end)
-    end
-end
-local function queueVanillaCombatProbe(entry)
-    if not D.debugLogging or not config.fadeTransitions then return end
-    local targets={"WBP_AA_Quickslots","WBP_HUD_FocusCharge_Bar","WBP_HUD_SpecialAttackCooldown"}
-    local eligible=false
-    for _,name in ipairs(targets) do
-        if panelModes[name]==Modes.VANILLA then eligible=true;break end
-    end
-    if not eligible then return end
-    runtime.vanillaCombatProbeSeen=runtime.vanillaCombatProbeSeen or {}
-    if runtime.vanillaCombatProbeSeen[entry] then return end
-    local remaining=runtime.vanillaCombatProbeRemaining or 0
-    if remaining<=0 then return end
-    runtime.vanillaCombatProbeSeen[entry]=true
-    runtime.vanillaCombatProbeRemaining=remaining-1
-    local source="GameHUD combat candidate"
-    runtime.enqueueVanillaCombatProbe({source=source,entry=entry,phase="post"})
-    for _,sample in ipairs({{16,"nextFrame"},{96,"after100ms"},{240,"after250ms"}}) do
-        local delay,phase=sample[1],sample[2]
-        pcall(ExecuteInGameThreadWithDelay,delay,function()
-            if D.debugLogging then
-                runtime.enqueueVanillaCombatProbe({source=source,entry=entry,phase=phase})
-            end
-        end)
-    end
-end
-local function queueVanillaCombatParentProbe(source,entry)
-    if not D.debugLogging or not config.fadeTransitions then return end
-    local targets={"WBP_AA_Quickslots","WBP_HUD_FocusCharge_Bar","WBP_HUD_SpecialAttackCooldown"}
-    local eligible=false
-    for _,name in ipairs(targets) do
-        if panelModes[name]==Modes.VANILLA then eligible=true;break end
-    end
-    if not eligible then return end
-    runtime.vanillaCombatParentProbeSeen=runtime.vanillaCombatParentProbeSeen or {}
-    local key=source..":"..tostring(entry)
-    if runtime.vanillaCombatParentProbeSeen[key] then return end
-    local remaining=runtime.vanillaCombatParentProbeRemaining or 0
-    if remaining<=0 then return end
-    runtime.vanillaCombatParentProbeSeen[key]=true
-    runtime.vanillaCombatParentProbeRemaining=remaining-1
-    runtime.enqueueVanillaCombatProbe({source=source,entry=entry,phase="post",parents=true,focusTree=true})
-    for _,sample in ipairs({{16,"nextFrame"},{96,"after100ms"},{240,"after250ms"}}) do
-        local delay,phase=sample[1],sample[2]
-        pcall(ExecuteInGameThreadWithDelay,delay,function()
-            if D.debugLogging then
-                runtime.enqueueVanillaCombatProbe({source=source,entry=entry,phase=phase,parents=true,focusTree=true})
-            end
-        end)
-    end
-end
-local function queueVanillaQuickslotProbe(source,discoverWidget)
-    -- Vanilla intentionally releases Quiet Dawn's opacity lease, so fading it
-    -- needs the exact stock event that changes its target. Until that event is
-    -- measured, record one post-hook sample and one next-frame verification;
-    -- this is Debug-only and cannot become a poll.
-    if not D.debugLogging or not config.fadeTransitions
-        or panelModes.WBP_AA_Quickslots~=Modes.VANILLA then return end
-    -- Entry 3515 is only correlated with combat transitions. Limit its
-    -- detailed class/visual-tree capture to three sightings per HUD instance;
-    -- an unproven graph entry must never turn into diagnostic event spam.
-    if discoverWidget then
-        local remaining=runtime.quickslotDiscoveryRemaining or 0
-        if remaining<=0 then return end
-        runtime.quickslotDiscoveryRemaining=remaining-1
-    end
-    runtime.quickslotProbeVersion=(runtime.quickslotProbeVersion or 0)+1
-    local version=runtime.quickslotProbeVersion
-    -- Supersede an unrelated older source so the post sample belongs to this
-    -- graph entry. Later samples queue rather than overwrite each other when
-    -- a busy worker takes more than one rendered frame to consume them.
-    runtime.quickslotProbe={source=source,phase="post",tree=discoverWidget,version=version}
-    runtime.quickslotProbeQueue={}
-    if wake then wake("quickslotProbe") end
-    local samples=discoverWidget and {{16,"nextFrame"},{96,"after100ms"},{240,"after250ms"}}
-        or {{16,"nextFrame"}}
-    for _,sample in ipairs(samples) do
-        local delay,phase=sample[1],sample[2]
-        pcall(ExecuteInGameThreadWithDelay,delay,function()
-            if not D.debugLogging or runtime.quickslotProbeVersion~=version then return end
-            runtime.enqueueQuickslotProbe({source=source,phase=phase,tree=discoverWidget,version=version})
-        end)
-    end
-end
 local function signal(source)
     if D.debugLogging then D.count("presetEvents") end
     if timeWatcher then timeWatcher.resume() end
     source=source or "HUD preset"
-    -- Push/Pop are the confirmed combat presentation boundaries. Debug still
-    -- compares their parent chains against the earlier weapon-state baseline;
-    -- production Activation Charges Fade below targets the separately confirmed
-    -- DynamicEntryBox, never the nonvisual outer Focus Charge root.
-    if source=="PushHUDPreset" or source=="PopHUDPreset" then
-        queueVanillaCombatParentProbe(source,nil)
-    end
     if source=="PushHUDPreset" then
         runtime.queueFocusChargeLocator(source)
     elseif source=="PopHUDPreset" then
         runtime.stopFocusChargeLocator("PopHUDPreset")
-        -- This runs before the production mediation below, so the immediate
-        -- post-Pop reading cannot be mistaken for one of our fade writes.
-        runtime.captureFocusChargePopTrace("post",false)
     end
-    -- The confirmed DynamicEntryBox is the complete display's visual parent.
-    -- The explicit debug locator temporarily owns that same opacity, so leave
-    -- normal Fade mediation dormant while the user requested that locator.
+    -- Vanilla owns the presentation boundary. Activation Charges is the only
+    -- confirmed proxy route so far; the three other combat panels remain
+    -- read-only until their compact factory trace identifies theirs.
     runtime.beginFocusChargeFade(source)
-    queueVanillaQuickslotProbe(source)
     refreshDirty=true
     wake()
-end
-function runtime.focusChargeSlotEvent(context,entryParam)
-    if not D.debugLogging or not config.fadeTransitions
-        or panelModes.WBP_HUD_FocusCharge_Bar~=Modes.VANILLA then return end
-    -- Once the finite graph-entry budget is spent, return before any
-    -- DynamicEntryBox lookup. Normal gameplay then has no probe work at all.
-    local remaining=runtime.focusChargeSlotProbeRemaining or 0
-    if remaining<=0 then return end
-    local object=unwrap(context)
-    if not valid(object) then return end
-    local readable,address=pcall(function() return object:GetAddress() end)
-    if not readable or not address then return end
-    if not runtime.focusChargeSlotAddressIsOwned(object,address) then return end
-    noteUbergraphEntry("WBP_HUD_FocusCharge_Slot",entryParam)
-    local entry=tonumber(unwrap(entryParam))
-    -- Every accepted callback spends one of twelve samples. A new event for
-    -- this slot replaces its older delayed samples through the address version,
-    -- so the log represents the stock graph's latest state, never a backlog.
-    runtime.focusChargeSlotProbeRemaining=remaining-1
-    runtime.focusChargeSlotProbeVersions=runtime.focusChargeSlotProbeVersions or {}
-    local version=(runtime.focusChargeSlotProbeVersions[address] or 0)+1
-    runtime.focusChargeSlotProbeVersions[address]=version
-    runtime.scheduleFocusChargeSlotProbe("Focus Charge Slot graph",entry,object,address,version,
-        "focusChargeSlotProbeVersions")
-end
-function runtime.focusChargeSlotWriteEvent(context,source)
-    if not D.debugLogging or not config.fadeTransitions
-        or panelModes.WBP_HUD_FocusCharge_Bar~=Modes.VANILLA then return end
-    -- Direct UWidget writes are the closest observable enable/disable route.
-    -- They have their own finite budget, so a busy graph cannot hide one.
-    local remaining=runtime.focusChargeSlotWriteProbeRemaining or 0
-    if remaining<=0 then return end
-    local object=unwrap(context)
-    if not valid(object) then return end
-    local readable,address=pcall(function() return object:GetAddress() end)
-    if not readable or not address then return end
-    local members=runtime.focusChargeSlotProbeMembers or {}
-    if not members[address] and not runtime.focusChargeSlotAddressIsOwned(object,address) then return end
-    runtime.queueFocusChargeSlotTreeBaseline("slot direct-write baseline")
-    runtime.focusChargeSlotWriteProbeRemaining=remaining-1
-    runtime.focusChargeSlotWriteProbeVersions=runtime.focusChargeSlotWriteProbeVersions or {}
-    local version=(runtime.focusChargeSlotWriteProbeVersions[address] or 0)+1
-    runtime.focusChargeSlotWriteProbeVersions[address]=version
-    runtime.scheduleFocusChargeSlotProbe("Focus Charge Slot "..source,nil,object,address,version,
-        "focusChargeSlotWriteProbeVersions")
 end
 local function capture(context)
     sprintSource.recover()
@@ -1941,26 +1187,6 @@ end
 local function switchedQuickslots(context,entryParam)
     noteUbergraphEntry("WBP_GameHUD",entryParam)
     local entry=tonumber(unwrap(entryParam))
-    -- Measure the actual combat presentation source before changing Vanilla
-    -- behavior. This applies only to the locally owned GameHUD and is bounded
-    -- to eight distinct entries for the requested one-session investigation.
-    if entry and currentPanelEvent(context) then
-        queueVanillaCombatProbe(entry)
-        -- Run 11 measured entry 573 while one activation charge was depleted.
-        -- Compare only the owned slots' static child trees at that exact route;
-        -- it is a finite snapshot sequence, not a generic HUD tree scan.
-        if entry==573 then runtime.queueFocusChargeSlotTreeProbe("GameHUD graph 573",entry) end
-        -- This baseline precedes the later confirmed HUD-preset boundary in
-        -- the observed combat sequence, so Push/Pop can compare ancestor
-        -- ownership without a recurring poll or unsafe native pre-hook read.
-        if entry==3515 then queueVanillaCombatParentProbe("GameHUD graph 3515 baseline",entry) end
-    end
-    -- The latest combat probe recorded 3515 on both weapon draw and sheath.
-    -- It is a candidate only: collect the same bounded opacity evidence before
-    -- treating it as the stock Quickslot Abilities visibility route.
-    if entry==3515 and panelModes.WBP_AA_Quickslots==Modes.VANILLA then
-        queueVanillaQuickslotProbe("GameHUD graph 3515",true)
-    end
     -- 4026 is a confirmed Focus-release graph entry. It does not decide the
     -- reveal itself: it only wakes the normal pawn snapshot, which reads the
     -- authoritative bIsInFocusMode transition and starts the hold if needed.
@@ -1971,14 +1197,10 @@ local function switchedQuickslots(context,entryParam)
         end
         return
     end
-    -- Stock Toggle AA Quickslots delegate enters the graph at 4146. It is a
-    -- known manual-toggle source, recorded separately from combat presets
-    -- while the Vanilla-fade route is still being discovered.
-    if entry~=4146 then return end
-    if panelModes.WBP_AA_Quickslots==Modes.VANILLA then
-        queueVanillaQuickslotProbe("Toggle AA Quickslots graph 4146")
-    end
-    if config.switchRevealSeconds<=0 or not hasSwitchPanels() or not currentPanelEvent(context) then return end
+    -- Stock Toggle AA Quickslots delegate enters the graph at 4146. It remains
+    -- the dedicated manual-toggle source for Quiet Dawn mode.
+    if entry~=4146 or config.switchRevealSeconds<=0 or not hasSwitchPanels()
+        or not currentPanelEvent(context) then return end
     local focus=hud.CombatFocusPanel
     if valid(focus) and focus:IsActivated() then return end -- stock toggle guard
     switchRequested,statsPending=true,true
@@ -1989,7 +1211,7 @@ end
 local specs = {
     {path="/Script/DogwoodUI.HUDManagerSubsystem:PushHUDPreset", callback=function()signal("PushHUDPreset")end, native=true},
     {path="/Script/DogwoodUI.HUDManagerSubsystem:PopHUDPreset",
-        before=runtime.beginFocusChargePopTrace, callback=function()signal("PopHUDPreset")end, native=true},
+        callback=function()signal("PopHUDPreset")end, native=true},
     {path="/Script/Engine.PlayerController:ClientRestart", callback=function(context)
         local pc = unwrap(context)
         if valid(pc) and pc:IsLocalController() then
@@ -2065,55 +1287,8 @@ if seen.WBP_HUD_SpecialAttackCooldown and panelModes.WBP_HUD_SpecialAttackCooldo
     specs[#specs+1]={path=SPECIAL..":SetupCooldownEffect", callback=cooldownEvent, optional="panel"}
     specs[#specs+1]={path=SPECIAL..":OnCooldownFinished", callback=cooldownEvent, optional="panel"}
 end
-if D.debugLogging and config.fadeTransitions and panelModes.WBP_HUD_FocusCharge_Bar==Modes.VANILLA then
-    -- The visible charges are DynamicEntryBox-generated slot widgets. Trace
-    -- their own graph for a finite twelve accepted events, keeping only each
-    -- slot's latest samples; this does not write opacity or replace Vanilla
-    -- visibility decisions.
-    specs[#specs+1]={path=FOCUS_CHARGE_SLOT..":ExecuteUbergraph_WBP_HUD_FocusCharge_Slot",
-        callback=runtime.focusChargeSlotEvent, optional="probe"}
-    -- Slot graphs establish lifecycle ordering; direct UWidget writes prove
-    -- whether the game itself changes an individual visual slot's state.
-    specs[#specs+1]={path="/Script/UMG.Widget:SetVisibility", native=true,
-        callback=function(context)
-            runtime.focusChargeSlotWriteEvent(context,"SetVisibility")
-            runtime.focusChargePopTraceWriteEvent(context,"SetVisibility")
-        end, optional="probe"}
-    specs[#specs+1]={path="/Script/UMG.Widget:SetRenderOpacity", native=true,
-        callback=function(context)
-            runtime.focusChargeSlotWriteEvent(context,"SetRenderOpacity")
-            runtime.focusChargePopTraceWriteEvent(context,"SetRenderOpacity")
-        end, optional="probe"}
-    specs[#specs+1]={path="/Script/UMG.Image:SetBrush", native=true,
-        callback=function(context) runtime.focusChargeSlotWriteEvent(context,"SetBrush") end, optional="probe"}
-    specs[#specs+1]={path="/Script/UMG.Image:SetColorAndOpacity", native=true,
-        callback=function(context) runtime.focusChargeSlotWriteEvent(context,"SetColorAndOpacity") end, optional="probe"}
-    -- Probe only the documented DynamicEntryBox removal APIs. The Pop timeline
-    -- already proved a grouped removal; these hooks identify which stock API
-    -- performs it before a Fade ever tries to defer that operation.
-    specs[#specs+1]={path="/Script/UMG.DynamicEntryBox:Reset", native=true,
-        callback=function(context) runtime.focusChargePopTraceEntryBoxEvent(context,"Reset") end, optional="probe"}
-    specs[#specs+1]={path="/Script/UMG.DynamicEntryBox:RemoveEntry", native=true,
-        callback=function(context) runtime.focusChargePopTraceEntryBoxEvent(context,"RemoveEntry") end, optional="probe"}
-    specs[#specs+1]={path="/Script/UMG.UserWidget:PlayAnimation", native=true,
-        callback=function(context,animation) runtime.focusChargePopTraceAnimationEvent(context,animation) end, optional="probe"}
-    specs[#specs+1]={path="/Script/Engine.KismetSystemLibrary:Delay", native=true,
-        callback=function(_,worldContext,duration) runtime.focusChargePopTraceDelayEvent(worldContext,duration,"Delay") end, optional="probe"}
-    specs[#specs+1]={path="/Script/Engine.KismetSystemLibrary:RetriggerableDelay", native=true,
-        callback=function(_,worldContext,duration) runtime.focusChargePopTraceDelayEvent(worldContext,duration,"RetriggerableDelay") end, optional="probe"}
-    specs[#specs+1]={path="/Script/Engine.KismetSystemLibrary:K2_SetTimer", native=true,
-        callback=function(_,object,_,duration) runtime.focusChargePopTraceTimerEvent(object,duration,"function") end, optional="probe"}
-    specs[#specs+1]={path="/Script/Engine.KismetSystemLibrary:K2_SetTimerDelegate", native=true,
-        callback=function(_,_,duration) runtime.focusChargePopTraceTimerEvent(nil,duration,"delegate") end, optional="probe"}
-    specs[#specs+1]={path="/Game/_Dawnwalker/UI/_Unified/HUD/CombatFocus/WBP_HUD_FocusCharge_Bar.WBP_HUD_FocusCharge_Bar_C:ExecuteUbergraph_WBP_HUD_FocusCharge_Bar",
-        callback=runtime.focusChargePopTraceBarGraphEvent, optional="probe"}
-end
-if (config.switchRevealSeconds>0 and hasSwitchPanels()) or (manualPeekEnabled and config.peekOnFocusMode)
-    or (D.debugLogging and config.fadeTransitions and (panelModes.WBP_AA_Quickslots==Modes.VANILLA
-        or panelModes.WBP_HUD_FocusCharge_Bar==Modes.VANILLA
-        or panelModes.WBP_HUD_SpecialAttackCooldown==Modes.VANILLA)) then
-    -- The same graph provides quickslot switching, the Focus-release wake and
-    -- the bounded Debug-only Vanilla combat-panel presentation probe.
+if (config.switchRevealSeconds>0 and hasSwitchPanels()) or (manualPeekEnabled and config.peekOnFocusMode) then
+    -- The same graph provides quickslot switching and the Focus-release wake.
     specs[#specs+1]={path=ROOT..":ExecuteUbergraph_WBP_GameHUD", callback=switchedQuickslots, optional="panel"}
 end
     local last=#specs
@@ -2149,8 +1324,6 @@ local function registerOne()
             failedHooks[spec.optional]=failedHooks[spec.optional] or hookIndex
             if spec.optional=="time" then
                 D.logWarning("Time-change hook unavailable; time panel keeps its configured opacity.")
-            elseif spec.optional=="probe" then
-                if D.debugLogging then D.event("focusChargeSlot","trace hook unavailable: %s",spec.path) end
             elseif spec.optional=="focusChargeFade" then
                 D.logWarning("Activation Charges exit fade rate hook unavailable; stock teardown keeps its default timing.")
             elseif spec.optional=="panel" then
@@ -2183,32 +1356,13 @@ local function accept(object)
     if not sameObject(object,hud) or not sameObject(objectWorld,world) then
         runtime.stopFocusChargeLocator("HUD replacement")
         runtime.resetFocusChargeFade()
-        runtime.resetFocusChargeSlotProbe()
-        runtime.resetFocusChargePopTrace()
         hud, world, panels, absent = object, objectWorld, {}, {}
+        runtime.resetCombatHudAnimationTrace()
         -- A direct object notification and the GameHUD hook are preferred.
         -- Keep the fallback named too: a future lifecycle route must not turn
         -- this diagnostic into an unexplained "unknown" startup path.
         runtime.hudAdoptionSource=candidateSource or "fallback"
         runtime.startupImmediateNoted=nil
-        runtime.quickslotProbe,runtime.quickslotProbeOpacity=nil,nil
-        runtime.quickslotProbeQueue,runtime.quickslotProbeTrees={},{}
-        runtime.quickslotDiscoveryRemaining=3
-        runtime.vanillaCombatProbe,runtime.vanillaCombatProbeQueue=nil,{}
-        runtime.vanillaCombatProbeSeen,runtime.vanillaCombatPanelStates={},{}
-        runtime.vanillaCombatProbeRemaining=8
-        runtime.vanillaCombatParentProbeSeen,runtime.vanillaCombatParentStates={},{}
-        runtime.vanillaCombatParentProbeRemaining=3
-        runtime.focusChargeProbeTrees={}
-        runtime.resetFocusChargeSlotProbe()
-        runtime.focusChargeSlotProbeRemaining=12
-        runtime.focusChargeSlotWriteProbeRemaining=12
-        runtime.focusChargeSlotTreeProbeRemaining=1
-        runtime.focusChargePopTraceRemaining=D.debugLogging and config.fadeTransitions
-            and not config.debugFocusChargeLocator
-            and panelModes.WBP_HUD_FocusCharge_Bar==Modes.VANILLA and 1 or 0
-        runtime.focusChargeLocatorArmed=config.debugFocusChargeLocator and D.debugLogging
-            and panelModes.WBP_HUD_FocusCharge_Bar==Modes.VANILLA
         panelRetries={}
         -- A newly adopted HUD should never wait for a decorative fade before
         -- honouring Quiet Dawn's baseline rules. Each managed panel stays in
@@ -2768,70 +1922,8 @@ local function step()
         runtime.advanceFocusChargeLocator(version)
         return false
     end
-    local popTrace=runtime.focusChargePopTrace
-    if popTrace and #popTrace.queue>0 then
-        local phase=table.remove(popTrace.queue,1)
-        runtime.captureFocusChargePopTrace(phase,true)
-        return false
-    end
     if runtime.focusChargeFadeEntry and focusChargeFade.active(runtime.focusChargeFadeKey) then
         runtime.stepFocusChargeFade()
-        return false
-    end
-    if runtime.focusChargeSlotTreeProbe then
-        local probe=runtime.focusChargeSlotTreeProbe
-        local queue=runtime.focusChargeSlotTreeProbeQueue or {}
-        runtime.focusChargeSlotTreeProbe=table.remove(queue,1)
-        runtime.captureFocusChargeSlotTreeProbe(probe)
-        return false
-    end
-    if runtime.focusChargeSlotProbe then
-        local probe=runtime.focusChargeSlotProbe
-        local queue=runtime.focusChargeSlotProbeQueue or {}
-        runtime.focusChargeSlotProbe=table.remove(queue,1)
-        runtime.captureFocusChargeSlotProbe(probe)
-        return false
-    end
-    if runtime.vanillaCombatProbe then
-        local probe=runtime.vanillaCombatProbe
-        local queue=runtime.vanillaCombatProbeQueue or {}
-        runtime.vanillaCombatProbe=table.remove(queue,1)
-        runtime.captureVanillaCombatPanels(probe)
-        return false
-    end
-    if runtime.quickslotProbe then
-        local probe=runtime.quickslotProbe
-        local queue=runtime.quickslotProbeQueue or {}
-        runtime.quickslotProbe=table.remove(queue,1)
-        local widget=valid(hud) and hud.WBP_AA_Quickslots or nil
-        if D.debugLogging and panelModes.WBP_AA_Quickslots==Modes.VANILLA and valid(widget)
-            and valid(controller) and sameObject(widget:GetOwningPlayer(),controller)
-            and sameObject(widget:GetWorld(),world) then
-            local current=widget:GetRenderOpacity()
-            local previous=runtime.quickslotProbeOpacity
-            runtime.quickslotProbeOpacity=current
-            runtime.quickslotProbeClass="unavailable"
-            runtime.quickslotProbeVisibility="unavailable"
-            do
-                local readable,value=pcall(function() return widget:GetClass():GetFullName() end)
-                if readable and value then runtime.quickslotProbeClass=tostring(value) end
-            end
-            do
-                local readable,value=pcall(function() return widget:GetVisibility() end)
-                if readable and value~=nil then runtime.quickslotProbeVisibility=tostring(value) end
-            end
-            -- This bounded route probe is Debug-only. Do not put decisive
-            -- samples through the general per-second event limiter: a combat
-            -- entry can legitimately emit many other graph sightings in the
-            -- same frame, as seen in the session log.
-            D.logInfo("vanillaQuickslots source=%s phase=%s class=%s rootVisibility=%s rootOpacity=%.3f previous=%s changed=%s",
-                probe.source,probe.phase,runtime.quickslotProbeClass,runtime.quickslotProbeVisibility,current,
-                previous and string.format("%.3f",previous) or "none",
-                tostring(previous~=nil and math.abs(current-previous)>1e-5))
-            runtime.captureQuickslotProbeTree(widget,probe)
-        elseif D.debugLogging then
-            D.logInfo("vanillaQuickslots source=%s phase=%s panel=unavailable",probe.source,probe.phase)
-        end
         return false
     end
     if runtime.startupBarrier and runtime.startupBarrier.releasePending then
@@ -3162,7 +2254,7 @@ wake = function(statsOnly)
         panelRetries={}
         settingsPending,settingsAttempts=true,0
     end
-    if statsOnly~="marker" and statsOnly~="settings" and statsOnly~="resource" and statsOnly~="enemyHealth" and statsOnly~="time" and statsOnly~="sprintPrompt" and statsOnly~="clawMarks" and statsOnly~="playerEffects" and statsOnly~="liveSettings" and statsOnly~="quickslotProbe" and statsOnly~="vanillaCombatProbe" and statsOnly~="focusChargeLocator" and statsOnly~="focusChargeSlotProbe" and statsOnly~="focusChargePopTrace" and statsOnly~="focusChargeFade" then dirty=true end
+    if statsOnly~="marker" and statsOnly~="settings" and statsOnly~="resource" and statsOnly~="enemyHealth" and statsOnly~="time" and statsOnly~="sprintPrompt" and statsOnly~="clawMarks" and statsOnly~="playerEffects" and statsOnly~="liveSettings" and statsOnly~="focusChargeLocator" and statsOnly~="focusChargeFade" then dirty=true end
     if worker then if D.debugLogging then D.count("workerCoalesced") end; return end
     worker=true
     if D.debugLogging then D.count("workerStarts") end
@@ -3363,20 +2455,14 @@ applyLiveSettings=function(run)
         focusChargeFade.configure(config.fadeTransitions,config.fadeInSeconds,config.fadeOutSeconds)
         runtime.fadePacing.reset()
     end
-    if changed.debugFocusChargeLocator or changed.logLevel or changed.mode_WBP_HUD_FocusCharge_Bar or changed.fadeTransitions then
+    if changed.debugFocusChargeLocator or changed.logLevel or changed.fadeTransitions
+        or changed.mode_WBP_HUD_FocusCharge_Bar or changed.mode_WBP_AA_Quickslots
+        or changed.mode_WBP_HUD_Quickslots_ChangePrompt or changed.mode_WBP_HUD_SpecialAttackCooldown then
         runtime.stopFocusChargeLocator("settings applied")
-        -- The opt-in locator owns the very same container. Release a retained
-        -- completed hide before either mode can leave it under a stale lease.
+        -- The opt-in locator owns the Activation Charges container. Release
+        -- its retained lease before a settings change can alter Fade behavior.
         runtime.resetFocusChargeFade()
-        runtime.resetFocusChargeSlotProbe()
-        runtime.resetFocusChargePopTrace()
-        local traceEligible=valid(hud) and D.debugLogging and config.fadeTransitions
-            and panelModes.WBP_HUD_FocusCharge_Bar==Modes.VANILLA
-        runtime.focusChargeSlotProbeRemaining=traceEligible and 12 or 0
-        runtime.focusChargeSlotWriteProbeRemaining=traceEligible and 12 or 0
-        runtime.focusChargeSlotTreeProbeRemaining=traceEligible and 1 or 0
-        runtime.focusChargePopTraceRemaining=traceEligible and not config.debugFocusChargeLocator and 1 or 0
-        if traceEligible then runtime.queueFocusChargeSlotTreeBaseline("settings applied") end
+        runtime.resetCombatHudAnimationTrace()
         runtime.focusChargeLocatorArmed=config.debugFocusChargeLocator and D.debugLogging
             and panelModes.WBP_HUD_FocusCharge_Bar==Modes.VANILLA
     end
