@@ -512,9 +512,9 @@ local function combatHudTracePanelFor(candidate)
         and className:find("Quickslots_ChangePrompt",1,true) then
         return "WBP_HUD_Quickslots_ChangePrompt","childClass"
     end
-    if panelModes.WBP_AA_Quickslots==Modes.VANILLA and className:find("Quickslot",1,true) then
-        return "WBP_AA_Quickslots","quickslotChild"
-    end
+    -- Do not classify the neighbouring WBP_HUD_Quickslots binding widget as
+    -- Quickslot Abilities merely because both class names contain "Quickslot".
+    -- Exact owner ancestry below handles WBP_AA_Quickslots descendants.
     if panelModes.WBP_HUD_SpecialAttackCooldown==Modes.VANILLA
         and className:find("SpecialAttack",1,true) then
         return "WBP_HUD_SpecialAttackCooldown","weaponArtsChild"
@@ -605,32 +605,44 @@ function runtime.traceCombatHudDirectAnimation(context,animationParam,startParam
 end
 local function combatHudPresentationOwner(object)
     if not valid(object) or not valid(hud) then return nil end
+    -- A presentation write is relevant only when its object belongs to the
+    -- actual active panel's own widget tree. The prior class-name fallback
+    -- incorrectly labelled WBP_HUD_Quickslots binding children as the separate
+    -- WBP_AA_Quickslots panel, so never use a shared "Quickslot" substring.
     for name in pairs(runtime.combatHudPresentationPanels) do
         if panelModes[name]==Modes.VANILLA then
             local ownerOK,owner=pcall(function() return hud[name] end)
-            if ownerOK and sameObject(object,owner) then return name,"exact" end
-            -- WidgetSwitcher can be an ancestor of the named root. The inner
-            -- Weapon Arts content's parent is its confirmed visual container.
-            local candidates={owner}
-            if name=="WBP_HUD_SpecialAttackCooldown" and valid(owner) then
-                local contentOK,content=pcall(function() return owner.WBP_SpecialAttack end)
-                local parentOK,parent=false,nil
-                if contentOK and valid(content) then parentOK,parent=pcall(function() return content:GetParent() end) end
-                if parentOK then candidates[#candidates+1]=parent end
-            end
-            for _,candidate in ipairs(candidates) do
-                local current=candidate
-                for depth=0,4 do
-                    if valid(current) and sameObject(object,current) then return name,"ownerParent"..depth end
-                    local parentOK,parent=pcall(function() return current:GetParent() end)
-                    if not parentOK or not valid(parent) then break end
-                    current=parent
+            if ownerOK and valid(owner) then
+                local candidates={{object=owner,label="exact"}}
+                if name=="WBP_HUD_SpecialAttackCooldown" then
+                    local contentOK,content=pcall(function() return owner.WBP_SpecialAttack end)
+                    if contentOK and valid(content) then
+                        candidates[#candidates+1]={object=content,label="specialAttack"}
+                    end
+                end
+                for _,candidate in ipairs(candidates) do
+                    local current=object
+                    for depth=0,8 do
+                        if valid(current) and sameObject(current,candidate.object) then
+                            return name,depth==0 and candidate.label or candidate.label.."Child:parent"..depth
+                        end
+                        local parentOK,parent=pcall(function() return current:GetParent() end)
+                        if not parentOK or not valid(parent) then break end
+                        current=parent
+                    end
+                    current=object
+                    for depth=0,8 do
+                        if valid(current) and sameObject(current,candidate.object) then
+                            return name,depth==0 and candidate.label or candidate.label.."Child:outer"..depth
+                        end
+                        local outerOK,outer=pcall(function() return current:GetOuter() end)
+                        if not outerOK or not valid(outer) then break end
+                        current=outer
+                    end
                 end
             end
         end
     end
-    local panel,owner=combatHudTraceOwner(object)
-    if panel and runtime.combatHudPresentationPanels[panel] then return panel,owner end
     return nil
 end
 function runtime.traceCombatHudPresentation(context,valueParam,method)
