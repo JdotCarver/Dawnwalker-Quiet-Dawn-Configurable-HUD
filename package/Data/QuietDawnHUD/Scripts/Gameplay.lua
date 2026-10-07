@@ -537,8 +537,10 @@ end
 function runtime.resetFocusChargeSlotProbe()
     runtime.focusChargeSlotProbe,runtime.focusChargeSlotProbeQueue=nil,{}
     runtime.focusChargeSlotProbeVersions={}
+    runtime.focusChargeSlotWriteProbeVersions={}
     runtime.focusChargeSlotProbeOwned,runtime.focusChargeSlotProbeRejected={},{}
     runtime.focusChargeSlotProbeRemaining=0
+    runtime.focusChargeSlotWriteProbeRemaining=0
 end
 Session.onClose(function()
     runtime.stopFocusChargeLocator("session close")
@@ -560,12 +562,26 @@ function runtime.focusChargeSlotIsOwned(object)
     end)
     return ok and owned
 end
+function runtime.focusChargeSlotAddressIsOwned(object,address)
+    runtime.focusChargeSlotProbeOwned=runtime.focusChargeSlotProbeOwned or {}
+    runtime.focusChargeSlotProbeRejected=runtime.focusChargeSlotProbeRejected or {}
+    if runtime.focusChargeSlotProbeRejected[address] then return false end
+    if not runtime.focusChargeSlotProbeOwned[address] then
+        if not runtime.focusChargeSlotIsOwned(object) then
+            runtime.focusChargeSlotProbeRejected[address]=true
+            return false
+        end
+        runtime.focusChargeSlotProbeOwned[address]=true
+    end
+    return true
+end
 function runtime.captureFocusChargeSlotProbe(probe)
     local object=probe.object
     local address=probe.address
     if not D.debugLogging or not valid(object) or not address
         or not (runtime.focusChargeSlotProbeOwned or {})[address] then return end
-    if probe.version and (runtime.focusChargeSlotProbeVersions or {})[address]~=probe.version then return end
+    local versionField=probe.versionField or "focusChargeSlotProbeVersions"
+    if probe.version and (runtime[versionField] or {})[address]~=probe.version then return end
     local className="unavailable"
     local visibility="unavailable"
     local opacityValue="unavailable"
@@ -1206,6 +1222,19 @@ function runtime.enqueueFocusChargeSlotProbe(probe)
     end
     if wake then wake("focusChargeSlotProbe") end
 end
+function runtime.scheduleFocusChargeSlotProbe(source,entry,object,address,version,versionField)
+    local function queue(phase)
+        runtime.enqueueFocusChargeSlotProbe({source=source,entry=entry,phase=phase,
+            object=object,address=address,version=version,versionField=versionField})
+    end
+    queue("post")
+    for _,sample in ipairs({{16,"nextFrame"},{96,"after100ms"},{240,"after250ms"}}) do
+        local delay,phase=sample[1],sample[2]
+        pcall(ExecuteInGameThreadWithDelay,delay,function()
+            if D.debugLogging and (runtime[versionField] or {})[address]==version then queue(phase) end
+        end)
+    end
+end
 local function queueVanillaCombatProbe(entry)
     if not D.debugLogging or not config.fadeTransitions then return end
     local targets={"WBP_AA_Quickslots","WBP_HUD_FocusCharge_Bar","WBP_HUD_SpecialAttackCooldown"}
@@ -1320,16 +1349,7 @@ function runtime.focusChargeSlotEvent(context,entryParam)
     if not valid(object) then return end
     local readable,address=pcall(function() return object:GetAddress() end)
     if not readable or not address then return end
-    runtime.focusChargeSlotProbeOwned=runtime.focusChargeSlotProbeOwned or {}
-    runtime.focusChargeSlotProbeRejected=runtime.focusChargeSlotProbeRejected or {}
-    if runtime.focusChargeSlotProbeRejected[address] then return end
-    if not runtime.focusChargeSlotProbeOwned[address] then
-        if not runtime.focusChargeSlotIsOwned(object) then
-            runtime.focusChargeSlotProbeRejected[address]=true
-            return
-        end
-        runtime.focusChargeSlotProbeOwned[address]=true
-    end
+    if not runtime.focusChargeSlotAddressIsOwned(object,address) then return end
     noteUbergraphEntry("WBP_HUD_FocusCharge_Slot",entryParam)
     local entry=tonumber(unwrap(entryParam))
     -- Every accepted callback spends one of twelve samples. A new event for
@@ -1339,16 +1359,26 @@ function runtime.focusChargeSlotEvent(context,entryParam)
     runtime.focusChargeSlotProbeVersions=runtime.focusChargeSlotProbeVersions or {}
     local version=(runtime.focusChargeSlotProbeVersions[address] or 0)+1
     runtime.focusChargeSlotProbeVersions[address]=version
-    local source="Focus Charge Slot graph"
-    runtime.enqueueFocusChargeSlotProbe({source=source,entry=entry,phase="post",object=object,address=address,version=version})
-    for _,sample in ipairs({{16,"nextFrame"},{96,"after100ms"},{240,"after250ms"}}) do
-        local delay,phase=sample[1],sample[2]
-        pcall(ExecuteInGameThreadWithDelay,delay,function()
-            if D.debugLogging and runtime.focusChargeSlotProbeVersions[address]==version then
-                runtime.enqueueFocusChargeSlotProbe({source=source,entry=entry,phase=phase,object=object,address=address,version=version})
-            end
-        end)
-    end
+    runtime.scheduleFocusChargeSlotProbe("Focus Charge Slot graph",entry,object,address,version,
+        "focusChargeSlotProbeVersions")
+end
+function runtime.focusChargeSlotWriteEvent(context,source)
+    if not D.debugLogging or not config.fadeTransitions
+        or panelModes.WBP_HUD_FocusCharge_Bar~=Modes.VANILLA then return end
+    -- Direct UWidget writes are the closest observable enable/disable route.
+    -- They have their own finite budget, so a busy graph cannot hide one.
+    local remaining=runtime.focusChargeSlotWriteProbeRemaining or 0
+    if remaining<=0 then return end
+    local object=unwrap(context)
+    if not valid(object) then return end
+    local readable,address=pcall(function() return object:GetAddress() end)
+    if not readable or not address or not runtime.focusChargeSlotAddressIsOwned(object,address) then return end
+    runtime.focusChargeSlotWriteProbeRemaining=remaining-1
+    runtime.focusChargeSlotWriteProbeVersions=runtime.focusChargeSlotWriteProbeVersions or {}
+    local version=(runtime.focusChargeSlotWriteProbeVersions[address] or 0)+1
+    runtime.focusChargeSlotWriteProbeVersions[address]=version
+    runtime.scheduleFocusChargeSlotProbe("Focus Charge Slot "..source,nil,object,address,version,
+        "focusChargeSlotWriteProbeVersions")
 end
 local function capture(context)
     sprintSource.recover()
@@ -1506,7 +1536,13 @@ if D.debugLogging and config.fadeTransitions and panelModes.WBP_HUD_FocusCharge_
     -- slot's latest samples; this does not write opacity or replace Vanilla
     -- visibility decisions.
     specs[#specs+1]={path=FOCUS_CHARGE_SLOT..":ExecuteUbergraph_WBP_HUD_FocusCharge_Slot",
-        callback=runtime.focusChargeSlotEvent, optional="panel"}
+        callback=runtime.focusChargeSlotEvent, optional="probe"}
+    -- Slot graphs establish lifecycle ordering; direct UWidget writes prove
+    -- whether the game itself changes an individual visual slot's state.
+    specs[#specs+1]={path="/Script/UMG.Widget:SetVisibility", native=true,
+        callback=function(context) runtime.focusChargeSlotWriteEvent(context,"SetVisibility") end, optional="probe"}
+    specs[#specs+1]={path="/Script/UMG.Widget:SetRenderOpacity", native=true,
+        callback=function(context) runtime.focusChargeSlotWriteEvent(context,"SetRenderOpacity") end, optional="probe"}
 end
 if (config.switchRevealSeconds>0 and hasSwitchPanels()) or (manualPeekEnabled and config.peekOnFocusMode)
     or (D.debugLogging and config.fadeTransitions and (panelModes.WBP_AA_Quickslots==Modes.VANILLA
@@ -1549,6 +1585,8 @@ local function registerOne()
             failedHooks[spec.optional]=failedHooks[spec.optional] or hookIndex
             if spec.optional=="time" then
                 D.logWarning("Time-change hook unavailable; time panel keeps its configured opacity.")
+            elseif spec.optional=="probe" then
+                if D.debugLogging then D.event("focusChargeSlot","trace hook unavailable: %s",spec.path) end
             elseif spec.optional=="panel" then
                 D.logWarning("Panel event unavailable; other HUD controls remain active: %s",spec.path)
             elseif spec.optional=="prompt" then
@@ -1596,6 +1634,7 @@ local function accept(object)
         runtime.focusChargeProbeTrees={}
         runtime.resetFocusChargeSlotProbe()
         runtime.focusChargeSlotProbeRemaining=12
+        runtime.focusChargeSlotWriteProbeRemaining=12
         runtime.focusChargeLocatorArmed=config.debugFocusChargeLocator and D.debugLogging
             and panelModes.WBP_HUD_FocusCharge_Bar==Modes.VANILLA
         panelRetries={}
@@ -2733,8 +2772,10 @@ applyLiveSettings=function(run)
     if changed.debugFocusChargeLocator or changed.logLevel or changed.mode_WBP_HUD_FocusCharge_Bar or changed.fadeTransitions then
         runtime.stopFocusChargeLocator("settings applied")
         runtime.resetFocusChargeSlotProbe()
-        runtime.focusChargeSlotProbeRemaining=valid(hud) and D.debugLogging and config.fadeTransitions
-            and panelModes.WBP_HUD_FocusCharge_Bar==Modes.VANILLA and 12 or 0
+        local traceEligible=valid(hud) and D.debugLogging and config.fadeTransitions
+            and panelModes.WBP_HUD_FocusCharge_Bar==Modes.VANILLA
+        runtime.focusChargeSlotProbeRemaining=traceEligible and 12 or 0
+        runtime.focusChargeSlotWriteProbeRemaining=traceEligible and 12 or 0
         runtime.focusChargeLocatorArmed=config.debugFocusChargeLocator and D.debugLogging
             and panelModes.WBP_HUD_FocusCharge_Bar==Modes.VANILLA
     end
