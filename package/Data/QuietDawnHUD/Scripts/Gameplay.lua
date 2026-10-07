@@ -679,6 +679,28 @@ function runtime.focusChargePopTraceAnimationEvent(context,animationParam)
     D.logInfo("focusChargePopTrace phase=animation target=%s node=%s animation=%s",
         address==state.barAddress and "bar" or "entry",tostring(address),animationName)
 end
+-- No owned UUserWidget PlayAnimation call accompanied the terminal Reset. The
+-- likely simpler stock presentation is therefore a Blueprint latent delay or
+-- an inline graph path. Identify both exact candidates before touching Reset:
+-- if the bar schedules a 0.2-second Delay, its duration is the natural Fade
+-- parameter rather than something Quiet Dawn needs to recreate.
+function runtime.focusChargePopTraceDelayEvent(worldParam,durationParam,kind)
+    local state=runtime.focusChargePopTrace
+    if not state or not D.debugLogging then return end
+    local object=unwrap(worldParam)
+    if not valid(object) or object:GetAddress()~=state.barAddress then return end
+    local duration=unwrap(durationParam)
+    D.logInfo("focusChargePopTrace phase=delay kind=%s target=bar node=%s duration=%s",
+        kind,tostring(state.barAddress),type(duration)=="number" and string.format("%.3f",duration) or tostring(duration))
+end
+function runtime.focusChargePopTraceBarGraphEvent(context,entryParam)
+    local state=runtime.focusChargePopTrace
+    if not state or not D.debugLogging then return end
+    local bar=unwrap(context)
+    if not valid(bar) or bar:GetAddress()~=state.barAddress then return end
+    D.logInfo("focusChargePopTrace phase=barGraph node=%s entry=%s",
+        tostring(state.barAddress),tostring(unwrap(entryParam)))
+end
 Session.onClose(function()
     runtime.stopFocusChargeLocator("session close")
     runtime.resetFocusChargeSlotProbe()
@@ -1965,6 +1987,12 @@ if D.debugLogging and config.fadeTransitions and panelModes.WBP_HUD_FocusCharge_
         callback=function(context) runtime.focusChargePopTraceEntryBoxEvent(context,"RemoveEntry") end, optional="probe"}
     specs[#specs+1]={path="/Script/UMG.UserWidget:PlayAnimation", native=true,
         callback=function(context,animation) runtime.focusChargePopTraceAnimationEvent(context,animation) end, optional="probe"}
+    specs[#specs+1]={path="/Script/Engine.KismetSystemLibrary:Delay", native=true,
+        callback=function(_,worldContext,duration) runtime.focusChargePopTraceDelayEvent(worldContext,duration,"Delay") end, optional="probe"}
+    specs[#specs+1]={path="/Script/Engine.KismetSystemLibrary:RetriggerableDelay", native=true,
+        callback=function(_,worldContext,duration) runtime.focusChargePopTraceDelayEvent(worldContext,duration,"RetriggerableDelay") end, optional="probe"}
+    specs[#specs+1]={path="/Game/_Dawnwalker/UI/_Unified/HUD/CombatFocus/WBP_HUD_FocusCharge_Bar.WBP_HUD_FocusCharge_Bar_C:ExecuteUbergraph_WBP_HUD_FocusCharge_Bar",
+        callback=runtime.focusChargePopTraceBarGraphEvent, optional="probe"}
 end
 if (config.switchRevealSeconds>0 and hasSwitchPanels()) or (manualPeekEnabled and config.peekOnFocusMode)
     or (D.debugLogging and config.fadeTransitions and (panelModes.WBP_AA_Quickslots==Modes.VANILLA
