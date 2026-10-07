@@ -378,11 +378,11 @@ function runtime.captureFocusChargeProbeTree(widget,probe)
         probe.source,probe.phase,nodes,changed)
 end
 -- The visible charge widgets are runtime entries of the owned DynamicEntryBox,
--- not ordinary WidgetTree children. A player-visible locator is therefore more
--- useful than further guesses: it asks this box for its current entries, hides
--- each entry once for two seconds, and restores it before moving on. It is
--- Debug-only, opt-in, bounded to one Push per HUD session, and never searches
--- outside the already-owned Focus Charge widget.
+-- not ordinary WidgetTree children. The outer bar was not a visual owner, so
+-- test the actual common DynamicEntryBox container once before its up-to-four
+-- confirmed slot entries. This explicit visual locator is Debug-only, opt-in,
+-- bounded to one Push per HUD session, and never searches outside the owned
+-- Focus Charge widget.
 runtime.focusChargeLocatorDelayMs=350
 runtime.focusChargeLocatorHideMs=2000
 runtime.focusChargeLocatorGapMs=1000
@@ -397,17 +397,22 @@ function runtime.stopFocusChargeLocator(reason)
     if state and state.active and state.active.lease then
         local restoredOK,restored=pcall(panelOpacity.restore,state.active.lease)
         if D.debugLogging then
-            D.event("focusChargeLocator","source=%s phase=cancel reason=%s ordinal=%d restored=%s",
-                state.source,tostring(reason),state.index,tostring(restoredOK and restored))
+            D.event("focusChargeLocator","source=%s phase=cancel reason=%s target=%s ordinal=%s restored=%s",
+                state.source,tostring(reason),state.active.kind,tostring(state.active.ordinal),tostring(restoredOK and restored))
         end
     end
 end
-function runtime.collectFocusChargeLocatorEntries()
+function runtime.focusChargeLocatorContainer()
     if not valid(hud) or not valid(hud.WBP_HUD_FocusCharge_Bar) then return nil,"Focus Charge unavailable" end
     local treeOK,tree=pcall(function() return hud.WBP_HUD_FocusCharge_Bar.WidgetTree end)
     if not treeOK or not valid(tree) then return nil,"Focus Charge WidgetTree unavailable" end
     local rootOK,box=pcall(function() return tree.RootWidget end)
     if not rootOK or not valid(box) then return nil,"Focus Charge DynamicEntryBox unavailable" end
+    return box
+end
+function runtime.collectFocusChargeLocatorEntries()
+    local box,reason=runtime.focusChargeLocatorContainer()
+    if not box then return nil,reason end
     local entriesOK,entries=pcall(function() return box:GetAllEntries() end)
     if not entriesOK or entries==nil then return nil,"DynamicEntryBox GetAllEntries unavailable" end
     local collected,seen={},{}
@@ -455,8 +460,8 @@ function runtime.advanceFocusChargeLocator(version)
         state.active=nil
         local restoredOK,restored=pcall(panelOpacity.restore,active.lease)
         if D.debugLogging then
-            D.event("focusChargeLocator","source=%s phase=restore ordinal=%d class=%s node=%s restored=%s",
-                state.source,state.index,active.className,tostring(active.address),tostring(restoredOK and restored))
+            D.event("focusChargeLocator","source=%s phase=restore target=%s ordinal=%s class=%s node=%s restored=%s",
+                state.source,active.kind,tostring(active.ordinal),active.className,tostring(active.address),tostring(restoredOK and restored))
         end
         state.index=state.index+1
         -- Keep one visible second between candidates. The user can therefore
@@ -477,22 +482,22 @@ function runtime.advanceFocusChargeLocator(version)
     end
     local leaseOK,lease=pcall(panelOpacity.bind,candidate.object)
     if not leaseOK or not lease then
-        if D.debugLogging then D.event("focusChargeLocator","source=%s phase=skip ordinal=%d reason=entry-unavailable",state.source,state.index) end
+        if D.debugLogging then D.event("focusChargeLocator","source=%s phase=skip target=%s ordinal=%s reason=entry-unavailable",state.source,candidate.kind,tostring(candidate.ordinal)) end
         state.index=state.index+1
         runtime.advanceFocusChargeLocator(version)
         return
     end
     local wroteOK,wrote=pcall(panelOpacity.apply,lease,0)
     if not wroteOK then
-        if D.debugLogging then D.event("focusChargeLocator","source=%s phase=skip ordinal=%d reason=opacity-write-failed",state.source,state.index) end
+        if D.debugLogging then D.event("focusChargeLocator","source=%s phase=skip target=%s ordinal=%s reason=opacity-write-failed",state.source,candidate.kind,tostring(candidate.ordinal)) end
         state.index=state.index+1
         runtime.advanceFocusChargeLocator(version)
         return
     end
-    state.active={lease=lease,address=candidate.address,className=candidate.className}
+    state.active={lease=lease,address=candidate.address,className=candidate.className,kind=candidate.kind,ordinal=candidate.ordinal}
     if D.debugLogging then
-        D.event("focusChargeLocator","source=%s phase=hide ordinal=%d/%d class=%s node=%s wrote=%s holdMs=%d",
-            state.source,state.index,#state.candidates,candidate.className,tostring(candidate.address),tostring(wrote),runtime.focusChargeLocatorHideMs)
+        D.event("focusChargeLocator","source=%s phase=hide target=%s ordinal=%s total=%d class=%s node=%s wrote=%s holdMs=%d",
+            state.source,candidate.kind,tostring(candidate.ordinal),#state.candidates,candidate.className,tostring(candidate.address),tostring(wrote),runtime.focusChargeLocatorHideMs)
     end
     pcall(ExecuteInGameThreadWithDelay,runtime.focusChargeLocatorHideMs,function()
         local current=runtime.focusChargeLocator
@@ -504,17 +509,26 @@ end
 function runtime.startFocusChargeLocator(source,version)
     if not config.debugFocusChargeLocator or not D.debugLogging
         or panelModes.WBP_HUD_FocusCharge_Bar~=Modes.VANILLA then return end
-    local candidates,reason=runtime.collectFocusChargeLocatorEntries()
-    if not candidates then
+    local box,reason=runtime.focusChargeLocatorContainer()
+    if not box then
         if D.debugLogging then D.event("focusChargeLocator","source=%s phase=unavailable reason=%s",source,reason) end
         return
     end
-    if #candidates==0 then
-        if D.debugLogging then D.event("focusChargeLocator","source=%s phase=unavailable reason=no-runtime-entries",source) end
+    local candidates,entryReason=runtime.collectFocusChargeLocatorEntries()
+    if not candidates or #candidates==0 then
+        if D.debugLogging then D.event("focusChargeLocator","source=%s phase=unavailable reason=%s",source,entryReason or "no-runtime-entries") end
         return
     end
-    runtime.focusChargeLocator={source=source,version=version,candidates=candidates,index=1}
-    if D.debugLogging then D.event("focusChargeLocator","source=%s phase=begin candidates=%d",source,#candidates) end
+    local className="unavailable"
+    local readable,class=pcall(function() return box:GetClass():GetFullName() end)
+    if readable and class then className=tostring(class) end
+    local targets={{object=box,address=box:GetAddress(),className=className,kind="container",ordinal="all"}}
+    for ordinal,candidate in ipairs(candidates) do
+        candidate.kind,candidate.ordinal="slot",ordinal
+        targets[#targets+1]=candidate
+    end
+    runtime.focusChargeLocator={source=source,version=version,candidates=targets,index=1}
+    if D.debugLogging then D.event("focusChargeLocator","source=%s phase=begin container=%s slots=%d",source,tostring(box:GetAddress()),#candidates) end
     runtime.advanceFocusChargeLocator(version)
 end
 function runtime.queueFocusChargeLocator(source)
