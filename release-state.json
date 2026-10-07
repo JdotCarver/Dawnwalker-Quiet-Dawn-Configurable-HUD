@@ -56,7 +56,7 @@
         "impact": "minor",
         "rationale": "Add synchronized fades, Always Hidden panels, Focus peeks, panel inclusion, combat-effect controls and logging levels with preserving preference migration.",
         "majorOverride": false,
-        "reviewedInputs": "e50fcd6080df39ace4a969e67cdc537c369e2d520cb09df75d01809e6e2f693e",
+        "reviewedInputs": "a30d4da99f7c7e34f880d2b0dc2e4cb2adec3fdea6a5925e3095ab6ac3184471",
         "divergenceReviewed": false
       }
     }
