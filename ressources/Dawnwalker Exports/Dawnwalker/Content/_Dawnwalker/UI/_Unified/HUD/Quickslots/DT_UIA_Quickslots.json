@@ -1,0 +1,1117 @@
+[
+  {
+    "Type": "DataTable",
+    "Name": "DT_UIA_Quickslots",
+    "Flags": "RF_Public | RF_Standalone | RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'DataTable'",
+    "Package": "/Game/_Dawnwalker/UI/_Unified/HUD/Quickslots/DT_UIA_Quickslots",
+    "Properties": {
+      "RowStruct": {
+        "ObjectName": "Class'CommonInputActionDataBase'",
+        "ObjectPath": "/Script/CommonUI"
+      }
+    },
+    "Rows": {
+      "Quickslot_Left": {
+        "DisplayName": {
+          "CultureInvariantString": null
+        },
+        "HoldDisplayName": {
+          "CultureInvariantString": null
+        },
+        "NavBarPriority": 0,
+        "KeyboardInputTypeInfo": {
+          "Key": {
+            "KeyName": "One"
+          },
+          "OverrrideState": "EInputActionState::Enabled",
+          "bActionRequiresHold": true,
+          "HoldTime": 0.5,
+          "HoldRollbackTime": 0.0,
+          "OverrideBrush": {
+            "TintColor": {
+              "SpecifiedColor": {
+                "R": 1.0,
+                "G": 1.0,
+                "B": 1.0,
+                "A": 1.0,
+                "Hex": "FFFFFF"
+              },
+              "ColorUseRule": "ESlateColorStylingMode::UseColor_Specified"
+            },
+            "DrawAs": "ESlateBrushDrawType::NoDrawType",
+            "Tiling": "ESlateBrushTileType::NoTile",
+            "Mirroring": "ESlateBrushMirrorType::NoMirror",
+            "ImageType": "ESlateBrushImageType::NoImage",
+            "ImageSize": {
+              "X": 32.0,
+              "Y": 32.0
+            },
+            "Margin": {
+              "Left": 0.0,
+              "Top": 0.0,
+              "Right": 0.0,
+              "Bottom": 0.0
+            },
+            "ResourceObject": null,
+            "OutlineSettings": {
+              "CornerRadii": {
+                "X": 0.0,
+                "Y": 0.0,
+                "Z": 0.0,
+                "W": 0.0
+              },
+              "Color": {
+                "SpecifiedColor": {
+                  "R": 0.0,
+                  "G": 0.0,
+                  "B": 0.0,
+                  "A": 0.0,
+                  "Hex": "000000"
+                },
+                "ColorUseRule": "ESlateColorStylingMode::UseColor_Specified"
+              },
+              "Width": 0.0,
+              "RoundingType": "ESlateBrushRoundingType::HalfHeightRadius",
+              "bUseBrushTransparency": false
+            },
+            "UVRegion": {
+              "Min": {
+                "X": 0.0,
+                "Y": 0.0
+              },
+              "Max": {
+                "X": 0.0,
+                "Y": 0.0
+              },
+              "bIsValid": 0
+            },
+            "bIsDynamicallyLoaded": false,
+            "ResourceName": "None"
+          }
+        },
+        "DefaultGamepadInputTypeInfo": {
+          "Key": {
+            "KeyName": "Gamepad_DPad_Left"
+          },
+          "OverrrideState": "EInputActionState::Enabled",
+          "bActionRequiresHold": true,
+          "HoldTime": 0.5,
+          "HoldRollbackTime": 0.0,
+          "OverrideBrush": {
+            "TintColor": {
+              "SpecifiedColor": {
+                "R": 1.0,
+                "G": 1.0,
+                "B": 1.0,
+                "A": 1.0,
+                "Hex": "FFFFFF"
+              },
+              "ColorUseRule": "ESlateColorStylingMode::UseColor_Specified"
+            },
+            "DrawAs": "ESlateBrushDrawType::NoDrawType",
+            "Tiling": "ESlateBrushTileType::NoTile",
+            "Mirroring": "ESlateBrushMirrorType::NoMirror",
+            "ImageType": "ESlateBrushImageType::NoImage",
+            "ImageSize": {
+              "X": 32.0,
+              "Y": 32.0
+            },
+            "Margin": {
+              "Left": 0.0,
+              "Top": 0.0,
+              "Right": 0.0,
+              "Bottom": 0.0
+            },
+            "ResourceObject": null,
+            "OutlineSettings": {
+              "CornerRadii": {
+                "X": 0.0,
+                "Y": 0.0,
+                "Z": 0.0,
+                "W": 0.0
+              },
+              "Color": {
+                "SpecifiedColor": {
+                  "R": 0.0,
+                  "G": 0.0,
+                  "B": 0.0,
+                  "A": 0.0,
+                  "Hex": "000000"
+                },
+                "ColorUseRule": "ESlateColorStylingMode::UseColor_Specified"
+              },
+              "Width": 0.0,
+              "RoundingType": "ESlateBrushRoundingType::HalfHeightRadius",
+              "bUseBrushTransparency": false
+            },
+            "UVRegion": {
+              "Min": {
+                "X": 0.0,
+                "Y": 0.0
+              },
+              "Max": {
+                "X": 0.0,
+                "Y": 0.0
+              },
+              "bIsValid": 0
+            },
+            "bIsDynamicallyLoaded": false,
+            "ResourceName": "None"
+          }
+        },
+        "GamepadInputOverrides": [],
+        "TouchInputTypeInfo": {
+          "Key": {
+            "KeyName": "None"
+          },
+          "OverrrideState": "EInputActionState::Enabled",
+          "bActionRequiresHold": false,
+          "HoldTime": 0.5,
+          "HoldRollbackTime": 0.0,
+          "OverrideBrush": {
+            "TintColor": {
+              "SpecifiedColor": {
+                "R": 1.0,
+                "G": 1.0,
+                "B": 1.0,
+                "A": 1.0,
+                "Hex": "FFFFFF"
+              },
+              "ColorUseRule": "ESlateColorStylingMode::UseColor_Specified"
+            },
+            "DrawAs": "ESlateBrushDrawType::NoDrawType",
+            "Tiling": "ESlateBrushTileType::NoTile",
+            "Mirroring": "ESlateBrushMirrorType::NoMirror",
+            "ImageType": "ESlateBrushImageType::NoImage",
+            "ImageSize": {
+              "X": 32.0,
+              "Y": 32.0
+            },
+            "Margin": {
+              "Left": 0.0,
+              "Top": 0.0,
+              "Right": 0.0,
+              "Bottom": 0.0
+            },
+            "ResourceObject": null,
+            "OutlineSettings": {
+              "CornerRadii": {
+                "X": 0.0,
+                "Y": 0.0,
+                "Z": 0.0,
+                "W": 0.0
+              },
+              "Color": {
+                "SpecifiedColor": {
+                  "R": 0.0,
+                  "G": 0.0,
+                  "B": 0.0,
+                  "A": 0.0,
+                  "Hex": "000000"
+                },
+                "ColorUseRule": "ESlateColorStylingMode::UseColor_Specified"
+              },
+              "Width": 0.0,
+              "RoundingType": "ESlateBrushRoundingType::HalfHeightRadius",
+              "bUseBrushTransparency": false
+            },
+            "UVRegion": {
+              "Min": {
+                "X": 0.0,
+                "Y": 0.0
+              },
+              "Max": {
+                "X": 0.0,
+                "Y": 0.0
+              },
+              "bIsValid": 0
+            },
+            "bIsDynamicallyLoaded": false,
+            "ResourceName": "None"
+          }
+        }
+      },
+      "Quickslot_Top": {
+        "DisplayName": {
+          "CultureInvariantString": null
+        },
+        "HoldDisplayName": {
+          "CultureInvariantString": null
+        },
+        "NavBarPriority": 0,
+        "KeyboardInputTypeInfo": {
+          "Key": {
+            "KeyName": "Two"
+          },
+          "OverrrideState": "EInputActionState::Enabled",
+          "bActionRequiresHold": true,
+          "HoldTime": 0.5,
+          "HoldRollbackTime": 0.0,
+          "OverrideBrush": {
+            "TintColor": {
+              "SpecifiedColor": {
+                "R": 1.0,
+                "G": 1.0,
+                "B": 1.0,
+                "A": 1.0,
+                "Hex": "FFFFFF"
+              },
+              "ColorUseRule": "ESlateColorStylingMode::UseColor_Specified"
+            },
+            "DrawAs": "ESlateBrushDrawType::NoDrawType",
+            "Tiling": "ESlateBrushTileType::NoTile",
+            "Mirroring": "ESlateBrushMirrorType::NoMirror",
+            "ImageType": "ESlateBrushImageType::NoImage",
+            "ImageSize": {
+              "X": 32.0,
+              "Y": 32.0
+            },
+            "Margin": {
+              "Left": 0.0,
+              "Top": 0.0,
+              "Right": 0.0,
+              "Bottom": 0.0
+            },
+            "ResourceObject": null,
+            "OutlineSettings": {
+              "CornerRadii": {
+                "X": 0.0,
+                "Y": 0.0,
+                "Z": 0.0,
+                "W": 0.0
+              },
+              "Color": {
+                "SpecifiedColor": {
+                  "R": 0.0,
+                  "G": 0.0,
+                  "B": 0.0,
+                  "A": 0.0,
+                  "Hex": "000000"
+                },
+                "ColorUseRule": "ESlateColorStylingMode::UseColor_Specified"
+              },
+              "Width": 0.0,
+              "RoundingType": "ESlateBrushRoundingType::HalfHeightRadius",
+              "bUseBrushTransparency": false
+            },
+            "UVRegion": {
+              "Min": {
+                "X": 0.0,
+                "Y": 0.0
+              },
+              "Max": {
+                "X": 0.0,
+                "Y": 0.0
+              },
+              "bIsValid": 0
+            },
+            "bIsDynamicallyLoaded": false,
+            "ResourceName": "None"
+          }
+        },
+        "DefaultGamepadInputTypeInfo": {
+          "Key": {
+            "KeyName": "Gamepad_DPad_Up"
+          },
+          "OverrrideState": "EInputActionState::Enabled",
+          "bActionRequiresHold": true,
+          "HoldTime": 0.5,
+          "HoldRollbackTime": 0.0,
+          "OverrideBrush": {
+            "TintColor": {
+              "SpecifiedColor": {
+                "R": 1.0,
+                "G": 1.0,
+                "B": 1.0,
+                "A": 1.0,
+                "Hex": "FFFFFF"
+              },
+              "ColorUseRule": "ESlateColorStylingMode::UseColor_Specified"
+            },
+            "DrawAs": "ESlateBrushDrawType::NoDrawType",
+            "Tiling": "ESlateBrushTileType::NoTile",
+            "Mirroring": "ESlateBrushMirrorType::NoMirror",
+            "ImageType": "ESlateBrushImageType::NoImage",
+            "ImageSize": {
+              "X": 32.0,
+              "Y": 32.0
+            },
+            "Margin": {
+              "Left": 0.0,
+              "Top": 0.0,
+              "Right": 0.0,
+              "Bottom": 0.0
+            },
+            "ResourceObject": null,
+            "OutlineSettings": {
+              "CornerRadii": {
+                "X": 0.0,
+                "Y": 0.0,
+                "Z": 0.0,
+                "W": 0.0
+              },
+              "Color": {
+                "SpecifiedColor": {
+                  "R": 0.0,
+                  "G": 0.0,
+                  "B": 0.0,
+                  "A": 0.0,
+                  "Hex": "000000"
+                },
+                "ColorUseRule": "ESlateColorStylingMode::UseColor_Specified"
+              },
+              "Width": 0.0,
+              "RoundingType": "ESlateBrushRoundingType::HalfHeightRadius",
+              "bUseBrushTransparency": false
+            },
+            "UVRegion": {
+              "Min": {
+                "X": 0.0,
+                "Y": 0.0
+              },
+              "Max": {
+                "X": 0.0,
+                "Y": 0.0
+              },
+              "bIsValid": 0
+            },
+            "bIsDynamicallyLoaded": false,
+            "ResourceName": "None"
+          }
+        },
+        "GamepadInputOverrides": [],
+        "TouchInputTypeInfo": {
+          "Key": {
+            "KeyName": "None"
+          },
+          "OverrrideState": "EInputActionState::Enabled",
+          "bActionRequiresHold": false,
+          "HoldTime": 0.5,
+          "HoldRollbackTime": 0.0,
+          "OverrideBrush": {
+            "TintColor": {
+              "SpecifiedColor": {
+                "R": 1.0,
+                "G": 1.0,
+                "B": 1.0,
+                "A": 1.0,
+                "Hex": "FFFFFF"
+              },
+              "ColorUseRule": "ESlateColorStylingMode::UseColor_Specified"
+            },
+            "DrawAs": "ESlateBrushDrawType::NoDrawType",
+            "Tiling": "ESlateBrushTileType::NoTile",
+            "Mirroring": "ESlateBrushMirrorType::NoMirror",
+            "ImageType": "ESlateBrushImageType::NoImage",
+            "ImageSize": {
+              "X": 32.0,
+              "Y": 32.0
+            },
+            "Margin": {
+              "Left": 0.0,
+              "Top": 0.0,
+              "Right": 0.0,
+              "Bottom": 0.0
+            },
+            "ResourceObject": null,
+            "OutlineSettings": {
+              "CornerRadii": {
+                "X": 0.0,
+                "Y": 0.0,
+                "Z": 0.0,
+                "W": 0.0
+              },
+              "Color": {
+                "SpecifiedColor": {
+                  "R": 0.0,
+                  "G": 0.0,
+                  "B": 0.0,
+                  "A": 0.0,
+                  "Hex": "000000"
+                },
+                "ColorUseRule": "ESlateColorStylingMode::UseColor_Specified"
+              },
+              "Width": 0.0,
+              "RoundingType": "ESlateBrushRoundingType::HalfHeightRadius",
+              "bUseBrushTransparency": false
+            },
+            "UVRegion": {
+              "Min": {
+                "X": 0.0,
+                "Y": 0.0
+              },
+              "Max": {
+                "X": 0.0,
+                "Y": 0.0
+              },
+              "bIsValid": 0
+            },
+            "bIsDynamicallyLoaded": false,
+            "ResourceName": "None"
+          }
+        }
+      },
+      "Quickslot_Right": {
+        "DisplayName": {
+          "CultureInvariantString": null
+        },
+        "HoldDisplayName": {
+          "CultureInvariantString": null
+        },
+        "NavBarPriority": 0,
+        "KeyboardInputTypeInfo": {
+          "Key": {
+            "KeyName": "Three"
+          },
+          "OverrrideState": "EInputActionState::Enabled",
+          "bActionRequiresHold": true,
+          "HoldTime": 0.5,
+          "HoldRollbackTime": 0.0,
+          "OverrideBrush": {
+            "TintColor": {
+              "SpecifiedColor": {
+                "R": 1.0,
+                "G": 1.0,
+                "B": 1.0,
+                "A": 1.0,
+                "Hex": "FFFFFF"
+              },
+              "ColorUseRule": "ESlateColorStylingMode::UseColor_Specified"
+            },
+            "DrawAs": "ESlateBrushDrawType::NoDrawType",
+            "Tiling": "ESlateBrushTileType::NoTile",
+            "Mirroring": "ESlateBrushMirrorType::NoMirror",
+            "ImageType": "ESlateBrushImageType::NoImage",
+            "ImageSize": {
+              "X": 32.0,
+              "Y": 32.0
+            },
+            "Margin": {
+              "Left": 0.0,
+              "Top": 0.0,
+              "Right": 0.0,
+              "Bottom": 0.0
+            },
+            "ResourceObject": null,
+            "OutlineSettings": {
+              "CornerRadii": {
+                "X": 0.0,
+                "Y": 0.0,
+                "Z": 0.0,
+                "W": 0.0
+              },
+              "Color": {
+                "SpecifiedColor": {
+                  "R": 0.0,
+                  "G": 0.0,
+                  "B": 0.0,
+                  "A": 0.0,
+                  "Hex": "000000"
+                },
+                "ColorUseRule": "ESlateColorStylingMode::UseColor_Specified"
+              },
+              "Width": 0.0,
+              "RoundingType": "ESlateBrushRoundingType::HalfHeightRadius",
+              "bUseBrushTransparency": false
+            },
+            "UVRegion": {
+              "Min": {
+                "X": 0.0,
+                "Y": 0.0
+              },
+              "Max": {
+                "X": 0.0,
+                "Y": 0.0
+              },
+              "bIsValid": 0
+            },
+            "bIsDynamicallyLoaded": false,
+            "ResourceName": "None"
+          }
+        },
+        "DefaultGamepadInputTypeInfo": {
+          "Key": {
+            "KeyName": "Gamepad_DPad_Right"
+          },
+          "OverrrideState": "EInputActionState::Enabled",
+          "bActionRequiresHold": true,
+          "HoldTime": 0.5,
+          "HoldRollbackTime": 0.0,
+          "OverrideBrush": {
+            "TintColor": {
+              "SpecifiedColor": {
+                "R": 1.0,
+                "G": 1.0,
+                "B": 1.0,
+                "A": 1.0,
+                "Hex": "FFFFFF"
+              },
+              "ColorUseRule": "ESlateColorStylingMode::UseColor_Specified"
+            },
+            "DrawAs": "ESlateBrushDrawType::NoDrawType",
+            "Tiling": "ESlateBrushTileType::NoTile",
+            "Mirroring": "ESlateBrushMirrorType::NoMirror",
+            "ImageType": "ESlateBrushImageType::NoImage",
+            "ImageSize": {
+              "X": 32.0,
+              "Y": 32.0
+            },
+            "Margin": {
+              "Left": 0.0,
+              "Top": 0.0,
+              "Right": 0.0,
+              "Bottom": 0.0
+            },
+            "ResourceObject": null,
+            "OutlineSettings": {
+              "CornerRadii": {
+                "X": 0.0,
+                "Y": 0.0,
+                "Z": 0.0,
+                "W": 0.0
+              },
+              "Color": {
+                "SpecifiedColor": {
+                  "R": 0.0,
+                  "G": 0.0,
+                  "B": 0.0,
+                  "A": 0.0,
+                  "Hex": "000000"
+                },
+                "ColorUseRule": "ESlateColorStylingMode::UseColor_Specified"
+              },
+              "Width": 0.0,
+              "RoundingType": "ESlateBrushRoundingType::HalfHeightRadius",
+              "bUseBrushTransparency": false
+            },
+            "UVRegion": {
+              "Min": {
+                "X": 0.0,
+                "Y": 0.0
+              },
+              "Max": {
+                "X": 0.0,
+                "Y": 0.0
+              },
+              "bIsValid": 0
+            },
+            "bIsDynamicallyLoaded": false,
+            "ResourceName": "None"
+          }
+        },
+        "GamepadInputOverrides": [],
+        "TouchInputTypeInfo": {
+          "Key": {
+            "KeyName": "None"
+          },
+          "OverrrideState": "EInputActionState::Enabled",
+          "bActionRequiresHold": false,
+          "HoldTime": 0.5,
+          "HoldRollbackTime": 0.0,
+          "OverrideBrush": {
+            "TintColor": {
+              "SpecifiedColor": {
+                "R": 1.0,
+                "G": 1.0,
+                "B": 1.0,
+                "A": 1.0,
+                "Hex": "FFFFFF"
+              },
+              "ColorUseRule": "ESlateColorStylingMode::UseColor_Specified"
+            },
+            "DrawAs": "ESlateBrushDrawType::NoDrawType",
+            "Tiling": "ESlateBrushTileType::NoTile",
+            "Mirroring": "ESlateBrushMirrorType::NoMirror",
+            "ImageType": "ESlateBrushImageType::NoImage",
+            "ImageSize": {
+              "X": 32.0,
+              "Y": 32.0
+            },
+            "Margin": {
+              "Left": 0.0,
+              "Top": 0.0,
+              "Right": 0.0,
+              "Bottom": 0.0
+            },
+            "ResourceObject": null,
+            "OutlineSettings": {
+              "CornerRadii": {
+                "X": 0.0,
+                "Y": 0.0,
+                "Z": 0.0,
+                "W": 0.0
+              },
+              "Color": {
+                "SpecifiedColor": {
+                  "R": 0.0,
+                  "G": 0.0,
+                  "B": 0.0,
+                  "A": 0.0,
+                  "Hex": "000000"
+                },
+                "ColorUseRule": "ESlateColorStylingMode::UseColor_Specified"
+              },
+              "Width": 0.0,
+              "RoundingType": "ESlateBrushRoundingType::HalfHeightRadius",
+              "bUseBrushTransparency": false
+            },
+            "UVRegion": {
+              "Min": {
+                "X": 0.0,
+                "Y": 0.0
+              },
+              "Max": {
+                "X": 0.0,
+                "Y": 0.0
+              },
+              "bIsValid": 0
+            },
+            "bIsDynamicallyLoaded": false,
+            "ResourceName": "None"
+          }
+        }
+      },
+      "Quickslot_Bottom": {
+        "DisplayName": {
+          "CultureInvariantString": null
+        },
+        "HoldDisplayName": {
+          "CultureInvariantString": null
+        },
+        "NavBarPriority": 0,
+        "KeyboardInputTypeInfo": {
+          "Key": {
+            "KeyName": "Four"
+          },
+          "OverrrideState": "EInputActionState::Enabled",
+          "bActionRequiresHold": true,
+          "HoldTime": 0.5,
+          "HoldRollbackTime": 0.0,
+          "OverrideBrush": {
+            "TintColor": {
+              "SpecifiedColor": {
+                "R": 1.0,
+                "G": 1.0,
+                "B": 1.0,
+                "A": 1.0,
+                "Hex": "FFFFFF"
+              },
+              "ColorUseRule": "ESlateColorStylingMode::UseColor_Specified"
+            },
+            "DrawAs": "ESlateBrushDrawType::NoDrawType",
+            "Tiling": "ESlateBrushTileType::NoTile",
+            "Mirroring": "ESlateBrushMirrorType::NoMirror",
+            "ImageType": "ESlateBrushImageType::NoImage",
+            "ImageSize": {
+              "X": 32.0,
+              "Y": 32.0
+            },
+            "Margin": {
+              "Left": 0.0,
+              "Top": 0.0,
+              "Right": 0.0,
+              "Bottom": 0.0
+            },
+            "ResourceObject": null,
+            "OutlineSettings": {
+              "CornerRadii": {
+                "X": 0.0,
+                "Y": 0.0,
+                "Z": 0.0,
+                "W": 0.0
+              },
+              "Color": {
+                "SpecifiedColor": {
+                  "R": 0.0,
+                  "G": 0.0,
+                  "B": 0.0,
+                  "A": 0.0,
+                  "Hex": "000000"
+                },
+                "ColorUseRule": "ESlateColorStylingMode::UseColor_Specified"
+              },
+              "Width": 0.0,
+              "RoundingType": "ESlateBrushRoundingType::HalfHeightRadius",
+              "bUseBrushTransparency": false
+            },
+            "UVRegion": {
+              "Min": {
+                "X": 0.0,
+                "Y": 0.0
+              },
+              "Max": {
+                "X": 0.0,
+                "Y": 0.0
+              },
+              "bIsValid": 0
+            },
+            "bIsDynamicallyLoaded": false,
+            "ResourceName": "None"
+          }
+        },
+        "DefaultGamepadInputTypeInfo": {
+          "Key": {
+            "KeyName": "Gamepad_DPad_Down"
+          },
+          "OverrrideState": "EInputActionState::Enabled",
+          "bActionRequiresHold": true,
+          "HoldTime": 0.5,
+          "HoldRollbackTime": 0.0,
+          "OverrideBrush": {
+            "TintColor": {
+              "SpecifiedColor": {
+                "R": 1.0,
+                "G": 1.0,
+                "B": 1.0,
+                "A": 1.0,
+                "Hex": "FFFFFF"
+              },
+              "ColorUseRule": "ESlateColorStylingMode::UseColor_Specified"
+            },
+            "DrawAs": "ESlateBrushDrawType::NoDrawType",
+            "Tiling": "ESlateBrushTileType::NoTile",
+            "Mirroring": "ESlateBrushMirrorType::NoMirror",
+            "ImageType": "ESlateBrushImageType::NoImage",
+            "ImageSize": {
+              "X": 32.0,
+              "Y": 32.0
+            },
+            "Margin": {
+              "Left": 0.0,
+              "Top": 0.0,
+              "Right": 0.0,
+              "Bottom": 0.0
+            },
+            "ResourceObject": null,
+            "OutlineSettings": {
+              "CornerRadii": {
+                "X": 0.0,
+                "Y": 0.0,
+                "Z": 0.0,
+                "W": 0.0
+              },
+              "Color": {
+                "SpecifiedColor": {
+                  "R": 0.0,
+                  "G": 0.0,
+                  "B": 0.0,
+                  "A": 0.0,
+                  "Hex": "000000"
+                },
+                "ColorUseRule": "ESlateColorStylingMode::UseColor_Specified"
+              },
+              "Width": 0.0,
+              "RoundingType": "ESlateBrushRoundingType::HalfHeightRadius",
+              "bUseBrushTransparency": false
+            },
+            "UVRegion": {
+              "Min": {
+                "X": 0.0,
+                "Y": 0.0
+              },
+              "Max": {
+                "X": 0.0,
+                "Y": 0.0
+              },
+              "bIsValid": 0
+            },
+            "bIsDynamicallyLoaded": false,
+            "ResourceName": "None"
+          }
+        },
+        "GamepadInputOverrides": [],
+        "TouchInputTypeInfo": {
+          "Key": {
+            "KeyName": "None"
+          },
+          "OverrrideState": "EInputActionState::Enabled",
+          "bActionRequiresHold": false,
+          "HoldTime": 0.5,
+          "HoldRollbackTime": 0.0,
+          "OverrideBrush": {
+            "TintColor": {
+              "SpecifiedColor": {
+                "R": 1.0,
+                "G": 1.0,
+                "B": 1.0,
+                "A": 1.0,
+                "Hex": "FFFFFF"
+              },
+              "ColorUseRule": "ESlateColorStylingMode::UseColor_Specified"
+            },
+            "DrawAs": "ESlateBrushDrawType::NoDrawType",
+            "Tiling": "ESlateBrushTileType::NoTile",
+            "Mirroring": "ESlateBrushMirrorType::NoMirror",
+            "ImageType": "ESlateBrushImageType::NoImage",
+            "ImageSize": {
+              "X": 32.0,
+              "Y": 32.0
+            },
+            "Margin": {
+              "Left": 0.0,
+              "Top": 0.0,
+              "Right": 0.0,
+              "Bottom": 0.0
+            },
+            "ResourceObject": null,
+            "OutlineSettings": {
+              "CornerRadii": {
+                "X": 0.0,
+                "Y": 0.0,
+                "Z": 0.0,
+                "W": 0.0
+              },
+              "Color": {
+                "SpecifiedColor": {
+                  "R": 0.0,
+                  "G": 0.0,
+                  "B": 0.0,
+                  "A": 0.0,
+                  "Hex": "000000"
+                },
+                "ColorUseRule": "ESlateColorStylingMode::UseColor_Specified"
+              },
+              "Width": 0.0,
+              "RoundingType": "ESlateBrushRoundingType::HalfHeightRadius",
+              "bUseBrushTransparency": false
+            },
+            "UVRegion": {
+              "Min": {
+                "X": 0.0,
+                "Y": 0.0
+              },
+              "Max": {
+                "X": 0.0,
+                "Y": 0.0
+              },
+              "bIsValid": 0
+            },
+            "bIsDynamicallyLoaded": false,
+            "ResourceName": "None"
+          }
+        }
+      },
+      "Quickslot_ChangeConfig": {
+        "DisplayName": {
+          "CultureInvariantString": null
+        },
+        "HoldDisplayName": {
+          "CultureInvariantString": null
+        },
+        "NavBarPriority": 0,
+        "KeyboardInputTypeInfo": {
+          "Key": {
+            "KeyName": "T"
+          },
+          "OverrrideState": "EInputActionState::Enabled",
+          "bActionRequiresHold": false,
+          "HoldTime": 0.5,
+          "HoldRollbackTime": 0.0,
+          "OverrideBrush": {
+            "TintColor": {
+              "SpecifiedColor": {
+                "R": 1.0,
+                "G": 1.0,
+                "B": 1.0,
+                "A": 1.0,
+                "Hex": "FFFFFF"
+              },
+              "ColorUseRule": "ESlateColorStylingMode::UseColor_Specified"
+            },
+            "DrawAs": "ESlateBrushDrawType::NoDrawType",
+            "Tiling": "ESlateBrushTileType::NoTile",
+            "Mirroring": "ESlateBrushMirrorType::NoMirror",
+            "ImageType": "ESlateBrushImageType::NoImage",
+            "ImageSize": {
+              "X": 32.0,
+              "Y": 32.0
+            },
+            "Margin": {
+              "Left": 0.0,
+              "Top": 0.0,
+              "Right": 0.0,
+              "Bottom": 0.0
+            },
+            "ResourceObject": null,
+            "OutlineSettings": {
+              "CornerRadii": {
+                "X": 0.0,
+                "Y": 0.0,
+                "Z": 0.0,
+                "W": 0.0
+              },
+              "Color": {
+                "SpecifiedColor": {
+                  "R": 0.0,
+                  "G": 0.0,
+                  "B": 0.0,
+                  "A": 0.0,
+                  "Hex": "000000"
+                },
+                "ColorUseRule": "ESlateColorStylingMode::UseColor_Specified"
+              },
+              "Width": 0.0,
+              "RoundingType": "ESlateBrushRoundingType::HalfHeightRadius",
+              "bUseBrushTransparency": false
+            },
+            "UVRegion": {
+              "Min": {
+                "X": 0.0,
+                "Y": 0.0
+              },
+              "Max": {
+                "X": 0.0,
+                "Y": 0.0
+              },
+              "bIsValid": 0
+            },
+            "bIsDynamicallyLoaded": false,
+            "ResourceName": "None"
+          }
+        },
+        "DefaultGamepadInputTypeInfo": {
+          "Key": {
+            "KeyName": "Gamepad_FaceButton_Left"
+          },
+          "OverrrideState": "EInputActionState::Enabled",
+          "bActionRequiresHold": false,
+          "HoldTime": 0.5,
+          "HoldRollbackTime": 0.0,
+          "OverrideBrush": {
+            "TintColor": {
+              "SpecifiedColor": {
+                "R": 1.0,
+                "G": 1.0,
+                "B": 1.0,
+                "A": 1.0,
+                "Hex": "FFFFFF"
+              },
+              "ColorUseRule": "ESlateColorStylingMode::UseColor_Specified"
+            },
+            "DrawAs": "ESlateBrushDrawType::NoDrawType",
+            "Tiling": "ESlateBrushTileType::NoTile",
+            "Mirroring": "ESlateBrushMirrorType::NoMirror",
+            "ImageType": "ESlateBrushImageType::NoImage",
+            "ImageSize": {
+              "X": 32.0,
+              "Y": 32.0
+            },
+            "Margin": {
+              "Left": 0.0,
+              "Top": 0.0,
+              "Right": 0.0,
+              "Bottom": 0.0
+            },
+            "ResourceObject": null,
+            "OutlineSettings": {
+              "CornerRadii": {
+                "X": 0.0,
+                "Y": 0.0,
+                "Z": 0.0,
+                "W": 0.0
+              },
+              "Color": {
+                "SpecifiedColor": {
+                  "R": 0.0,
+                  "G": 0.0,
+                  "B": 0.0,
+                  "A": 0.0,
+                  "Hex": "000000"
+                },
+                "ColorUseRule": "ESlateColorStylingMode::UseColor_Specified"
+              },
+              "Width": 0.0,
+              "RoundingType": "ESlateBrushRoundingType::HalfHeightRadius",
+              "bUseBrushTransparency": false
+            },
+            "UVRegion": {
+              "Min": {
+                "X": 0.0,
+                "Y": 0.0
+              },
+              "Max": {
+                "X": 0.0,
+                "Y": 0.0
+              },
+              "bIsValid": 0
+            },
+            "bIsDynamicallyLoaded": false,
+            "ResourceName": "None"
+          }
+        },
+        "GamepadInputOverrides": [],
+        "TouchInputTypeInfo": {
+          "Key": {
+            "KeyName": "None"
+          },
+          "OverrrideState": "EInputActionState::Enabled",
+          "bActionRequiresHold": false,
+          "HoldTime": 0.5,
+          "HoldRollbackTime": 0.0,
+          "OverrideBrush": {
+            "TintColor": {
+              "SpecifiedColor": {
+                "R": 1.0,
+                "G": 1.0,
+                "B": 1.0,
+                "A": 1.0,
+                "Hex": "FFFFFF"
+              },
+              "ColorUseRule": "ESlateColorStylingMode::UseColor_Specified"
+            },
+            "DrawAs": "ESlateBrushDrawType::NoDrawType",
+            "Tiling": "ESlateBrushTileType::NoTile",
+            "Mirroring": "ESlateBrushMirrorType::NoMirror",
+            "ImageType": "ESlateBrushImageType::NoImage",
+            "ImageSize": {
+              "X": 32.0,
+              "Y": 32.0
+            },
+            "Margin": {
+              "Left": 0.0,
+              "Top": 0.0,
+              "Right": 0.0,
+              "Bottom": 0.0
+            },
+            "ResourceObject": null,
+            "OutlineSettings": {
+              "CornerRadii": {
+                "X": 0.0,
+                "Y": 0.0,
+                "Z": 0.0,
+                "W": 0.0
+              },
+              "Color": {
+                "SpecifiedColor": {
+                  "R": 0.0,
+                  "G": 0.0,
+                  "B": 0.0,
+                  "A": 0.0,
+                  "Hex": "000000"
+                },
+                "ColorUseRule": "ESlateColorStylingMode::UseColor_Specified"
+              },
+              "Width": 0.0,
+              "RoundingType": "ESlateBrushRoundingType::HalfHeightRadius",
+              "bUseBrushTransparency": false
+            },
+            "UVRegion": {
+              "Min": {
+                "X": 0.0,
+                "Y": 0.0
+              },
+              "Max": {
+                "X": 0.0,
+                "Y": 0.0
+              },
+              "bIsValid": 0
+            },
+            "bIsDynamicallyLoaded": false,
+            "ResourceName": "None"
+          }
+        }
+      }
+    }
+  }
+]

@@ -1,0 +1,244 @@
+[
+  {
+    "Type": "Function",
+    "Name": "Construct",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "WidgetBlueprintGeneratedClass'WBP_HUD_AbilityCooldownsContainer_C'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/AbilityCooldowns/WBP_HUD_AbilityCooldownsContainer.7"
+    },
+    "Super": {
+      "ObjectName": "Function'WBP_HUD_BuffContainer_C:Construct'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/Buffs/WBP_HUD_BuffContainer.2"
+    },
+    "FunctionFlags": "FUNC_BlueprintCosmetic | FUNC_Event | FUNC_Public | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "Destruct",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "WidgetBlueprintGeneratedClass'WBP_HUD_AbilityCooldownsContainer_C'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/AbilityCooldowns/WBP_HUD_AbilityCooldownsContainer.7"
+    },
+    "Super": {
+      "ObjectName": "Function'WBP_HUD_BuffContainer_C:Destruct'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/Buffs/WBP_HUD_BuffContainer.3"
+    },
+    "FunctionFlags": "FUNC_BlueprintCosmetic | FUNC_Event | FUNC_Public | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "ExecuteUbergraph_WBP_HUD_AbilityCooldownsContainer",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "WidgetBlueprintGeneratedClass'WBP_HUD_AbilityCooldownsContainer_C'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/AbilityCooldowns/WBP_HUD_AbilityCooldownsContainer.7"
+    },
+    "ChildProperties": [
+      {
+        "Type": "IntProperty",
+        "Name": "EntryPoint",
+        "Flags": "RF_Public",
+        "ElementSize": 4,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm"
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "K2Node_Event_IsDesignTime",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      }
+    ],
+    "FunctionFlags": "FUNC_Final | FUNC_UbergraphFunction"
+  },
+  {
+    "Type": "Function",
+    "Name": "OnCombatEnded_Event",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "WidgetBlueprintGeneratedClass'WBP_HUD_AbilityCooldownsContainer_C'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/AbilityCooldowns/WBP_HUD_AbilityCooldownsContainer.7"
+    },
+    "FunctionFlags": "FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "OnCombatStarted_Event",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "WidgetBlueprintGeneratedClass'WBP_HUD_AbilityCooldownsContainer_C'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/AbilityCooldowns/WBP_HUD_AbilityCooldownsContainer.7"
+    },
+    "FunctionFlags": "FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "PreConstruct",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "WidgetBlueprintGeneratedClass'WBP_HUD_AbilityCooldownsContainer_C'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/AbilityCooldowns/WBP_HUD_AbilityCooldownsContainer.7"
+    },
+    "SuperStruct": {
+      "ObjectName": "Class'UserWidget:PreConstruct'",
+      "ObjectPath": "/Script/UMG"
+    },
+    "ChildProperties": [
+      {
+        "Type": "BoolProperty",
+        "Name": "IsDesignTime",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      }
+    ],
+    "FunctionFlags": "FUNC_BlueprintCosmetic | FUNC_Event | FUNC_Public | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "WBP_HUD_AbilityCooldownsContainer_C",
+    "Name": "Default__WBP_HUD_AbilityCooldownsContainer_C",
+    "Flags": "RF_Public | RF_ClassDefaultObject | RF_ArchetypeObject | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "WidgetBlueprintGeneratedClass'/Game/_Dawnwalker/UI/_Unified/HUD/AbilityCooldowns/WBP_HUD_AbilityCooldownsContainer.WBP_HUD_AbilityCooldownsContainer_C'",
+    "Package": "/Game/_Dawnwalker/UI/_Unified/HUD/AbilityCooldowns/WBP_HUD_AbilityCooldownsContainer",
+    "Template": {
+      "ObjectName": "WBP_HUD_BuffContainer_C'Default__WBP_HUD_BuffContainer_C'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/Buffs/WBP_HUD_BuffContainer.15"
+    },
+    "Properties": {
+      "UberGraphFrame": {},
+      "Required Buff Tags": [
+        "Character.Debuff.AbilityCooldown"
+      ],
+      "Blocking Buff Tags": []
+    }
+  },
+  {
+    "Type": "WidgetBlueprintGeneratedClass",
+    "Name": "WBP_HUD_AbilityCooldownsContainer_C",
+    "Flags": "RF_Public | RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'WidgetBlueprintGeneratedClass'",
+    "Package": "/Game/_Dawnwalker/UI/_Unified/HUD/AbilityCooldowns/WBP_HUD_AbilityCooldownsContainer",
+    "Super": {
+      "ObjectName": "WidgetBlueprintGeneratedClass'WBP_HUD_BuffContainer_C'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/Buffs/WBP_HUD_BuffContainer.16"
+    },
+    "Properties": {
+      "WidgetTree": {
+        "ObjectName": "WidgetTree'WBP_HUD_AbilityCooldownsContainer_C:WidgetTree'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/AbilityCooldowns/WBP_HUD_AbilityCooldownsContainer.8"
+      },
+      "UberGraphFunction": {
+        "ObjectName": "Function'WBP_HUD_AbilityCooldownsContainer_C:ExecuteUbergraph_WBP_HUD_AbilityCooldownsContainer'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/AbilityCooldowns/WBP_HUD_AbilityCooldownsContainer.2"
+      }
+    },
+    "Children": [
+      {
+        "ObjectName": "Function'WBP_HUD_AbilityCooldownsContainer_C:OnCombatStarted_Event'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/AbilityCooldowns/WBP_HUD_AbilityCooldownsContainer.4"
+      },
+      {
+        "ObjectName": "Function'WBP_HUD_AbilityCooldownsContainer_C:OnCombatEnded_Event'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/AbilityCooldowns/WBP_HUD_AbilityCooldownsContainer.3"
+      },
+      {
+        "ObjectName": "Function'WBP_HUD_AbilityCooldownsContainer_C:Construct'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/AbilityCooldowns/WBP_HUD_AbilityCooldownsContainer.0"
+      },
+      {
+        "ObjectName": "Function'WBP_HUD_AbilityCooldownsContainer_C:Destruct'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/AbilityCooldowns/WBP_HUD_AbilityCooldownsContainer.1"
+      },
+      {
+        "ObjectName": "Function'WBP_HUD_AbilityCooldownsContainer_C:PreConstruct'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/AbilityCooldowns/WBP_HUD_AbilityCooldownsContainer.5"
+      },
+      {
+        "ObjectName": "Function'WBP_HUD_AbilityCooldownsContainer_C:ExecuteUbergraph_WBP_HUD_AbilityCooldownsContainer'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/AbilityCooldowns/WBP_HUD_AbilityCooldownsContainer.2"
+      }
+    ],
+    "ChildProperties": [
+      {
+        "Type": "StructProperty",
+        "Name": "UberGraphFrame",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 16,
+        "PropertyFlags": "Transient | DuplicateTransient",
+        "Struct": {
+          "ObjectName": "Class'PointerToUberGraphFrame'",
+          "ObjectPath": "/Script/Engine"
+        }
+      }
+    ],
+    "FuncMap": {
+      "ExecuteUbergraph_WBP_HUD_AbilityCooldownsContainer": {
+        "ObjectName": "Function'WBP_HUD_AbilityCooldownsContainer_C:ExecuteUbergraph_WBP_HUD_AbilityCooldownsContainer'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/AbilityCooldowns/WBP_HUD_AbilityCooldownsContainer.2"
+      },
+      "PreConstruct": {
+        "ObjectName": "Function'WBP_HUD_AbilityCooldownsContainer_C:PreConstruct'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/AbilityCooldowns/WBP_HUD_AbilityCooldownsContainer.5"
+      },
+      "Destruct": {
+        "ObjectName": "Function'WBP_HUD_AbilityCooldownsContainer_C:Destruct'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/AbilityCooldowns/WBP_HUD_AbilityCooldownsContainer.1"
+      },
+      "Construct": {
+        "ObjectName": "Function'WBP_HUD_AbilityCooldownsContainer_C:Construct'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/AbilityCooldowns/WBP_HUD_AbilityCooldownsContainer.0"
+      },
+      "OnCombatEnded_Event": {
+        "ObjectName": "Function'WBP_HUD_AbilityCooldownsContainer_C:OnCombatEnded_Event'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/AbilityCooldowns/WBP_HUD_AbilityCooldownsContainer.3"
+      },
+      "OnCombatStarted_Event": {
+        "ObjectName": "Function'WBP_HUD_AbilityCooldownsContainer_C:OnCombatStarted_Event'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/AbilityCooldowns/WBP_HUD_AbilityCooldownsContainer.4"
+      }
+    },
+    "ClassFlags": "CLASS_ReplicationDataIsSetUp | CLASS_EditInlineNew | CLASS_CompiledFromBlueprint | CLASS_DefaultToInstanced | CLASS_HasInstancedReference",
+    "ClassWithin": {
+      "ObjectName": "Class'Object'",
+      "ObjectPath": "/Script/CoreUObject"
+    },
+    "ClassConfigName": "Engine",
+    "bCooked": true,
+    "ClassDefaultObject": {
+      "ObjectName": "WBP_HUD_AbilityCooldownsContainer_C'Default__WBP_HUD_AbilityCooldownsContainer_C'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/AbilityCooldowns/WBP_HUD_AbilityCooldownsContainer.6"
+    },
+    "EditorTags": {
+      "BlueprintType": "BPTYPE_Normal"
+    }
+  },
+  {
+    "Type": "WidgetTree",
+    "Name": "WidgetTree",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'WidgetTree'",
+    "Outer": {
+      "ObjectName": "WidgetBlueprintGeneratedClass'WBP_HUD_AbilityCooldownsContainer_C'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/AbilityCooldowns/WBP_HUD_AbilityCooldownsContainer.7"
+    }
+  }
+]

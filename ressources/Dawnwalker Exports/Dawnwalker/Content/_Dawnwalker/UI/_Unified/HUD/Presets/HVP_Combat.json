@@ -1,0 +1,19 @@
+[
+  {
+    "Type": "HUDVisibilityPreset",
+    "Name": "HVP_Combat",
+    "Flags": "RF_Public | RF_Standalone | RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'HUDVisibilityPreset'",
+    "Package": "/Game/_Dawnwalker/UI/_Unified/HUD/Presets/HVP_Combat",
+    "Properties": {
+      "ChosenElements": [
+        {
+          "TagName": "UI.HUD.Elements.QuestInfo"
+        },
+        {
+          "TagName": "UI.HUD.Elements.Time"
+        }
+      ]
+    }
+  }
+]

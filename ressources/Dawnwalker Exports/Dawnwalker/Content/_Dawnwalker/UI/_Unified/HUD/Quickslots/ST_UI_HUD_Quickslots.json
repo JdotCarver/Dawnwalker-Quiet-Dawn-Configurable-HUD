@@ -1,0 +1,19 @@
+[
+  {
+    "Type": "StringTable",
+    "Name": "ST_UI_HUD_Quickslots",
+    "Flags": "RF_Public | RF_Standalone | RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'StringTable'",
+    "Package": "/Game/_Dawnwalker/UI/_Unified/HUD/Quickslots/ST_UI_HUD_Quickslots",
+    "Properties": {
+      "TableVersion": "EStringTableVersion::CurrentTableVersion"
+    },
+    "StringTable": {
+      "TableNamespace": "ST_UI_HUD_Quickslots",
+      "KeysToEntries": {
+        "TorchTimeDisplayFormat": "{minutes} m {seconds} s"
+      },
+      "KeysToMetaData": {}
+    }
+  }
+]

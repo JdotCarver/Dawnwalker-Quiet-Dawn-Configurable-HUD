@@ -1,0 +1,81 @@
+[
+  {
+    "Type": "AkAudioEvent",
+    "Name": "UI_Quickslot_Swap",
+    "Flags": "RF_Public | RF_Standalone | RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'AkAudioEvent'",
+    "Package": "/Game/Audio/AK_Events/Events/UI/UI_Gameplay/UI_Quickslot_Swap",
+    "EventCookedData": {
+      "EventLanguageMap": [
+        {
+          "Key": {
+            "LanguageId": 0,
+            "LanguageName": "SFX",
+            "LanguageRequirement": "EWwiseLanguageRequirement::SFX"
+          },
+          "Value": {
+            "EventId": 2019543523,
+            "SoundBanks": [
+              {
+                "SoundBankId": 2019543523,
+                "SoundBankPathName": "None",
+                "MemoryAlignment": 0,
+                "bDeviceMemory": false,
+                "bContainsMedia": false,
+                "SoundBankType": "EWwiseSoundBankType::Event",
+                "DebugName": "UI_Quickslot_Swap",
+                "PackagedFile": {
+                  "Hash": 3458292776,
+                  "PathName": "WwiseStaging/Event/20/2019543523.bnk",
+                  "ModularGameplayName": "Game",
+                  "bStreaming": false
+                }
+              }
+            ],
+            "Media": [
+              {
+                "MediaId": 601920660,
+                "MediaPathName": "None",
+                "PrefetchSize": 0,
+                "MemoryAlignment": 0,
+                "bDeviceMemory": false,
+                "bStreaming": false,
+                "DebugName": "UI\\UI_Menus\\UI_Quickslot_Swap.wav",
+                "PackagedFile": {
+                  "Hash": 2023790747,
+                  "PathName": "WwiseStaging/Media/60/601920660.wem",
+                  "bStreaming": false
+                }
+              },
+              {
+                "MediaId": 737671457,
+                "MediaPathName": "None",
+                "PrefetchSize": 0,
+                "MemoryAlignment": 0,
+                "bDeviceMemory": false,
+                "bStreaming": false,
+                "DebugName": "UI\\UI_Menus\\UI_Quickslot_Swap_2.wav",
+                "PackagedFile": {
+                  "Hash": 2942415323,
+                  "PathName": "WwiseStaging/Media/73/737671457.wem",
+                  "bStreaming": false
+                }
+              }
+            ],
+            "ExternalSources": [],
+            "SwitchContainerLeaves": [],
+            "RequiredGroupValueSet": [],
+            "DestroyOptions": "EWwiseEventDestroyOptions::StopEventOnDestroy",
+            "DebugName": "UI_Quickslot_Swap"
+          }
+        }
+      ],
+      "DebugName": "UI_Quickslot_Swap",
+      "EventId": 2019543523
+    },
+    "MaximumDuration": 2.0325832,
+    "MinimumDuration": 1.9602083,
+    "IsInfinite": false,
+    "MaxAttenuationRadius": 0.0
+  }
+]

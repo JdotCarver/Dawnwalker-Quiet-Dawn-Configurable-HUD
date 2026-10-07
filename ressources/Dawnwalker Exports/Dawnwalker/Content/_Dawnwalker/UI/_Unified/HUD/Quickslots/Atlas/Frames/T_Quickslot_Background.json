@@ -1,0 +1,139 @@
+[
+  {
+    "Type": "BodySetup",
+    "Name": "BodySetup_1",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'BodySetup'",
+    "Outer": {
+      "ObjectName": "PaperSprite'T_Quickslot_Background'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/Quickslots/Atlas/Frames/T_Quickslot_Background.1"
+    },
+    "Properties": {
+      "AggGeom": {
+        "BoxElems": [
+          {
+            "Center": {
+              "X": 0.5,
+              "Y": 0.0,
+              "Z": -0.5
+            },
+            "Rotation": {
+              "Pitch": 0.0,
+              "Yaw": 0.0,
+              "Roll": 0.0
+            },
+            "X": 149.0,
+            "Y": 10.0,
+            "Z": 149.0,
+            "RestOffset": 0.0,
+            "Name": "None",
+            "bContributeToMass": true,
+            "CollisionEnabled": "ECollisionEnabled::QueryAndPhysics"
+          }
+        ]
+      },
+      "DefaultInstance": {
+        "ObjectType": "ECollisionChannel::ECC_WorldDynamic",
+        "CollisionProfileName": "BlockAllDynamic",
+        "CollisionResponses": {
+          "ResponseArray": [
+            {
+              "Channel": "PlayerPawn",
+              "Response": "ECollisionResponse::ECR_Block"
+            },
+            {
+              "Channel": "NPCPawn",
+              "Response": "ECollisionResponse::ECR_Block"
+            },
+            {
+              "Channel": "LedgeClimb",
+              "Response": "ECollisionResponse::ECR_Block"
+            },
+            {
+              "Channel": "ActionPoint",
+              "Response": "ECollisionResponse::ECR_Block"
+            },
+            {
+              "Channel": "Projectile",
+              "Response": "ECollisionResponse::ECR_Block"
+            },
+            {
+              "Channel": "ShadowstepAim",
+              "Response": "ECollisionResponse::ECR_Block"
+            }
+          ]
+        }
+      },
+      "CollisionTraceFlag": "ECollisionTraceFlag::CTF_UseSimpleAsComplex"
+    },
+    "BodySetupGuid": "C42FB1A146EBE9BE10E492AB1AC9741F"
+  },
+  {
+    "Type": "PaperSprite",
+    "Name": "T_Quickslot_Background",
+    "Flags": "RF_Public | RF_Standalone | RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'PaperSprite'",
+    "Package": "/Game/_Dawnwalker/UI/_Unified/HUD/Quickslots/Atlas/Frames/T_Quickslot_Background",
+    "Properties": {
+      "BakedSourceUV": {
+        "X": 1.0,
+        "Y": 235.0
+      },
+      "BakedSourceDimension": {
+        "X": 152.0,
+        "Y": 152.0
+      },
+      "BakedSourceTexture": {
+        "ObjectName": "Texture2D'Atlas_0'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/Quickslots/Atlas/Textures/Atlas_0.0"
+      },
+      "DefaultMaterial": {
+        "ObjectName": "MaterialInstanceConstant'TranslucentUnlitSpriteMaterial'",
+        "ObjectPath": "/Paper2D/TranslucentUnlitSpriteMaterial.0"
+      },
+      "PixelsPerUnrealUnit": 1.0,
+      "BodySetup": {
+        "ObjectName": "BodySetup'T_Quickslot_Background:BodySetup_1'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/Quickslots/Atlas/Frames/T_Quickslot_Background.0"
+      },
+      "BakedRenderData": [
+        {
+          "X": 75.0,
+          "Y": 74.0,
+          "Z": 0.59375,
+          "W": 0.46289062
+        },
+        {
+          "X": -74.0,
+          "Y": 74.0,
+          "Z": 0.01171875,
+          "W": 0.46289062
+        },
+        {
+          "X": -74.0,
+          "Y": -75.0,
+          "Z": 0.01171875,
+          "W": 0.75390625
+        },
+        {
+          "X": 75.0,
+          "Y": -75.0,
+          "Z": 0.59375,
+          "W": 0.75390625
+        },
+        {
+          "X": 75.0,
+          "Y": 74.0,
+          "Z": 0.59375,
+          "W": 0.46289062
+        },
+        {
+          "X": -74.0,
+          "Y": -75.0,
+          "Z": 0.01171875,
+          "W": 0.75390625
+        }
+      ]
+    }
+  }
+]

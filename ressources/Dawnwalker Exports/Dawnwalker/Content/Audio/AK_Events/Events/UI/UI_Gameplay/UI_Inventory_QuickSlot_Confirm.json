@@ -1,0 +1,67 @@
+[
+  {
+    "Type": "AkAudioEvent",
+    "Name": "UI_Inventory_QuickSlot_Confirm",
+    "Flags": "RF_Public | RF_Standalone | RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'AkAudioEvent'",
+    "Package": "/Game/Audio/AK_Events/Events/UI/UI_Gameplay/UI_Inventory_QuickSlot_Confirm",
+    "EventCookedData": {
+      "EventLanguageMap": [
+        {
+          "Key": {
+            "LanguageId": 0,
+            "LanguageName": "SFX",
+            "LanguageRequirement": "EWwiseLanguageRequirement::SFX"
+          },
+          "Value": {
+            "EventId": 2269866543,
+            "SoundBanks": [
+              {
+                "SoundBankId": 2269866543,
+                "SoundBankPathName": "None",
+                "MemoryAlignment": 0,
+                "bDeviceMemory": false,
+                "bContainsMedia": false,
+                "SoundBankType": "EWwiseSoundBankType::Event",
+                "DebugName": "UI_Inventory_QuickSlot_Confirm",
+                "PackagedFile": {
+                  "Hash": 3268328972,
+                  "PathName": "WwiseStaging/Event/22/2269866543.bnk",
+                  "ModularGameplayName": "Game",
+                  "bStreaming": false
+                }
+              }
+            ],
+            "Media": [
+              {
+                "MediaId": 664819739,
+                "MediaPathName": "None",
+                "PrefetchSize": 0,
+                "MemoryAlignment": 0,
+                "bDeviceMemory": false,
+                "bStreaming": false,
+                "DebugName": "UI\\UI_Menus\\UI_Inventory_QuickSlot_Confirm.wav",
+                "PackagedFile": {
+                  "Hash": 2825424759,
+                  "PathName": "WwiseStaging/Media/66/664819739.wem",
+                  "bStreaming": false
+                }
+              }
+            ],
+            "ExternalSources": [],
+            "SwitchContainerLeaves": [],
+            "RequiredGroupValueSet": [],
+            "DestroyOptions": "EWwiseEventDestroyOptions::StopEventOnDestroy",
+            "DebugName": "UI_Inventory_QuickSlot_Confirm"
+          }
+        }
+      ],
+      "DebugName": "UI_Inventory_QuickSlot_Confirm",
+      "EventId": 2269866543
+    },
+    "MaximumDuration": 2.517252,
+    "MinimumDuration": 2.517252,
+    "IsInfinite": false,
+    "MaxAttenuationRadius": 0.0
+  }
+]

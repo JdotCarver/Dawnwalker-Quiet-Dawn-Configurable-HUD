@@ -1,0 +1,1479 @@
+[
+  {
+    "Type": "Border",
+    "Name": "Border_24",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Border'",
+    "Outer": {
+      "ObjectName": "WidgetTree'WBP_HUD_Quickslots_TorchRemainingDuration_C:WidgetTree'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/Quickslots/WBP_HUD_Quickslots_TorchRemainingDuration.26"
+    },
+    "Properties": {
+      "Padding": {
+        "Left": 25.0,
+        "Top": 5.0,
+        "Right": 25.0,
+        "Bottom": 15.0
+      },
+      "Background": {
+        "DrawAs": "ESlateBrushDrawType::Box",
+        "ImageType": "ESlateBrushImageType::FullColor",
+        "ImageSize": {
+          "X": 128.0,
+          "Y": 128.0
+        },
+        "Margin": {
+          "Left": 0.5,
+          "Top": 0.5,
+          "Right": 0.5,
+          "Bottom": 0.5
+        },
+        "ResourceObject": {
+          "ObjectName": "Texture2D'T_Generic_Line_Background'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/SharedTextures/Backgrounds/T_Generic_Line_Background.0"
+        }
+      },
+      "BrushColor": {
+        "R": 0.0,
+        "G": 0.0,
+        "B": 0.0,
+        "A": 0.2,
+        "Hex": "33000000"
+      },
+      "Slots": [
+        {
+          "ObjectName": "BorderSlot'WBP_HUD_Quickslots_TorchRemainingDuration_C:WidgetTree.Border_24.BorderSlot_0'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/Quickslots/WBP_HUD_Quickslots_TorchRemainingDuration.1"
+        }
+      ],
+      "bIsVariable": true,
+      "Visibility": "ESlateVisibility::SelfHitTestInvisible"
+    }
+  },
+  {
+    "Type": "BorderSlot",
+    "Name": "BorderSlot_0",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'BorderSlot'",
+    "Outer": {
+      "ObjectName": "Border'WBP_HUD_Quickslots_TorchRemainingDuration_C:WidgetTree.Border_24'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/Quickslots/WBP_HUD_Quickslots_TorchRemainingDuration.0"
+    },
+    "Properties": {
+      "Padding": {
+        "Left": 25.0,
+        "Top": 5.0,
+        "Right": 25.0,
+        "Bottom": 15.0
+      },
+      "Parent": {
+        "ObjectName": "Border'WBP_HUD_Quickslots_TorchRemainingDuration_C:WidgetTree.Border_24'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/Quickslots/WBP_HUD_Quickslots_TorchRemainingDuration.0"
+      },
+      "Content": {
+        "ObjectName": "DWW_Text_C'WBP_HUD_Quickslots_TorchRemainingDuration_C:WidgetTree.TimeLabel'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/Quickslots/WBP_HUD_Quickslots_TorchRemainingDuration.2"
+      }
+    }
+  },
+  {
+    "Type": "DWW_Text_C",
+    "Name": "TimeLabel",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "BlueprintGeneratedClass'/Game/_Dawnwalker/UI/_Unified/BaseWidgets/DWW_Text.DWW_Text_C'",
+    "Outer": {
+      "ObjectName": "WidgetTree'WBP_HUD_Quickslots_TorchRemainingDuration_C:WidgetTree'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/Quickslots/WBP_HUD_Quickslots_TorchRemainingDuration.26"
+    },
+    "Template": {
+      "ObjectName": "DWW_Text_C'Default__DWW_Text_C'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/BaseWidgets/DWW_Text.1"
+    },
+    "Properties": {
+      "Style": {
+        "ObjectName": "BlueprintGeneratedClass'DTS_Common_White_C'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/TextStyles/DTS_Common_White.0"
+      },
+      "Text": {
+        "CultureInvariantString": "5m 24s"
+      },
+      "ColorAndOpacity": {
+        "SpecifiedColor": {
+          "R": 1.0,
+          "G": 0.0,
+          "B": 1.0,
+          "A": 1.0,
+          "Hex": "FF00FF"
+        }
+      },
+      "Font": {
+        "FontObject": null,
+        "TypefaceFontName": "None",
+        "Size": 24.0
+      },
+      "ShadowOffset": {
+        "X": 0.0,
+        "Y": 0.0
+      },
+      "ShadowColorAndOpacity": {
+        "R": 0.0,
+        "G": 0.0,
+        "B": 0.0,
+        "A": 0.0,
+        "Hex": "000000"
+      },
+      "Slot": {
+        "ObjectName": "BorderSlot'WBP_HUD_Quickslots_TorchRemainingDuration_C:WidgetTree.Border_24.BorderSlot_0'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/Quickslots/WBP_HUD_Quickslots_TorchRemainingDuration.1"
+      },
+      "bIsVariable": true
+    }
+  },
+  {
+    "Type": "Function",
+    "Name": "Construct",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "WidgetBlueprintGeneratedClass'WBP_HUD_Quickslots_TorchRemainingDuration_C'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/Quickslots/WBP_HUD_Quickslots_TorchRemainingDuration.25"
+    },
+    "SuperStruct": {
+      "ObjectName": "Class'UserWidget:Construct'",
+      "ObjectPath": "/Script/UMG"
+    },
+    "FunctionFlags": "FUNC_BlueprintCosmetic | FUNC_Event | FUNC_Public | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "Destruct",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "WidgetBlueprintGeneratedClass'WBP_HUD_Quickslots_TorchRemainingDuration_C'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/Quickslots/WBP_HUD_Quickslots_TorchRemainingDuration.25"
+    },
+    "SuperStruct": {
+      "ObjectName": "Class'UserWidget:Destruct'",
+      "ObjectPath": "/Script/UMG"
+    },
+    "FunctionFlags": "FUNC_BlueprintCosmetic | FUNC_Event | FUNC_Public | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "ExecuteUbergraph_WBP_HUD_Quickslots_TorchRemainingDuration",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "WidgetBlueprintGeneratedClass'WBP_HUD_Quickslots_TorchRemainingDuration_C'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/Quickslots/WBP_HUD_Quickslots_TorchRemainingDuration.25"
+    },
+    "ChildProperties": [
+      {
+        "Type": "IntProperty",
+        "Name": "EntryPoint",
+        "Flags": "RF_Public",
+        "ElementSize": 4,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm"
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_GetPlayerPawn_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'Pawn'",
+          "ObjectPath": "/Script/Engine"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "K2Node_DynamicCast_AsDawnwalker_Player_Character",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'DawnwalkerPlayerCharacter'",
+          "ObjectPath": "/Script/Dawnwalker"
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "K2Node_DynamicCast_bSuccess",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "DelegateProperty",
+        "Name": "K2Node_CreateDelegate_OutputDelegate",
+        "Flags": "RF_Public",
+        "ElementSize": 32,
+        "SignatureFunction": {
+          "ObjectName": "Class'QuickslotUpdateDelegate__DelegateSignature'",
+          "ObjectPath": "/Script/DogwoodSystem"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_GetAbilitySystemComponent_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "InstancedReference",
+        "PropertyClass": {
+          "ObjectName": "Class'AbilitySystemComponent'",
+          "ObjectPath": "/Script/GameplayAbilities"
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "CallFunc_GetFloatAttributeFromAbilitySystemComponent_bSuccessfullyFoundAttribute",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "FloatProperty",
+        "Name": "CallFunc_GetFloatAttributeFromAbilitySystemComponent_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 4
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_PlayAnimationReverse_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'UMGSequencePlayer'",
+          "ObjectPath": "/Script/UMG"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_PlayAnimationForward_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'UMGSequencePlayer'",
+          "ObjectPath": "/Script/UMG"
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "CallFunc_Not_PreBool_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "DelegateProperty",
+        "Name": "K2Node_CreateDelegate_OutputDelegate_1",
+        "Flags": "RF_Public",
+        "ElementSize": 32,
+        "SignatureFunction": {
+          "ObjectName": "Class'OnTorchRemainingTimeChanged__DelegateSignature'",
+          "ObjectPath": "/Script/Dawnwalker"
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "CallFunc_IsValid_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_GetWorldSubsystem_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'InventoryQuickslotSubsystem'",
+          "ObjectPath": "/Script/DogwoodInventory"
+        }
+      },
+      {
+        "Type": "DelegateProperty",
+        "Name": "K2Node_CreateDelegate_OutputDelegate_2",
+        "Flags": "RF_Public",
+        "ElementSize": 32,
+        "SignatureFunction": {
+          "ObjectName": "Class'TorchStateDelegate__DelegateSignature'",
+          "ObjectPath": "/Script/Dawnwalker"
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "K2Node_CustomEvent_bNewTorchState",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      }
+    ],
+    "FunctionFlags": "FUNC_Final | FUNC_UbergraphFunction"
+  },
+  {
+    "Type": "Function",
+    "Name": "Manually Update Torch Time",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "WidgetBlueprintGeneratedClass'WBP_HUD_Quickslots_TorchRemainingDuration_C'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/Quickslots/WBP_HUD_Quickslots_TorchRemainingDuration.25"
+    },
+    "FunctionFlags": "FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "On Torch Remaining Time Changed",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "WidgetBlueprintGeneratedClass'WBP_HUD_Quickslots_TorchRemainingDuration_C'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/Quickslots/WBP_HUD_Quickslots_TorchRemainingDuration.25"
+    },
+    "ChildProperties": [
+      {
+        "Type": "FloatProperty",
+        "Name": "RemainingTime",
+        "Flags": "RF_Public",
+        "ElementSize": 4,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm"
+      },
+      {
+        "Type": "IntProperty",
+        "Name": "Minutes",
+        "Flags": "RF_Public",
+        "ElementSize": 4,
+        "PropertyFlags": "Edit | BlueprintVisible"
+      },
+      {
+        "Type": "IntProperty",
+        "Name": "Seconds",
+        "Flags": "RF_Public",
+        "ElementSize": 4,
+        "PropertyFlags": "Edit | BlueprintVisible"
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "CallFunc_Greater_DoubleDouble_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "Int64Property",
+        "Name": "CallFunc_Conv_IntToInt64_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 8
+      },
+      {
+        "Type": "StructProperty",
+        "Name": "K2Node_MakeStruct_FormatArgumentData",
+        "Flags": "RF_Public",
+        "ElementSize": 72,
+        "Struct": {
+          "ObjectName": "Class'FormatArgumentData'",
+          "ObjectPath": "/Script/Engine"
+        }
+      },
+      {
+        "Type": "DoubleProperty",
+        "Name": "CallFunc_Divide_DoubleDouble_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 8
+      },
+      {
+        "Type": "DoubleProperty",
+        "Name": "CallFunc_Percent_FloatFloat_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 8
+      },
+      {
+        "Type": "IntProperty",
+        "Name": "CallFunc_FFloor_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 4
+      },
+      {
+        "Type": "IntProperty",
+        "Name": "CallFunc_FFloor_ReturnValue_1",
+        "Flags": "RF_Public",
+        "ElementSize": 4
+      },
+      {
+        "Type": "TextProperty",
+        "Name": "CallFunc_Conv_IntToText_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 16
+      },
+      {
+        "Type": "StructProperty",
+        "Name": "K2Node_MakeStruct_FormatArgumentData_1",
+        "Flags": "RF_Public",
+        "ElementSize": 72,
+        "Struct": {
+          "ObjectName": "Class'FormatArgumentData'",
+          "ObjectPath": "/Script/Engine"
+        }
+      },
+      {
+        "Type": "ArrayProperty",
+        "Name": "K2Node_MakeArray_Array",
+        "Flags": "RF_Public",
+        "ElementSize": 16,
+        "PropertyFlags": "ReferenceParm",
+        "Inner": {
+          "Type": "StructProperty",
+          "Name": "K2Node_MakeArray_Array",
+          "Flags": "RF_Public",
+          "ElementSize": 72,
+          "Struct": {
+            "ObjectName": "Class'FormatArgumentData'",
+            "ObjectPath": "/Script/Engine"
+          }
+        }
+      },
+      {
+        "Type": "TextProperty",
+        "Name": "CallFunc_Format_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 16
+      },
+      {
+        "Type": "DoubleProperty",
+        "Name": "CallFunc_Percent_FloatFloat_A_ImplicitCast",
+        "Flags": "RF_Public",
+        "ElementSize": 8
+      },
+      {
+        "Type": "DoubleProperty",
+        "Name": "CallFunc_Divide_DoubleDouble_A_ImplicitCast",
+        "Flags": "RF_Public",
+        "ElementSize": 8
+      },
+      {
+        "Type": "DoubleProperty",
+        "Name": "CallFunc_Greater_DoubleDouble_A_ImplicitCast",
+        "Flags": "RF_Public",
+        "ElementSize": 8
+      }
+    ],
+    "FunctionFlags": "FUNC_Public | FUNC_HasDefaults | FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "Torch State Changed",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "WidgetBlueprintGeneratedClass'WBP_HUD_Quickslots_TorchRemainingDuration_C'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/Quickslots/WBP_HUD_Quickslots_TorchRemainingDuration.25"
+    },
+    "ChildProperties": [
+      {
+        "Type": "BoolProperty",
+        "Name": "bNewTorchState",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      }
+    ],
+    "FunctionFlags": "FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "MovieScene",
+    "Name": "FadeIn",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'MovieScene'",
+    "Outer": {
+      "ObjectName": "WidgetAnimation'WBP_HUD_Quickslots_TorchRemainingDuration_C:FadeIn_INST'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/Quickslots/WBP_HUD_Quickslots_TorchRemainingDuration.24"
+    },
+    "Properties": {
+      "Possessables": [
+        {
+          "Tags": [],
+          "Guid": "D8292BA6-40C47356-AA911984-2CC82277",
+          "Name": "Border_24",
+          "ParentGuid": "00000000-00000000-00000000-00000000",
+          "SpawnableObjectBindingID": {
+            "Guid": "00000000-00000000-00000000-00000000",
+            "SequenceID": 0,
+            "ResolveParentIndex": -1
+          }
+        }
+      ],
+      "ObjectBindings": [
+        {
+          "ObjectGuid": "D8292BA6-40C47356-AA911984-2CC82277",
+          "BindingName": "Border_24",
+          "Tracks": [
+            {
+              "ObjectName": "MovieSceneByteTrack'WBP_HUD_Quickslots_TorchRemainingDuration_C:FadeIn_INST.FadeIn.MovieSceneByteTrack_0'",
+              "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/Quickslots/WBP_HUD_Quickslots_TorchRemainingDuration.19"
+            },
+            {
+              "ObjectName": "MovieSceneFloatTrack'WBP_HUD_Quickslots_TorchRemainingDuration_C:FadeIn_INST.FadeIn.MovieSceneFloatTrack_0'",
+              "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/Quickslots/WBP_HUD_Quickslots_TorchRemainingDuration.22"
+            },
+            {
+              "ObjectName": "MovieScene2DTransformTrack'WBP_HUD_Quickslots_TorchRemainingDuration_C:FadeIn_INST.FadeIn.MovieScene2DTransformTrack_0'",
+              "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/Quickslots/WBP_HUD_Quickslots_TorchRemainingDuration.11"
+            }
+          ]
+        }
+      ],
+      "PlaybackRange": {
+        "Value": {
+          "LowerBound": {
+            "Type": 1,
+            "Value": {
+              "Value": 0
+            }
+          },
+          "UpperBound": {
+            "Type": 0,
+            "Value": {
+              "Value": 15001
+            }
+          }
+        }
+      },
+      "DisplayRate": {
+        "Numerator": 20
+      },
+      "Signature": "1BD1340D-49EDA0B4-6A43CABE-32C0095E"
+    }
+  },
+  {
+    "Type": "MovieScene2DTransformSection",
+    "Name": "MovieScene2DTransformSection_0",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'MovieScene2DTransformSection'",
+    "Outer": {
+      "ObjectName": "MovieScene2DTransformTrack'WBP_HUD_Quickslots_TorchRemainingDuration_C:FadeIn_INST.FadeIn.MovieScene2DTransformTrack_0'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/Quickslots/WBP_HUD_Quickslots_TorchRemainingDuration.11"
+    },
+    "Properties": {
+      "Translation": {
+        "PreInfinityExtrap": "RCCE_Constant",
+        "PostInfinityExtrap": "RCCE_Constant",
+        "Times": [
+          {
+            "Value": 0
+          }
+        ],
+        "Values": [
+          {
+            "Value": 0.0,
+            "Tangent": {
+              "ArriveTangent": 0.0,
+              "LeaveTangent": 0.0,
+              "ArriveTangentWeight": 0.0,
+              "LeaveTangentWeight": 0.0,
+              "TangentWeightMode": 0
+            },
+            "InterpMode": 2,
+            "TangentMode": 0
+          }
+        ],
+        "DefaultValue": 0.0,
+        "bHasDefaultValue": false,
+        "TickResolution": {
+          "Numerator": 60000,
+          "Denominator": 1
+        },
+        "bShowCurve": false,
+        "StructFallback": null
+      },
+      "Translation[1]": {
+        "PreInfinityExtrap": "RCCE_Constant",
+        "PostInfinityExtrap": "RCCE_Constant",
+        "Times": [
+          {
+            "Value": 0
+          },
+          {
+            "Value": 15000
+          }
+        ],
+        "Values": [
+          {
+            "Value": 20.0,
+            "Tangent": {
+              "ArriveTangent": 0.0,
+              "LeaveTangent": 0.0,
+              "ArriveTangentWeight": 0.0,
+              "LeaveTangentWeight": 0.0,
+              "TangentWeightMode": 0
+            },
+            "InterpMode": 2,
+            "TangentMode": 0
+          },
+          {
+            "Value": 0.0,
+            "Tangent": {
+              "ArriveTangent": 0.0,
+              "LeaveTangent": 0.0,
+              "ArriveTangentWeight": 0.0,
+              "LeaveTangentWeight": 0.0,
+              "TangentWeightMode": 0
+            },
+            "InterpMode": 2,
+            "TangentMode": 0
+          }
+        ],
+        "DefaultValue": 0.0,
+        "bHasDefaultValue": false,
+        "TickResolution": {
+          "Numerator": 60000,
+          "Denominator": 1
+        },
+        "bShowCurve": false,
+        "StructFallback": null
+      },
+      "Easing": {
+        "EaseIn": {
+          "ObjectName": "MovieSceneBuiltInEasingFunction'WBP_HUD_Quickslots_TorchRemainingDuration_C:FadeIn_INST.FadeIn.MovieScene2DTransformTrack_0.MovieScene2DTransformSection_0.EaseInFunction'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/Quickslots/WBP_HUD_Quickslots_TorchRemainingDuration.12"
+        },
+        "EaseOut": {
+          "ObjectName": "MovieSceneBuiltInEasingFunction'WBP_HUD_Quickslots_TorchRemainingDuration_C:FadeIn_INST.FadeIn.MovieScene2DTransformTrack_0.MovieScene2DTransformSection_0.EaseOutFunction'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/Quickslots/WBP_HUD_Quickslots_TorchRemainingDuration.13"
+        }
+      },
+      "SectionRange": {
+        "Value": {
+          "LowerBound": {
+            "Type": 1,
+            "Value": {
+              "Value": 0
+            }
+          },
+          "UpperBound": {
+            "Type": 1,
+            "Value": {
+              "Value": 15000
+            }
+          }
+        }
+      },
+      "Signature": "E6D3DD55-4B73CCD1-A1413E85-8DAC2ACB"
+    }
+  },
+  {
+    "Type": "MovieScene2DTransformTrack",
+    "Name": "MovieScene2DTransformTrack_0",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'MovieScene2DTransformTrack'",
+    "Outer": {
+      "ObjectName": "MovieScene'WBP_HUD_Quickslots_TorchRemainingDuration_C:FadeIn_INST.FadeIn'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/Quickslots/WBP_HUD_Quickslots_TorchRemainingDuration.9"
+    },
+    "Properties": {
+      "PropertyBinding": {
+        "PropertyName": "RenderTransform",
+        "PropertyPath": "RenderTransform",
+        "bCanUseClassLookup": true
+      },
+      "Sections": [
+        {
+          "ObjectName": "MovieScene2DTransformSection'WBP_HUD_Quickslots_TorchRemainingDuration_C:FadeIn_INST.FadeIn.MovieScene2DTransformTrack_0.MovieScene2DTransformSection_0'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/Quickslots/WBP_HUD_Quickslots_TorchRemainingDuration.10"
+        }
+      ],
+      "EvaluationFieldGuid": "8D76724E-431DA773-8F884286-23E3CD26",
+      "EvaluationField": {
+        "Entries": [
+          {
+            "Section": {
+              "ObjectName": "MovieScene2DTransformSection'WBP_HUD_Quickslots_TorchRemainingDuration_C:FadeIn_INST.FadeIn.MovieScene2DTransformTrack_0.MovieScene2DTransformSection_0'",
+              "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/Quickslots/WBP_HUD_Quickslots_TorchRemainingDuration.10"
+            },
+            "Range": {
+              "LowerBound": {
+                "Type": "ERangeBoundTypes::Inclusive",
+                "Value": {
+                  "Value": 0
+                }
+              },
+              "UpperBound": {
+                "Type": "ERangeBoundTypes::Inclusive",
+                "Value": {
+                  "Value": 15000
+                }
+              }
+            },
+            "ForcedTime": {
+              "Value": -2147483648
+            },
+            "Flags": "ESectionEvaluationFlags::None",
+            "LegacySortOrder": 0
+          }
+        ]
+      },
+      "Signature": "8D76724E-431DA773-8F884286-23E3CD26"
+    }
+  },
+  {
+    "Type": "MovieSceneBuiltInEasingFunction",
+    "Name": "EaseInFunction",
+    "Flags": "RF_Public | RF_Transactional | RF_DefaultSubObject | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'MovieSceneBuiltInEasingFunction'",
+    "Outer": {
+      "ObjectName": "MovieScene2DTransformSection'WBP_HUD_Quickslots_TorchRemainingDuration_C:FadeIn_INST.FadeIn.MovieScene2DTransformTrack_0.MovieScene2DTransformSection_0'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/Quickslots/WBP_HUD_Quickslots_TorchRemainingDuration.10"
+    }
+  },
+  {
+    "Type": "MovieSceneBuiltInEasingFunction",
+    "Name": "EaseOutFunction",
+    "Flags": "RF_Public | RF_Transactional | RF_DefaultSubObject | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'MovieSceneBuiltInEasingFunction'",
+    "Outer": {
+      "ObjectName": "MovieScene2DTransformSection'WBP_HUD_Quickslots_TorchRemainingDuration_C:FadeIn_INST.FadeIn.MovieScene2DTransformTrack_0.MovieScene2DTransformSection_0'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/Quickslots/WBP_HUD_Quickslots_TorchRemainingDuration.10"
+    }
+  },
+  {
+    "Type": "MovieSceneBuiltInEasingFunction",
+    "Name": "EaseInFunction",
+    "Flags": "RF_Public | RF_Transactional | RF_DefaultSubObject | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'MovieSceneBuiltInEasingFunction'",
+    "Outer": {
+      "ObjectName": "MovieSceneByteSection'WBP_HUD_Quickslots_TorchRemainingDuration_C:FadeIn_INST.FadeIn.MovieSceneByteTrack_0.MovieSceneByteSection_0'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/Quickslots/WBP_HUD_Quickslots_TorchRemainingDuration.18"
+    }
+  },
+  {
+    "Type": "MovieSceneBuiltInEasingFunction",
+    "Name": "EaseOutFunction",
+    "Flags": "RF_Public | RF_Transactional | RF_DefaultSubObject | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'MovieSceneBuiltInEasingFunction'",
+    "Outer": {
+      "ObjectName": "MovieSceneByteSection'WBP_HUD_Quickslots_TorchRemainingDuration_C:FadeIn_INST.FadeIn.MovieSceneByteTrack_0.MovieSceneByteSection_0'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/Quickslots/WBP_HUD_Quickslots_TorchRemainingDuration.18"
+    }
+  },
+  {
+    "Type": "MovieSceneBuiltInEasingFunction",
+    "Name": "EaseInFunction",
+    "Flags": "RF_Public | RF_Transactional | RF_DefaultSubObject | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'MovieSceneBuiltInEasingFunction'",
+    "Outer": {
+      "ObjectName": "MovieSceneFloatSection'WBP_HUD_Quickslots_TorchRemainingDuration_C:FadeIn_INST.FadeIn.MovieSceneFloatTrack_0.MovieSceneFloatSection_0'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/Quickslots/WBP_HUD_Quickslots_TorchRemainingDuration.21"
+    }
+  },
+  {
+    "Type": "MovieSceneBuiltInEasingFunction",
+    "Name": "EaseOutFunction",
+    "Flags": "RF_Public | RF_Transactional | RF_DefaultSubObject | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'MovieSceneBuiltInEasingFunction'",
+    "Outer": {
+      "ObjectName": "MovieSceneFloatSection'WBP_HUD_Quickslots_TorchRemainingDuration_C:FadeIn_INST.FadeIn.MovieSceneFloatTrack_0.MovieSceneFloatSection_0'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/Quickslots/WBP_HUD_Quickslots_TorchRemainingDuration.21"
+    }
+  },
+  {
+    "Type": "MovieSceneByteSection",
+    "Name": "MovieSceneByteSection_0",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'MovieSceneByteSection'",
+    "Outer": {
+      "ObjectName": "MovieSceneByteTrack'WBP_HUD_Quickslots_TorchRemainingDuration_C:FadeIn_INST.FadeIn.MovieSceneByteTrack_0'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/Quickslots/WBP_HUD_Quickslots_TorchRemainingDuration.19"
+    },
+    "Properties": {
+      "ByteCurve": {
+        "Times": [
+          {
+            "Value": 0
+          },
+          {
+            "Value": 1500
+          },
+          {
+            "Value": 15000
+          }
+        ],
+        "Values": [
+          1,
+          4,
+          4
+        ],
+        "Enum": {
+          "ObjectName": "Class'ESlateVisibility'",
+          "ObjectPath": "/Script/UMG"
+        }
+      },
+      "Easing": {
+        "EaseIn": {
+          "ObjectName": "MovieSceneBuiltInEasingFunction'WBP_HUD_Quickslots_TorchRemainingDuration_C:FadeIn_INST.FadeIn.MovieSceneByteTrack_0.MovieSceneByteSection_0.EaseInFunction'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/Quickslots/WBP_HUD_Quickslots_TorchRemainingDuration.14"
+        },
+        "EaseOut": {
+          "ObjectName": "MovieSceneBuiltInEasingFunction'WBP_HUD_Quickslots_TorchRemainingDuration_C:FadeIn_INST.FadeIn.MovieSceneByteTrack_0.MovieSceneByteSection_0.EaseOutFunction'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/Quickslots/WBP_HUD_Quickslots_TorchRemainingDuration.15"
+        }
+      },
+      "SectionRange": {
+        "Value": {
+          "LowerBound": {
+            "Type": 1,
+            "Value": {
+              "Value": 0
+            }
+          },
+          "UpperBound": {
+            "Type": 1,
+            "Value": {
+              "Value": 15000
+            }
+          }
+        }
+      },
+      "Signature": "D7C6DAFB-482622E9-232BC78F-73812E73"
+    }
+  },
+  {
+    "Type": "MovieSceneByteTrack",
+    "Name": "MovieSceneByteTrack_0",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'MovieSceneByteTrack'",
+    "Outer": {
+      "ObjectName": "MovieScene'WBP_HUD_Quickslots_TorchRemainingDuration_C:FadeIn_INST.FadeIn'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/Quickslots/WBP_HUD_Quickslots_TorchRemainingDuration.9"
+    },
+    "Properties": {
+      "Enum": {
+        "ObjectName": "Class'ESlateVisibility'",
+        "ObjectPath": "/Script/UMG"
+      },
+      "PropertyBinding": {
+        "PropertyName": "Visibility",
+        "PropertyPath": "Visibility",
+        "bCanUseClassLookup": true
+      },
+      "Sections": [
+        {
+          "ObjectName": "MovieSceneByteSection'WBP_HUD_Quickslots_TorchRemainingDuration_C:FadeIn_INST.FadeIn.MovieSceneByteTrack_0.MovieSceneByteSection_0'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/Quickslots/WBP_HUD_Quickslots_TorchRemainingDuration.18"
+        }
+      ],
+      "EvaluationFieldGuid": "3184FE4B-49BADED9-D0863D88-189BCE0B",
+      "EvaluationField": {
+        "Entries": [
+          {
+            "Section": {
+              "ObjectName": "MovieSceneByteSection'WBP_HUD_Quickslots_TorchRemainingDuration_C:FadeIn_INST.FadeIn.MovieSceneByteTrack_0.MovieSceneByteSection_0'",
+              "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/Quickslots/WBP_HUD_Quickslots_TorchRemainingDuration.18"
+            },
+            "Range": {
+              "LowerBound": {
+                "Type": "ERangeBoundTypes::Inclusive",
+                "Value": {
+                  "Value": 0
+                }
+              },
+              "UpperBound": {
+                "Type": "ERangeBoundTypes::Inclusive",
+                "Value": {
+                  "Value": 15000
+                }
+              }
+            },
+            "ForcedTime": {
+              "Value": -2147483648
+            },
+            "Flags": "ESectionEvaluationFlags::None",
+            "LegacySortOrder": 0
+          }
+        ]
+      },
+      "Signature": "3184FE4B-49BADED9-D0863D88-189BCE0B"
+    }
+  },
+  {
+    "Type": "MovieSceneCompiledData",
+    "Name": "CompiledData",
+    "Flags": "RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'MovieSceneCompiledData'",
+    "Outer": {
+      "ObjectName": "WidgetAnimation'WBP_HUD_Quickslots_TorchRemainingDuration_C:FadeIn_INST'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/Quickslots/WBP_HUD_Quickslots_TorchRemainingDuration.24"
+    },
+    "Properties": {
+      "EntityComponentField": {
+        "PersistentEntityTree": {
+          "SerializedData": {
+            "Data": {
+              "Entries": [
+                {
+                  "StartIndex": 0,
+                  "Size": 3,
+                  "Capacity": 3
+                }
+              ],
+              "Items": [
+                {
+                  "EntityIndex": 0,
+                  "MetaDataIndex": -1
+                },
+                {
+                  "EntityIndex": 1,
+                  "MetaDataIndex": -1
+                },
+                {
+                  "EntityIndex": 2,
+                  "MetaDataIndex": -1
+                }
+              ]
+            },
+            "RootNode": {
+              "Range": {
+                "LowerBound": {
+                  "Type": 2,
+                  "Value": {
+                    "Value": 0
+                  }
+                },
+                "UpperBound": {
+                  "Type": 2,
+                  "Value": {
+                    "Value": 0
+                  }
+                }
+              },
+              "Parent": {
+                "ChildrenHandle": {
+                  "EntryIndex": -1
+                },
+                "Index": -1
+              },
+              "ChildrenID": {
+                "EntryIndex": 0
+              },
+              "DataID": {
+                "EntryIndex": -1
+              }
+            },
+            "ChildNodes": {
+              "Entries": [
+                {
+                  "StartIndex": 0,
+                  "Size": 1,
+                  "Capacity": 1
+                }
+              ],
+              "Items": [
+                {
+                  "Range": {
+                    "LowerBound": {
+                      "Type": 1,
+                      "Value": {
+                        "Value": 0
+                      }
+                    },
+                    "UpperBound": {
+                      "Type": 1,
+                      "Value": {
+                        "Value": 15000
+                      }
+                    }
+                  },
+                  "Parent": {
+                    "ChildrenHandle": {
+                      "EntryIndex": -1
+                    },
+                    "Index": 0
+                  },
+                  "ChildrenID": {
+                    "EntryIndex": -1
+                  },
+                  "DataID": {
+                    "EntryIndex": 0
+                  }
+                }
+              ]
+            }
+          }
+        },
+        "Entities": [
+          {
+            "Key": {
+              "EntityOwner": {
+                "ObjectName": "MovieSceneByteSection'WBP_HUD_Quickslots_TorchRemainingDuration_C:FadeIn_INST.FadeIn.MovieSceneByteTrack_0.MovieSceneByteSection_0'",
+                "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/Quickslots/WBP_HUD_Quickslots_TorchRemainingDuration.18"
+              },
+              "EntityID": 0
+            },
+            "SharedMetaDataIndex": 0
+          },
+          {
+            "Key": {
+              "EntityOwner": {
+                "ObjectName": "MovieSceneFloatSection'WBP_HUD_Quickslots_TorchRemainingDuration_C:FadeIn_INST.FadeIn.MovieSceneFloatTrack_0.MovieSceneFloatSection_0'",
+                "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/Quickslots/WBP_HUD_Quickslots_TorchRemainingDuration.21"
+              },
+              "EntityID": 0
+            },
+            "SharedMetaDataIndex": 1
+          },
+          {
+            "Key": {
+              "EntityOwner": {
+                "ObjectName": "MovieScene2DTransformSection'WBP_HUD_Quickslots_TorchRemainingDuration_C:FadeIn_INST.FadeIn.MovieScene2DTransformTrack_0.MovieScene2DTransformSection_0'",
+                "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/Quickslots/WBP_HUD_Quickslots_TorchRemainingDuration.10"
+              },
+              "EntityID": 0
+            },
+            "SharedMetaDataIndex": 2
+          }
+        ],
+        "SharedMetaData": [
+          {
+            "ObjectBindingID": "D8292BA6-40C47356-AA911984-2CC82277"
+          },
+          {
+            "ObjectBindingID": "D8292BA6-40C47356-AA911984-2CC82277"
+          },
+          {
+            "ObjectBindingID": "D8292BA6-40C47356-AA911984-2CC82277"
+          }
+        ]
+      },
+      "DeterminismFences": [
+        {
+          "FrameNumber": {
+            "Value": 15000
+          },
+          "bInclusive": false
+        }
+      ],
+      "CompiledSignature": "2167F983-49281A7A-7771E4B7-0EDC0D25",
+      "CompilerVersion": "7D4B9809-2FAC4A6B-964ECF72-D8279EF8",
+      "AccumulatedMask": "EMovieSceneSequenceCompilerMask::EntityComponentField",
+      "AllocatedMask": "EMovieSceneSequenceCompilerMask::EntityComponentField"
+    }
+  },
+  {
+    "Type": "MovieSceneFloatSection",
+    "Name": "MovieSceneFloatSection_0",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'MovieSceneFloatSection'",
+    "Outer": {
+      "ObjectName": "MovieSceneFloatTrack'WBP_HUD_Quickslots_TorchRemainingDuration_C:FadeIn_INST.FadeIn.MovieSceneFloatTrack_0'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/Quickslots/WBP_HUD_Quickslots_TorchRemainingDuration.22"
+    },
+    "Properties": {
+      "FloatCurve": {
+        "PreInfinityExtrap": "RCCE_Constant",
+        "PostInfinityExtrap": "RCCE_Constant",
+        "Times": [
+          {
+            "Value": 0
+          },
+          {
+            "Value": 1500
+          },
+          {
+            "Value": 15000
+          }
+        ],
+        "Values": [
+          {
+            "Value": 0.0,
+            "Tangent": {
+              "ArriveTangent": 0.0,
+              "LeaveTangent": 0.0,
+              "ArriveTangentWeight": 0.0,
+              "LeaveTangentWeight": 0.0,
+              "TangentWeightMode": 0
+            },
+            "InterpMode": 2,
+            "TangentMode": 0
+          },
+          {
+            "Value": 0.0,
+            "Tangent": {
+              "ArriveTangent": 0.0,
+              "LeaveTangent": 0.0,
+              "ArriveTangentWeight": 0.0,
+              "LeaveTangentWeight": 0.0,
+              "TangentWeightMode": 0
+            },
+            "InterpMode": 2,
+            "TangentMode": 0
+          },
+          {
+            "Value": 1.0,
+            "Tangent": {
+              "ArriveTangent": 0.0,
+              "LeaveTangent": 0.0,
+              "ArriveTangentWeight": 0.0,
+              "LeaveTangentWeight": 0.0,
+              "TangentWeightMode": 0
+            },
+            "InterpMode": 2,
+            "TangentMode": 0
+          }
+        ],
+        "DefaultValue": 0.0,
+        "bHasDefaultValue": false,
+        "TickResolution": {
+          "Numerator": 60000,
+          "Denominator": 1
+        },
+        "bShowCurve": false,
+        "StructFallback": null
+      },
+      "Easing": {
+        "EaseIn": {
+          "ObjectName": "MovieSceneBuiltInEasingFunction'WBP_HUD_Quickslots_TorchRemainingDuration_C:FadeIn_INST.FadeIn.MovieSceneFloatTrack_0.MovieSceneFloatSection_0.EaseInFunction'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/Quickslots/WBP_HUD_Quickslots_TorchRemainingDuration.16"
+        },
+        "EaseOut": {
+          "ObjectName": "MovieSceneBuiltInEasingFunction'WBP_HUD_Quickslots_TorchRemainingDuration_C:FadeIn_INST.FadeIn.MovieSceneFloatTrack_0.MovieSceneFloatSection_0.EaseOutFunction'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/Quickslots/WBP_HUD_Quickslots_TorchRemainingDuration.17"
+        }
+      },
+      "SectionRange": {
+        "Value": {
+          "LowerBound": {
+            "Type": 1,
+            "Value": {
+              "Value": 0
+            }
+          },
+          "UpperBound": {
+            "Type": 1,
+            "Value": {
+              "Value": 15000
+            }
+          }
+        }
+      },
+      "Signature": "909C58A4-4BB0DB37-B26575AD-8F3F019A"
+    }
+  },
+  {
+    "Type": "MovieSceneFloatTrack",
+    "Name": "MovieSceneFloatTrack_0",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'MovieSceneFloatTrack'",
+    "Outer": {
+      "ObjectName": "MovieScene'WBP_HUD_Quickslots_TorchRemainingDuration_C:FadeIn_INST.FadeIn'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/Quickslots/WBP_HUD_Quickslots_TorchRemainingDuration.9"
+    },
+    "Properties": {
+      "PropertyBinding": {
+        "PropertyName": "RenderOpacity",
+        "PropertyPath": "RenderOpacity",
+        "bCanUseClassLookup": true
+      },
+      "Sections": [
+        {
+          "ObjectName": "MovieSceneFloatSection'WBP_HUD_Quickslots_TorchRemainingDuration_C:FadeIn_INST.FadeIn.MovieSceneFloatTrack_0.MovieSceneFloatSection_0'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/Quickslots/WBP_HUD_Quickslots_TorchRemainingDuration.21"
+        }
+      ],
+      "EvaluationFieldGuid": "6D6BA7FB-4BBA013D-7C348582-6F929DE9",
+      "EvaluationField": {
+        "Entries": [
+          {
+            "Section": {
+              "ObjectName": "MovieSceneFloatSection'WBP_HUD_Quickslots_TorchRemainingDuration_C:FadeIn_INST.FadeIn.MovieSceneFloatTrack_0.MovieSceneFloatSection_0'",
+              "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/Quickslots/WBP_HUD_Quickslots_TorchRemainingDuration.21"
+            },
+            "Range": {
+              "LowerBound": {
+                "Type": "ERangeBoundTypes::Inclusive",
+                "Value": {
+                  "Value": 0
+                }
+              },
+              "UpperBound": {
+                "Type": "ERangeBoundTypes::Inclusive",
+                "Value": {
+                  "Value": 15000
+                }
+              }
+            },
+            "ForcedTime": {
+              "Value": -2147483648
+            },
+            "Flags": "ESectionEvaluationFlags::None",
+            "LegacySortOrder": 0
+          }
+        ]
+      },
+      "Signature": "6D6BA7FB-4BBA013D-7C348582-6F929DE9"
+    }
+  },
+  {
+    "Type": "WBP_HUD_Quickslots_TorchRemainingDuration_C",
+    "Name": "Default__WBP_HUD_Quickslots_TorchRemainingDuration_C",
+    "Flags": "RF_Public | RF_ClassDefaultObject | RF_ArchetypeObject | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "WidgetBlueprintGeneratedClass'/Game/_Dawnwalker/UI/_Unified/HUD/Quickslots/WBP_HUD_Quickslots_TorchRemainingDuration.WBP_HUD_Quickslots_TorchRemainingDuration_C'",
+    "Package": "/Game/_Dawnwalker/UI/_Unified/HUD/Quickslots/WBP_HUD_Quickslots_TorchRemainingDuration",
+    "Properties": {
+      "UberGraphFrame": {},
+      "bHasScriptImplementedTick": false,
+      "bHasScriptImplementedPaint": false,
+      "Visibility": "ESlateVisibility::HitTestInvisible"
+    }
+  },
+  {
+    "Type": "WidgetAnimation",
+    "Name": "FadeIn_INST",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'WidgetAnimation'",
+    "Outer": {
+      "ObjectName": "WidgetBlueprintGeneratedClass'WBP_HUD_Quickslots_TorchRemainingDuration_C'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/Quickslots/WBP_HUD_Quickslots_TorchRemainingDuration.25"
+    },
+    "Properties": {
+      "MovieScene": {
+        "ObjectName": "MovieScene'WBP_HUD_Quickslots_TorchRemainingDuration_C:FadeIn_INST.FadeIn'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/Quickslots/WBP_HUD_Quickslots_TorchRemainingDuration.9"
+      },
+      "AnimationBindings": [
+        {
+          "WidgetName": "Border_24",
+          "SlotWidgetName": "None",
+          "AnimationGuid": "D8292BA6-40C47356-AA911984-2CC82277",
+          "bIsRootWidget": false,
+          "DynamicBinding": {
+            "Function": null,
+            "ResolveParamsProperty": {
+              "Path": [],
+              "ResolvedOwner": null
+            }
+          }
+        }
+      ],
+      "DisplayLabel": "FadeIn",
+      "CompiledData": {
+        "ObjectName": "MovieSceneCompiledData'WBP_HUD_Quickslots_TorchRemainingDuration_C:FadeIn_INST.CompiledData'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/Quickslots/WBP_HUD_Quickslots_TorchRemainingDuration.20"
+      },
+      "Signature": "2167F983-49281A7A-7771E4B7-0EDC0D25"
+    }
+  },
+  {
+    "Type": "WidgetBlueprintGeneratedClass",
+    "Name": "WBP_HUD_Quickslots_TorchRemainingDuration_C",
+    "Flags": "RF_Public | RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'WidgetBlueprintGeneratedClass'",
+    "Package": "/Game/_Dawnwalker/UI/_Unified/HUD/Quickslots/WBP_HUD_Quickslots_TorchRemainingDuration",
+    "Properties": {
+      "WidgetTree": {
+        "ObjectName": "WidgetTree'WBP_HUD_Quickslots_TorchRemainingDuration_C:WidgetTree'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/Quickslots/WBP_HUD_Quickslots_TorchRemainingDuration.26"
+      },
+      "Animations": [
+        {
+          "ObjectName": "WidgetAnimation'WBP_HUD_Quickslots_TorchRemainingDuration_C:FadeIn_INST'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/Quickslots/WBP_HUD_Quickslots_TorchRemainingDuration.24"
+        }
+      ],
+      "UberGraphFunction": {
+        "ObjectName": "Function'WBP_HUD_Quickslots_TorchRemainingDuration_C:ExecuteUbergraph_WBP_HUD_Quickslots_TorchRemainingDuration'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/Quickslots/WBP_HUD_Quickslots_TorchRemainingDuration.5"
+      }
+    },
+    "SuperStruct": {
+      "ObjectName": "Class'UserWidget'",
+      "ObjectPath": "/Script/UMG"
+    },
+    "Children": [
+      {
+        "ObjectName": "Function'WBP_HUD_Quickslots_TorchRemainingDuration_C:On Torch Remaining Time Changed'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/Quickslots/WBP_HUD_Quickslots_TorchRemainingDuration.7"
+      },
+      {
+        "ObjectName": "Function'WBP_HUD_Quickslots_TorchRemainingDuration_C:Construct'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/Quickslots/WBP_HUD_Quickslots_TorchRemainingDuration.3"
+      },
+      {
+        "ObjectName": "Function'WBP_HUD_Quickslots_TorchRemainingDuration_C:Destruct'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/Quickslots/WBP_HUD_Quickslots_TorchRemainingDuration.4"
+      },
+      {
+        "ObjectName": "Function'WBP_HUD_Quickslots_TorchRemainingDuration_C:Manually Update Torch Time'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/Quickslots/WBP_HUD_Quickslots_TorchRemainingDuration.6"
+      },
+      {
+        "ObjectName": "Function'WBP_HUD_Quickslots_TorchRemainingDuration_C:Torch State Changed'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/Quickslots/WBP_HUD_Quickslots_TorchRemainingDuration.8"
+      },
+      {
+        "ObjectName": "Function'WBP_HUD_Quickslots_TorchRemainingDuration_C:ExecuteUbergraph_WBP_HUD_Quickslots_TorchRemainingDuration'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/Quickslots/WBP_HUD_Quickslots_TorchRemainingDuration.5"
+      }
+    ],
+    "ChildProperties": [
+      {
+        "Type": "StructProperty",
+        "Name": "UberGraphFrame",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 16,
+        "PropertyFlags": "Transient | DuplicateTransient",
+        "Struct": {
+          "ObjectName": "Class'PointerToUberGraphFrame'",
+          "ObjectPath": "/Script/Engine"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "FadeIn",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Transient | RepSkip",
+        "PropertyClass": {
+          "ObjectName": "Class'WidgetAnimation'",
+          "ObjectPath": "/Script/UMG"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "Border_24",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | ExportObject | BlueprintReadOnly | DisableEditOnInstance | InstancedReference | RepSkip | PersistentInstance",
+        "PropertyClass": {
+          "ObjectName": "Class'Border'",
+          "ObjectPath": "/Script/UMG"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "TimeLabel",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | ExportObject | BlueprintReadOnly | DisableEditOnInstance | InstancedReference | RepSkip | PersistentInstance",
+        "PropertyClass": {
+          "ObjectName": "BlueprintGeneratedClass'DWW_Text_C'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/BaseWidgets/DWW_Text.0"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "Player Pawn",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 8,
+        "PropertyFlags": "Edit | BlueprintVisible | DisableEditOnTemplate | DisableEditOnInstance",
+        "PropertyClass": {
+          "ObjectName": "Class'DawnwalkerPlayerCharacter'",
+          "ObjectPath": "/Script/Dawnwalker"
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "IsTimerDisplayed",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 1,
+        "PropertyFlags": "Edit | BlueprintVisible | DisableEditOnInstance",
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      }
+    ],
+    "FuncMap": {
+      "ExecuteUbergraph_WBP_HUD_Quickslots_TorchRemainingDuration": {
+        "ObjectName": "Function'WBP_HUD_Quickslots_TorchRemainingDuration_C:ExecuteUbergraph_WBP_HUD_Quickslots_TorchRemainingDuration'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/Quickslots/WBP_HUD_Quickslots_TorchRemainingDuration.5"
+      },
+      "Torch State Changed": {
+        "ObjectName": "Function'WBP_HUD_Quickslots_TorchRemainingDuration_C:Torch State Changed'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/Quickslots/WBP_HUD_Quickslots_TorchRemainingDuration.8"
+      },
+      "Manually Update Torch Time": {
+        "ObjectName": "Function'WBP_HUD_Quickslots_TorchRemainingDuration_C:Manually Update Torch Time'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/Quickslots/WBP_HUD_Quickslots_TorchRemainingDuration.6"
+      },
+      "Destruct": {
+        "ObjectName": "Function'WBP_HUD_Quickslots_TorchRemainingDuration_C:Destruct'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/Quickslots/WBP_HUD_Quickslots_TorchRemainingDuration.4"
+      },
+      "Construct": {
+        "ObjectName": "Function'WBP_HUD_Quickslots_TorchRemainingDuration_C:Construct'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/Quickslots/WBP_HUD_Quickslots_TorchRemainingDuration.3"
+      },
+      "On Torch Remaining Time Changed": {
+        "ObjectName": "Function'WBP_HUD_Quickslots_TorchRemainingDuration_C:On Torch Remaining Time Changed'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/Quickslots/WBP_HUD_Quickslots_TorchRemainingDuration.7"
+      }
+    },
+    "ClassFlags": "CLASS_ReplicationDataIsSetUp | CLASS_EditInlineNew | CLASS_CompiledFromBlueprint | CLASS_DefaultToInstanced | CLASS_HasInstancedReference",
+    "ClassWithin": {
+      "ObjectName": "Class'Object'",
+      "ObjectPath": "/Script/CoreUObject"
+    },
+    "ClassConfigName": "Engine",
+    "bCooked": true,
+    "ClassDefaultObject": {
+      "ObjectName": "WBP_HUD_Quickslots_TorchRemainingDuration_C'Default__WBP_HUD_Quickslots_TorchRemainingDuration_C'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/Quickslots/WBP_HUD_Quickslots_TorchRemainingDuration.23"
+    },
+    "EditorTags": {
+      "BlueprintType": "BPTYPE_Normal"
+    }
+  },
+  {
+    "Type": "WidgetTree",
+    "Name": "WidgetTree",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'WidgetTree'",
+    "Outer": {
+      "ObjectName": "WidgetBlueprintGeneratedClass'WBP_HUD_Quickslots_TorchRemainingDuration_C'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/Quickslots/WBP_HUD_Quickslots_TorchRemainingDuration.25"
+    },
+    "Properties": {
+      "RootWidget": {
+        "ObjectName": "Border'WBP_HUD_Quickslots_TorchRemainingDuration_C:WidgetTree.Border_24'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/Quickslots/WBP_HUD_Quickslots_TorchRemainingDuration.0"
+      }
+    }
+  }
+]

@@ -1,0 +1,17 @@
+[
+  {
+    "Type": "HUDVisibilityPreset",
+    "Name": "HVP_Default",
+    "Flags": "RF_Public | RF_Standalone | RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'HUDVisibilityPreset'",
+    "Package": "/Game/_Dawnwalker/UI/_Unified/HUD/Presets/HVP_Default",
+    "Properties": {
+      "PresetMode": "EHUDPresetMode::HideAllExcept",
+      "ChosenElements": [
+        {
+          "TagName": "UI.HUD.Elements.Compass"
+        }
+      ]
+    }
+  }
+]

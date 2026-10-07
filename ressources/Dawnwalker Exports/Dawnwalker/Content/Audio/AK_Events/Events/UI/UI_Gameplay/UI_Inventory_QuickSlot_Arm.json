@@ -1,0 +1,67 @@
+[
+  {
+    "Type": "AkAudioEvent",
+    "Name": "UI_Inventory_QuickSlot_Arm",
+    "Flags": "RF_Public | RF_Standalone | RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'AkAudioEvent'",
+    "Package": "/Game/Audio/AK_Events/Events/UI/UI_Gameplay/UI_Inventory_QuickSlot_Arm",
+    "EventCookedData": {
+      "EventLanguageMap": [
+        {
+          "Key": {
+            "LanguageId": 0,
+            "LanguageName": "SFX",
+            "LanguageRequirement": "EWwiseLanguageRequirement::SFX"
+          },
+          "Value": {
+            "EventId": 4148497353,
+            "SoundBanks": [
+              {
+                "SoundBankId": 4148497353,
+                "SoundBankPathName": "None",
+                "MemoryAlignment": 0,
+                "bDeviceMemory": false,
+                "bContainsMedia": false,
+                "SoundBankType": "EWwiseSoundBankType::Event",
+                "DebugName": "UI_Inventory_QuickSlot_Arm",
+                "PackagedFile": {
+                  "Hash": 2234654019,
+                  "PathName": "WwiseStaging/Event/41/4148497353.bnk",
+                  "ModularGameplayName": "Game",
+                  "bStreaming": false
+                }
+              }
+            ],
+            "Media": [
+              {
+                "MediaId": 686800640,
+                "MediaPathName": "None",
+                "PrefetchSize": 0,
+                "MemoryAlignment": 0,
+                "bDeviceMemory": false,
+                "bStreaming": false,
+                "DebugName": "UI\\UI_Menus\\UI_Inventory_QuickSlot_Arm.wav",
+                "PackagedFile": {
+                  "Hash": 3590118912,
+                  "PathName": "WwiseStaging/Media/68/686800640.wem",
+                  "bStreaming": false
+                }
+              }
+            ],
+            "ExternalSources": [],
+            "SwitchContainerLeaves": [],
+            "RequiredGroupValueSet": [],
+            "DestroyOptions": "EWwiseEventDestroyOptions::StopEventOnDestroy",
+            "DebugName": "UI_Inventory_QuickSlot_Arm"
+          }
+        }
+      ],
+      "DebugName": "UI_Inventory_QuickSlot_Arm",
+      "EventId": 4148497353
+    },
+    "MaximumDuration": 1.7763542,
+    "MinimumDuration": 1.7763542,
+    "IsInfinite": false,
+    "MaxAttenuationRadius": 0.0
+  }
+]

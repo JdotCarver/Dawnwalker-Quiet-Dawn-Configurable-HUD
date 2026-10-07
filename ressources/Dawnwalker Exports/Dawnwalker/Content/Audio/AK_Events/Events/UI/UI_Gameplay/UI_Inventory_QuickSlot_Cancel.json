@@ -1,0 +1,67 @@
+[
+  {
+    "Type": "AkAudioEvent",
+    "Name": "UI_Inventory_QuickSlot_Cancel",
+    "Flags": "RF_Public | RF_Standalone | RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'AkAudioEvent'",
+    "Package": "/Game/Audio/AK_Events/Events/UI/UI_Gameplay/UI_Inventory_QuickSlot_Cancel",
+    "EventCookedData": {
+      "EventLanguageMap": [
+        {
+          "Key": {
+            "LanguageId": 0,
+            "LanguageName": "SFX",
+            "LanguageRequirement": "EWwiseLanguageRequirement::SFX"
+          },
+          "Value": {
+            "EventId": 1924895455,
+            "SoundBanks": [
+              {
+                "SoundBankId": 1924895455,
+                "SoundBankPathName": "None",
+                "MemoryAlignment": 0,
+                "bDeviceMemory": false,
+                "bContainsMedia": false,
+                "SoundBankType": "EWwiseSoundBankType::Event",
+                "DebugName": "UI_Inventory_QuickSlot_Cancel",
+                "PackagedFile": {
+                  "Hash": 3252682176,
+                  "PathName": "WwiseStaging/Event/19/1924895455.bnk",
+                  "ModularGameplayName": "Game",
+                  "bStreaming": false
+                }
+              }
+            ],
+            "Media": [
+              {
+                "MediaId": 1010732763,
+                "MediaPathName": "None",
+                "PrefetchSize": 0,
+                "MemoryAlignment": 0,
+                "bDeviceMemory": false,
+                "bStreaming": false,
+                "DebugName": "UI\\UI_Menus\\UI_Inventory_QuickSlot_Arm.wav",
+                "PackagedFile": {
+                  "Hash": 167051849,
+                  "PathName": "WwiseStaging/Media/10/1010732763.wem",
+                  "bStreaming": false
+                }
+              }
+            ],
+            "ExternalSources": [],
+            "SwitchContainerLeaves": [],
+            "RequiredGroupValueSet": [],
+            "DestroyOptions": "EWwiseEventDestroyOptions::StopEventOnDestroy",
+            "DebugName": "UI_Inventory_QuickSlot_Cancel"
+          }
+        }
+      ],
+      "DebugName": "UI_Inventory_QuickSlot_Cancel",
+      "EventId": 1924895455
+    },
+    "MaximumDuration": 1.3396666,
+    "MinimumDuration": 1.3396666,
+    "IsInfinite": false,
+    "MaxAttenuationRadius": 0.0
+  }
+]
