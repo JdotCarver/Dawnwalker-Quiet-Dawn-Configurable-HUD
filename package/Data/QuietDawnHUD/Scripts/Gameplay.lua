@@ -317,6 +317,65 @@ function runtime.captureQuickslotProbeTree(widget,probe)
     D.logInfo("vanillaQuickslotsTree source=%s phase=%s nodes=%d changed=%d nodeLimit=64 depthLimit=8",
         probe.source,probe.phase,nodes,changed)
 end
+-- Run 8 proved that the Focus Charge outer root follows a configured two-second
+-- opacity fade without changing the player-visible element. Before another
+-- interception, inspect only its owned child tree at the same bounded preset
+-- phases. This is read-only and follows no global widgets or animations.
+function runtime.captureFocusChargeProbeTree(widget,probe)
+    if not probe.focusTree or not D.debugLogging or not valid(widget) then return end
+    runtime.focusChargeProbeTrees=runtime.focusChargeProbeTrees or {}
+    local key=probe.source..":"..tostring(probe.entry)
+    local prior=runtime.focusChargeProbeTrees[key]
+    local treeState,seen={},{}
+    local nodes,changed=0,0
+    local function walk(node,path,depth)
+        if not valid(node) or nodes>=64 or depth>8 then return end
+        local address=node:GetAddress()
+        if seen[address] then return end
+        seen[address]=true
+        nodes=nodes+1
+        local className="unavailable"
+        local visibility="unavailable"
+        local opacityValue="unavailable"
+        local readable,value=pcall(function() return node:GetClass():GetFullName() end)
+        if readable and value then className=tostring(value) end
+        readable,value=pcall(function() return node:GetVisibility() end)
+        if readable and value~=nil then visibility=tostring(value) end
+        readable,value=pcall(function() return node:GetRenderOpacity() end)
+        if readable and type(value)=="number" then opacityValue=string.format("%.3f",value) end
+        local state=path.."|"..className.."|"..visibility.."|"..opacityValue
+        treeState[address]=state
+        if not prior or prior[address]~=state then
+            changed=changed+1
+            D.logInfo("vanillaFocusChargeTree source=%s phase=%s node=%s path=%s class=%s visibility=%s opacity=%s",
+                probe.source,probe.phase,tostring(address),path,className,visibility,opacityValue)
+        end
+        local treeOK,tree=pcall(function() return node.WidgetTree end)
+        if treeOK and valid(tree) then
+            local rootOK,root=pcall(function() return tree.RootWidget end)
+            if rootOK then walk(root,path..".WidgetTree.RootWidget",depth+1) end
+        end
+        local countOK,count=pcall(function() return node:GetChildrenCount() end)
+        if countOK and type(count)=="number" then
+            for index=0,math.min(count,64)-1 do
+                local childOK,child=pcall(function() return node:GetChildAt(index) end)
+                if childOK then walk(child,path..".Child["..index.."]",depth+1) end
+            end
+        end
+    end
+    walk(widget,"FocusChargeBar",0)
+    if prior then
+        for address in pairs(prior) do
+            if not treeState[address] then
+                changed=changed+1
+                D.logInfo("vanillaFocusChargeTree source=%s phase=%s node=%s removed",probe.source,probe.phase,tostring(address))
+            end
+        end
+    end
+    runtime.focusChargeProbeTrees[key]=treeState
+    D.logInfo("vanillaFocusChargeTree source=%s phase=%s nodes=%d changed=%d nodeLimit=64 depthLimit=8",
+        probe.source,probe.phase,nodes,changed)
+end
 -- 3515 is a weapon-state callback, not a Quickslot presentation callback.
 -- The next bounded probe therefore compares the three combat-only Vanilla
 -- panels around every distinct GameHUD graph entry during one test. It reads
@@ -354,6 +413,7 @@ function runtime.captureVanillaCombatPanels(probe)
                 D.logInfo("vanillaCombatPanel source=%s entry=%s phase=%s panel=%s presentation=%s class=%s visibility=%s opacity=%s previous=%s changed=%s",
                     probe.source,tostring(probe.entry),probe.phase,name,presentation,className,visibility,opacityValue,
                     previous or "none",tostring(previous~=nil and previous~=state))
+                if name=="WBP_HUD_FocusCharge_Bar" then runtime.captureFocusChargeProbeTree(widget,probe) end
                 if probe.parents then
                     runtime.vanillaCombatParentStates=runtime.vanillaCombatParentStates or {}
                     local parent=object:GetParent()
@@ -433,77 +493,6 @@ local fade=require("QuietDawnFade").new(D,function()
     return frameClock:GetGameTimeInSeconds(controller)
 end)
 fade.configure(config.fadeTransitions,config.fadeInSeconds,config.fadeOutSeconds)
--- Vanilla preserves the game's decision about WHEN a panel is presented. This
--- separate transition ledger supplies only the configured HOW, without putting
--- synthetic keys into the normal managed-panel fade group or its forEach pass.
-local vanillaFade=require("QuietDawnFade").new(D,function()
-    if not valid(frameClock) or not valid(controller) then return nil end
-    return frameClock:GetGameTimeInSeconds(controller)
-end)
-vanillaFade.configure(config.fadeTransitions,config.fadeInSeconds,config.fadeOutSeconds)
-runtime.vanillaFades={}
-runtime.vanillaFocusFadeKey="vanilla:WBP_HUD_FocusCharge_Bar"
--- Stock reaches its terminal root opacity by 250 ms in the measured Push/Pop
--- traces. Retain a small bounded reassertion window so a shorter configured
--- Fade is not overwritten by the tail of that stock timeline.
-runtime.vanillaFocusStockGuardSeconds=.30
-function runtime.vanillaFadeMoment()
-    if not valid(frameClock) or not valid(controller) then return nil end
-    local readable,moment=pcall(function() return frameClock:GetGameTimeInSeconds(controller) end)
-    return readable and type(moment)=="number" and moment or nil
-end
-function runtime.resetVanillaFades()
-    vanillaFade.reset()
-    runtime.vanillaFades={}
-    runtime.vanillaFocusFadeSource=nil
-end
-function runtime.beginVanillaFocusFade(source)
-    if not config.fadeTransitions or panelModes.WBP_HUD_FocusCharge_Bar~=Modes.VANILLA then return end
-    local target=source=="PushHUDPreset" and 1 or source=="PopHUDPreset" and 0 or nil
-    if target==nil or not valid(hud) or not valid(controller)
-        or not sameObject(hud:GetWorld(),world) or not sameObject(controller:GetWorld(),world)
-        or not sameObject(hud:GetOwningPlayer(),controller) then return end
-    local object=hud.WBP_HUD_FocusCharge_Bar
-    if not valid(object) then return end
-    local current=object:GetRenderOpacity()
-    if math.abs(current-target)<=1e-5 then return end
-    local lease=panelOpacity.bind(object)
-    if not lease then return end
-    local key=runtime.vanillaFocusFadeKey
-    local moment=runtime.vanillaFadeMoment()
-    runtime.vanillaFades[key]={object=object,lease=lease,target=target,source=source,
-        guardUntil=moment and moment+runtime.vanillaFocusStockGuardSeconds or nil}
-    local value=vanillaFade.step(key,current,target)
-    panelOpacity.apply(lease,value)
-    if D.debugLogging then
-        D.count("vanillaFadeStarts")
-        D.event("vanillaFade","source=%s panel=WBP_HUD_FocusCharge_Bar from=%.3f target=%.3f",source,current,target)
-    end
-end
-function runtime.stepVanillaFades()
-    for key,entry in pairs(runtime.vanillaFades) do
-        if not valid(entry.object) then
-            vanillaFade.forget(key)
-            runtime.vanillaFades[key]=nil
-        else
-            local value=entry.target
-            if not entry.settled then
-                value=vanillaFade.step(key,entry.object:GetRenderOpacity(),entry.target)
-                entry.settled=math.abs(value-entry.target)<=1e-5
-            end
-            local wrote=panelOpacity.apply(entry.lease,value)
-            if D.debugLogging and wrote then D.count("vanillaFadeFrames") end
-            local moment=runtime.vanillaFadeMoment()
-            if entry.settled and (entry.guardUntil==nil or (moment and moment>=entry.guardUntil)) then
-                panelOpacity.commit(entry.lease,entry.target)
-                runtime.vanillaFades[key]=nil
-                if D.debugLogging then
-                    D.event("vanillaFade","source=%s panel=WBP_HUD_FocusCharge_Bar settled=%.3f",entry.source,entry.target)
-                end
-            end
-        end
-    end
-end
 -- Focus has no dedicated UFunction. Resource and HUD events already wake the
 -- existing worker many times during normal play, so sample the pawn only while
 -- Focus is selected as the peek trigger; no permanent Focus polling loop is
@@ -1046,12 +1035,12 @@ local function queueVanillaCombatParentProbe(source,entry)
     if remaining<=0 then return end
     runtime.vanillaCombatParentProbeSeen[key]=true
     runtime.vanillaCombatParentProbeRemaining=remaining-1
-    runtime.enqueueVanillaCombatProbe({source=source,entry=entry,phase="post",parents=true})
+    runtime.enqueueVanillaCombatProbe({source=source,entry=entry,phase="post",parents=true,focusTree=true})
     for _,sample in ipairs({{16,"nextFrame"},{96,"after100ms"},{240,"after250ms"}}) do
         local delay,phase=sample[1],sample[2]
         pcall(ExecuteInGameThreadWithDelay,delay,function()
             if D.debugLogging then
-                runtime.enqueueVanillaCombatProbe({source=source,entry=entry,phase=phase,parents=true})
+                runtime.enqueueVanillaCombatProbe({source=source,entry=entry,phase=phase,parents=true,focusTree=true})
             end
         end)
     end
@@ -1094,16 +1083,11 @@ local function signal(source)
     if timeWatcher then timeWatcher.resume() end
     source=source or "HUD preset"
     -- Push/Pop are the confirmed combat presentation boundaries. Compare them
-    -- against the earlier weapon-state baseline before deciding how a Vanilla
-    -- fade can preserve the game's WHEN without guessing an owner.
+    -- against the earlier weapon-state baseline before changing Vanilla
+    -- behavior: the observed Focus Charge root opacity was not its visible
+    -- presentation owner in the two-second Fade verification.
     if source=="PushHUDPreset" or source=="PopHUDPreset" then
         queueVanillaCombatParentProbe(source,nil)
-        -- The Focus Charge root is now a measured stock-opacity path. Queue
-        -- its configured Vanilla fade before diagnostics consume this worker;
-        -- with Fade off Vanilla gets no opacity lease, transition or write.
-        if config.fadeTransitions and panelModes.WBP_HUD_FocusCharge_Bar==Modes.VANILLA then
-            runtime.vanillaFocusFadeSource=source
-        end
     end
     queueVanillaQuickslotProbe(source)
     refreshDirty=true
@@ -1342,6 +1326,7 @@ local function accept(object)
         runtime.vanillaCombatProbeRemaining=8
         runtime.vanillaCombatParentProbeSeen,runtime.vanillaCombatParentStates={},{}
         runtime.vanillaCombatParentProbeRemaining=3
+        runtime.focusChargeProbeTrees={}
         panelRetries={}
         -- A newly adopted HUD should never wait for a decorative fade before
         -- honouring Quiet Dawn's baseline rules. Each managed panel stays in
@@ -1357,7 +1342,6 @@ local function accept(object)
         -- baseline hiding during load.
         for name in pairs(runtime.startupBarrier.members) do runtime.startupPanels[name]=nil end
         fade.reset()
-        runtime.resetVanillaFades()
         if runtime.fadePacing then runtime.fadePacing.reset() end
         runtime.fadeWave,runtime.fadeWaveSize={},0
         runtime.fadeWaveLast,runtime.fadeWaveIdle=0,0
@@ -1807,7 +1791,6 @@ local function panelStep(name)
         hud, world, panels = nil, nil, {}
         -- The panels these transitions referred to are gone with the world.
         fade.reset()
-        runtime.resetVanillaFades()
         if runtime.fadePacing then runtime.fadePacing.reset() end
         runtime.fadeWave,runtime.fadeWaveSize={},0
         runtime.fadeInFlight=false
@@ -1886,18 +1869,6 @@ local timeTurn=false
 local timeSampleTurn=false
 local function step()
     if livePending then applyLiveSettings(true);return false end
-    if runtime.vanillaFocusFadeSource then
-        local source=runtime.vanillaFocusFadeSource
-        runtime.vanillaFocusFadeSource=nil
-        runtime.beginVanillaFocusFade(source)
-        return false
-    end
-    if next(runtime.vanillaFades) then
-        -- Give a Vanilla transition its frame, then allow one ordinary worker
-        -- slice below. It therefore stays smooth without starving combat,
-        -- resource, diagnostic or lifecycle work for a long fade-out.
-        runtime.stepVanillaFades()
-    end
     if runtime.vanillaCombatProbe then
         local probe=runtime.vanillaCombatProbe
         local queue=runtime.vanillaCombatProbeQueue or {}
@@ -2248,10 +2219,8 @@ function runtime.workerDelay()
     -- Re-arm promptly until that finite job is consumed; the frame gate above
     -- still prevents a busy loop when rendering has stopped.
     if markerUrgent then return runtime.workerFadeMs end
-    local ok,panelFading,vanillaFading=pcall(function()
-        return fade.pending(),vanillaFade.pending()
-    end)
-    runtime.fadeInFlight=ok and (panelFading or vanillaFading or next(runtime.vanillaFades)~=nil) or false
+    local ok,fading=pcall(fade.pending)
+    runtime.fadeInFlight=ok and fading or false
     if not runtime.fadeInFlight then runtime.fadePacing.reset() end
     return runtime.fadeInFlight and runtime.workerFadeMs or runtime.workerIdleMs
 end
@@ -2466,11 +2435,8 @@ applyLiveSettings=function(run)
     for key,value in pairs(updated) do if type(value)~='table' then config[key]=value end end
     if changed.fadeTransitions or changed.fadeInSeconds or changed.fadeOutSeconds then
         fade.configure(config.fadeTransitions,config.fadeInSeconds,config.fadeOutSeconds)
-        vanillaFade.configure(config.fadeTransitions,config.fadeInSeconds,config.fadeOutSeconds)
-        runtime.resetVanillaFades()
         runtime.fadePacing.reset()
     end
-    if changed.mode_WBP_HUD_FocusCharge_Bar then runtime.resetVanillaFades() end
     dynamicPanels.HumanStats,dynamicPanels.VampireStats=updated.dynamicPanels.HumanStats,updated.dynamicPanels.VampireStats
     statNames={}
     for _,name in ipairs({'HumanStats','VampireStats'}) do if dynamicPanels[name] then statNames[#statNames+1]=name end end
