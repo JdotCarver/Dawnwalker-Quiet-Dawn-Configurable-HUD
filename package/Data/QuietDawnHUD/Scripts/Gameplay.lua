@@ -563,9 +563,94 @@ function runtime.resetFocusChargeSlotProbe()
     runtime.focusChargeSlotWriteProbeRemaining=0
     runtime.focusChargeSlotTreeProbeRemaining=0
 end
+-- Fade-in proved the common DynamicEntryBox renders the complete display. A
+-- single pre/post Pop timeline now answers the remaining exit question without
+-- guessing a Clear/Remove native call: do the box's runtime entries disappear,
+-- become hidden, or survive while another ancestor suppresses them?
+function runtime.resetFocusChargePopTrace()
+    runtime.focusChargePopTrace=nil
+    runtime.focusChargePopTraceRemaining=0
+end
+function runtime.captureFocusChargePopTrace(phase,delayed)
+    local state=runtime.focusChargePopTrace
+    if not state then return end
+    state.captures=state.captures+1
+    local box,reason=runtime.focusChargeLocatorContainer()
+    if not valid(box) then
+        D.logInfo("focusChargePopTrace phase=%s container=unavailable reason=%s",phase,tostring(reason))
+    else
+        local visibility,opacityValue="unavailable","unavailable"
+        local readable,value=pcall(function() return box:GetVisibility() end)
+        if readable and value~=nil then visibility=tostring(value) end
+        readable,value=pcall(function() return box:GetRenderOpacity() end)
+        if readable and type(value)=="number" then opacityValue=string.format("%.3f",value) end
+        local entries,entryReason=runtime.collectFocusChargeLocatorEntries()
+        local entryCount=entries and #entries or 0
+        state.containerAddress=box:GetAddress()
+        D.logInfo("focusChargePopTrace phase=%s container=%s visibility=%s opacity=%s entries=%s reason=%s",
+            phase,tostring(state.containerAddress),visibility,opacityValue,
+            entries and tostring(entryCount) or "unavailable",tostring(entryReason or "none"))
+        local seen={}
+        for ordinal,candidate in ipairs(entries or {}) do
+            local object=candidate.object
+            local entryVisibility,entryOpacity="unavailable","unavailable"
+            readable,value=pcall(function() return object:GetVisibility() end)
+            if readable and value~=nil then entryVisibility=tostring(value) end
+            readable,value=pcall(function() return object:GetRenderOpacity() end)
+            if readable and type(value)=="number" then entryOpacity=string.format("%.3f",value) end
+            seen[candidate.address]=true
+            state.known[candidate.address]={className=candidate.className,ordinal=ordinal}
+            D.logInfo("focusChargePopTrace phase=%s entry=%d node=%s class=%s visibility=%s opacity=%s collection=present",
+                phase,ordinal,tostring(candidate.address),candidate.className,entryVisibility,entryOpacity)
+        end
+        for address,known in pairs(state.known) do
+            if not seen[address] then
+                D.logInfo("focusChargePopTrace phase=%s entry=%s node=%s class=%s collection=absent",
+                    phase,tostring(known.ordinal),tostring(address),known.className)
+            end
+        end
+    end
+    if delayed then
+        state.pending=state.pending-1
+        if state.pending<=0 then
+            D.logInfo("focusChargePopTrace phase=complete captures=%d",state.captures)
+            runtime.focusChargePopTrace=nil
+        end
+    end
+end
+function runtime.beginFocusChargePopTrace()
+    if (runtime.focusChargePopTraceRemaining or 0)<=0 or not D.debugLogging
+        or not config.fadeTransitions or config.debugFocusChargeLocator
+        or panelModes.WBP_HUD_FocusCharge_Bar~=Modes.VANILLA then return end
+    local box=runtime.focusChargeLocatorContainer()
+    if not valid(box) then return end
+    runtime.focusChargePopTraceRemaining=runtime.focusChargePopTraceRemaining-1
+    local state={known={},queue={},pending=5,captures=0}
+    runtime.focusChargePopTrace=state
+    runtime.captureFocusChargePopTrace("pre",false)
+    for _,sample in ipairs({{16,"nextFrame"},{96,"after100ms"},{240,"after250ms"},{490,"after500ms"},{1490,"after1500ms"}}) do
+        local delay,phase=sample[1],sample[2]
+        pcall(ExecuteInGameThreadWithDelay,delay,function()
+            if runtime.focusChargePopTrace~=state then return end
+            state.queue[#state.queue+1]=phase
+            wake("focusChargePopTrace")
+        end)
+    end
+end
+function runtime.focusChargePopTraceWriteEvent(context,method)
+    local state=runtime.focusChargePopTrace
+    if not state or not D.debugLogging then return end
+    local object=unwrap(context)
+    if not valid(object) then return end
+    local readable,address=pcall(function() return object:GetAddress() end)
+    if not readable or (address~=state.containerAddress and not state.known[address]) then return end
+    D.logInfo("focusChargePopTrace phase=write method=%s node=%s target=%s",
+        method,tostring(address),address==state.containerAddress and "container" or "entry")
+end
 Session.onClose(function()
     runtime.stopFocusChargeLocator("session close")
     runtime.resetFocusChargeSlotProbe()
+    runtime.resetFocusChargePopTrace()
 end)
 -- The locator established the user-visible slot class. Its individual
 -- enable/disable timing is still owned by the game, so observe a small,
@@ -1604,6 +1689,9 @@ local function signal(source)
         runtime.queueFocusChargeLocator(source)
     elseif source=="PopHUDPreset" then
         runtime.stopFocusChargeLocator("PopHUDPreset")
+        -- This runs before the production mediation below, so the immediate
+        -- post-Pop reading cannot be mistaken for one of our fade writes.
+        runtime.captureFocusChargePopTrace("post",false)
     end
     -- The confirmed DynamicEntryBox is the complete display's visual parent.
     -- The explicit debug locator temporarily owns that same opacity, so leave
@@ -1741,7 +1829,8 @@ end
 -- Native paths use an explicit post-hook; Blueprint callbacks are post-hooks.
 local specs = {
     {path="/Script/DogwoodUI.HUDManagerSubsystem:PushHUDPreset", callback=function()signal("PushHUDPreset")end, native=true},
-    {path="/Script/DogwoodUI.HUDManagerSubsystem:PopHUDPreset", callback=function()signal("PopHUDPreset")end, native=true},
+    {path="/Script/DogwoodUI.HUDManagerSubsystem:PopHUDPreset",
+        before=runtime.beginFocusChargePopTrace, callback=function()signal("PopHUDPreset")end, native=true},
     {path="/Script/Engine.PlayerController:ClientRestart", callback=function(context)
         local pc = unwrap(context)
         if valid(pc) and pc:IsLocalController() then
@@ -1822,9 +1911,15 @@ if D.debugLogging and config.fadeTransitions and panelModes.WBP_HUD_FocusCharge_
     -- Slot graphs establish lifecycle ordering; direct UWidget writes prove
     -- whether the game itself changes an individual visual slot's state.
     specs[#specs+1]={path="/Script/UMG.Widget:SetVisibility", native=true,
-        callback=function(context) runtime.focusChargeSlotWriteEvent(context,"SetVisibility") end, optional="probe"}
+        callback=function(context)
+            runtime.focusChargeSlotWriteEvent(context,"SetVisibility")
+            runtime.focusChargePopTraceWriteEvent(context,"SetVisibility")
+        end, optional="probe"}
     specs[#specs+1]={path="/Script/UMG.Widget:SetRenderOpacity", native=true,
-        callback=function(context) runtime.focusChargeSlotWriteEvent(context,"SetRenderOpacity") end, optional="probe"}
+        callback=function(context)
+            runtime.focusChargeSlotWriteEvent(context,"SetRenderOpacity")
+            runtime.focusChargePopTraceWriteEvent(context,"SetRenderOpacity")
+        end, optional="probe"}
     specs[#specs+1]={path="/Script/UMG.Image:SetBrush", native=true,
         callback=function(context) runtime.focusChargeSlotWriteEvent(context,"SetBrush") end, optional="probe"}
     specs[#specs+1]={path="/Script/UMG.Image:SetColorAndOpacity", native=true,
@@ -1853,7 +1948,7 @@ local function registerOne()
     if hooks[spec.path] then hookIndex=hookIndex+1;return hookIndex>#specs end
     local success, pre, post
     if spec.native then
-        success, pre, post = pcall(RegisterHook, spec.path, noop, spec.callback)
+        success, pre, post = pcall(RegisterHook, spec.path, spec.before or noop, spec.callback)
     else
         success, pre, post = pcall(RegisterHook, spec.path, spec.callback)
     end
@@ -1904,6 +1999,7 @@ local function accept(object)
         runtime.stopFocusChargeLocator("HUD replacement")
         runtime.resetFocusChargeFade()
         runtime.resetFocusChargeSlotProbe()
+        runtime.resetFocusChargePopTrace()
         hud, world, panels, absent = object, objectWorld, {}, {}
         -- A direct object notification and the GameHUD hook are preferred.
         -- Keep the fallback named too: a future lifecycle route must not turn
@@ -1923,6 +2019,9 @@ local function accept(object)
         runtime.focusChargeSlotProbeRemaining=12
         runtime.focusChargeSlotWriteProbeRemaining=12
         runtime.focusChargeSlotTreeProbeRemaining=1
+        runtime.focusChargePopTraceRemaining=D.debugLogging and config.fadeTransitions
+            and not config.debugFocusChargeLocator
+            and panelModes.WBP_HUD_FocusCharge_Bar==Modes.VANILLA and 1 or 0
         runtime.focusChargeLocatorArmed=config.debugFocusChargeLocator and D.debugLogging
             and panelModes.WBP_HUD_FocusCharge_Bar==Modes.VANILLA
         panelRetries={}
@@ -2389,6 +2488,7 @@ local function panelStep(name)
         runtime.stopFocusChargeLocator("HUD unavailable")
         runtime.resetFocusChargeFade()
         runtime.resetFocusChargeSlotProbe()
+        runtime.resetFocusChargePopTrace()
         hud, world, panels = nil, nil, {}
         -- The panels these transitions referred to are gone with the world.
         fade.reset()
@@ -2481,6 +2581,12 @@ local function step()
         local version=runtime.focusChargeLocatorAdvanceVersion
         runtime.focusChargeLocatorAdvanceVersion=nil
         runtime.advanceFocusChargeLocator(version)
+        return false
+    end
+    local popTrace=runtime.focusChargePopTrace
+    if popTrace and #popTrace.queue>0 then
+        local phase=table.remove(popTrace.queue,1)
+        runtime.captureFocusChargePopTrace(phase,true)
         return false
     end
     if runtime.focusChargeFadeEntry and focusChargeFade.active(runtime.focusChargeFadeKey) then
@@ -2871,7 +2977,7 @@ wake = function(statsOnly)
         panelRetries={}
         settingsPending,settingsAttempts=true,0
     end
-    if statsOnly~="marker" and statsOnly~="settings" and statsOnly~="resource" and statsOnly~="enemyHealth" and statsOnly~="time" and statsOnly~="sprintPrompt" and statsOnly~="clawMarks" and statsOnly~="playerEffects" and statsOnly~="liveSettings" and statsOnly~="quickslotProbe" and statsOnly~="vanillaCombatProbe" and statsOnly~="focusChargeLocator" and statsOnly~="focusChargeSlotProbe" and statsOnly~="focusChargeFade" then dirty=true end
+    if statsOnly~="marker" and statsOnly~="settings" and statsOnly~="resource" and statsOnly~="enemyHealth" and statsOnly~="time" and statsOnly~="sprintPrompt" and statsOnly~="clawMarks" and statsOnly~="playerEffects" and statsOnly~="liveSettings" and statsOnly~="quickslotProbe" and statsOnly~="vanillaCombatProbe" and statsOnly~="focusChargeLocator" and statsOnly~="focusChargeSlotProbe" and statsOnly~="focusChargePopTrace" and statsOnly~="focusChargeFade" then dirty=true end
     if worker then if D.debugLogging then D.count("workerCoalesced") end; return end
     worker=true
     if D.debugLogging then D.count("workerStarts") end
@@ -3078,11 +3184,13 @@ applyLiveSettings=function(run)
         -- completed hide before either mode can leave it under a stale lease.
         runtime.resetFocusChargeFade()
         runtime.resetFocusChargeSlotProbe()
+        runtime.resetFocusChargePopTrace()
         local traceEligible=valid(hud) and D.debugLogging and config.fadeTransitions
             and panelModes.WBP_HUD_FocusCharge_Bar==Modes.VANILLA
         runtime.focusChargeSlotProbeRemaining=traceEligible and 12 or 0
         runtime.focusChargeSlotWriteProbeRemaining=traceEligible and 12 or 0
         runtime.focusChargeSlotTreeProbeRemaining=traceEligible and 1 or 0
+        runtime.focusChargePopTraceRemaining=traceEligible and not config.debugFocusChargeLocator and 1 or 0
         if traceEligible then runtime.queueFocusChargeSlotTreeBaseline("settings applied") end
         runtime.focusChargeLocatorArmed=config.debugFocusChargeLocator and D.debugLogging
             and panelModes.WBP_HUD_FocusCharge_Bar==Modes.VANILLA
