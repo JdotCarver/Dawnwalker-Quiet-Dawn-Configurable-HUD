@@ -701,6 +701,28 @@ function runtime.focusChargePopTraceBarGraphEvent(context,entryParam)
     D.logInfo("focusChargePopTrace phase=barGraph node=%s entry=%s",
         tostring(state.barAddress),tostring(unwrap(entryParam)))
 end
+-- Entry 3348 precedes the Reset route 2867 by about 0.2 seconds, while the
+-- ordinary Delay nodes were absent. Blueprint Set Timer is the remaining
+-- stock scheduler family. Log the bar-owned function timer directly; delegate
+-- timers have no exposed owner here, so keep their one-shot diagnostic budget
+-- at sixteen observations rather than turning a global engine function into a
+-- combat poll.
+function runtime.focusChargePopTraceTimerEvent(objectParam,durationParam,kind)
+    local state=runtime.focusChargePopTrace
+    if not state or not D.debugLogging then return end
+    if kind=="function" then
+        local object=unwrap(objectParam)
+        if not valid(object) or object:GetAddress()~=state.barAddress then return end
+    elseif (state.delegateTimerCalls or 0)>=16 then
+        return
+    else
+        state.delegateTimerCalls=(state.delegateTimerCalls or 0)+1
+    end
+    local duration=unwrap(durationParam)
+    D.logInfo("focusChargePopTrace phase=timer kind=%s target=%s duration=%s",
+        kind,kind=="function" and "bar" or "delegate-unknown",
+        type(duration)=="number" and string.format("%.3f",duration) or tostring(duration))
+end
 Session.onClose(function()
     runtime.stopFocusChargeLocator("session close")
     runtime.resetFocusChargeSlotProbe()
@@ -1991,6 +2013,10 @@ if D.debugLogging and config.fadeTransitions and panelModes.WBP_HUD_FocusCharge_
         callback=function(_,worldContext,duration) runtime.focusChargePopTraceDelayEvent(worldContext,duration,"Delay") end, optional="probe"}
     specs[#specs+1]={path="/Script/Engine.KismetSystemLibrary:RetriggerableDelay", native=true,
         callback=function(_,worldContext,duration) runtime.focusChargePopTraceDelayEvent(worldContext,duration,"RetriggerableDelay") end, optional="probe"}
+    specs[#specs+1]={path="/Script/Engine.KismetSystemLibrary:K2_SetTimer", native=true,
+        callback=function(_,object,_,duration) runtime.focusChargePopTraceTimerEvent(object,duration,"function") end, optional="probe"}
+    specs[#specs+1]={path="/Script/Engine.KismetSystemLibrary:K2_SetTimerDelegate", native=true,
+        callback=function(_,_,duration) runtime.focusChargePopTraceTimerEvent(nil,duration,"delegate") end, optional="probe"}
     specs[#specs+1]={path="/Game/_Dawnwalker/UI/_Unified/HUD/CombatFocus/WBP_HUD_FocusCharge_Bar.WBP_HUD_FocusCharge_Bar_C:ExecuteUbergraph_WBP_HUD_FocusCharge_Bar",
         callback=runtime.focusChargePopTraceBarGraphEvent, optional="probe"}
 end
