@@ -647,6 +647,19 @@ function runtime.focusChargePopTraceWriteEvent(context,method)
     D.logInfo("focusChargePopTrace phase=write method=%s node=%s target=%s",
         method,tostring(address),address==state.containerAddress and "container" or "entry")
 end
+-- Entries vanished together between the 100 ms and 250 ms samples without an
+-- entry visibility write. Reset and RemoveEntry are DynamicEntryBox's two
+-- documented Blueprint-facing removal APIs; trace only those two candidates,
+-- only while the one Pop timeline is active, before attempting any mediation.
+function runtime.focusChargePopTraceEntryBoxEvent(context,method)
+    local state=runtime.focusChargePopTrace
+    if not state or not D.debugLogging then return end
+    local box=unwrap(context)
+    if not valid(box) then return end
+    local readable,address=pcall(function() return box:GetAddress() end)
+    if not readable or address~=state.containerAddress then return end
+    D.logInfo("focusChargePopTrace phase=entryBox method=%s node=%s",method,tostring(address))
+end
 Session.onClose(function()
     runtime.stopFocusChargeLocator("session close")
     runtime.resetFocusChargeSlotProbe()
@@ -1924,6 +1937,13 @@ if D.debugLogging and config.fadeTransitions and panelModes.WBP_HUD_FocusCharge_
         callback=function(context) runtime.focusChargeSlotWriteEvent(context,"SetBrush") end, optional="probe"}
     specs[#specs+1]={path="/Script/UMG.Image:SetColorAndOpacity", native=true,
         callback=function(context) runtime.focusChargeSlotWriteEvent(context,"SetColorAndOpacity") end, optional="probe"}
+    -- Probe only the documented DynamicEntryBox removal APIs. The Pop timeline
+    -- already proved a grouped removal; these hooks identify which stock API
+    -- performs it before a Fade ever tries to defer that operation.
+    specs[#specs+1]={path="/Script/UMG.DynamicEntryBox:Reset", native=true,
+        callback=function(context) runtime.focusChargePopTraceEntryBoxEvent(context,"Reset") end, optional="probe"}
+    specs[#specs+1]={path="/Script/UMG.DynamicEntryBox:RemoveEntry", native=true,
+        callback=function(context) runtime.focusChargePopTraceEntryBoxEvent(context,"RemoveEntry") end, optional="probe"}
 end
 if (config.switchRevealSeconds>0 and hasSwitchPanels()) or (manualPeekEnabled and config.peekOnFocusMode)
     or (D.debugLogging and config.fadeTransitions and (panelModes.WBP_AA_Quickslots==Modes.VANILLA
