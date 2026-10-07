@@ -1,0 +1,4236 @@
+[
+  {
+    "Type": "BlueprintGeneratedClass",
+    "Name": "BP_PlayerHUD_C",
+    "Flags": "RF_Public | RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'BlueprintGeneratedClass'",
+    "Package": "/Game/_Dawnwalker/Player/BP_PlayerHUD",
+    "Properties": {
+      "SimpleConstructionScript": {
+        "ObjectName": "SimpleConstructionScript'BP_PlayerHUD_C:SimpleConstructionScript_0'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.73"
+      },
+      "UberGraphFunction": {
+        "ObjectName": "Function'BP_PlayerHUD_C:ExecuteUbergraph_BP_PlayerHUD'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.25"
+      }
+    },
+    "SuperStruct": {
+      "ObjectName": "Class'DawnwalkerHUDBase'",
+      "ObjectPath": "/Script/Dawnwalker"
+    },
+    "Children": [
+      {
+        "ObjectName": "Function'BP_PlayerHUD_C:ShowTutorials'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.68"
+      },
+      {
+        "ObjectName": "Function'BP_PlayerHUD_C:HideTutorials'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.28"
+      },
+      {
+        "ObjectName": "Function'BP_PlayerHUD_C:AfterPush_F9DE5F4144105256491398B1B60C7354'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.7"
+      },
+      {
+        "ObjectName": "Function'BP_PlayerHUD_C:BeforePush_F9DE5F4144105256491398B1B60C7354'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.14"
+      },
+      {
+        "ObjectName": "Function'BP_PlayerHUD_C:AfterPush_1B7E06724CE6DB940186CF92E787B75E'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.2"
+      },
+      {
+        "ObjectName": "Function'BP_PlayerHUD_C:BeforePush_1B7E06724CE6DB940186CF92E787B75E'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.9"
+      },
+      {
+        "ObjectName": "Function'BP_PlayerHUD_C:AfterPush_49E57FF747A4EB287EA8998583AB3559'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.3"
+      },
+      {
+        "ObjectName": "Function'BP_PlayerHUD_C:BeforePush_49E57FF747A4EB287EA8998583AB3559'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.10"
+      },
+      {
+        "ObjectName": "Function'BP_PlayerHUD_C:OnLoaded_92ED899B40266FCDF621B492A953E1AD'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.42"
+      },
+      {
+        "ObjectName": "Function'BP_PlayerHUD_C:AfterPush_AD40A62B448391EB9211C1BF3AF5A910'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.4"
+      },
+      {
+        "ObjectName": "Function'BP_PlayerHUD_C:BeforePush_AD40A62B448391EB9211C1BF3AF5A910'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.11"
+      },
+      {
+        "ObjectName": "Function'BP_PlayerHUD_C:AfterPush_DCDE17A945132130CDFCF0BF9611E0A2'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.5"
+      },
+      {
+        "ObjectName": "Function'BP_PlayerHUD_C:BeforePush_DCDE17A945132130CDFCF0BF9611E0A2'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.12"
+      },
+      {
+        "ObjectName": "Function'BP_PlayerHUD_C:AfterPush_DF6617424F1A2E6F028B51ACA85BAF9D'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.6"
+      },
+      {
+        "ObjectName": "Function'BP_PlayerHUD_C:BeforePush_DF6617424F1A2E6F028B51ACA85BAF9D'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.13"
+      },
+      {
+        "ObjectName": "Function'BP_PlayerHUD_C:AfterPush_FAF4997F42747158D1950A98A6592F6C'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.8"
+      },
+      {
+        "ObjectName": "Function'BP_PlayerHUD_C:BeforePush_FAF4997F42747158D1950A98A6592F6C'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.15"
+      },
+      {
+        "ObjectName": "Function'BP_PlayerHUD_C:ReceiveBeginPlay'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.58"
+      },
+      {
+        "ObjectName": "Function'BP_PlayerHUD_C:Bind Events'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.17"
+      },
+      {
+        "ObjectName": "Function'BP_PlayerHUD_C:OnQuestSequencePlayed'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.43"
+      },
+      {
+        "ObjectName": "Function'BP_PlayerHUD_C:OnQuestSequenceStopped'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.44"
+      },
+      {
+        "ObjectName": "Function'BP_PlayerHUD_C:Bind Inventory Events'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.19"
+      },
+      {
+        "ObjectName": "Function'BP_PlayerHUD_C:On Readable Item Used'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.35"
+      },
+      {
+        "ObjectName": "Function'BP_PlayerHUD_C:GameplayDialogueStated'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.27"
+      },
+      {
+        "ObjectName": "Function'BP_PlayerHUD_C:GameplayDialogueFinished'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.26"
+      },
+      {
+        "ObjectName": "Function'BP_PlayerHUD_C:Playback Started'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.57"
+      },
+      {
+        "ObjectName": "Function'BP_PlayerHUD_C:Playback Finished'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.56"
+      },
+      {
+        "ObjectName": "Function'BP_PlayerHUD_C:On Read Special Choice Selected'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.34"
+      },
+      {
+        "ObjectName": "Function'BP_PlayerHUD_C:Bind Dialogue Events'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.16"
+      },
+      {
+        "ObjectName": "Function'BP_PlayerHUD_C:OpenDelayedDialogueShop'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.53"
+      },
+      {
+        "ObjectName": "Function'BP_PlayerHUD_C:BindFocusAbilityEvents'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.21"
+      },
+      {
+        "ObjectName": "Function'BP_PlayerHUD_C:On Glossary Show Readable'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.33"
+      },
+      {
+        "ObjectName": "Function'BP_PlayerHUD_C:Bind Glossary Events'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.18"
+      },
+      {
+        "ObjectName": "Function'BP_PlayerHUD_C:Play Character Development Video'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.55"
+      },
+      {
+        "ObjectName": "Function'BP_PlayerHUD_C:Request Show Xanthe Timer'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.60"
+      },
+      {
+        "ObjectName": "Function'BP_PlayerHUD_C:Request Hide Xanthe Timer'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.59"
+      },
+      {
+        "ObjectName": "Function'BP_PlayerHUD_C:Set Xanthe Timer Progress'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.65"
+      },
+      {
+        "ObjectName": "Function'BP_PlayerHUD_C:Notify Current Enemy Phase Changed'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.31"
+      },
+      {
+        "ObjectName": "Function'BP_PlayerHUD_C:Notify Total Enemy Phases Changed'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.32"
+      },
+      {
+        "ObjectName": "Function'BP_PlayerHUD_C:OnFocusCinematicModeChanged'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.38"
+      },
+      {
+        "ObjectName": "Function'BP_PlayerHUD_C:Bind Shop Events'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.20"
+      },
+      {
+        "ObjectName": "Function'BP_PlayerHUD_C:BindToDialogueToOpenShop'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.22"
+      },
+      {
+        "ObjectName": "Function'BP_PlayerHUD_C:LaunchShop'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.29"
+      },
+      {
+        "ObjectName": "Function'BP_PlayerHUD_C:SetCrosshairTextEnabled'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.66"
+      },
+      {
+        "ObjectName": "Function'BP_PlayerHUD_C:SetInputPromptEnabled'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.67"
+      },
+      {
+        "ObjectName": "Function'BP_PlayerHUD_C:OnItemPayment'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.41"
+      },
+      {
+        "ObjectName": "Function'BP_PlayerHUD_C:LaunchUpgrades'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.30"
+      },
+      {
+        "ObjectName": "Function'BP_PlayerHUD_C:OpenDelayedDialogueUpgrades'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.54"
+      },
+      {
+        "ObjectName": "Function'BP_PlayerHUD_C:BindToDialogueToOpenUpgrades'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.23"
+      },
+      {
+        "ObjectName": "Function'BP_PlayerHUD_C:BindUpgradeEvents'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.24"
+      },
+      {
+        "ObjectName": "Function'BP_PlayerHUD_C:Request Toggle Quickslots'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.61"
+      },
+      {
+        "ObjectName": "Function'BP_PlayerHUD_C:RequestShowAmbrusTimer'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.64"
+      },
+      {
+        "ObjectName": "Function'BP_PlayerHUD_C:RequestHideAmbrusTimer'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.63"
+      },
+      {
+        "ObjectName": "Function'BP_PlayerHUD_C:RequestDecreaseAmbrusTimerCurrentValuePercentage'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.62"
+      },
+      {
+        "ObjectName": "Function'BP_PlayerHUD_C:ExecuteUbergraph_BP_PlayerHUD'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.25"
+      },
+      {
+        "ObjectName": "Function'BP_PlayerHUD_C:OnSetAmbrusTimerMaxValue__DelegateSignature'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.45"
+      },
+      {
+        "ObjectName": "Function'BP_PlayerHUD_C:OnDecreaseAmbrusTimerCurrentValuePercentage__DelegateSignature'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.37"
+      },
+      {
+        "ObjectName": "Function'BP_PlayerHUD_C:OnHideAmbrusTimer__DelegateSignature'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.39"
+      },
+      {
+        "ObjectName": "Function'BP_PlayerHUD_C:OnShowAmbrusTimer__DelegateSignature'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.48"
+      },
+      {
+        "ObjectName": "Function'BP_PlayerHUD_C:OnToggleQuickslots__DelegateSignature'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.50"
+      },
+      {
+        "ObjectName": "Function'BP_PlayerHUD_C:OnSetInputPromptEnabled__DelegateSignature'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.47"
+      },
+      {
+        "ObjectName": "Function'BP_PlayerHUD_C:OnSetCrosshairTextEnabled__DelegateSignature'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.46"
+      },
+      {
+        "ObjectName": "Function'BP_PlayerHUD_C:OnTotalCombatPhaseCountSet__DelegateSignature'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.51"
+      },
+      {
+        "ObjectName": "Function'BP_PlayerHUD_C:OnCurrentCombatPhaseChanged__DelegateSignature'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.36"
+      },
+      {
+        "ObjectName": "Function'BP_PlayerHUD_C:OnUpdateXantheBar__DelegateSignature'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.52"
+      },
+      {
+        "ObjectName": "Function'BP_PlayerHUD_C:OnHideXantheBar__DelegateSignature'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.40"
+      },
+      {
+        "ObjectName": "Function'BP_PlayerHUD_C:OnShowXantheBar__DelegateSignature'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.49"
+      }
+    ],
+    "ChildProperties": [
+      {
+        "Type": "StructProperty",
+        "Name": "UberGraphFrame",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 16,
+        "PropertyFlags": "Transient | DuplicateTransient",
+        "Struct": {
+          "ObjectName": "Class'PointerToUberGraphFrame'",
+          "ObjectPath": "/Script/Engine"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "MediaSound",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | InstancedReference | NonTransactional",
+        "PropertyClass": {
+          "ObjectName": "Class'MediaSoundComponent'",
+          "ObjectPath": "/Script/MediaAssets"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "DefaultSceneRoot",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | InstancedReference | NonTransactional",
+        "PropertyClass": {
+          "ObjectName": "Class'SceneComponent'",
+          "ObjectPath": "/Script/Engine"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "Dialogue Widget",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 8,
+        "PropertyFlags": "Edit | BlueprintVisible | DisableEditOnInstance",
+        "PropertyClass": {
+          "ObjectName": "Class'Object'",
+          "ObjectPath": "/Script/CoreUObject"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "Owning Player",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 8,
+        "PropertyFlags": "Edit | BlueprintVisible | DisableEditOnTemplate | DisableEditOnInstance",
+        "PropertyClass": {
+          "ObjectName": "Class'DawnwalkerPlayerControllerBase'",
+          "ObjectPath": "/Script/Dawnwalker"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "Active Cinematic Dialogue Widget",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 8,
+        "PropertyFlags": "Edit | BlueprintVisible | DisableEditOnInstance | InstancedReference",
+        "PropertyClass": {
+          "ObjectName": "Class'CommonActivatableWidget'",
+          "ObjectPath": "/Script/CommonUI"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "Active Cinematic Quest Sequence Player",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 8,
+        "PropertyFlags": "Edit | BlueprintVisible | DisableEditOnInstance",
+        "PropertyClass": {
+          "ObjectName": "Class'EventLevelSequencePlayer'",
+          "ObjectPath": "/Script/NodeRuntime"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "Active Cinematic Sequence Overlay Widget",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 8,
+        "PropertyFlags": "Edit | BlueprintVisible | DisableEditOnInstance | InstancedReference",
+        "PropertyClass": {
+          "ObjectName": "WidgetBlueprintGeneratedClass'WBP_QuestLevelSequenceOverlay_C'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/Gameplay/QuestLevelSequenceOverlay/WBP_QuestLevelSequenceOverlay.13"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "In Sequence Player",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 8,
+        "PropertyFlags": "Edit | BlueprintVisible | DisableEditOnInstance",
+        "PropertyClass": {
+          "ObjectName": "Class'EventLevelSequencePlayer'",
+          "ObjectPath": "/Script/NodeRuntime"
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "In Cinematic Mode",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 1,
+        "PropertyFlags": "Edit | BlueprintVisible | DisableEditOnInstance",
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "Gameplay Dialogue Widget",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 8,
+        "PropertyFlags": "Edit | BlueprintVisible | DisableEditOnInstance | InstancedReference",
+        "PropertyClass": {
+          "ObjectName": "WidgetBlueprintGeneratedClass'WBP_GameplayDialogue_HUD_C'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/GameplayDialogue/WBP_GameplayDialogue_HUD.39"
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "XantheBarShown",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 1,
+        "PropertyFlags": "Edit | BlueprintVisible | DisableEditOnInstance",
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "DoubleProperty",
+        "Name": "XantheProgress",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 8,
+        "PropertyFlags": "Edit | BlueprintVisible | DisableEditOnInstance"
+      },
+      {
+        "Type": "MulticastInlineDelegateProperty",
+        "Name": "OnShowXantheBar",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 24,
+        "PropertyFlags": "Edit | BlueprintVisible | DisableEditOnInstance | BlueprintAssignable | BlueprintCallable",
+        "SignatureFunction": {
+          "ObjectName": "Function'BP_PlayerHUD_C:OnShowXantheBar__DelegateSignature'",
+          "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.49"
+        }
+      },
+      {
+        "Type": "MulticastInlineDelegateProperty",
+        "Name": "OnHideXantheBar",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 24,
+        "PropertyFlags": "Edit | BlueprintVisible | DisableEditOnInstance | BlueprintAssignable | BlueprintCallable",
+        "SignatureFunction": {
+          "ObjectName": "Function'BP_PlayerHUD_C:OnHideXantheBar__DelegateSignature'",
+          "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.40"
+        }
+      },
+      {
+        "Type": "MulticastInlineDelegateProperty",
+        "Name": "OnUpdateXantheBar",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 24,
+        "PropertyFlags": "Edit | BlueprintVisible | DisableEditOnInstance | BlueprintAssignable | BlueprintCallable",
+        "SignatureFunction": {
+          "ObjectName": "Function'BP_PlayerHUD_C:OnUpdateXantheBar__DelegateSignature'",
+          "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.52"
+        }
+      },
+      {
+        "Type": "IntProperty",
+        "Name": "Current Enemy Total Phase Count",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 4,
+        "PropertyFlags": "Edit | BlueprintVisible | DisableEditOnInstance"
+      },
+      {
+        "Type": "IntProperty",
+        "Name": "Current Enemy Current Phase",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 4,
+        "PropertyFlags": "Edit | BlueprintVisible | DisableEditOnInstance"
+      },
+      {
+        "Type": "MulticastInlineDelegateProperty",
+        "Name": "OnCurrentCombatPhaseChanged",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 24,
+        "PropertyFlags": "Edit | BlueprintVisible | DisableEditOnInstance | BlueprintAssignable | BlueprintCallable",
+        "SignatureFunction": {
+          "ObjectName": "Function'BP_PlayerHUD_C:OnCurrentCombatPhaseChanged__DelegateSignature'",
+          "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.36"
+        }
+      },
+      {
+        "Type": "MulticastInlineDelegateProperty",
+        "Name": "OnTotalCombatPhaseCountSet",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 24,
+        "PropertyFlags": "Edit | BlueprintVisible | DisableEditOnInstance | BlueprintAssignable | BlueprintCallable",
+        "SignatureFunction": {
+          "ObjectName": "Function'BP_PlayerHUD_C:OnTotalCombatPhaseCountSet__DelegateSignature'",
+          "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.51"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "Merchant Shop Inventory",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 8,
+        "PropertyFlags": "Edit | BlueprintVisible | DisableEditOnInstance | InstancedReference",
+        "PropertyClass": {
+          "ObjectName": "Class'InventoryComponent'",
+          "ObjectPath": "/Script/DogwoodInventory"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "Dialogue Shop Inventory",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 8,
+        "PropertyFlags": "Edit | BlueprintVisible | DisableEditOnInstance | InstancedReference",
+        "PropertyClass": {
+          "ObjectName": "Class'InventoryComponent'",
+          "ObjectPath": "/Script/DogwoodInventory"
+        }
+      },
+      {
+        "Type": "MulticastInlineDelegateProperty",
+        "Name": "OnSetCrosshairTextEnabled",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 24,
+        "PropertyFlags": "Edit | BlueprintVisible | DisableEditOnInstance | BlueprintAssignable | BlueprintCallable",
+        "SignatureFunction": {
+          "ObjectName": "Function'BP_PlayerHUD_C:OnSetCrosshairTextEnabled__DelegateSignature'",
+          "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.46"
+        }
+      },
+      {
+        "Type": "MulticastInlineDelegateProperty",
+        "Name": "OnSetInputPromptEnabled",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 24,
+        "PropertyFlags": "Edit | BlueprintVisible | DisableEditOnInstance | BlueprintAssignable | BlueprintCallable",
+        "SignatureFunction": {
+          "ObjectName": "Function'BP_PlayerHUD_C:OnSetInputPromptEnabled__DelegateSignature'",
+          "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.47"
+        }
+      },
+      {
+        "Type": "MulticastInlineDelegateProperty",
+        "Name": "OnToggleQuickslots",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 24,
+        "PropertyFlags": "Edit | BlueprintVisible | DisableEditOnInstance | BlueprintAssignable | BlueprintCallable",
+        "SignatureFunction": {
+          "ObjectName": "Function'BP_PlayerHUD_C:OnToggleQuickslots__DelegateSignature'",
+          "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.50"
+        }
+      },
+      {
+        "Type": "MulticastInlineDelegateProperty",
+        "Name": "OnShowAmbrusTimer",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 24,
+        "PropertyFlags": "Edit | BlueprintVisible | DisableEditOnInstance | BlueprintAssignable | BlueprintCallable",
+        "SignatureFunction": {
+          "ObjectName": "Function'BP_PlayerHUD_C:OnShowAmbrusTimer__DelegateSignature'",
+          "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.48"
+        }
+      },
+      {
+        "Type": "MulticastInlineDelegateProperty",
+        "Name": "OnHideAmbrusTimer",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 24,
+        "PropertyFlags": "Edit | BlueprintVisible | DisableEditOnInstance | BlueprintAssignable | BlueprintCallable",
+        "SignatureFunction": {
+          "ObjectName": "Function'BP_PlayerHUD_C:OnHideAmbrusTimer__DelegateSignature'",
+          "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.39"
+        }
+      },
+      {
+        "Type": "MulticastInlineDelegateProperty",
+        "Name": "OnDecreaseAmbrusTimerCurrentValuePercentage",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 24,
+        "PropertyFlags": "Edit | BlueprintVisible | DisableEditOnInstance | BlueprintAssignable | BlueprintCallable",
+        "SignatureFunction": {
+          "ObjectName": "Function'BP_PlayerHUD_C:OnDecreaseAmbrusTimerCurrentValuePercentage__DelegateSignature'",
+          "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.37"
+        }
+      },
+      {
+        "Type": "MulticastInlineDelegateProperty",
+        "Name": "OnSetAmbrusTimerMaxValue",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 24,
+        "PropertyFlags": "Edit | BlueprintVisible | DisableEditOnInstance | BlueprintAssignable | BlueprintCallable",
+        "SignatureFunction": {
+          "ObjectName": "Function'BP_PlayerHUD_C:OnSetAmbrusTimerMaxValue__DelegateSignature'",
+          "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.45"
+        }
+      }
+    ],
+    "FuncMap": {
+      "OnShowXantheBar__DelegateSignature": {
+        "ObjectName": "Function'BP_PlayerHUD_C:OnShowXantheBar__DelegateSignature'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.49"
+      },
+      "OnHideXantheBar__DelegateSignature": {
+        "ObjectName": "Function'BP_PlayerHUD_C:OnHideXantheBar__DelegateSignature'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.40"
+      },
+      "OnUpdateXantheBar__DelegateSignature": {
+        "ObjectName": "Function'BP_PlayerHUD_C:OnUpdateXantheBar__DelegateSignature'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.52"
+      },
+      "OnCurrentCombatPhaseChanged__DelegateSignature": {
+        "ObjectName": "Function'BP_PlayerHUD_C:OnCurrentCombatPhaseChanged__DelegateSignature'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.36"
+      },
+      "OnTotalCombatPhaseCountSet__DelegateSignature": {
+        "ObjectName": "Function'BP_PlayerHUD_C:OnTotalCombatPhaseCountSet__DelegateSignature'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.51"
+      },
+      "OnSetCrosshairTextEnabled__DelegateSignature": {
+        "ObjectName": "Function'BP_PlayerHUD_C:OnSetCrosshairTextEnabled__DelegateSignature'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.46"
+      },
+      "OnSetInputPromptEnabled__DelegateSignature": {
+        "ObjectName": "Function'BP_PlayerHUD_C:OnSetInputPromptEnabled__DelegateSignature'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.47"
+      },
+      "OnToggleQuickslots__DelegateSignature": {
+        "ObjectName": "Function'BP_PlayerHUD_C:OnToggleQuickslots__DelegateSignature'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.50"
+      },
+      "OnShowAmbrusTimer__DelegateSignature": {
+        "ObjectName": "Function'BP_PlayerHUD_C:OnShowAmbrusTimer__DelegateSignature'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.48"
+      },
+      "OnHideAmbrusTimer__DelegateSignature": {
+        "ObjectName": "Function'BP_PlayerHUD_C:OnHideAmbrusTimer__DelegateSignature'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.39"
+      },
+      "OnDecreaseAmbrusTimerCurrentValuePercentage__DelegateSignature": {
+        "ObjectName": "Function'BP_PlayerHUD_C:OnDecreaseAmbrusTimerCurrentValuePercentage__DelegateSignature'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.37"
+      },
+      "OnSetAmbrusTimerMaxValue__DelegateSignature": {
+        "ObjectName": "Function'BP_PlayerHUD_C:OnSetAmbrusTimerMaxValue__DelegateSignature'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.45"
+      },
+      "ExecuteUbergraph_BP_PlayerHUD": {
+        "ObjectName": "Function'BP_PlayerHUD_C:ExecuteUbergraph_BP_PlayerHUD'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.25"
+      },
+      "RequestDecreaseAmbrusTimerCurrentValuePercentage": {
+        "ObjectName": "Function'BP_PlayerHUD_C:RequestDecreaseAmbrusTimerCurrentValuePercentage'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.62"
+      },
+      "RequestHideAmbrusTimer": {
+        "ObjectName": "Function'BP_PlayerHUD_C:RequestHideAmbrusTimer'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.63"
+      },
+      "RequestShowAmbrusTimer": {
+        "ObjectName": "Function'BP_PlayerHUD_C:RequestShowAmbrusTimer'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.64"
+      },
+      "Request Toggle Quickslots": {
+        "ObjectName": "Function'BP_PlayerHUD_C:Request Toggle Quickslots'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.61"
+      },
+      "BindUpgradeEvents": {
+        "ObjectName": "Function'BP_PlayerHUD_C:BindUpgradeEvents'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.24"
+      },
+      "BindToDialogueToOpenUpgrades": {
+        "ObjectName": "Function'BP_PlayerHUD_C:BindToDialogueToOpenUpgrades'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.23"
+      },
+      "OpenDelayedDialogueUpgrades": {
+        "ObjectName": "Function'BP_PlayerHUD_C:OpenDelayedDialogueUpgrades'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.54"
+      },
+      "LaunchUpgrades": {
+        "ObjectName": "Function'BP_PlayerHUD_C:LaunchUpgrades'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.30"
+      },
+      "OnItemPayment": {
+        "ObjectName": "Function'BP_PlayerHUD_C:OnItemPayment'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.41"
+      },
+      "SetInputPromptEnabled": {
+        "ObjectName": "Function'BP_PlayerHUD_C:SetInputPromptEnabled'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.67"
+      },
+      "SetCrosshairTextEnabled": {
+        "ObjectName": "Function'BP_PlayerHUD_C:SetCrosshairTextEnabled'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.66"
+      },
+      "LaunchShop": {
+        "ObjectName": "Function'BP_PlayerHUD_C:LaunchShop'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.29"
+      },
+      "BindToDialogueToOpenShop": {
+        "ObjectName": "Function'BP_PlayerHUD_C:BindToDialogueToOpenShop'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.22"
+      },
+      "Bind Shop Events": {
+        "ObjectName": "Function'BP_PlayerHUD_C:Bind Shop Events'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.20"
+      },
+      "OnFocusCinematicModeChanged": {
+        "ObjectName": "Function'BP_PlayerHUD_C:OnFocusCinematicModeChanged'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.38"
+      },
+      "Notify Total Enemy Phases Changed": {
+        "ObjectName": "Function'BP_PlayerHUD_C:Notify Total Enemy Phases Changed'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.32"
+      },
+      "Notify Current Enemy Phase Changed": {
+        "ObjectName": "Function'BP_PlayerHUD_C:Notify Current Enemy Phase Changed'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.31"
+      },
+      "Set Xanthe Timer Progress": {
+        "ObjectName": "Function'BP_PlayerHUD_C:Set Xanthe Timer Progress'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.65"
+      },
+      "Request Hide Xanthe Timer": {
+        "ObjectName": "Function'BP_PlayerHUD_C:Request Hide Xanthe Timer'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.59"
+      },
+      "Request Show Xanthe Timer": {
+        "ObjectName": "Function'BP_PlayerHUD_C:Request Show Xanthe Timer'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.60"
+      },
+      "Play Character Development Video": {
+        "ObjectName": "Function'BP_PlayerHUD_C:Play Character Development Video'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.55"
+      },
+      "Bind Glossary Events": {
+        "ObjectName": "Function'BP_PlayerHUD_C:Bind Glossary Events'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.18"
+      },
+      "On Glossary Show Readable": {
+        "ObjectName": "Function'BP_PlayerHUD_C:On Glossary Show Readable'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.33"
+      },
+      "BindFocusAbilityEvents": {
+        "ObjectName": "Function'BP_PlayerHUD_C:BindFocusAbilityEvents'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.21"
+      },
+      "OpenDelayedDialogueShop": {
+        "ObjectName": "Function'BP_PlayerHUD_C:OpenDelayedDialogueShop'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.53"
+      },
+      "Bind Dialogue Events": {
+        "ObjectName": "Function'BP_PlayerHUD_C:Bind Dialogue Events'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.16"
+      },
+      "On Read Special Choice Selected": {
+        "ObjectName": "Function'BP_PlayerHUD_C:On Read Special Choice Selected'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.34"
+      },
+      "Playback Finished": {
+        "ObjectName": "Function'BP_PlayerHUD_C:Playback Finished'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.56"
+      },
+      "Playback Started": {
+        "ObjectName": "Function'BP_PlayerHUD_C:Playback Started'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.57"
+      },
+      "GameplayDialogueFinished": {
+        "ObjectName": "Function'BP_PlayerHUD_C:GameplayDialogueFinished'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.26"
+      },
+      "GameplayDialogueStated": {
+        "ObjectName": "Function'BP_PlayerHUD_C:GameplayDialogueStated'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.27"
+      },
+      "On Readable Item Used": {
+        "ObjectName": "Function'BP_PlayerHUD_C:On Readable Item Used'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.35"
+      },
+      "Bind Inventory Events": {
+        "ObjectName": "Function'BP_PlayerHUD_C:Bind Inventory Events'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.19"
+      },
+      "OnQuestSequenceStopped": {
+        "ObjectName": "Function'BP_PlayerHUD_C:OnQuestSequenceStopped'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.44"
+      },
+      "OnQuestSequencePlayed": {
+        "ObjectName": "Function'BP_PlayerHUD_C:OnQuestSequencePlayed'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.43"
+      },
+      "Bind Events": {
+        "ObjectName": "Function'BP_PlayerHUD_C:Bind Events'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.17"
+      },
+      "ReceiveBeginPlay": {
+        "ObjectName": "Function'BP_PlayerHUD_C:ReceiveBeginPlay'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.58"
+      },
+      "BeforePush_FAF4997F42747158D1950A98A6592F6C": {
+        "ObjectName": "Function'BP_PlayerHUD_C:BeforePush_FAF4997F42747158D1950A98A6592F6C'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.15"
+      },
+      "AfterPush_FAF4997F42747158D1950A98A6592F6C": {
+        "ObjectName": "Function'BP_PlayerHUD_C:AfterPush_FAF4997F42747158D1950A98A6592F6C'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.8"
+      },
+      "BeforePush_DF6617424F1A2E6F028B51ACA85BAF9D": {
+        "ObjectName": "Function'BP_PlayerHUD_C:BeforePush_DF6617424F1A2E6F028B51ACA85BAF9D'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.13"
+      },
+      "AfterPush_DF6617424F1A2E6F028B51ACA85BAF9D": {
+        "ObjectName": "Function'BP_PlayerHUD_C:AfterPush_DF6617424F1A2E6F028B51ACA85BAF9D'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.6"
+      },
+      "BeforePush_DCDE17A945132130CDFCF0BF9611E0A2": {
+        "ObjectName": "Function'BP_PlayerHUD_C:BeforePush_DCDE17A945132130CDFCF0BF9611E0A2'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.12"
+      },
+      "AfterPush_DCDE17A945132130CDFCF0BF9611E0A2": {
+        "ObjectName": "Function'BP_PlayerHUD_C:AfterPush_DCDE17A945132130CDFCF0BF9611E0A2'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.5"
+      },
+      "BeforePush_AD40A62B448391EB9211C1BF3AF5A910": {
+        "ObjectName": "Function'BP_PlayerHUD_C:BeforePush_AD40A62B448391EB9211C1BF3AF5A910'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.11"
+      },
+      "AfterPush_AD40A62B448391EB9211C1BF3AF5A910": {
+        "ObjectName": "Function'BP_PlayerHUD_C:AfterPush_AD40A62B448391EB9211C1BF3AF5A910'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.4"
+      },
+      "OnLoaded_92ED899B40266FCDF621B492A953E1AD": {
+        "ObjectName": "Function'BP_PlayerHUD_C:OnLoaded_92ED899B40266FCDF621B492A953E1AD'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.42"
+      },
+      "BeforePush_49E57FF747A4EB287EA8998583AB3559": {
+        "ObjectName": "Function'BP_PlayerHUD_C:BeforePush_49E57FF747A4EB287EA8998583AB3559'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.10"
+      },
+      "AfterPush_49E57FF747A4EB287EA8998583AB3559": {
+        "ObjectName": "Function'BP_PlayerHUD_C:AfterPush_49E57FF747A4EB287EA8998583AB3559'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.3"
+      },
+      "BeforePush_1B7E06724CE6DB940186CF92E787B75E": {
+        "ObjectName": "Function'BP_PlayerHUD_C:BeforePush_1B7E06724CE6DB940186CF92E787B75E'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.9"
+      },
+      "AfterPush_1B7E06724CE6DB940186CF92E787B75E": {
+        "ObjectName": "Function'BP_PlayerHUD_C:AfterPush_1B7E06724CE6DB940186CF92E787B75E'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.2"
+      },
+      "BeforePush_F9DE5F4144105256491398B1B60C7354": {
+        "ObjectName": "Function'BP_PlayerHUD_C:BeforePush_F9DE5F4144105256491398B1B60C7354'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.14"
+      },
+      "AfterPush_F9DE5F4144105256491398B1B60C7354": {
+        "ObjectName": "Function'BP_PlayerHUD_C:AfterPush_F9DE5F4144105256491398B1B60C7354'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.7"
+      },
+      "HideTutorials": {
+        "ObjectName": "Function'BP_PlayerHUD_C:HideTutorials'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.28"
+      },
+      "ShowTutorials": {
+        "ObjectName": "Function'BP_PlayerHUD_C:ShowTutorials'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.68"
+      }
+    },
+    "ClassFlags": "CLASS_Config | CLASS_Transient | CLASS_NotPlaceable | CLASS_ReplicationDataIsSetUp | CLASS_CompiledFromBlueprint | CLASS_HasInstancedReference",
+    "ClassWithin": {
+      "ObjectName": "Class'Object'",
+      "ObjectPath": "/Script/CoreUObject"
+    },
+    "ClassConfigName": "Game",
+    "bCooked": true,
+    "ClassDefaultObject": {
+      "ObjectName": "BP_PlayerHUD_C'Default__BP_PlayerHUD_C'",
+      "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.1"
+    },
+    "EditorTags": {
+      "BlueprintType": "BPTYPE_Normal"
+    }
+  },
+  {
+    "Type": "BP_PlayerHUD_C",
+    "Name": "Default__BP_PlayerHUD_C",
+    "Flags": "RF_Public | RF_ClassDefaultObject | RF_ArchetypeObject | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "BlueprintGeneratedClass'/Game/_Dawnwalker/Player/BP_PlayerHUD.BP_PlayerHUD_C'",
+    "Package": "/Game/_Dawnwalker/Player/BP_PlayerHUD",
+    "Properties": {
+      "UberGraphFrame": {},
+      "OnShowXantheBar": {
+        "InvocationList": []
+      },
+      "OnHideXantheBar": {
+        "InvocationList": []
+      },
+      "OnUpdateXantheBar": {
+        "InvocationList": []
+      },
+      "OnCurrentCombatPhaseChanged": {
+        "InvocationList": []
+      },
+      "OnTotalCombatPhaseCountSet": {
+        "InvocationList": []
+      },
+      "OnSetCrosshairTextEnabled": {
+        "InvocationList": []
+      },
+      "OnSetInputPromptEnabled": {
+        "InvocationList": []
+      },
+      "OnToggleQuickslots": {
+        "InvocationList": []
+      },
+      "OnShowAmbrusTimer": {
+        "InvocationList": []
+      },
+      "OnHideAmbrusTimer": {
+        "InvocationList": []
+      },
+      "OnDecreaseAmbrusTimerCurrentValuePercentage": {
+        "InvocationList": []
+      },
+      "OnSetAmbrusTimerMaxValue": {
+        "InvocationList": []
+      }
+    }
+  },
+  {
+    "Type": "Function",
+    "Name": "AfterPush_1B7E06724CE6DB940186CF92E787B75E",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'BP_PlayerHUD_C'",
+      "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.0"
+    },
+    "ChildProperties": [
+      {
+        "Type": "ObjectProperty",
+        "Name": "UserWidget",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm | InstancedReference",
+        "PropertyClass": {
+          "ObjectName": "Class'CommonActivatableWidget'",
+          "ObjectPath": "/Script/CommonUI"
+        }
+      }
+    ],
+    "FunctionFlags": "FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "AfterPush_49E57FF747A4EB287EA8998583AB3559",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'BP_PlayerHUD_C'",
+      "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.0"
+    },
+    "ChildProperties": [
+      {
+        "Type": "ObjectProperty",
+        "Name": "UserWidget",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm | InstancedReference",
+        "PropertyClass": {
+          "ObjectName": "Class'CommonActivatableWidget'",
+          "ObjectPath": "/Script/CommonUI"
+        }
+      }
+    ],
+    "FunctionFlags": "FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "AfterPush_AD40A62B448391EB9211C1BF3AF5A910",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'BP_PlayerHUD_C'",
+      "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.0"
+    },
+    "ChildProperties": [
+      {
+        "Type": "ObjectProperty",
+        "Name": "UserWidget",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm | InstancedReference",
+        "PropertyClass": {
+          "ObjectName": "Class'CommonActivatableWidget'",
+          "ObjectPath": "/Script/CommonUI"
+        }
+      }
+    ],
+    "FunctionFlags": "FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "AfterPush_DCDE17A945132130CDFCF0BF9611E0A2",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'BP_PlayerHUD_C'",
+      "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.0"
+    },
+    "ChildProperties": [
+      {
+        "Type": "ObjectProperty",
+        "Name": "UserWidget",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm | InstancedReference",
+        "PropertyClass": {
+          "ObjectName": "Class'CommonActivatableWidget'",
+          "ObjectPath": "/Script/CommonUI"
+        }
+      }
+    ],
+    "FunctionFlags": "FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "AfterPush_DF6617424F1A2E6F028B51ACA85BAF9D",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'BP_PlayerHUD_C'",
+      "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.0"
+    },
+    "ChildProperties": [
+      {
+        "Type": "ObjectProperty",
+        "Name": "UserWidget",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm | InstancedReference",
+        "PropertyClass": {
+          "ObjectName": "Class'CommonActivatableWidget'",
+          "ObjectPath": "/Script/CommonUI"
+        }
+      }
+    ],
+    "FunctionFlags": "FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "AfterPush_F9DE5F4144105256491398B1B60C7354",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'BP_PlayerHUD_C'",
+      "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.0"
+    },
+    "ChildProperties": [
+      {
+        "Type": "ObjectProperty",
+        "Name": "UserWidget",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm | InstancedReference",
+        "PropertyClass": {
+          "ObjectName": "Class'CommonActivatableWidget'",
+          "ObjectPath": "/Script/CommonUI"
+        }
+      }
+    ],
+    "FunctionFlags": "FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "AfterPush_FAF4997F42747158D1950A98A6592F6C",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'BP_PlayerHUD_C'",
+      "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.0"
+    },
+    "ChildProperties": [
+      {
+        "Type": "ObjectProperty",
+        "Name": "UserWidget",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm | InstancedReference",
+        "PropertyClass": {
+          "ObjectName": "Class'CommonActivatableWidget'",
+          "ObjectPath": "/Script/CommonUI"
+        }
+      }
+    ],
+    "FunctionFlags": "FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "BeforePush_1B7E06724CE6DB940186CF92E787B75E",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'BP_PlayerHUD_C'",
+      "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.0"
+    },
+    "ChildProperties": [
+      {
+        "Type": "ObjectProperty",
+        "Name": "UserWidget",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm | InstancedReference",
+        "PropertyClass": {
+          "ObjectName": "Class'CommonActivatableWidget'",
+          "ObjectPath": "/Script/CommonUI"
+        }
+      }
+    ],
+    "FunctionFlags": "FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "BeforePush_49E57FF747A4EB287EA8998583AB3559",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'BP_PlayerHUD_C'",
+      "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.0"
+    },
+    "ChildProperties": [
+      {
+        "Type": "ObjectProperty",
+        "Name": "UserWidget",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm | InstancedReference",
+        "PropertyClass": {
+          "ObjectName": "Class'CommonActivatableWidget'",
+          "ObjectPath": "/Script/CommonUI"
+        }
+      }
+    ],
+    "FunctionFlags": "FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "BeforePush_AD40A62B448391EB9211C1BF3AF5A910",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'BP_PlayerHUD_C'",
+      "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.0"
+    },
+    "ChildProperties": [
+      {
+        "Type": "ObjectProperty",
+        "Name": "UserWidget",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm | InstancedReference",
+        "PropertyClass": {
+          "ObjectName": "Class'CommonActivatableWidget'",
+          "ObjectPath": "/Script/CommonUI"
+        }
+      }
+    ],
+    "FunctionFlags": "FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "BeforePush_DCDE17A945132130CDFCF0BF9611E0A2",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'BP_PlayerHUD_C'",
+      "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.0"
+    },
+    "ChildProperties": [
+      {
+        "Type": "ObjectProperty",
+        "Name": "UserWidget",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm | InstancedReference",
+        "PropertyClass": {
+          "ObjectName": "Class'CommonActivatableWidget'",
+          "ObjectPath": "/Script/CommonUI"
+        }
+      }
+    ],
+    "FunctionFlags": "FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "BeforePush_DF6617424F1A2E6F028B51ACA85BAF9D",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'BP_PlayerHUD_C'",
+      "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.0"
+    },
+    "ChildProperties": [
+      {
+        "Type": "ObjectProperty",
+        "Name": "UserWidget",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm | InstancedReference",
+        "PropertyClass": {
+          "ObjectName": "Class'CommonActivatableWidget'",
+          "ObjectPath": "/Script/CommonUI"
+        }
+      }
+    ],
+    "FunctionFlags": "FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "BeforePush_F9DE5F4144105256491398B1B60C7354",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'BP_PlayerHUD_C'",
+      "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.0"
+    },
+    "ChildProperties": [
+      {
+        "Type": "ObjectProperty",
+        "Name": "UserWidget",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm | InstancedReference",
+        "PropertyClass": {
+          "ObjectName": "Class'CommonActivatableWidget'",
+          "ObjectPath": "/Script/CommonUI"
+        }
+      }
+    ],
+    "FunctionFlags": "FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "BeforePush_FAF4997F42747158D1950A98A6592F6C",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'BP_PlayerHUD_C'",
+      "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.0"
+    },
+    "ChildProperties": [
+      {
+        "Type": "ObjectProperty",
+        "Name": "UserWidget",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm | InstancedReference",
+        "PropertyClass": {
+          "ObjectName": "Class'CommonActivatableWidget'",
+          "ObjectPath": "/Script/CommonUI"
+        }
+      }
+    ],
+    "FunctionFlags": "FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "Bind Dialogue Events",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'BP_PlayerHUD_C'",
+      "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.0"
+    },
+    "FunctionFlags": "FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "Bind Events",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'BP_PlayerHUD_C'",
+      "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.0"
+    },
+    "FunctionFlags": "FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "Bind Glossary Events",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'BP_PlayerHUD_C'",
+      "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.0"
+    },
+    "FunctionFlags": "FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "Bind Inventory Events",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'BP_PlayerHUD_C'",
+      "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.0"
+    },
+    "FunctionFlags": "FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "Bind Shop Events",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'BP_PlayerHUD_C'",
+      "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.0"
+    },
+    "FunctionFlags": "FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "BindFocusAbilityEvents",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'BP_PlayerHUD_C'",
+      "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.0"
+    },
+    "FunctionFlags": "FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "BindToDialogueToOpenShop",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'BP_PlayerHUD_C'",
+      "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.0"
+    },
+    "ChildProperties": [
+      {
+        "Type": "ObjectProperty",
+        "Name": "InventoryComponent",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "ConstParm | BlueprintVisible | BlueprintReadOnly | Parm | InstancedReference",
+        "PropertyClass": {
+          "ObjectName": "Class'InventoryComponent'",
+          "ObjectPath": "/Script/DogwoodInventory"
+        }
+      }
+    ],
+    "FunctionFlags": "FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "BindToDialogueToOpenUpgrades",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'BP_PlayerHUD_C'",
+      "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.0"
+    },
+    "ChildProperties": [
+      {
+        "Type": "ObjectProperty",
+        "Name": "Inventory Component",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm | InstancedReference",
+        "PropertyClass": {
+          "ObjectName": "Class'InventoryComponent'",
+          "ObjectPath": "/Script/DogwoodInventory"
+        }
+      }
+    ],
+    "FunctionFlags": "FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "BindUpgradeEvents",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'BP_PlayerHUD_C'",
+      "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.0"
+    },
+    "FunctionFlags": "FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "ExecuteUbergraph_BP_PlayerHUD",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'BP_PlayerHUD_C'",
+      "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.0"
+    },
+    "ChildProperties": [
+      {
+        "Type": "IntProperty",
+        "Name": "EntryPoint",
+        "Flags": "RF_Public",
+        "ElementSize": 4,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm"
+      },
+      {
+        "Type": "DelegateProperty",
+        "Name": "K2Node_CreateDelegate_OutputDelegate",
+        "Flags": "RF_Public",
+        "ElementSize": 32,
+        "SignatureFunction": {
+          "ObjectName": "Class'OnReadableUsed__DelegateSignature'",
+          "ObjectPath": "/Script/DogwoodInventory"
+        }
+      },
+      {
+        "Type": "DelegateProperty",
+        "Name": "K2Node_CreateDelegate_OutputDelegate_1",
+        "Flags": "RF_Public",
+        "ElementSize": 32,
+        "SignatureFunction": {
+          "ObjectName": "Class'GameplayDialogueEvent__DelegateSignature'",
+          "ObjectPath": "/Script/DialogueSystem"
+        }
+      },
+      {
+        "Type": "DelegateProperty",
+        "Name": "K2Node_CreateDelegate_OutputDelegate_2",
+        "Flags": "RF_Public",
+        "ElementSize": 32,
+        "SignatureFunction": {
+          "ObjectName": "Class'GameplayDialogueEvent__DelegateSignature'",
+          "ObjectPath": "/Script/DialogueSystem"
+        }
+      },
+      {
+        "Type": "DelegateProperty",
+        "Name": "K2Node_CreateDelegate_OutputDelegate_3",
+        "Flags": "RF_Public",
+        "ElementSize": 32,
+        "SignatureFunction": {
+          "ObjectName": "Class'DialogueStartedEvent__DelegateSignature'",
+          "ObjectPath": "/Script/DialogueSystem"
+        }
+      },
+      {
+        "Type": "DelegateProperty",
+        "Name": "K2Node_CreateDelegate_OutputDelegate_4",
+        "Flags": "RF_Public",
+        "ElementSize": 32,
+        "SignatureFunction": {
+          "ObjectName": "Class'DialogueActiveEvent__DelegateSignature'",
+          "ObjectPath": "/Script/DialogueSystem"
+        }
+      },
+      {
+        "Type": "DelegateProperty",
+        "Name": "K2Node_CreateDelegate_OutputDelegate_5",
+        "Flags": "RF_Public",
+        "ElementSize": 32,
+        "SignatureFunction": {
+          "ObjectName": "Class'PushContentToLayerForPlayerAsyncDelegate__DelegateSignature'",
+          "ObjectPath": "/Script/DogwoodUI"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "K2Node_CustomEvent_UserWidget_9",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "InstancedReference",
+        "PropertyClass": {
+          "ObjectName": "Class'CommonActivatableWidget'",
+          "ObjectPath": "/Script/CommonUI"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "K2Node_CustomEvent_UserWidget_8",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "InstancedReference",
+        "PropertyClass": {
+          "ObjectName": "Class'CommonActivatableWidget'",
+          "ObjectPath": "/Script/CommonUI"
+        }
+      },
+      {
+        "Type": "DelegateProperty",
+        "Name": "K2Node_CreateDelegate_OutputDelegate_6",
+        "Flags": "RF_Public",
+        "ElementSize": 32,
+        "SignatureFunction": {
+          "ObjectName": "Class'PushContentToLayerForPlayerAsyncDelegate__DelegateSignature'",
+          "ObjectPath": "/Script/DogwoodUI"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "Temp_object_Variable",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "InstancedReference",
+        "PropertyClass": {
+          "ObjectName": "Class'CommonActivatableWidget'",
+          "ObjectPath": "/Script/CommonUI"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_PushWidgetToLayer_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'AsyncAction_PushWidgetToLayer'",
+          "ObjectPath": "/Script/DogwoodUI"
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "CallFunc_IsValid_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "K2Node_DynamicCast_AsWBP_Gameplay_Dialogue_HUD",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "InstancedReference",
+        "PropertyClass": {
+          "ObjectName": "WidgetBlueprintGeneratedClass'WBP_GameplayDialogue_HUD_C'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/GameplayDialogue/WBP_GameplayDialogue_HUD.39"
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "K2Node_DynamicCast_bSuccess",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "DelegateProperty",
+        "Name": "K2Node_CreateDelegate_OutputDelegate_7",
+        "Flags": "RF_Public",
+        "ElementSize": 32,
+        "SignatureFunction": {
+          "ObjectName": "Class'ReadSpecialChoiceSelected__DelegateSignature'",
+          "ObjectPath": "/Script/DogwoodDialogue"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "K2Node_CustomEvent_Loaded",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'Object'",
+          "ObjectPath": "/Script/CoreUObject"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "Temp_object_Variable_1",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'Object'",
+          "ObjectPath": "/Script/CoreUObject"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "K2Node_DynamicCast_AsReadable_Data_Asset",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'ReadableDataAsset'",
+          "ObjectPath": "/Script/DogwoodGlossary"
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "K2Node_DynamicCast_bSuccess_1",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_GetWorldSubsystem_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'CinematicSubsystem'",
+          "ObjectPath": "/Script/DialogueSystem"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_GetGameInstanceSubsystem_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'GlossarySubsystem'",
+          "ObjectPath": "/Script/DogwoodGlossary"
+        }
+      },
+      {
+        "Type": "DelegateProperty",
+        "Name": "K2Node_CreateDelegate_OutputDelegate_8",
+        "Flags": "RF_Public",
+        "ElementSize": 32,
+        "SignatureFunction": {
+          "ObjectName": "Class'OnShowReadable__DelegateSignature'",
+          "ObjectPath": "/Script/DogwoodGlossary"
+        }
+      },
+      {
+        "Type": "DelegateProperty",
+        "Name": "K2Node_CreateDelegate_OutputDelegate_9",
+        "Flags": "RF_Public",
+        "ElementSize": 32,
+        "SignatureFunction": {
+          "ObjectName": "Class'PushContentToLayerForPlayerAsyncDelegate__DelegateSignature'",
+          "ObjectPath": "/Script/DogwoodUI"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "K2Node_CustomEvent_UserWidget_7",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "InstancedReference",
+        "PropertyClass": {
+          "ObjectName": "Class'CommonActivatableWidget'",
+          "ObjectPath": "/Script/CommonUI"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "K2Node_CustomEvent_UserWidget_6",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "InstancedReference",
+        "PropertyClass": {
+          "ObjectName": "Class'CommonActivatableWidget'",
+          "ObjectPath": "/Script/CommonUI"
+        }
+      },
+      {
+        "Type": "DelegateProperty",
+        "Name": "K2Node_CreateDelegate_OutputDelegate_10",
+        "Flags": "RF_Public",
+        "ElementSize": 32,
+        "SignatureFunction": {
+          "ObjectName": "Class'PushContentToLayerForPlayerAsyncDelegate__DelegateSignature'",
+          "ObjectPath": "/Script/DogwoodUI"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "Temp_object_Variable_2",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "InstancedReference",
+        "PropertyClass": {
+          "ObjectName": "Class'CommonActivatableWidget'",
+          "ObjectPath": "/Script/CommonUI"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_PushWidgetToLayer_ReturnValue_1",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'AsyncAction_PushWidgetToLayer'",
+          "ObjectPath": "/Script/DogwoodUI"
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "CallFunc_IsValid_ReturnValue_1",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "InterfaceProperty",
+        "Name": "K2Node_DynamicCast_AsBPI_Document_Popup",
+        "Flags": "RF_Public",
+        "ElementSize": 16,
+        "InterfaceClass": {
+          "ObjectName": "BlueprintGeneratedClass'BPI_DocumentPopup_C'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/Readable/BPI_DocumentPopup.0"
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "K2Node_DynamicCast_bSuccess_2",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_GetGameInstanceSubsystem_ReturnValue_1",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'GlossarySubsystem'",
+          "ObjectPath": "/Script/DogwoodGlossary"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_GetWorldSubsystem_ReturnValue_1",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'FocusAbilitiesSubsystem'",
+          "ObjectPath": "/Script/DogwoodFocus"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_GetWorldSubsystem_ReturnValue_2",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'DogwoodDialogueSubsystem'",
+          "ObjectPath": "/Script/DogwoodDialogue"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_GetWorldSubsystem_ReturnValue_3",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'DogwoodDialogueSubsystem'",
+          "ObjectPath": "/Script/DogwoodDialogue"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_GetGameInstanceSubsystem_ReturnValue_2",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'CharacterDevelopmentSubsystem'",
+          "ObjectPath": "/Script/DogwoodCharacterDevelopment"
+        }
+      },
+      {
+        "Type": "DelegateProperty",
+        "Name": "K2Node_CreateDelegate_OutputDelegate_11",
+        "Flags": "RF_Public",
+        "ElementSize": 32,
+        "SignatureFunction": {
+          "ObjectName": "Class'OnPlayCharacterDevelopmentVideo__DelegateSignature'",
+          "ObjectPath": "/Script/DogwoodCharacterDevelopment"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_GetWorldSubsystem_ReturnValue_4",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'CinematicSubsystem'",
+          "ObjectPath": "/Script/DialogueSystem"
+        }
+      },
+      {
+        "Type": "DelegateProperty",
+        "Name": "K2Node_CreateDelegate_OutputDelegate_12",
+        "Flags": "RF_Public",
+        "ElementSize": 32,
+        "SignatureFunction": {
+          "ObjectName": "Class'OnFocusCinematicModeChanged__DelegateSignature'",
+          "ObjectPath": "/Script/DogwoodFocus"
+        }
+      },
+      {
+        "Type": "DelegateProperty",
+        "Name": "K2Node_CreateDelegate_OutputDelegate_13",
+        "Flags": "RF_Public",
+        "ElementSize": 32,
+        "SignatureFunction": {
+          "ObjectName": "Class'PushContentToLayerForPlayerAsyncDelegate__DelegateSignature'",
+          "ObjectPath": "/Script/DogwoodUI"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "K2Node_CustomEvent_UserWidget_5",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "InstancedReference",
+        "PropertyClass": {
+          "ObjectName": "Class'CommonActivatableWidget'",
+          "ObjectPath": "/Script/CommonUI"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "K2Node_CustomEvent_UserWidget_4",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "InstancedReference",
+        "PropertyClass": {
+          "ObjectName": "Class'CommonActivatableWidget'",
+          "ObjectPath": "/Script/CommonUI"
+        }
+      },
+      {
+        "Type": "DelegateProperty",
+        "Name": "K2Node_CreateDelegate_OutputDelegate_14",
+        "Flags": "RF_Public",
+        "ElementSize": 32,
+        "SignatureFunction": {
+          "ObjectName": "Class'PushContentToLayerForPlayerAsyncDelegate__DelegateSignature'",
+          "ObjectPath": "/Script/DogwoodUI"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "Temp_object_Variable_3",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "InstancedReference",
+        "PropertyClass": {
+          "ObjectName": "Class'CommonActivatableWidget'",
+          "ObjectPath": "/Script/CommonUI"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_PushWidgetToLayer_ReturnValue_2",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'AsyncAction_PushWidgetToLayer'",
+          "ObjectPath": "/Script/DogwoodUI"
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "CallFunc_IsValid_ReturnValue_2",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "K2Node_DynamicCast_AsWBP_Double_Inventory_Base",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "InstancedReference",
+        "PropertyClass": {
+          "ObjectName": "WidgetBlueprintGeneratedClass'WBP_DoubleInventoryBase_C'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ShopAndStorage/WBP_DoubleInventoryBase.160"
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "K2Node_DynamicCast_bSuccess_3",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "CallFunc_IsValid_ReturnValue_3",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "CallFunc_IsValid_ReturnValue_4",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "DelegateProperty",
+        "Name": "K2Node_CreateDelegate_OutputDelegate_15",
+        "Flags": "RF_Public",
+        "ElementSize": 32,
+        "SignatureFunction": {
+          "ObjectName": "Class'ItemPaymentSpecialChoiceSelected__DelegateSignature'",
+          "ObjectPath": "/Script/DogwoodDialogue"
+        }
+      },
+      {
+        "Type": "DelegateProperty",
+        "Name": "K2Node_CreateDelegate_OutputDelegate_16",
+        "Flags": "RF_Public",
+        "ElementSize": 32,
+        "SignatureFunction": {
+          "ObjectName": "Class'PushContentToLayerForPlayerAsyncDelegate__DelegateSignature'",
+          "ObjectPath": "/Script/DogwoodUI"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "K2Node_CustomEvent_UserWidget_3",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "InstancedReference",
+        "PropertyClass": {
+          "ObjectName": "Class'CommonActivatableWidget'",
+          "ObjectPath": "/Script/CommonUI"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "K2Node_CustomEvent_UserWidget_2",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "InstancedReference",
+        "PropertyClass": {
+          "ObjectName": "Class'CommonActivatableWidget'",
+          "ObjectPath": "/Script/CommonUI"
+        }
+      },
+      {
+        "Type": "DelegateProperty",
+        "Name": "K2Node_CreateDelegate_OutputDelegate_17",
+        "Flags": "RF_Public",
+        "ElementSize": 32,
+        "SignatureFunction": {
+          "ObjectName": "Class'PushContentToLayerForPlayerAsyncDelegate__DelegateSignature'",
+          "ObjectPath": "/Script/DogwoodUI"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "Temp_object_Variable_4",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "InstancedReference",
+        "PropertyClass": {
+          "ObjectName": "Class'CommonActivatableWidget'",
+          "ObjectPath": "/Script/CommonUI"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_PushWidgetToLayer_ReturnValue_3",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'AsyncAction_PushWidgetToLayer'",
+          "ObjectPath": "/Script/DogwoodUI"
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "CallFunc_IsValid_ReturnValue_5",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "K2Node_CustomEvent_UserWidget_1",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "InstancedReference",
+        "PropertyClass": {
+          "ObjectName": "Class'CommonActivatableWidget'",
+          "ObjectPath": "/Script/CommonUI"
+        }
+      },
+      {
+        "Type": "DelegateProperty",
+        "Name": "K2Node_CreateDelegate_OutputDelegate_18",
+        "Flags": "RF_Public",
+        "ElementSize": 32,
+        "SignatureFunction": {
+          "ObjectName": "Class'PushContentToLayerForPlayerAsyncDelegate__DelegateSignature'",
+          "ObjectPath": "/Script/DogwoodUI"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "K2Node_CustomEvent_UserWidget",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "InstancedReference",
+        "PropertyClass": {
+          "ObjectName": "Class'CommonActivatableWidget'",
+          "ObjectPath": "/Script/CommonUI"
+        }
+      },
+      {
+        "Type": "DelegateProperty",
+        "Name": "K2Node_CreateDelegate_OutputDelegate_19",
+        "Flags": "RF_Public",
+        "ElementSize": 32,
+        "SignatureFunction": {
+          "ObjectName": "Class'PushContentToLayerForPlayerAsyncDelegate__DelegateSignature'",
+          "ObjectPath": "/Script/DogwoodUI"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "Temp_object_Variable_5",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "InstancedReference",
+        "PropertyClass": {
+          "ObjectName": "Class'CommonActivatableWidget'",
+          "ObjectPath": "/Script/CommonUI"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_PushWidgetToLayer_ReturnValue_4",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'AsyncAction_PushWidgetToLayer'",
+          "ObjectPath": "/Script/DogwoodUI"
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "CallFunc_IsValid_ReturnValue_6",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "K2Node_DynamicCast_AsWBP_Item_Upgrades_Merchant",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "InstancedReference",
+        "PropertyClass": {
+          "ObjectName": "WidgetBlueprintGeneratedClass'WBP_ItemUpgrades_Merchant_C'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ItemUpgrades/WBP_ItemUpgrades_Merchant.101"
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "K2Node_DynamicCast_bSuccess_4",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_GetWorldSubsystem_ReturnValue_5",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'CinematicSubsystem'",
+          "ObjectPath": "/Script/DialogueSystem"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_GetWorldSubsystem_ReturnValue_6",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'CinematicSubsystem'",
+          "ObjectPath": "/Script/DialogueSystem"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_GetWorldSubsystem_ReturnValue_7",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'DogwoodDialogueSubsystem'",
+          "ObjectPath": "/Script/DogwoodDialogue"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_GetWorldSubsystem_ReturnValue_8",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'AudioSystemImpl'",
+          "ObjectPath": "/Script/Dawnwalker"
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "CallFunc_IsValid_ReturnValue_7",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_GetOwningPlayerController_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'PlayerController'",
+          "ObjectPath": "/Script/Engine"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "K2Node_DynamicCast_AsDawnwalker_Player_Controller_Base",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'DawnwalkerPlayerControllerBase'",
+          "ObjectPath": "/Script/Dawnwalker"
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "K2Node_DynamicCast_bSuccess_5",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "K2Node_CustomEvent_UserWidget_12",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "InstancedReference",
+        "PropertyClass": {
+          "ObjectName": "Class'CommonActivatableWidget'",
+          "ObjectPath": "/Script/CommonUI"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "K2Node_Event_SequencePlayer_1",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'EventLevelSequencePlayer'",
+          "ObjectPath": "/Script/NodeRuntime"
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "K2Node_Event_bInCinematicMode_1",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "K2Node_Event_SequencePlayer",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'EventLevelSequencePlayer'",
+          "ObjectPath": "/Script/NodeRuntime"
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "K2Node_Event_bInCinematicMode",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "TextProperty",
+        "Name": "CallFunc_Conv_ObjectToText_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 16
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "CallFunc_IsValid_ReturnValue_8",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "StructProperty",
+        "Name": "K2Node_MakeStruct_FormatArgumentData",
+        "Flags": "RF_Public",
+        "ElementSize": 72,
+        "Struct": {
+          "ObjectName": "Class'FormatArgumentData'",
+          "ObjectPath": "/Script/Engine"
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "CallFunc_IsValid_ReturnValue_9",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "CallFunc_BooleanAND_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_PushWidgetToLayer_ReturnValue_5",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'AsyncAction_PushWidgetToLayer'",
+          "ObjectPath": "/Script/DogwoodUI"
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "CallFunc_IsValid_ReturnValue_10",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "Temp_object_Variable_6",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "InstancedReference",
+        "PropertyClass": {
+          "ObjectName": "Class'CommonActivatableWidget'",
+          "ObjectPath": "/Script/CommonUI"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "K2Node_DynamicCast_AsWBP_Quest_Level_Sequence_Overlay",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "InstancedReference",
+        "PropertyClass": {
+          "ObjectName": "WidgetBlueprintGeneratedClass'WBP_QuestLevelSequenceOverlay_C'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/Gameplay/QuestLevelSequenceOverlay/WBP_QuestLevelSequenceOverlay.13"
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "K2Node_DynamicCast_bSuccess_6",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "DelegateProperty",
+        "Name": "K2Node_CreateDelegate_OutputDelegate_20",
+        "Flags": "RF_Public",
+        "ElementSize": 32,
+        "SignatureFunction": {
+          "ObjectName": "Class'PushContentToLayerForPlayerAsyncDelegate__DelegateSignature'",
+          "ObjectPath": "/Script/DogwoodUI"
+        }
+      },
+      {
+        "Type": "TextProperty",
+        "Name": "CallFunc_Conv_ObjectToText_ReturnValue_1",
+        "Flags": "RF_Public",
+        "ElementSize": 16
+      },
+      {
+        "Type": "StructProperty",
+        "Name": "K2Node_MakeStruct_FormatArgumentData_1",
+        "Flags": "RF_Public",
+        "ElementSize": 72,
+        "Struct": {
+          "ObjectName": "Class'FormatArgumentData'",
+          "ObjectPath": "/Script/Engine"
+        }
+      },
+      {
+        "Type": "ArrayProperty",
+        "Name": "K2Node_MakeArray_Array",
+        "Flags": "RF_Public",
+        "ElementSize": 16,
+        "PropertyFlags": "ReferenceParm",
+        "Inner": {
+          "Type": "StructProperty",
+          "Name": "K2Node_MakeArray_Array",
+          "Flags": "RF_Public",
+          "ElementSize": 72,
+          "Struct": {
+            "ObjectName": "Class'FormatArgumentData'",
+            "ObjectPath": "/Script/Engine"
+          }
+        }
+      },
+      {
+        "Type": "TextProperty",
+        "Name": "CallFunc_Format_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 16
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "CallFunc_EqualEqual_ObjectObject_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "K2Node_CustomEvent_ReadableAsset",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "ConstParm",
+        "PropertyClass": {
+          "ObjectName": "Class'ReadableDataAsset'",
+          "ObjectPath": "/Script/DogwoodGlossary"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "K2Node_CustomEvent_Dialogue_2",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'CinematicDialogue'",
+          "ObjectPath": "/Script/DialogueSystem"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "K2Node_CustomEvent_Dialogue_1",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'CinematicDialogue'",
+          "ObjectPath": "/Script/DialogueSystem"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "K2Node_CustomEvent_UserWidget_10",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "InstancedReference",
+        "PropertyClass": {
+          "ObjectName": "Class'CommonActivatableWidget'",
+          "ObjectPath": "/Script/CommonUI"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "K2Node_CustomEvent_Dialogue",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'CinematicDialogue'",
+          "ObjectPath": "/Script/DialogueSystem"
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "K2Node_CustomEvent_bWasStateKept",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "PropertyFlags": "ConstParm",
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "SoftObjectProperty",
+        "Name": "K2Node_CustomEvent_ReadableObject",
+        "Flags": "RF_Public",
+        "ElementSize": 48,
+        "PropertyFlags": "ConstParm | UObjectWrapper",
+        "PropertyClass": {
+          "ObjectName": "Class'ReadableDataAsset'",
+          "ObjectPath": "/Script/DogwoodGlossary"
+        }
+      },
+      {
+        "Type": "DelegateProperty",
+        "Name": "K2Node_CreateDelegate_OutputDelegate_21",
+        "Flags": "RF_Public",
+        "ElementSize": 32,
+        "SignatureFunction": {
+          "ObjectName": "Class'PushContentToLayerForPlayerAsyncDelegate__DelegateSignature'",
+          "ObjectPath": "/Script/DogwoodUI"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "K2Node_CustomEvent_UserWidget_13",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "InstancedReference",
+        "PropertyClass": {
+          "ObjectName": "Class'CommonActivatableWidget'",
+          "ObjectPath": "/Script/CommonUI"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_GetPlayerPawn_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'Pawn'",
+          "ObjectPath": "/Script/Engine"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "K2Node_CustomEvent_UserWidget_11",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "InstancedReference",
+        "PropertyClass": {
+          "ObjectName": "Class'CommonActivatableWidget'",
+          "ObjectPath": "/Script/CommonUI"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "K2Node_DynamicCast_AsDawnwalker_Character_Base",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'DawnwalkerCharacterBase'",
+          "ObjectPath": "/Script/Dawnwalker"
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "K2Node_DynamicCast_bSuccess_7",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_GetInventoryComponent_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "InstancedReference",
+        "PropertyClass": {
+          "ObjectName": "Class'InventoryComponent'",
+          "ObjectPath": "/Script/DogwoodInventory"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_GetLocalPlayerSubSystemFromPlayerController_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'UIManagerSubsystem'",
+          "ObjectPath": "/Script/DogwoodUI"
+        }
+      },
+      {
+        "Type": "DelegateProperty",
+        "Name": "K2Node_CreateDelegate_OutputDelegate_22",
+        "Flags": "RF_Public",
+        "ElementSize": 32,
+        "SignatureFunction": {
+          "ObjectName": "Class'PushContentToLayerForPlayerAsyncDelegate__DelegateSignature'",
+          "ObjectPath": "/Script/DogwoodUI"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_GetLocalPlayerSubSystemFromPlayerController_ReturnValue_1",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'UIManagerSubsystem'",
+          "ObjectPath": "/Script/DogwoodUI"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "K2Node_CustomEvent_ReadableDataAsset",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "ConstParm",
+        "PropertyClass": {
+          "ObjectName": "Class'ReadableDataAsset'",
+          "ObjectPath": "/Script/DogwoodGlossary"
+        }
+      },
+      {
+        "Type": "DelegateProperty",
+        "Name": "K2Node_CreateDelegate_OutputDelegate_23",
+        "Flags": "RF_Public",
+        "ElementSize": 32,
+        "SignatureFunction": {
+          "ObjectName": "Class'PushContentToLayerForPlayerAsyncDelegate__DelegateSignature'",
+          "ObjectPath": "/Script/DogwoodUI"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "K2Node_CustomEvent_MediaSource",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "ConstParm",
+        "PropertyClass": {
+          "ObjectName": "Class'MediaSource'",
+          "ObjectPath": "/Script/MediaAssets"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_GetFrontend_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "InstancedReference",
+        "PropertyClass": {
+          "ObjectName": "Class'UIFrontend'",
+          "ObjectPath": "/Script/DogwoodUI"
+        }
+      },
+      {
+        "Type": "StructProperty",
+        "Name": "K2Node_MakeStruct_VideoPlaybackOptions",
+        "Flags": "RF_Public",
+        "ElementSize": 80,
+        "Struct": {
+          "ObjectName": "Class'VideoPlaybackOptions'",
+          "ObjectPath": "/Script/DogwoodUI"
+        }
+      },
+      {
+        "Type": "StrProperty",
+        "Name": "CallFunc_GetPathName_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 16
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "CallFunc_PlayVideo_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "StructProperty",
+        "Name": "CallFunc_MakeSoftObjectPath_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 40,
+        "Struct": {
+          "ObjectName": "Class'SoftObjectPath'",
+          "ObjectPath": "/Script/CoreUObject"
+        }
+      },
+      {
+        "Type": "DoubleProperty",
+        "Name": "K2Node_CustomEvent_Progress_1",
+        "Flags": "RF_Public",
+        "ElementSize": 8
+      },
+      {
+        "Type": "IntProperty",
+        "Name": "K2Node_CustomEvent_Current_Phase_1",
+        "Flags": "RF_Public",
+        "ElementSize": 4
+      },
+      {
+        "Type": "IntProperty",
+        "Name": "K2Node_CustomEvent_Current_Phase",
+        "Flags": "RF_Public",
+        "ElementSize": 4
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "K2Node_CustomEvent_bEnabled",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "CallFunc_Not_PreBool_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "DelegateProperty",
+        "Name": "K2Node_CreateDelegate_OutputDelegate_24",
+        "Flags": "RF_Public",
+        "ElementSize": 32,
+        "SignatureFunction": {
+          "ObjectName": "Class'ShopSpecialChoiceSelected__DelegateSignature'",
+          "ObjectPath": "/Script/DogwoodDialogue"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "K2Node_CustomEvent_InventoryComponent",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "ConstParm | InstancedReference",
+        "PropertyClass": {
+          "ObjectName": "Class'InventoryComponent'",
+          "ObjectPath": "/Script/DogwoodInventory"
+        }
+      },
+      {
+        "Type": "DelegateProperty",
+        "Name": "K2Node_CreateDelegate_OutputDelegate_25",
+        "Flags": "RF_Public",
+        "ElementSize": 32,
+        "SignatureFunction": {
+          "ObjectName": "Class'DialogueActiveEvent__DelegateSignature'",
+          "ObjectPath": "/Script/DialogueSystem"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "K2Node_Event_MerchantInvntory",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "InstancedReference",
+        "PropertyClass": {
+          "ObjectName": "Class'InventoryComponent'",
+          "ObjectPath": "/Script/DogwoodInventory"
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "CallFunc_IsValid_ReturnValue_11",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "K2Node_Event_bEnabled_1",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "TextProperty",
+        "Name": "K2Node_Event_Text",
+        "Flags": "RF_Public",
+        "ElementSize": 16,
+        "PropertyFlags": "ConstParm"
+      },
+      {
+        "Type": "EnumProperty",
+        "Name": "K2Node_Event_Style",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "Enum": {
+          "ObjectName": "Class'EDwCrosshairTextStyle'",
+          "ObjectPath": "/Script/Dawnwalker"
+        },
+        "UnderlyingProp": {
+          "Type": "ByteProperty",
+          "Name": "UnderlyingType",
+          "Flags": "RF_Public",
+          "ElementSize": 1,
+          "Enum": null
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "K2Node_Event_bEnabled",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "StructProperty",
+        "Name": "K2Node_Event_Action",
+        "Flags": "RF_Public",
+        "ElementSize": 16,
+        "PropertyFlags": "ConstParm",
+        "Struct": {
+          "ObjectName": "Class'ActionPrompt'",
+          "ObjectPath": "/Script/Dawnwalker"
+        }
+      },
+      {
+        "Type": "TextProperty",
+        "Name": "K2Node_Event_PromptText",
+        "Flags": "RF_Public",
+        "ElementSize": 16,
+        "PropertyFlags": "ConstParm"
+      },
+      {
+        "Type": "StructProperty",
+        "Name": "K2Node_Event_SecondAction",
+        "Flags": "RF_Public",
+        "ElementSize": 16,
+        "PropertyFlags": "ConstParm",
+        "Struct": {
+          "ObjectName": "Class'ActionPrompt'",
+          "ObjectPath": "/Script/Dawnwalker"
+        }
+      },
+      {
+        "Type": "TextProperty",
+        "Name": "K2Node_Event_SecondPromptText",
+        "Flags": "RF_Public",
+        "ElementSize": 16,
+        "PropertyFlags": "ConstParm"
+      },
+      {
+        "Type": "StructProperty",
+        "Name": "K2Node_CustomEvent_Payload",
+        "Flags": "RF_Public",
+        "ElementSize": 80,
+        "PropertyFlags": "ConstParm",
+        "Struct": {
+          "ObjectName": "Class'ItemPaymentSpecialChoicePayload'",
+          "ObjectPath": "/Script/DogwoodDialogue"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_GetWorldSubsystem_ReturnValue_9",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'CinematicSubsystem'",
+          "ObjectPath": "/Script/DialogueSystem"
+        }
+      },
+      {
+        "Type": "DelegateProperty",
+        "Name": "K2Node_CreateDelegate_OutputDelegate_26",
+        "Flags": "RF_Public",
+        "ElementSize": 32,
+        "SignatureFunction": {
+          "ObjectName": "Class'KismetSystemLibrary:OnAssetLoaded__DelegateSignature'",
+          "ObjectPath": "/Script/Engine"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_PushWidgetToLayer_ReturnValue_6",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'AsyncAction_PushWidgetToLayer'",
+          "ObjectPath": "/Script/DogwoodUI"
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "CallFunc_IsValid_ReturnValue_12",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "K2Node_CustomEvent_Inventory_Component",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "InstancedReference",
+        "PropertyClass": {
+          "ObjectName": "Class'InventoryComponent'",
+          "ObjectPath": "/Script/DogwoodInventory"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "Temp_object_Variable_7",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "InstancedReference",
+        "PropertyClass": {
+          "ObjectName": "Class'CommonActivatableWidget'",
+          "ObjectPath": "/Script/CommonUI"
+        }
+      },
+      {
+        "Type": "DelegateProperty",
+        "Name": "K2Node_CreateDelegate_OutputDelegate_27",
+        "Flags": "RF_Public",
+        "ElementSize": 32,
+        "SignatureFunction": {
+          "ObjectName": "Class'DialogueActiveEvent__DelegateSignature'",
+          "ObjectPath": "/Script/DialogueSystem"
+        }
+      },
+      {
+        "Type": "DelegateProperty",
+        "Name": "K2Node_CreateDelegate_OutputDelegate_28",
+        "Flags": "RF_Public",
+        "ElementSize": 32,
+        "SignatureFunction": {
+          "ObjectName": "Class'DialogueActiveEvent__DelegateSignature'",
+          "ObjectPath": "/Script/DialogueSystem"
+        }
+      },
+      {
+        "Type": "DelegateProperty",
+        "Name": "K2Node_CreateDelegate_OutputDelegate_29",
+        "Flags": "RF_Public",
+        "ElementSize": 32,
+        "SignatureFunction": {
+          "ObjectName": "Class'UpgradeSpecialChoiceSelected__DelegateSignature'",
+          "ObjectPath": "/Script/DogwoodDialogue"
+        }
+      },
+      {
+        "Type": "DelegateProperty",
+        "Name": "K2Node_CreateDelegate_OutputDelegate_30",
+        "Flags": "RF_Public",
+        "ElementSize": 32,
+        "SignatureFunction": {
+          "ObjectName": "Class'DialogueActiveEvent__DelegateSignature'",
+          "ObjectPath": "/Script/DialogueSystem"
+        }
+      },
+      {
+        "Type": "DoubleProperty",
+        "Name": "K2Node_CustomEvent_MaxValue",
+        "Flags": "RF_Public",
+        "ElementSize": 8
+      },
+      {
+        "Type": "DoubleProperty",
+        "Name": "K2Node_CustomEvent_Progress",
+        "Flags": "RF_Public",
+        "ElementSize": 8
+      }
+    ],
+    "FunctionFlags": "FUNC_Final | FUNC_UbergraphFunction | FUNC_HasDefaults"
+  },
+  {
+    "Type": "Function",
+    "Name": "GameplayDialogueFinished",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'BP_PlayerHUD_C'",
+      "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.0"
+    },
+    "ChildProperties": [
+      {
+        "Type": "ObjectProperty",
+        "Name": "Dialogue",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "PropertyClass": {
+          "ObjectName": "Class'CinematicDialogue'",
+          "ObjectPath": "/Script/DialogueSystem"
+        }
+      }
+    ],
+    "FunctionFlags": "FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "GameplayDialogueStated",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'BP_PlayerHUD_C'",
+      "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.0"
+    },
+    "ChildProperties": [
+      {
+        "Type": "ObjectProperty",
+        "Name": "Dialogue",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "PropertyClass": {
+          "ObjectName": "Class'CinematicDialogue'",
+          "ObjectPath": "/Script/DialogueSystem"
+        }
+      }
+    ],
+    "FunctionFlags": "FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "HideTutorials",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'BP_PlayerHUD_C'",
+      "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.0"
+    },
+    "ChildProperties": [
+      {
+        "Type": "IntProperty",
+        "Name": "Temp_int_Array_Index_Variable",
+        "Flags": "RF_Public",
+        "ElementSize": 4
+      },
+      {
+        "Type": "IntProperty",
+        "Name": "Temp_int_Loop_Counter_Variable",
+        "Flags": "RF_Public",
+        "ElementSize": 4
+      },
+      {
+        "Type": "IntProperty",
+        "Name": "CallFunc_Add_IntInt_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 4
+      },
+      {
+        "Type": "ArrayProperty",
+        "Name": "CallFunc_GetAllWidgetsOfClass_FoundWidgets",
+        "Flags": "RF_Public",
+        "ElementSize": 16,
+        "PropertyFlags": "ReferenceParm | ContainsInstancedReference",
+        "Inner": {
+          "Type": "ObjectProperty",
+          "Name": "CallFunc_GetAllWidgetsOfClass_FoundWidgets",
+          "Flags": "RF_Public",
+          "ElementSize": 8,
+          "PropertyFlags": "InstancedReference",
+          "PropertyClass": {
+            "ObjectName": "WidgetBlueprintGeneratedClass'WBP_SmallTutorialPopup_C'",
+            "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/Tutorial/WBP_SmallTutorialPopup.37"
+          }
+        }
+      },
+      {
+        "Type": "IntProperty",
+        "Name": "CallFunc_Array_Length_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 4
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_Array_Get_Item",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "InstancedReference",
+        "PropertyClass": {
+          "ObjectName": "WidgetBlueprintGeneratedClass'WBP_SmallTutorialPopup_C'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/Tutorial/WBP_SmallTutorialPopup.37"
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "CallFunc_Less_IntInt_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      }
+    ],
+    "FunctionFlags": "FUNC_Public | FUNC_HasDefaults | FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "LaunchShop",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'BP_PlayerHUD_C'",
+      "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.0"
+    },
+    "SuperStruct": {
+      "ObjectName": "Class'DawnwalkerHUDBase:LaunchShop'",
+      "ObjectPath": "/Script/Dawnwalker"
+    },
+    "ChildProperties": [
+      {
+        "Type": "ObjectProperty",
+        "Name": "MerchantInvntory",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm | InstancedReference",
+        "PropertyClass": {
+          "ObjectName": "Class'InventoryComponent'",
+          "ObjectPath": "/Script/DogwoodInventory"
+        }
+      }
+    ],
+    "FunctionFlags": "FUNC_Event | FUNC_Public | FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "LaunchUpgrades",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'BP_PlayerHUD_C'",
+      "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.0"
+    },
+    "FunctionFlags": "FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "Notify Current Enemy Phase Changed",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'BP_PlayerHUD_C'",
+      "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.0"
+    },
+    "ChildProperties": [
+      {
+        "Type": "IntProperty",
+        "Name": "Current Phase",
+        "Flags": "RF_Public",
+        "ElementSize": 4,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm"
+      }
+    ],
+    "FunctionFlags": "FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "Notify Total Enemy Phases Changed",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'BP_PlayerHUD_C'",
+      "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.0"
+    },
+    "ChildProperties": [
+      {
+        "Type": "IntProperty",
+        "Name": "Current Phase",
+        "Flags": "RF_Public",
+        "ElementSize": 4,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm"
+      }
+    ],
+    "FunctionFlags": "FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "On Glossary Show Readable",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'BP_PlayerHUD_C'",
+      "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.0"
+    },
+    "ChildProperties": [
+      {
+        "Type": "ObjectProperty",
+        "Name": "ReadableDataAsset",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "ConstParm | BlueprintVisible | BlueprintReadOnly | Parm",
+        "PropertyClass": {
+          "ObjectName": "Class'ReadableDataAsset'",
+          "ObjectPath": "/Script/DogwoodGlossary"
+        }
+      }
+    ],
+    "FunctionFlags": "FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "On Read Special Choice Selected",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'BP_PlayerHUD_C'",
+      "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.0"
+    },
+    "ChildProperties": [
+      {
+        "Type": "SoftObjectProperty",
+        "Name": "ReadableObject",
+        "Flags": "RF_Public",
+        "ElementSize": 48,
+        "PropertyFlags": "ConstParm | BlueprintVisible | BlueprintReadOnly | Parm | UObjectWrapper",
+        "PropertyClass": {
+          "ObjectName": "Class'ReadableDataAsset'",
+          "ObjectPath": "/Script/DogwoodGlossary"
+        }
+      }
+    ],
+    "FunctionFlags": "FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "On Readable Item Used",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'BP_PlayerHUD_C'",
+      "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.0"
+    },
+    "ChildProperties": [
+      {
+        "Type": "ObjectProperty",
+        "Name": "ReadableAsset",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "ConstParm | BlueprintVisible | BlueprintReadOnly | Parm",
+        "PropertyClass": {
+          "ObjectName": "Class'ReadableDataAsset'",
+          "ObjectPath": "/Script/DogwoodGlossary"
+        }
+      }
+    ],
+    "FunctionFlags": "FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "OnCurrentCombatPhaseChanged__DelegateSignature",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'BP_PlayerHUD_C'",
+      "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.0"
+    },
+    "ChildProperties": [
+      {
+        "Type": "IntProperty",
+        "Name": "Current Phase",
+        "Flags": "RF_Public",
+        "ElementSize": 4,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm"
+      }
+    ],
+    "FunctionFlags": "FUNC_Public | FUNC_Delegate | FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "OnDecreaseAmbrusTimerCurrentValuePercentage__DelegateSignature",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'BP_PlayerHUD_C'",
+      "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.0"
+    },
+    "ChildProperties": [
+      {
+        "Type": "DoubleProperty",
+        "Name": "Progress",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm"
+      }
+    ],
+    "FunctionFlags": "FUNC_Public | FUNC_Delegate | FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "OnFocusCinematicModeChanged",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'BP_PlayerHUD_C'",
+      "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.0"
+    },
+    "ChildProperties": [
+      {
+        "Type": "BoolProperty",
+        "Name": "bEnabled",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      }
+    ],
+    "FunctionFlags": "FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "OnHideAmbrusTimer__DelegateSignature",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'BP_PlayerHUD_C'",
+      "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.0"
+    },
+    "FunctionFlags": "FUNC_Public | FUNC_Delegate | FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "OnHideXantheBar__DelegateSignature",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'BP_PlayerHUD_C'",
+      "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.0"
+    },
+    "FunctionFlags": "FUNC_Public | FUNC_Delegate | FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "OnItemPayment",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'BP_PlayerHUD_C'",
+      "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.0"
+    },
+    "ChildProperties": [
+      {
+        "Type": "StructProperty",
+        "Name": "Payload",
+        "Flags": "RF_Public",
+        "ElementSize": 80,
+        "PropertyFlags": "ConstParm | BlueprintVisible | BlueprintReadOnly | Parm | OutParm | ReferenceParm",
+        "Struct": {
+          "ObjectName": "Class'ItemPaymentSpecialChoicePayload'",
+          "ObjectPath": "/Script/DogwoodDialogue"
+        }
+      }
+    ],
+    "FunctionFlags": "FUNC_HasOutParms | FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "OnLoaded_92ED899B40266FCDF621B492A953E1AD",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'BP_PlayerHUD_C'",
+      "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.0"
+    },
+    "ChildProperties": [
+      {
+        "Type": "ObjectProperty",
+        "Name": "Loaded",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "PropertyClass": {
+          "ObjectName": "Class'Object'",
+          "ObjectPath": "/Script/CoreUObject"
+        }
+      }
+    ],
+    "FunctionFlags": "FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "OnQuestSequencePlayed",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'BP_PlayerHUD_C'",
+      "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.0"
+    },
+    "SuperStruct": {
+      "ObjectName": "Class'DawnwalkerHUDBase:OnQuestSequencePlayed'",
+      "ObjectPath": "/Script/Dawnwalker"
+    },
+    "ChildProperties": [
+      {
+        "Type": "ObjectProperty",
+        "Name": "SequencePlayer",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "PropertyClass": {
+          "ObjectName": "Class'EventLevelSequencePlayer'",
+          "ObjectPath": "/Script/NodeRuntime"
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "bInCinematicMode",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      }
+    ],
+    "FunctionFlags": "FUNC_Event | FUNC_Protected | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "OnQuestSequenceStopped",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'BP_PlayerHUD_C'",
+      "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.0"
+    },
+    "SuperStruct": {
+      "ObjectName": "Class'DawnwalkerHUDBase:OnQuestSequenceStopped'",
+      "ObjectPath": "/Script/Dawnwalker"
+    },
+    "ChildProperties": [
+      {
+        "Type": "ObjectProperty",
+        "Name": "SequencePlayer",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "PropertyClass": {
+          "ObjectName": "Class'EventLevelSequencePlayer'",
+          "ObjectPath": "/Script/NodeRuntime"
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "bInCinematicMode",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      }
+    ],
+    "FunctionFlags": "FUNC_Event | FUNC_Protected | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "OnSetAmbrusTimerMaxValue__DelegateSignature",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'BP_PlayerHUD_C'",
+      "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.0"
+    },
+    "ChildProperties": [
+      {
+        "Type": "DoubleProperty",
+        "Name": "MaxValue",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm"
+      }
+    ],
+    "FunctionFlags": "FUNC_Public | FUNC_Delegate | FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "OnSetCrosshairTextEnabled__DelegateSignature",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'BP_PlayerHUD_C'",
+      "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.0"
+    },
+    "ChildProperties": [
+      {
+        "Type": "BoolProperty",
+        "Name": "Enabled",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "TextProperty",
+        "Name": "Text",
+        "Flags": "RF_Public",
+        "ElementSize": 16,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm"
+      },
+      {
+        "Type": "EnumProperty",
+        "Name": "Style",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "Enum": {
+          "ObjectName": "Class'EDwCrosshairTextStyle'",
+          "ObjectPath": "/Script/Dawnwalker"
+        },
+        "UnderlyingProp": {
+          "Type": "ByteProperty",
+          "Name": "UnderlyingType",
+          "Flags": "RF_Public",
+          "ElementSize": 1,
+          "Enum": null
+        }
+      }
+    ],
+    "FunctionFlags": "FUNC_Public | FUNC_Delegate | FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "OnSetInputPromptEnabled__DelegateSignature",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'BP_PlayerHUD_C'",
+      "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.0"
+    },
+    "ChildProperties": [
+      {
+        "Type": "BoolProperty",
+        "Name": "Enabled",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "StructProperty",
+        "Name": "Action",
+        "Flags": "RF_Public",
+        "ElementSize": 16,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "Struct": {
+          "ObjectName": "Class'ActionPrompt'",
+          "ObjectPath": "/Script/Dawnwalker"
+        }
+      },
+      {
+        "Type": "TextProperty",
+        "Name": "PromptText",
+        "Flags": "RF_Public",
+        "ElementSize": 16,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm"
+      },
+      {
+        "Type": "StructProperty",
+        "Name": "SecondAction",
+        "Flags": "RF_Public",
+        "ElementSize": 16,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "Struct": {
+          "ObjectName": "Class'ActionPrompt'",
+          "ObjectPath": "/Script/Dawnwalker"
+        }
+      },
+      {
+        "Type": "TextProperty",
+        "Name": "SecondPromptText",
+        "Flags": "RF_Public",
+        "ElementSize": 16,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm"
+      }
+    ],
+    "FunctionFlags": "FUNC_Public | FUNC_Delegate | FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "OnShowAmbrusTimer__DelegateSignature",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'BP_PlayerHUD_C'",
+      "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.0"
+    },
+    "ChildProperties": [
+      {
+        "Type": "DoubleProperty",
+        "Name": "MaxValue",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm"
+      }
+    ],
+    "FunctionFlags": "FUNC_Public | FUNC_Delegate | FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "OnShowXantheBar__DelegateSignature",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'BP_PlayerHUD_C'",
+      "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.0"
+    },
+    "FunctionFlags": "FUNC_Public | FUNC_Delegate | FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "OnToggleQuickslots__DelegateSignature",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'BP_PlayerHUD_C'",
+      "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.0"
+    },
+    "FunctionFlags": "FUNC_Public | FUNC_Delegate | FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "OnTotalCombatPhaseCountSet__DelegateSignature",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'BP_PlayerHUD_C'",
+      "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.0"
+    },
+    "ChildProperties": [
+      {
+        "Type": "IntProperty",
+        "Name": "Total Phase Count",
+        "Flags": "RF_Public",
+        "ElementSize": 4,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm"
+      }
+    ],
+    "FunctionFlags": "FUNC_Public | FUNC_Delegate | FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "OnUpdateXantheBar__DelegateSignature",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'BP_PlayerHUD_C'",
+      "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.0"
+    },
+    "ChildProperties": [
+      {
+        "Type": "DoubleProperty",
+        "Name": "Progress",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm"
+      }
+    ],
+    "FunctionFlags": "FUNC_Public | FUNC_Delegate | FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "OpenDelayedDialogueShop",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'BP_PlayerHUD_C'",
+      "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.0"
+    },
+    "FunctionFlags": "FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "OpenDelayedDialogueUpgrades",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'BP_PlayerHUD_C'",
+      "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.0"
+    },
+    "FunctionFlags": "FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "Play Character Development Video",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'BP_PlayerHUD_C'",
+      "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.0"
+    },
+    "ChildProperties": [
+      {
+        "Type": "ObjectProperty",
+        "Name": "MediaSource",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "ConstParm | BlueprintVisible | BlueprintReadOnly | Parm",
+        "PropertyClass": {
+          "ObjectName": "Class'MediaSource'",
+          "ObjectPath": "/Script/MediaAssets"
+        }
+      }
+    ],
+    "FunctionFlags": "FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "Playback Finished",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'BP_PlayerHUD_C'",
+      "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.0"
+    },
+    "FunctionFlags": "FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "Playback Started",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'BP_PlayerHUD_C'",
+      "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.0"
+    },
+    "ChildProperties": [
+      {
+        "Type": "ObjectProperty",
+        "Name": "Dialogue",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "PropertyClass": {
+          "ObjectName": "Class'CinematicDialogue'",
+          "ObjectPath": "/Script/DialogueSystem"
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "bWasStateKept",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "PropertyFlags": "ConstParm | BlueprintVisible | BlueprintReadOnly | Parm",
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      }
+    ],
+    "FunctionFlags": "FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "ReceiveBeginPlay",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'BP_PlayerHUD_C'",
+      "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.0"
+    },
+    "SuperStruct": {
+      "ObjectName": "Class'Actor:ReceiveBeginPlay'",
+      "ObjectPath": "/Script/Engine"
+    },
+    "FunctionFlags": "FUNC_Event | FUNC_Protected | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "Request Hide Xanthe Timer",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'BP_PlayerHUD_C'",
+      "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.0"
+    },
+    "FunctionFlags": "FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "Request Show Xanthe Timer",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'BP_PlayerHUD_C'",
+      "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.0"
+    },
+    "FunctionFlags": "FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "Request Toggle Quickslots",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'BP_PlayerHUD_C'",
+      "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.0"
+    },
+    "FunctionFlags": "FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "RequestDecreaseAmbrusTimerCurrentValuePercentage",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'BP_PlayerHUD_C'",
+      "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.0"
+    },
+    "ChildProperties": [
+      {
+        "Type": "DoubleProperty",
+        "Name": "Progress",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm"
+      }
+    ],
+    "FunctionFlags": "FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "RequestHideAmbrusTimer",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'BP_PlayerHUD_C'",
+      "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.0"
+    },
+    "FunctionFlags": "FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "RequestShowAmbrusTimer",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'BP_PlayerHUD_C'",
+      "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.0"
+    },
+    "ChildProperties": [
+      {
+        "Type": "DoubleProperty",
+        "Name": "MaxValue",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm"
+      }
+    ],
+    "FunctionFlags": "FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "Set Xanthe Timer Progress",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'BP_PlayerHUD_C'",
+      "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.0"
+    },
+    "ChildProperties": [
+      {
+        "Type": "DoubleProperty",
+        "Name": "Progress",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm"
+      }
+    ],
+    "FunctionFlags": "FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "SetCrosshairTextEnabled",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'BP_PlayerHUD_C'",
+      "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.0"
+    },
+    "SuperStruct": {
+      "ObjectName": "Class'DawnwalkerHUDBase:SetCrosshairTextEnabled'",
+      "ObjectPath": "/Script/Dawnwalker"
+    },
+    "ChildProperties": [
+      {
+        "Type": "BoolProperty",
+        "Name": "bEnabled",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "TextProperty",
+        "Name": "Text",
+        "Flags": "RF_Public",
+        "ElementSize": 16,
+        "PropertyFlags": "ConstParm | BlueprintVisible | BlueprintReadOnly | Parm | OutParm | ReferenceParm"
+      },
+      {
+        "Type": "EnumProperty",
+        "Name": "Style",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "Enum": {
+          "ObjectName": "Class'EDwCrosshairTextStyle'",
+          "ObjectPath": "/Script/Dawnwalker"
+        },
+        "UnderlyingProp": {
+          "Type": "ByteProperty",
+          "Name": "UnderlyingType",
+          "Flags": "RF_Public",
+          "ElementSize": 1,
+          "Enum": null
+        }
+      }
+    ],
+    "FunctionFlags": "FUNC_Event | FUNC_Public | FUNC_HasOutParms | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "SetInputPromptEnabled",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'BP_PlayerHUD_C'",
+      "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.0"
+    },
+    "SuperStruct": {
+      "ObjectName": "Class'DawnwalkerHUDBase:SetInputPromptEnabled'",
+      "ObjectPath": "/Script/Dawnwalker"
+    },
+    "ChildProperties": [
+      {
+        "Type": "BoolProperty",
+        "Name": "bEnabled",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "StructProperty",
+        "Name": "Action",
+        "Flags": "RF_Public",
+        "ElementSize": 16,
+        "PropertyFlags": "ConstParm | BlueprintVisible | BlueprintReadOnly | Parm | OutParm | ReferenceParm",
+        "Struct": {
+          "ObjectName": "Class'ActionPrompt'",
+          "ObjectPath": "/Script/Dawnwalker"
+        }
+      },
+      {
+        "Type": "TextProperty",
+        "Name": "PromptText",
+        "Flags": "RF_Public",
+        "ElementSize": 16,
+        "PropertyFlags": "ConstParm | BlueprintVisible | BlueprintReadOnly | Parm | OutParm | ReferenceParm"
+      },
+      {
+        "Type": "StructProperty",
+        "Name": "SecondAction",
+        "Flags": "RF_Public",
+        "ElementSize": 16,
+        "PropertyFlags": "ConstParm | BlueprintVisible | BlueprintReadOnly | Parm | OutParm | ReferenceParm",
+        "Struct": {
+          "ObjectName": "Class'ActionPrompt'",
+          "ObjectPath": "/Script/Dawnwalker"
+        }
+      },
+      {
+        "Type": "TextProperty",
+        "Name": "SecondPromptText",
+        "Flags": "RF_Public",
+        "ElementSize": 16,
+        "PropertyFlags": "ConstParm | BlueprintVisible | BlueprintReadOnly | Parm | OutParm | ReferenceParm"
+      }
+    ],
+    "FunctionFlags": "FUNC_Event | FUNC_Public | FUNC_HasOutParms | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "ShowTutorials",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'BP_PlayerHUD_C'",
+      "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.0"
+    },
+    "ChildProperties": [
+      {
+        "Type": "IntProperty",
+        "Name": "Temp_int_Array_Index_Variable",
+        "Flags": "RF_Public",
+        "ElementSize": 4
+      },
+      {
+        "Type": "IntProperty",
+        "Name": "Temp_int_Loop_Counter_Variable",
+        "Flags": "RF_Public",
+        "ElementSize": 4
+      },
+      {
+        "Type": "IntProperty",
+        "Name": "CallFunc_Add_IntInt_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 4
+      },
+      {
+        "Type": "ArrayProperty",
+        "Name": "CallFunc_GetAllWidgetsOfClass_FoundWidgets",
+        "Flags": "RF_Public",
+        "ElementSize": 16,
+        "PropertyFlags": "ReferenceParm | ContainsInstancedReference",
+        "Inner": {
+          "Type": "ObjectProperty",
+          "Name": "CallFunc_GetAllWidgetsOfClass_FoundWidgets",
+          "Flags": "RF_Public",
+          "ElementSize": 8,
+          "PropertyFlags": "InstancedReference",
+          "PropertyClass": {
+            "ObjectName": "WidgetBlueprintGeneratedClass'WBP_SmallTutorialPopup_C'",
+            "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/Tutorial/WBP_SmallTutorialPopup.37"
+          }
+        }
+      },
+      {
+        "Type": "IntProperty",
+        "Name": "CallFunc_Array_Length_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 4
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_Array_Get_Item",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "InstancedReference",
+        "PropertyClass": {
+          "ObjectName": "WidgetBlueprintGeneratedClass'WBP_SmallTutorialPopup_C'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/Tutorial/WBP_SmallTutorialPopup.37"
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "CallFunc_Less_IntInt_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      }
+    ],
+    "FunctionFlags": "FUNC_Public | FUNC_HasDefaults | FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "MediaSoundComponent",
+    "Name": "MediaSound_GEN_VARIABLE",
+    "Flags": "RF_Public | RF_Transactional | RF_ArchetypeObject | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'MediaSoundComponent'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'BP_PlayerHUD_C'",
+      "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.0"
+    },
+    "Properties": {
+      "MediaPlayer": {
+        "ObjectName": "MediaPlayer'MP_HudVideoPlayer'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/Video/MP_HudVideoPlayer.0"
+      }
+    }
+  },
+  {
+    "Type": "SceneComponent",
+    "Name": "DefaultSceneRoot_GEN_VARIABLE",
+    "Flags": "RF_Public | RF_Transactional | RF_ArchetypeObject | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'SceneComponent'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'BP_PlayerHUD_C'",
+      "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.0"
+    }
+  },
+  {
+    "Type": "SCS_Node",
+    "Name": "SCS_Node_0",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'SCS_Node'",
+    "Outer": {
+      "ObjectName": "SimpleConstructionScript'BP_PlayerHUD_C:SimpleConstructionScript_0'",
+      "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.73"
+    },
+    "Properties": {
+      "ComponentClass": {
+        "ObjectName": "Class'SceneComponent'",
+        "ObjectPath": "/Script/Engine"
+      },
+      "ComponentTemplate": {
+        "ObjectName": "SceneComponent'BP_PlayerHUD_C:DefaultSceneRoot_GEN_VARIABLE'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.70"
+      },
+      "ChildNodes": [
+        {
+          "ObjectName": "SCS_Node'BP_PlayerHUD_C:SimpleConstructionScript_0.SCS_Node_1'",
+          "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.72"
+        }
+      ],
+      "VariableGUID": "B828D8D1-47D040D3-2397B496-22EF893E",
+      "InternalVariableName": "DefaultSceneRoot"
+    }
+  },
+  {
+    "Type": "SCS_Node",
+    "Name": "SCS_Node_1",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'SCS_Node'",
+    "Outer": {
+      "ObjectName": "SimpleConstructionScript'BP_PlayerHUD_C:SimpleConstructionScript_0'",
+      "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.73"
+    },
+    "Properties": {
+      "ComponentClass": {
+        "ObjectName": "Class'MediaSoundComponent'",
+        "ObjectPath": "/Script/MediaAssets"
+      },
+      "ComponentTemplate": {
+        "ObjectName": "MediaSoundComponent'BP_PlayerHUD_C:MediaSound_GEN_VARIABLE'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.69"
+      },
+      "VariableGUID": "DA574012-45CADC1F-59C1CBBA-433B26F8",
+      "InternalVariableName": "MediaSound"
+    }
+  },
+  {
+    "Type": "SimpleConstructionScript",
+    "Name": "SimpleConstructionScript_0",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'SimpleConstructionScript'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'BP_PlayerHUD_C'",
+      "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.0"
+    },
+    "Properties": {
+      "RootNodes": [
+        {
+          "ObjectName": "SCS_Node'BP_PlayerHUD_C:SimpleConstructionScript_0.SCS_Node_0'",
+          "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.71"
+        }
+      ],
+      "AllNodes": [
+        {
+          "ObjectName": "SCS_Node'BP_PlayerHUD_C:SimpleConstructionScript_0.SCS_Node_0'",
+          "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.71"
+        },
+        {
+          "ObjectName": "SCS_Node'BP_PlayerHUD_C:SimpleConstructionScript_0.SCS_Node_1'",
+          "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.72"
+        }
+      ],
+      "DefaultSceneRootNode": {
+        "ObjectName": "SCS_Node'BP_PlayerHUD_C:SimpleConstructionScript_0.SCS_Node_0'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/BP_PlayerHUD.71"
+      }
+    }
+  }
+]
