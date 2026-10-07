@@ -525,11 +525,9 @@ local function combatHudTraceOwner(widget)
     end
     return nil
 end
-function runtime.traceCombatHudAnimationProxy(_,_,widgetParam,animationParam,startParam,loopsParam,playModeParam,playbackSpeedParam)
+function runtime.recordCombatHudAnimation(source,widget,animationParam,startParam,loopsParam,playModeParam,playbackSpeedParam)
     local remaining=runtime.combatHudAnimationTraceRemaining or 0
-    if remaining<=0 or not D.debugLogging or not config.fadeTransitions or not valid(hud) then return end
-    local widgetOK,widget=pcall(unwrap,widgetParam)
-    if not widgetOK or not valid(widget) then return end
+    if remaining<=0 or not D.debugLogging or not config.fadeTransitions or not valid(hud) or not valid(widget) then return end
     local panel,owner=combatHudTraceOwner(widget)
     if not panel then return end
     local animationOK,animation=pcall(unwrap,animationParam)
@@ -537,7 +535,7 @@ function runtime.traceCombatHudAnimationProxy(_,_,widgetParam,animationParam,sta
     local named,animationName=pcall(function() return animation:GetFullName() end)
     if not named or not animationName then return end
     local playMode=combatHudProxyValue(playModeParam)
-    local signature=panel.."|"..owner.."|"..tostring(animationName).."|"..playMode
+    local signature=source.."|"..panel.."|"..owner.."|"..tostring(animationName).."|"..playMode
     local seen=runtime.combatHudAnimationTraceSeen or {}
     runtime.combatHudAnimationTraceSeen=seen
     if seen[signature] then return end
@@ -546,9 +544,22 @@ function runtime.traceCombatHudAnimationProxy(_,_,widgetParam,animationParam,sta
     local duration="unavailable"
     local durationOK,endTime=pcall(function() return animation:GetEndTime() end)
     if durationOK and type(endTime)=="number" then duration=string.format("%.3f",endTime) end
-    D.logInfo("combatHudAnimationTrace panel=%s owner=%s animation=%s duration=%s start=%s loops=%s playMode=%s playbackSpeed=%s remaining=%d",
-        panel,owner,tostring(animationName),duration,combatHudProxyValue(startParam),combatHudProxyValue(loopsParam),playMode,
+    D.logInfo("combatHudAnimationTrace source=%s panel=%s owner=%s animation=%s duration=%s start=%s loops=%s playMode=%s playbackSpeed=%s remaining=%d",
+        source,panel,owner,tostring(animationName),duration,combatHudProxyValue(startParam),combatHudProxyValue(loopsParam),playMode,
         combatHudProxyValue(playbackSpeedParam),runtime.combatHudAnimationTraceRemaining)
+end
+-- Factory calls include a WorldContextObject before the target widget. Focus
+-- Charge proved the proxy executes UUserWidget::PlayAnimation directly, while
+-- another Blueprint may invoke that native method through ProcessEvent instead.
+function runtime.traceCombatHudAnimationProxy(_,_,widgetParam,animationParam,startParam,loopsParam,playModeParam,playbackSpeedParam)
+    local widgetOK,widget=pcall(unwrap,widgetParam)
+    if not widgetOK then return end
+    runtime.recordCombatHudAnimation("proxy",widget,animationParam,startParam,loopsParam,playModeParam,playbackSpeedParam)
+end
+function runtime.traceCombatHudDirectAnimation(context,animationParam,startParam,loopsParam,playModeParam,playbackSpeedParam)
+    local widgetOK,widget=pcall(unwrap,context)
+    if not widgetOK then return end
+    runtime.recordCombatHudAnimation("direct",widget,animationParam,startParam,loopsParam,playModeParam,playbackSpeedParam)
 end
 -- Live factory arguments are: WorldContextObject, Widget, Animation,
 -- StartAtTime, NumLoops, PlayMode, PlaybackSpeed. Only the exact reverse
@@ -1288,6 +1299,8 @@ local function noop() end
 -- early return and writes nothing unless the exact owned reverse call qualifies.
 specs[#specs+1]={path="/Script/UMG.WidgetAnimationPlayCallbackProxy:CreatePlayAnimationProxyObject", native=true,
     before=runtime.focusChargeAnimationProxyEvent, callback=noop, optional="focusChargeFade"}
+specs[#specs+1]={path="/Script/UMG.UserWidget:PlayAnimation", native=true,
+    before=runtime.traceCombatHudDirectAnimation, callback=noop, optional="combatHudTrace"}
 local knownSpecs={}
 for _,spec in ipairs(specs) do knownSpecs[spec.path]=true end
 local function ensureFeatureSpecs()
@@ -1384,6 +1397,8 @@ local function registerOne()
                 D.logWarning("Time-change hook unavailable; time panel keeps its configured opacity.")
             elseif spec.optional=="focusChargeFade" then
                 D.logWarning("Activation Charges exit fade rate hook unavailable; stock teardown keeps its default timing.")
+            elseif spec.optional=="combatHudTrace" then
+                if D.debugLogging then D.logInfo("combatHudAnimationTrace direct PlayAnimation hook unavailable.") end
             elseif spec.optional=="panel" then
                 D.logWarning("Panel event unavailable; other HUD controls remain active: %s",spec.path)
             elseif spec.optional=="prompt" then
