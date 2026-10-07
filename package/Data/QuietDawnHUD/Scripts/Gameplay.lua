@@ -586,36 +586,12 @@ function runtime.traceCombatHudDirectAnimation(context,animationParam,startParam
     runtime.recordCombatHudAnimation("direct",widget,animationParam,startParam,loopsParam,playModeParam,playbackSpeedParam)
     runtime.mediateQuickslotsPromptAnimation(context,animationParam,startParam,loopsParam,playModeParam,playbackSpeedParam)
 end
--- FModel shows WBP_AA_Quickslots has ShowInputs/Spread in-panel animations,
--- but the live weapon-draw/combat-exit path never invoked those functions.
--- Do not retime them: they may serve a distinct manual expand/collapse state.
--- Its shared combat dismissal must be identified from the GameHUD/preset owner.
---
--- The Weapon Arts export identifies these base-class virtual events. Its derived
--- Blueprint paths did not observe in-game, so probe the exact native superclass
--- boundary instead. The snapshots are read-only and only run at Debug.
-local function combatHudWidgetState(widget)
-    if not valid(widget) then return "invalid" end
-    local visibility="unavailable"
-    local opacity="unavailable"
-    local visibleOK,value=pcall(function() return widget:GetVisibility() end)
-    if visibleOK then visibility=tostring(value) end
-    local opacityOK,value=pcall(function() return widget:GetRenderOpacity() end)
-    if opacityOK and type(value)=="number" then opacity=string.format("%.3f",value) end
-    return "visibility="..visibility.." opacity="..opacity
-end
-function runtime.traceWeaponArtsCombatBoundary(context,event,phase)
-    if not D.debugLogging or not config.fadeTransitions or panelModes.WBP_HUD_SpecialAttackCooldown~=Modes.VANILLA
-        or not valid(hud) then return end
-    local widgetOK,widget=pcall(unwrap,context)
-    local ownerOK,owner=pcall(function() return hud.WBP_HUD_SpecialAttackCooldown end)
-    if not widgetOK or not ownerOK or not sameObject(widget,owner) then return end
-    local specialOK,special=pcall(function() return owner.WBP_SpecialAttack end)
-    local cooldownOK,cooldown=pcall(function() return owner.WBP_CooldownDisplay end)
-    D.logInfo("weaponArtsTrace source=FModel event=%s phase=%s owner=%s special=%s cooldown=%s",event,phase,
-        combatHudWidgetState(owner),specialOK and combatHudWidgetState(special) or "unavailable",
-        cooldownOK and combatHudWidgetState(cooldown) or "unavailable")
-end
+-- FModel maps Quickslot Abilities to GameHUD's QuickslotContainer and its
+-- QuickslotsSwitcher, while Weapon Arts lives in the distinct
+-- AbilitiesCooldownContainer. Both are NamedToggleableContainer tags owned by
+-- HUD presets, so no child-panel animation or individual event is a safe Fade
+-- route. The unobserved Weapon Arts superclass probe is retired; the preset
+-- data asset is the remaining direct inspection target.
 
 -- Live factory arguments are: WorldContextObject, Widget, Animation,
 -- StartAtTime, NumLoops, PlayMode, PlaybackSpeed. Only the exact reverse
@@ -1409,15 +1385,6 @@ if seen.WBP_HUD_SpecialAttackCooldown and panelModes.WBP_HUD_SpecialAttackCooldo
     specs[#specs+1]={path=SPECIAL..":SetupCooldownEffect", callback=cooldownEvent, optional="panel"}
     specs[#specs+1]={path=SPECIAL..":OnCooldownFinished", callback=cooldownEvent, optional="panel"}
 end
-if D.debugLogging and config.fadeTransitions and panelModes.WBP_HUD_SpecialAttackCooldown==Modes.VANILLA then
-    for _,event in ipairs({"OnCombatStarted","OnCombatEnded"}) do
-        local eventName=event -- each hook must retain its own boundary label
-        specs[#specs+1]={path="/Script/DogwoodUI.SpecialAttackHUDWidget:"..eventName, native=true,
-            before=function(context) runtime.traceWeaponArtsCombatBoundary(context,eventName,"pre") end,
-            callback=function(context) runtime.traceWeaponArtsCombatBoundary(context,eventName,"post") end,
-            optional="weaponArtsTrace"}
-    end
-end
 if (config.switchRevealSeconds>0 and hasSwitchPanels()) or (manualPeekEnabled and config.peekOnFocusMode)
     or (D.debugLogging and config.fadeTransitions and (panelModes.WBP_AA_Quickslots==Modes.VANILLA
         or panelModes.WBP_HUD_Quickslots_ChangePrompt==Modes.VANILLA
@@ -1463,8 +1430,6 @@ local function registerOne()
                 D.logWarning("Activation Charges exit fade rate hook unavailable; stock teardown keeps its default timing.")
             elseif spec.optional=="combatHudTrace" then
                 if D.debugLogging then D.logInfo("combatHudAnimationTrace direct PlayAnimation hook unavailable.") end
-            elseif spec.optional=="weaponArtsTrace" then
-                if D.debugLogging then D.logInfo("weaponArtsTrace combat-boundary hook unavailable.") end
             elseif spec.optional=="panel" then
                 D.logWarning("Panel event unavailable; other HUD controls remain active: %s",spec.path)
             elseif spec.optional=="prompt" then
