@@ -452,11 +452,12 @@ runtime.quickslotsPromptAnimations={
     ["WidgetAnimation /Game/_Dawnwalker/UI/_Unified/HUD/Quickslots/WBP_HUD_Quickslots_ChangePrompt.WBP_HUD_Quickslots_ChangePrompt_C:ShowAnim_INST"]=true,
 }
 runtime.quickslotsPromptStockSeconds=0.25
-function runtime.resetCombatHudAnimationTrace(closing)
+function runtime.resetCombatHudAnimationTrace(closing,source)
     runtime.combatHudAnimationTraceSeen={}
     runtime.combatHudAnimationTraceRemaining=0
     runtime.combatHudPresentationTraceSeen={}
     runtime.combatHudPresentationTraceRemaining=0
+    runtime.combatHudPresentationTraceSource=source or "HUD"
     runtime.combatHudAnimationTrace3515Logged=false
     if closing or not D.debugLogging or not config.fadeTransitions or not valid(hud) then return end
     local eligible={}
@@ -469,9 +470,14 @@ function runtime.resetCombatHudAnimationTrace(closing)
         runtime.combatHudPresentationTraceRemaining=12
         D.logInfo("combatHudAnimationTrace armed panels=%s maxDistinct=%d",
             table.concat(eligible,","),runtime.combatHudAnimationTraceRemaining)
-        D.logInfo("combatHudPresentationTrace armed panels=WBP_AA_Quickslots,WBP_HUD_SpecialAttackCooldown maxDistinct=%d",
-            runtime.combatHudPresentationTraceRemaining)
+        D.logInfo("combatHudPresentationTrace armed source=%s panels=WBP_AA_Quickslots,WBP_HUD_SpecialAttackCooldown maxDistinct=%d",
+            runtime.combatHudPresentationTraceSource,runtime.combatHudPresentationTraceRemaining)
     end
+end
+-- Push/Pop native pre-hooks arm a fresh short presentation window before the
+-- game's own visibility/switcher writes execute. This is diagnostic-only.
+function runtime.beginCombatHudPresentationTrace(source)
+    runtime.resetCombatHudAnimationTrace(false,source)
 end
 local function combatHudProxyValue(param)
     local readable,value=pcall(unwrap,param)
@@ -641,8 +647,15 @@ function runtime.traceCombatHudPresentation(context,valueParam,method)
     if seen[signature] then return end
     seen[signature]=true
     runtime.combatHudPresentationTraceRemaining=remaining-1
-    D.logInfo("combatHudPresentationTrace panel=%s owner=%s method=%s value=%s remaining=%d",
-        panel,owner,method,value,runtime.combatHudPresentationTraceRemaining)
+    local node="unavailable"
+    local className="unavailable"
+    local nodeOK,nodeName=pcall(function() return object:GetFullName() end)
+    if nodeOK and nodeName then node=tostring(nodeName) end
+    local classOK,classValue=pcall(function() return object:GetClass():GetFullName() end)
+    if classOK and classValue then className=tostring(classValue) end
+    D.logInfo("combatHudPresentationTrace source=%s panel=%s owner=%s method=%s value=%s node=%s class=%s remaining=%d",
+        tostring(runtime.combatHudPresentationTraceSource or "unknown"),panel,owner,method,value,node,className,
+        runtime.combatHudPresentationTraceRemaining)
 end
 -- Live factory arguments are: WorldContextObject, Widget, Animation,
 -- StartAtTime, NumLoops, PlayMode, PlaybackSpeed. Only the exact reverse
@@ -1357,8 +1370,11 @@ end
 -- Blueprint paths verified against the stock WBP_GameHUD export table.
 -- Native paths use an explicit post-hook; Blueprint callbacks are post-hooks.
 local specs = {
-    {path="/Script/DogwoodUI.HUDManagerSubsystem:PushHUDPreset", callback=function()signal("PushHUDPreset")end, native=true},
+    {path="/Script/DogwoodUI.HUDManagerSubsystem:PushHUDPreset",
+        before=function() runtime.beginCombatHudPresentationTrace("PushHUDPreset") end,
+        callback=function()signal("PushHUDPreset")end, native=true},
     {path="/Script/DogwoodUI.HUDManagerSubsystem:PopHUDPreset",
+        before=function() runtime.beginCombatHudPresentationTrace("PopHUDPreset") end,
         callback=function()signal("PopHUDPreset")end, native=true},
     {path="/Script/Engine.PlayerController:ClientRestart", callback=function(context)
         local pc = unwrap(context)
@@ -1519,7 +1535,7 @@ local function accept(object)
         runtime.stopFocusChargeLocator("HUD replacement")
         runtime.resetFocusChargeFade()
         hud, world, panels, absent = object, objectWorld, {}, {}
-        runtime.resetCombatHudAnimationTrace()
+        runtime.resetCombatHudAnimationTrace(false,"HUD")
         -- A direct object notification and the GameHUD hook are preferred.
         -- Keep the fallback named too: a future lifecycle route must not turn
         -- this diagnostic into an unexplained "unknown" startup path.
@@ -2624,7 +2640,7 @@ applyLiveSettings=function(run)
         -- The opt-in locator owns the Activation Charges container. Release
         -- its retained lease before a settings change can alter Fade behavior.
         runtime.resetFocusChargeFade()
-        runtime.resetCombatHudAnimationTrace()
+        runtime.resetCombatHudAnimationTrace(false,"settings")
         runtime.focusChargeLocatorArmed=config.debugFocusChargeLocator and D.debugLogging
             and panelModes.WBP_HUD_FocusCharge_Bar==Modes.VANILLA
     end
