@@ -536,11 +536,17 @@ function runtime.queueFocusChargeLocator(source)
 end
 function runtime.resetFocusChargeSlotProbe()
     runtime.focusChargeSlotProbe,runtime.focusChargeSlotProbeQueue=nil,{}
+    runtime.focusChargeSlotTreeProbe,runtime.focusChargeSlotTreeProbeQueue=nil,{}
     runtime.focusChargeSlotProbeVersions={}
     runtime.focusChargeSlotWriteProbeVersions={}
+    runtime.focusChargeSlotTreeStates={}
+    runtime.focusChargeSlotTreeVersion=0
+    runtime.focusChargeSlotTreeBaselineReady=false
+    runtime.focusChargeSlotTreeBaselinePending=false
     runtime.focusChargeSlotProbeOwned,runtime.focusChargeSlotProbeRejected={},{}
     runtime.focusChargeSlotProbeRemaining=0
     runtime.focusChargeSlotWriteProbeRemaining=0
+    runtime.focusChargeSlotTreeProbeRemaining=0
 end
 Session.onClose(function()
     runtime.stopFocusChargeLocator("session close")
@@ -593,6 +599,76 @@ function runtime.captureFocusChargeSlotProbe(probe)
     if readable and type(value)=="number" then opacityValue=string.format("%.3f",value) end
     D.logInfo("focusChargeSlot source=%s entry=%s phase=%s address=%s class=%s visibility=%s opacity=%s",
         probe.source,tostring(probe.entry),probe.phase,tostring(address),className,visibility,opacityValue)
+end
+-- The DynamicEntryBox hides its runtime entries from the outer WidgetTree, but
+-- each measured slot owns an ordinary WidgetTree. Read it only at the exact
+-- depleted-charge route: this identifies skeleton, fill and animation children
+-- without scanning the pool during gameplay.
+function runtime.captureFocusChargeSlotTreeProbe(probe)
+    if probe.phase=="baseline" and probe.version~=runtime.focusChargeSlotTreeVersion then
+        runtime.focusChargeSlotTreeBaselinePending=false
+    end
+    if not D.debugLogging or not config.fadeTransitions
+        or panelModes.WBP_HUD_FocusCharge_Bar~=Modes.VANILLA
+        or probe.version~=runtime.focusChargeSlotTreeVersion then return end
+    local prior=runtime.focusChargeSlotTreeStates or {}
+    local treeState,seen={},{}
+    local nodes,changed,slots=0,0,0
+    local function walk(node,path,slot,depth)
+        if not valid(node) or nodes>=128 or depth>8 then return end
+        local addressOK,address=pcall(function() return node:GetAddress() end)
+        if not addressOK or seen[address] then return end
+        seen[address]=true
+        nodes=nodes+1
+        local className="unavailable"
+        local visibility="unavailable"
+        local opacityValue="unavailable"
+        local readable,value=pcall(function() return node:GetClass():GetFullName() end)
+        if readable and value then className=tostring(value) end
+        readable,value=pcall(function() return node:GetVisibility() end)
+        if readable and value~=nil then visibility=tostring(value) end
+        readable,value=pcall(function() return node:GetRenderOpacity() end)
+        if readable and type(value)=="number" then opacityValue=string.format("%.3f",value) end
+        local state=path.."|"..className.."|"..visibility.."|"..opacityValue
+        treeState[address]=state
+        if prior[address]~=state then
+            changed=changed+1
+            D.logInfo("focusChargeSlotTree source=%s entry=%s phase=%s slot=%d node=%s path=%s class=%s visibility=%s opacity=%s",
+                probe.source,tostring(probe.entry),probe.phase,slot,tostring(address),path,className,visibility,opacityValue)
+        end
+        local treeOK,tree=pcall(function() return node.WidgetTree end)
+        if treeOK and valid(tree) then
+            local rootOK,root=pcall(function() return tree.RootWidget end)
+            if rootOK then walk(root,path..".WidgetTree.RootWidget",slot,depth+1) end
+        end
+        local countOK,count=pcall(function() return node:GetChildrenCount() end)
+        if countOK and type(count)=="number" then
+            for index=0,math.min(count,32)-1 do
+                local childOK,child=pcall(function() return node:GetChildAt(index) end)
+                if childOK then walk(child,path..".Child["..index.."]",slot,depth+1) end
+            end
+        end
+    end
+    for ordinal,candidate in ipairs(probe.slots or {}) do
+        if valid(candidate.object) then
+            slots=slots+1
+            walk(candidate.object,"FocusChargeSlot["..ordinal.."]",ordinal,0)
+        end
+    end
+    for address in pairs(prior) do
+        if not treeState[address] then
+            changed=changed+1
+            D.logInfo("focusChargeSlotTree source=%s entry=%s phase=%s node=%s removed",
+                probe.source,tostring(probe.entry),probe.phase,tostring(address))
+        end
+    end
+    runtime.focusChargeSlotTreeStates=treeState
+    if probe.phase=="baseline" then
+        runtime.focusChargeSlotTreeBaselineReady=true
+        runtime.focusChargeSlotTreeBaselinePending=false
+    end
+    D.logInfo("focusChargeSlotTree source=%s entry=%s phase=%s slots=%d nodes=%d changed=%d nodeLimit=128 depthLimit=8",
+        probe.source,tostring(probe.entry),probe.phase,slots,nodes,changed)
 end
 -- 3515 is a weapon-state callback, not a Quickslot presentation callback.
 -- The next bounded probe therefore compares the three combat-only Vanilla
@@ -1222,6 +1298,15 @@ function runtime.enqueueFocusChargeSlotProbe(probe)
     end
     if wake then wake("focusChargeSlotProbe") end
 end
+function runtime.enqueueFocusChargeSlotTreeProbe(probe)
+    runtime.focusChargeSlotTreeProbeQueue=runtime.focusChargeSlotTreeProbeQueue or {}
+    if runtime.focusChargeSlotTreeProbe then
+        runtime.focusChargeSlotTreeProbeQueue[#runtime.focusChargeSlotTreeProbeQueue+1]=probe
+    else
+        runtime.focusChargeSlotTreeProbe=probe
+    end
+    if wake then wake("focusChargeSlotTreeProbe") end
+end
 function runtime.scheduleFocusChargeSlotProbe(source,entry,object,address,version,versionField)
     local function queue(phase)
         runtime.enqueueFocusChargeSlotProbe({source=source,entry=entry,phase=phase,
@@ -1232,6 +1317,46 @@ function runtime.scheduleFocusChargeSlotProbe(source,entry,object,address,versio
         local delay,phase=sample[1],sample[2]
         pcall(ExecuteInGameThreadWithDelay,delay,function()
             if D.debugLogging and (runtime[versionField] or {})[address]==version then queue(phase) end
+        end)
+    end
+end
+function runtime.queueFocusChargeSlotTreeBaseline(source)
+    if not D.debugLogging or not config.fadeTransitions
+        or panelModes.WBP_HUD_FocusCharge_Bar~=Modes.VANILLA
+        or runtime.focusChargeSlotTreeBaselineReady or runtime.focusChargeSlotTreeBaselinePending then return end
+    local slots,reason=runtime.collectFocusChargeLocatorEntries()
+    if not slots then
+        if D.debugLogging then D.event("focusChargeSlotTree","source=%s phase=unavailable reason=%s",source,tostring(reason)) end
+        return
+    end
+    runtime.focusChargeSlotTreeVersion=(runtime.focusChargeSlotTreeVersion or 0)+1
+    runtime.focusChargeSlotTreeBaselinePending=true
+    runtime.enqueueFocusChargeSlotTreeProbe({source=source,phase="baseline",slots=slots,
+        version=runtime.focusChargeSlotTreeVersion})
+end
+function runtime.queueFocusChargeSlotTreeProbe(source,entry)
+    if not D.debugLogging or not config.fadeTransitions or entry~=573
+        or panelModes.WBP_HUD_FocusCharge_Bar~=Modes.VANILLA then return end
+    local remaining=runtime.focusChargeSlotTreeProbeRemaining or 0
+    if remaining<=0 then return end
+    local slots,reason=runtime.collectFocusChargeLocatorEntries()
+    if not slots then
+        if D.debugLogging then D.event("focusChargeSlotTree","source=%s entry=%d phase=unavailable reason=%s",source,entry,tostring(reason)) end
+        return
+    end
+    runtime.focusChargeSlotTreeProbeRemaining=remaining-1
+    runtime.focusChargeSlotTreeVersion=(runtime.focusChargeSlotTreeVersion or 0)+1
+    local version=runtime.focusChargeSlotTreeVersion
+    local function queue(phase)
+        runtime.enqueueFocusChargeSlotTreeProbe({source=source,entry=entry,phase=phase,slots=slots,version=version})
+    end
+    queue("post")
+    -- A fill animation can outlast the old 250 ms diagnostic window. This is
+    -- still one finite, user-triggered timeline, never a watcher or poll.
+    for _,sample in ipairs({{16,"nextFrame"},{96,"after100ms"},{240,"after250ms"},{500,"after500ms"},{1000,"after1000ms"}}) do
+        local delay,phase=sample[1],sample[2]
+        pcall(ExecuteInGameThreadWithDelay,delay,function()
+            if D.debugLogging and runtime.focusChargeSlotTreeVersion==version then queue(phase) end
         end)
     end
 end
@@ -1373,6 +1498,7 @@ function runtime.focusChargeSlotWriteEvent(context,source)
     if not valid(object) then return end
     local readable,address=pcall(function() return object:GetAddress() end)
     if not readable or not address or not runtime.focusChargeSlotAddressIsOwned(object,address) then return end
+    runtime.queueFocusChargeSlotTreeBaseline("slot direct-write baseline")
     runtime.focusChargeSlotWriteProbeRemaining=remaining-1
     runtime.focusChargeSlotWriteProbeVersions=runtime.focusChargeSlotWriteProbeVersions or {}
     local version=(runtime.focusChargeSlotWriteProbeVersions[address] or 0)+1
@@ -1421,6 +1547,10 @@ local function switchedQuickslots(context,entryParam)
     -- to eight distinct entries for the requested one-session investigation.
     if entry and currentPanelEvent(context) then
         queueVanillaCombatProbe(entry)
+        -- Run 11 measured entry 573 while one activation charge was depleted.
+        -- Compare only the owned slots' static child trees at that exact route;
+        -- it is a finite snapshot sequence, not a generic HUD tree scan.
+        if entry==573 then runtime.queueFocusChargeSlotTreeProbe("GameHUD graph 573",entry) end
         -- This baseline precedes the later confirmed HUD-preset boundary in
         -- the observed combat sequence, so Push/Pop can compare ancestor
         -- ownership without a recurring poll or unsafe native pre-hook read.
@@ -1635,6 +1765,7 @@ local function accept(object)
         runtime.resetFocusChargeSlotProbe()
         runtime.focusChargeSlotProbeRemaining=12
         runtime.focusChargeSlotWriteProbeRemaining=12
+        runtime.focusChargeSlotTreeProbeRemaining=1
         runtime.focusChargeLocatorArmed=config.debugFocusChargeLocator and D.debugLogging
             and panelModes.WBP_HUD_FocusCharge_Bar==Modes.VANILLA
         panelRetries={}
@@ -2192,6 +2323,13 @@ local function step()
         local version=runtime.focusChargeLocatorAdvanceVersion
         runtime.focusChargeLocatorAdvanceVersion=nil
         runtime.advanceFocusChargeLocator(version)
+        return false
+    end
+    if runtime.focusChargeSlotTreeProbe then
+        local probe=runtime.focusChargeSlotTreeProbe
+        local queue=runtime.focusChargeSlotTreeProbeQueue or {}
+        runtime.focusChargeSlotTreeProbe=table.remove(queue,1)
+        runtime.captureFocusChargeSlotTreeProbe(probe)
         return false
     end
     if runtime.focusChargeSlotProbe then
@@ -2776,6 +2914,8 @@ applyLiveSettings=function(run)
             and panelModes.WBP_HUD_FocusCharge_Bar==Modes.VANILLA
         runtime.focusChargeSlotProbeRemaining=traceEligible and 12 or 0
         runtime.focusChargeSlotWriteProbeRemaining=traceEligible and 12 or 0
+        runtime.focusChargeSlotTreeProbeRemaining=traceEligible and 1 or 0
+        if traceEligible then runtime.queueFocusChargeSlotTreeBaseline("settings applied") end
         runtime.focusChargeLocatorArmed=config.debugFocusChargeLocator and D.debugLogging
             and panelModes.WBP_HUD_FocusCharge_Bar==Modes.VANILLA
     end
