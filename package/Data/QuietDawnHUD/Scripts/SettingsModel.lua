@@ -59,17 +59,18 @@ local originalText=Store.read(Store.path(directory))
 -- Validate all present current keys before any historical upgrade may write.
 -- Missing keys are handled by their own preserving generation below.
 if originalText then
+    -- parse validates every present assignment before reporting missing keys.
+    -- One full-schema pass protects partial files without rereading each line
+    -- once per setting during startup.
+    local _,problem=Store.parse(originalText,newestSchema)
+    if problem and not problem:match('^Missing setting:') then
+        error('Quiet Dawn settings rejected: '..problem)
+    end
     local levels=Store.parse(originalText,{{key='logLevel',values=LogLevels.ordered,default=LogLevels.DEFAULT}})
     if not levels then
         local _,legacyError=Store.parse(originalText,{{key='debugLogging',values={0,1},default=0}})
         if legacyError and not legacyError:match('^Missing setting:') then
             error('Quiet Dawn settings rejected: '..legacyError)
-        end
-    end
-    for _,row in ipairs(newestSchema) do
-        local _,problem=Store.parse(originalText,{row})
-        if problem and not problem:match('^Missing setting:') then
-            error('Quiet Dawn settings rejected: '..problem)
         end
     end
 end

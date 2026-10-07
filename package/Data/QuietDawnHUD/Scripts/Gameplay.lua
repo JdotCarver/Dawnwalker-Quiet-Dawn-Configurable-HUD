@@ -1383,7 +1383,8 @@ local function writePanel(name,entry,target)
     end
     -- The fade turns the eventual target into this frame's value. With fading
     -- off, or on the frame a transition lands, that is the target itself.
-    local value=fade.step(name,entry.object:GetRenderOpacity(),target)
+    local value=target
+    if fade.enabled() then value=fade.step(name,entry.object:GetRenderOpacity(),target) end
     local wrote=panelOpacity.apply(entry.lease,value)
     if peekVisible and peekPanel(name) and math.abs(value-target)<=1e-5 then
         runtime.peekSettled[name]=true
@@ -1433,12 +1434,13 @@ local function cachedVisibility(kind)
             local widget=hud[name]
             if entry and sameObject(entry.widget,widget) and valid(entry.object) then
                 local target=panelTarget(name,entry,widget)
-                local current=entry.object:GetRenderOpacity()
                 -- Refresh callbacks arrive even while the game has left this
                 -- panel exactly where its active rule wants it. Queuing a
                 -- wave before checking that fact made every no-op refresh
                 -- look like a new Focus fade in the Debug log.
-                if math.abs(current-target)>1e-5 then
+                -- Without fades the opacity lease already skips unchanged
+                -- writes; avoid an additional engine read before that check.
+                if not fade.enabled() or math.abs(entry.object:GetRenderOpacity()-target)>1e-5 then
                     local ok,err=pcall(writePanel,name,entry,target)
                     if not ok then panelFailure(name,err) end
                 elseif fade.active(name) then
@@ -1833,7 +1835,7 @@ local function step()
     -- player-HUD fade. The fade pass below advances it in this same worker
     -- call, so this changes priority rather than adding another tick.
     healthTurn=not healthTurn
-    if not fade.pending() and enemyBars.ready()
+    if (not fade.pending() or runtime.fadeSuspended) and enemyBars.ready()
         and (healthTurn or (cursor==0 and not dirty and not statsPending and not markersReady())) then
         enemyBars.step()
         return false
@@ -2004,13 +2006,6 @@ wake = function(statsOnly)
     attempts=0
     repeatUntilDone(runtime.workerDelay, function()
         local success, stop = pcall(function()
-            fade.expire(function(name,target)
-                local entry=panels[name]
-                if entry and valid(hud) and valid(controller) and valid(entry.object)
-                    and sameObject(hud:GetWorld(),world) and sameObject(hud:GetOwningPlayer(),controller) then
-                    panelOpacity.apply(entry.lease,target)
-                end
-            end)
             if not valid(frameClock) then
                 frameClock=StaticFindObject("/Script/Engine.Default__KismetSystemLibrary")
                 if not valid(frameClock) then
@@ -2020,6 +2015,13 @@ wake = function(statsOnly)
                 end
             end
             local frame=frameClock:GetFrameCount()
+            fade.expire(function(name,target)
+                local entry=panels[name]
+                if entry and valid(hud) and valid(controller) and valid(entry.object)
+                    and sameObject(hud:GetWorld(),world) and sameObject(hud:GetOwningPlayer(),controller) then
+                    panelOpacity.apply(entry.lease,target)
+                end
+            end,runtime.fadePacing.paused() and frame~=lastFrame)
             if frame == lastFrame then
                 -- A paused renderer must not defer a committed settings edit.
                 if livePending then applyLiveSettings(true) end

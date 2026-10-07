@@ -32,8 +32,9 @@ local ORPHAN_GRACE_SECONDS = 1
 -- the clock behind it: game time stops while the game is paused or the window
 -- is in the background, so a time-based expiry alone can never fire in
 -- exactly the situation where a stuck worker hurts most. Counting the worker
--- calls a transition survives cannot be fooled that way. At roughly 60 calls
--- a second this is about thirty seconds, far longer than any sane fade.
+-- calls a transition survives bounds stalled rendering too. A confirmed pause
+-- with advancing render frames explicitly holds this count: that transition
+-- still has a live owner and must resume at the same opacity after unpausing.
 local MAX_TICKS = 2000
 
 function M.new(D, clock)
@@ -97,12 +98,13 @@ function M.new(D, clock)
 
     -- Called exactly once per scheduled worker callback, even if rendering or
     -- game time stopped. Expiry lands owned live panels on their target before
-    -- retiring them; missing owners are simply discarded by the caller.
-    function api.expire(onExpired)
+    -- retiring them; missing owners are simply discarded by the caller. A
+    -- confirmed rendered pause preserves the callback budget as well as time.
+    function api.expire(onExpired, held)
         if transitionCount==0 then return end
         local moment = now()
         for key, transition in pairs(transitions) do
-            transition.ticks = transition.ticks + 1
+            if not held then transition.ticks = transition.ticks + 1 end
             -- A clock that has gone backwards means a new world, or a reset
             -- game time. The transition refers to a world that no longer
             -- exists either way.

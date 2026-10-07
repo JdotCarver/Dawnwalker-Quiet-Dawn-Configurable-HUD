@@ -37,7 +37,7 @@ Show HUD (`manualPeek`) is 0 Off, 1 Controls Legend or 2 Focus mode. Focus holds
 | Player status: Health and stamina | HUD Peek Behaviour | `showHUD_VampireStats` | 1 | 0, 1 — Exclude, Include |
 | Player status: Health and stamina | HUD Peek Behaviour | `fixedPeek_VampireStats` | 0 | 0, 1 — Don't change, Raise opacity |
 | Player status: Health and stamina | Keep health visible below | `healthThreshold` | 50 | 0–100 (step 5) |
-| Player status: Health and stamina | Health: blood hold duration | `healthHoldSeconds` | 4 | 0–10 (step 0.5) |
+| Player status: Health and stamina | Health / blood hold duration | `healthHoldSeconds` | 4 | 0–10 (step 0.5) |
 | Player status: Health and stamina | Keep stamina visible below | `staminaThreshold` | 20 | 0–100 (step 5) |
 | Player status: Health and stamina | Stamina hold duration | `staminaHoldSeconds` | 1.5 | 0–10 (step 0.5) |
 | Combat: Ability cooldowns | Mode | `mode_WBP_HUD_AbilityCooldownsContainer` | 1 | 0, 1, 2, 3 — Vanilla, Quiet Dawn, Fixed Opacity, Always Hidden |

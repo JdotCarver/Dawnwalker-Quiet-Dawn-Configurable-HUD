@@ -336,7 +336,7 @@ function M.new(context)
             return true
         end
 
-        local keep = false
+        local keep,childStarted = false,false
         local success,reason = pcall(function()
             if not valid(object) then return end
             if not belongsToSpec(object,spec) then
@@ -369,6 +369,7 @@ function M.new(context)
                 if #job.fields==0 then return end
             end
             local field = job.fields[job.field]
+            childStarted=true
             local child = findChild(object, field)
             if not valid(child) then
                 -- A missing bar or label must not block independent
@@ -378,7 +379,6 @@ function M.new(context)
                 keep = retry() or nextField()
                 return
             end
-            clearUnavailable(object,spec,field)
             if hidden(field) then
                 if child:GetRenderOpacity()~=0 then
                     opacity(child,0)
@@ -395,11 +395,16 @@ function M.new(context)
                     if field=="WBP_NPCWoundContainer" then D.event("enemyEffects","hidden=false") end
                 end
             end
+            -- Keep the exhausted/rearmed state until this child actually
+            -- succeeds; a throwing getter must not reopen its retry budget.
+            clearUnavailable(object,spec,field)
             keep = nextField()
         end)
 
         if not success then
-            keep = retry()
+            -- Owner failures retire this job. A child failure exhausts only
+            -- that field, so independent health/name/effect controls progress.
+            keep = retry() or (childStarted and nextField())
             -- Report each distinct cause once, with the object that
             -- triggered it. The identity is what makes this actionable: the
             -- message alone does not say which widget could not be read.
