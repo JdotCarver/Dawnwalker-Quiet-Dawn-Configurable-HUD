@@ -1,0 +1,1113 @@
+[
+  {
+    "Type": "DWW_RichText_C",
+    "Name": "CooldownLabel",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "BlueprintGeneratedClass'/Game/_Dawnwalker/UI/_Unified/BaseWidgets/DWW_RichText.DWW_RichText_C'",
+    "Outer": {
+      "ObjectName": "WidgetTree'WBP_SpecialAttack_Labeled_C:WidgetTree'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack_Labeled.24"
+    },
+    "Template": {
+      "ObjectName": "DWW_RichText_C'Default__DWW_RichText_C'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/BaseWidgets/DWW_RichText.1"
+    },
+    "Properties": {
+      "DefaultTextStyleOverrideClass": {
+        "ObjectName": "BlueprintGeneratedClass'DTS_Common_Beige_C'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/TextStyles/DTS_Common_Beige.0"
+      },
+      "Text": {
+        "CultureInvariantString": "DB Cooldown: <Default>Xs</>"
+      },
+      "DefaultTextStyleOverride": {
+        "Font": {
+          "FontObject": {
+            "ObjectName": "Font'Afacad'",
+            "ObjectPath": "/Game/_Dawnwalker/UI/Fonts/Afacad.0"
+          },
+          "TypefaceFontName": "Regular",
+          "Size": 33.0
+        },
+        "ColorAndOpacity": {
+          "SpecifiedColor": {
+            "R": 0.417885,
+            "G": 0.361307,
+            "B": 0.287441,
+            "A": 1.0,
+            "Hex": "ADA292"
+          }
+        },
+        "ShadowOffset": {
+          "X": 0.0,
+          "Y": 2.0
+        }
+      },
+      "Slot": {
+        "ObjectName": "VerticalBoxSlot'WBP_SpecialAttack_Labeled_C:WidgetTree.VerticalBox_0.VerticalBoxSlot_2'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack_Labeled.20"
+      }
+    }
+  },
+  {
+    "Type": "DWW_Text_C",
+    "Name": "NameLabel",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "BlueprintGeneratedClass'/Game/_Dawnwalker/UI/_Unified/BaseWidgets/DWW_Text.DWW_Text_C'",
+    "Outer": {
+      "ObjectName": "WidgetTree'WBP_SpecialAttack_Labeled_C:WidgetTree'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack_Labeled.24"
+    },
+    "Template": {
+      "ObjectName": "DWW_Text_C'Default__DWW_Text_C'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/BaseWidgets/DWW_Text.1"
+    },
+    "Properties": {
+      "Style": {
+        "ObjectName": "BlueprintGeneratedClass'DWS_BaseTextStyle_C'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/Styles/DWS_BaseTextStyle.0"
+      },
+      "ScrollStyle": {
+        "ObjectName": "BlueprintGeneratedClass'DSTS_Scroll_C'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/TextStyles/DSTS_Scroll.0"
+      },
+      "Text": {
+        "CultureInvariantString": "Claw Art"
+      },
+      "ColorAndOpacity": {
+        "SpecifiedColor": {
+          "R": 1.0,
+          "G": 0.0,
+          "B": 1.0,
+          "A": 1.0,
+          "Hex": "FF00FF"
+        }
+      },
+      "Font": {
+        "FontObject": null,
+        "TypefaceFontName": "None",
+        "Size": 24.0
+      },
+      "ShadowOffset": {
+        "X": 0.0,
+        "Y": 0.0
+      },
+      "ShadowColorAndOpacity": {
+        "R": 0.0,
+        "G": 0.0,
+        "B": 0.0,
+        "A": 0.0,
+        "Hex": "000000"
+      },
+      "Slot": {
+        "ObjectName": "SizeBoxSlot'WBP_SpecialAttack_Labeled_C:WidgetTree.TextSizeBox.SizeBoxSlot_0'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack_Labeled.12"
+      },
+      "bIsVariable": true
+    }
+  },
+  {
+    "Type": "Function",
+    "Name": "ExecuteUbergraph_WBP_SpecialAttack_Labeled",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "WidgetBlueprintGeneratedClass'WBP_SpecialAttack_Labeled_C'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack_Labeled.23"
+    },
+    "ChildProperties": [
+      {
+        "Type": "IntProperty",
+        "Name": "EntryPoint",
+        "Flags": "RF_Public",
+        "ElementSize": 4,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm"
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "Temp_bool_Variable",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "EnumProperty",
+        "Name": "Temp_byte_Variable",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "Enum": {
+          "ObjectName": "Class'ESlateVisibility'",
+          "ObjectPath": "/Script/UMG"
+        },
+        "UnderlyingProp": {
+          "Type": "ByteProperty",
+          "Name": "UnderlyingType",
+          "Flags": "RF_Public",
+          "ElementSize": 1,
+          "Enum": null
+        }
+      },
+      {
+        "Type": "EnumProperty",
+        "Name": "Temp_byte_Variable_1",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "Enum": {
+          "ObjectName": "Class'ESlateVisibility'",
+          "ObjectPath": "/Script/UMG"
+        },
+        "UnderlyingProp": {
+          "Type": "ByteProperty",
+          "Name": "UnderlyingType",
+          "Flags": "RF_Public",
+          "ElementSize": 1,
+          "Enum": null
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "Temp_bool_Variable_1",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "EnumProperty",
+        "Name": "Temp_byte_Variable_2",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "Enum": {
+          "ObjectName": "Class'ESlateVisibility'",
+          "ObjectPath": "/Script/UMG"
+        },
+        "UnderlyingProp": {
+          "Type": "ByteProperty",
+          "Name": "UnderlyingType",
+          "Flags": "RF_Public",
+          "ElementSize": 1,
+          "Enum": null
+        }
+      },
+      {
+        "Type": "EnumProperty",
+        "Name": "Temp_byte_Variable_3",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "Enum": {
+          "ObjectName": "Class'ESlateVisibility'",
+          "ObjectPath": "/Script/UMG"
+        },
+        "UnderlyingProp": {
+          "Type": "ByteProperty",
+          "Name": "UnderlyingType",
+          "Flags": "RF_Public",
+          "ElementSize": 1,
+          "Enum": null
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "K2Node_Event_IsDesignTime",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "TextProperty",
+        "Name": "K2Node_CustomEvent_Label_Text",
+        "Flags": "RF_Public",
+        "ElementSize": 16
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "K2Node_CustomEvent_Item",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'ItemBaseDataAsset'",
+          "ObjectPath": "/Script/DogwoodInventory"
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "CallFunc_Has_Item_Combo_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "EnumProperty",
+        "Name": "K2Node_Select_Default",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "Enum": {
+          "ObjectName": "Class'ESlateVisibility'",
+          "ObjectPath": "/Script/UMG"
+        },
+        "UnderlyingProp": {
+          "Type": "ByteProperty",
+          "Name": "UnderlyingType",
+          "Flags": "RF_Public",
+          "ElementSize": 1,
+          "Enum": null
+        }
+      },
+      {
+        "Type": "TextProperty",
+        "Name": "CallFunc_Get_Cooldown_Duration_Text_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 16
+      },
+      {
+        "Type": "StructProperty",
+        "Name": "K2Node_MakeStruct_FormatArgumentData",
+        "Flags": "RF_Public",
+        "ElementSize": 72,
+        "Struct": {
+          "ObjectName": "Class'FormatArgumentData'",
+          "ObjectPath": "/Script/Engine"
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "CallFunc_Has_Item_Combo_ReturnValue_1",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "ArrayProperty",
+        "Name": "K2Node_MakeArray_Array",
+        "Flags": "RF_Public",
+        "ElementSize": 16,
+        "PropertyFlags": "ReferenceParm",
+        "Inner": {
+          "Type": "StructProperty",
+          "Name": "K2Node_MakeArray_Array",
+          "Flags": "RF_Public",
+          "ElementSize": 72,
+          "Struct": {
+            "ObjectName": "Class'FormatArgumentData'",
+            "ObjectPath": "/Script/Engine"
+          }
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "CallFunc_BooleanAND_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "TextProperty",
+        "Name": "CallFunc_Format_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 16
+      },
+      {
+        "Type": "EnumProperty",
+        "Name": "K2Node_Select_Default_1",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "Enum": {
+          "ObjectName": "Class'ESlateVisibility'",
+          "ObjectPath": "/Script/UMG"
+        },
+        "UnderlyingProp": {
+          "Type": "ByteProperty",
+          "Name": "UnderlyingType",
+          "Flags": "RF_Public",
+          "ElementSize": 1,
+          "Enum": null
+        }
+      }
+    ],
+    "FunctionFlags": "FUNC_Final | FUNC_UbergraphFunction | FUNC_HasDefaults"
+  },
+  {
+    "Type": "Function",
+    "Name": "Get Cooldown Duration Text",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "WidgetBlueprintGeneratedClass'WBP_SpecialAttack_Labeled_C'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack_Labeled.23"
+    },
+    "ChildProperties": [
+      {
+        "Type": "TextProperty",
+        "Name": "ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 16,
+        "PropertyFlags": "Parm | OutParm | ReturnParm"
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_GetWorldSubsystem_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'CombatSubsystem'",
+          "ObjectPath": "/Script/DogwoodCombat"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_GetPlayerAbilitySystemComponent_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "InstancedReference",
+        "PropertyClass": {
+          "ObjectName": "Class'AbilitySystemComponent'",
+          "ObjectPath": "/Script/GameplayAbilities"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_GetCombatConfig_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'CombatConfig'",
+          "ObjectPath": "/Script/DogwoodCombat"
+        }
+      },
+      {
+        "Type": "StructProperty",
+        "Name": "CallFunc_GetEffectDuration_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 12,
+        "Struct": {
+          "ObjectName": "Class'EffectDurationData'",
+          "ObjectPath": "/Script/DogwoodStats"
+        }
+      },
+      {
+        "Type": "TextProperty",
+        "Name": "CallFunc_Conv_DoubleToText_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 16
+      },
+      {
+        "Type": "StructProperty",
+        "Name": "K2Node_MakeStruct_FormatArgumentData",
+        "Flags": "RF_Public",
+        "ElementSize": 72,
+        "Struct": {
+          "ObjectName": "Class'FormatArgumentData'",
+          "ObjectPath": "/Script/Engine"
+        }
+      },
+      {
+        "Type": "ArrayProperty",
+        "Name": "K2Node_MakeArray_Array",
+        "Flags": "RF_Public",
+        "ElementSize": 16,
+        "PropertyFlags": "ReferenceParm",
+        "Inner": {
+          "Type": "StructProperty",
+          "Name": "K2Node_MakeArray_Array",
+          "Flags": "RF_Public",
+          "ElementSize": 72,
+          "Struct": {
+            "ObjectName": "Class'FormatArgumentData'",
+            "ObjectPath": "/Script/Engine"
+          }
+        }
+      },
+      {
+        "Type": "TextProperty",
+        "Name": "CallFunc_Format_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 16
+      },
+      {
+        "Type": "DoubleProperty",
+        "Name": "CallFunc_Conv_DoubleToText_Value_ImplicitCast",
+        "Flags": "RF_Public",
+        "ElementSize": 8
+      }
+    ],
+    "FunctionFlags": "FUNC_Public | FUNC_HasOutParms | FUNC_HasDefaults | FUNC_BlueprintCallable | FUNC_BlueprintEvent | FUNC_BlueprintPure"
+  },
+  {
+    "Type": "Function",
+    "Name": "PreConstruct",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "WidgetBlueprintGeneratedClass'WBP_SpecialAttack_Labeled_C'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack_Labeled.23"
+    },
+    "SuperStruct": {
+      "ObjectName": "Class'UserWidget:PreConstruct'",
+      "ObjectPath": "/Script/UMG"
+    },
+    "ChildProperties": [
+      {
+        "Type": "BoolProperty",
+        "Name": "IsDesignTime",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      }
+    ],
+    "FunctionFlags": "FUNC_BlueprintCosmetic | FUNC_Event | FUNC_Public | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "Set Name ",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "WidgetBlueprintGeneratedClass'WBP_SpecialAttack_Labeled_C'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack_Labeled.23"
+    },
+    "ChildProperties": [
+      {
+        "Type": "TextProperty",
+        "Name": "Label Text",
+        "Flags": "RF_Public",
+        "ElementSize": 16,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm"
+      }
+    ],
+    "FunctionFlags": "FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "Update Cooldown",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "WidgetBlueprintGeneratedClass'WBP_SpecialAttack_Labeled_C'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack_Labeled.23"
+    },
+    "FunctionFlags": "FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "Update Name",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "WidgetBlueprintGeneratedClass'WBP_SpecialAttack_Labeled_C'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack_Labeled.23"
+    },
+    "FunctionFlags": "FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "Update Special",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "WidgetBlueprintGeneratedClass'WBP_SpecialAttack_Labeled_C'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack_Labeled.23"
+    },
+    "ChildProperties": [
+      {
+        "Type": "ObjectProperty",
+        "Name": "Item",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "PropertyClass": {
+          "ObjectName": "Class'ItemBaseDataAsset'",
+          "ObjectPath": "/Script/DogwoodInventory"
+        }
+      }
+    ],
+    "FunctionFlags": "FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "SizeBox",
+    "Name": "SizeBox_0",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'SizeBox'",
+    "Outer": {
+      "ObjectName": "WidgetTree'WBP_SpecialAttack_Labeled_C:WidgetTree'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack_Labeled.24"
+    },
+    "Properties": {
+      "Slots": [
+        {
+          "ObjectName": "SizeBoxSlot'WBP_SpecialAttack_Labeled_C:WidgetTree.SizeBox_0.SizeBoxSlot_0'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack_Labeled.11"
+        }
+      ]
+    }
+  },
+  {
+    "Type": "SizeBox",
+    "Name": "TextSizeBox",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'SizeBox'",
+    "Outer": {
+      "ObjectName": "WidgetTree'WBP_SpecialAttack_Labeled_C:WidgetTree'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack_Labeled.24"
+    },
+    "Properties": {
+      "MaxDesiredWidth": 250.0,
+      "bOverride_MaxDesiredWidth": true,
+      "Slots": [
+        {
+          "ObjectName": "SizeBoxSlot'WBP_SpecialAttack_Labeled_C:WidgetTree.TextSizeBox.SizeBoxSlot_0'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack_Labeled.12"
+        }
+      ],
+      "Slot": {
+        "ObjectName": "StackBoxSlot'WBP_SpecialAttack_Labeled_C:WidgetTree.Layout.StackBoxSlot_0'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack_Labeled.15"
+      },
+      "bIsVariable": true
+    }
+  },
+  {
+    "Type": "SizeBoxSlot",
+    "Name": "SizeBoxSlot_0",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'SizeBoxSlot'",
+    "Outer": {
+      "ObjectName": "SizeBox'WBP_SpecialAttack_Labeled_C:WidgetTree.SizeBox_0'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack_Labeled.9"
+    },
+    "Properties": {
+      "Padding": {
+        "Top": 2.0
+      },
+      "VerticalAlignment": "EVerticalAlignment::VAlign_Center",
+      "Parent": {
+        "ObjectName": "SizeBox'WBP_SpecialAttack_Labeled_C:WidgetTree.SizeBox_0'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack_Labeled.9"
+      },
+      "Content": {
+        "ObjectName": "VerticalBox'WBP_SpecialAttack_Labeled_C:WidgetTree.VerticalBox_0'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack_Labeled.18"
+      }
+    }
+  },
+  {
+    "Type": "SizeBoxSlot",
+    "Name": "SizeBoxSlot_0",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'SizeBoxSlot'",
+    "Outer": {
+      "ObjectName": "SizeBox'WBP_SpecialAttack_Labeled_C:WidgetTree.TextSizeBox'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack_Labeled.10"
+    },
+    "Properties": {
+      "Parent": {
+        "ObjectName": "SizeBox'WBP_SpecialAttack_Labeled_C:WidgetTree.TextSizeBox'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack_Labeled.10"
+      },
+      "Content": {
+        "ObjectName": "DWW_Text_C'WBP_SpecialAttack_Labeled_C:WidgetTree.NameLabel'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack_Labeled.1"
+      }
+    }
+  },
+  {
+    "Type": "Spacer",
+    "Name": "Spacer_57",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Spacer'",
+    "Outer": {
+      "ObjectName": "WidgetTree'WBP_SpecialAttack_Labeled_C:WidgetTree'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack_Labeled.24"
+    },
+    "Properties": {
+      "Size": {
+        "X": 10.0,
+        "Y": 10.0
+      },
+      "Slot": {
+        "ObjectName": "StackBoxSlot'WBP_SpecialAttack_Labeled_C:WidgetTree.Layout.StackBoxSlot_2'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack_Labeled.17"
+      }
+    }
+  },
+  {
+    "Type": "StackBox",
+    "Name": "Layout",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'StackBox'",
+    "Outer": {
+      "ObjectName": "WidgetTree'WBP_SpecialAttack_Labeled_C:WidgetTree'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack_Labeled.24"
+    },
+    "Properties": {
+      "Slots": [
+        {
+          "ObjectName": "StackBoxSlot'WBP_SpecialAttack_Labeled_C:WidgetTree.Layout.StackBoxSlot_0'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack_Labeled.15"
+        },
+        {
+          "ObjectName": "StackBoxSlot'WBP_SpecialAttack_Labeled_C:WidgetTree.Layout.StackBoxSlot_2'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack_Labeled.17"
+        },
+        {
+          "ObjectName": "StackBoxSlot'WBP_SpecialAttack_Labeled_C:WidgetTree.Layout.StackBoxSlot_1'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack_Labeled.16"
+        }
+      ],
+      "Slot": {
+        "ObjectName": "VerticalBoxSlot'WBP_SpecialAttack_Labeled_C:WidgetTree.VerticalBox_0.VerticalBoxSlot_0'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack_Labeled.19"
+      },
+      "bIsVariable": true
+    }
+  },
+  {
+    "Type": "StackBoxSlot",
+    "Name": "StackBoxSlot_0",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'StackBoxSlot'",
+    "Outer": {
+      "ObjectName": "StackBox'WBP_SpecialAttack_Labeled_C:WidgetTree.Layout'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack_Labeled.14"
+    },
+    "Properties": {
+      "Parent": {
+        "ObjectName": "StackBox'WBP_SpecialAttack_Labeled_C:WidgetTree.Layout'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack_Labeled.14"
+      },
+      "Content": {
+        "ObjectName": "SizeBox'WBP_SpecialAttack_Labeled_C:WidgetTree.TextSizeBox'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack_Labeled.10"
+      }
+    }
+  },
+  {
+    "Type": "StackBoxSlot",
+    "Name": "StackBoxSlot_1",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'StackBoxSlot'",
+    "Outer": {
+      "ObjectName": "StackBox'WBP_SpecialAttack_Labeled_C:WidgetTree.Layout'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack_Labeled.14"
+    },
+    "Properties": {
+      "Padding": {
+        "Top": -15.0,
+        "Bottom": -5.0
+      },
+      "Parent": {
+        "ObjectName": "StackBox'WBP_SpecialAttack_Labeled_C:WidgetTree.Layout'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack_Labeled.14"
+      },
+      "Content": {
+        "ObjectName": "WBP_SpecialAttack_C'WBP_SpecialAttack_Labeled_C:WidgetTree.WBP_SpecialAttack'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack_Labeled.21"
+      }
+    }
+  },
+  {
+    "Type": "StackBoxSlot",
+    "Name": "StackBoxSlot_2",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'StackBoxSlot'",
+    "Outer": {
+      "ObjectName": "StackBox'WBP_SpecialAttack_Labeled_C:WidgetTree.Layout'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack_Labeled.14"
+    },
+    "Properties": {
+      "Parent": {
+        "ObjectName": "StackBox'WBP_SpecialAttack_Labeled_C:WidgetTree.Layout'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack_Labeled.14"
+      },
+      "Content": {
+        "ObjectName": "Spacer'WBP_SpecialAttack_Labeled_C:WidgetTree.Spacer_57'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack_Labeled.13"
+      }
+    }
+  },
+  {
+    "Type": "VerticalBox",
+    "Name": "VerticalBox_0",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'VerticalBox'",
+    "Outer": {
+      "ObjectName": "WidgetTree'WBP_SpecialAttack_Labeled_C:WidgetTree'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack_Labeled.24"
+    },
+    "Properties": {
+      "Slots": [
+        {
+          "ObjectName": "VerticalBoxSlot'WBP_SpecialAttack_Labeled_C:WidgetTree.VerticalBox_0.VerticalBoxSlot_0'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack_Labeled.19"
+        },
+        {
+          "ObjectName": "VerticalBoxSlot'WBP_SpecialAttack_Labeled_C:WidgetTree.VerticalBox_0.VerticalBoxSlot_2'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack_Labeled.20"
+        }
+      ],
+      "Slot": {
+        "ObjectName": "SizeBoxSlot'WBP_SpecialAttack_Labeled_C:WidgetTree.SizeBox_0.SizeBoxSlot_0'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack_Labeled.11"
+      },
+      "bIsVariable": true
+    }
+  },
+  {
+    "Type": "VerticalBoxSlot",
+    "Name": "VerticalBoxSlot_0",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'VerticalBoxSlot'",
+    "Outer": {
+      "ObjectName": "VerticalBox'WBP_SpecialAttack_Labeled_C:WidgetTree.VerticalBox_0'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack_Labeled.18"
+    },
+    "Properties": {
+      "Parent": {
+        "ObjectName": "VerticalBox'WBP_SpecialAttack_Labeled_C:WidgetTree.VerticalBox_0'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack_Labeled.18"
+      },
+      "Content": {
+        "ObjectName": "StackBox'WBP_SpecialAttack_Labeled_C:WidgetTree.Layout'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack_Labeled.14"
+      }
+    }
+  },
+  {
+    "Type": "VerticalBoxSlot",
+    "Name": "VerticalBoxSlot_2",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'VerticalBoxSlot'",
+    "Outer": {
+      "ObjectName": "VerticalBox'WBP_SpecialAttack_Labeled_C:WidgetTree.VerticalBox_0'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack_Labeled.18"
+    },
+    "Properties": {
+      "Padding": {
+        "Top": -6.0
+      },
+      "VerticalAlignment": "EVerticalAlignment::VAlign_Center",
+      "Parent": {
+        "ObjectName": "VerticalBox'WBP_SpecialAttack_Labeled_C:WidgetTree.VerticalBox_0'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack_Labeled.18"
+      },
+      "Content": {
+        "ObjectName": "DWW_RichText_C'WBP_SpecialAttack_Labeled_C:WidgetTree.CooldownLabel'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack_Labeled.0"
+      }
+    }
+  },
+  {
+    "Type": "WBP_SpecialAttack_C",
+    "Name": "WBP_SpecialAttack",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "WidgetBlueprintGeneratedClass'/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack.WBP_SpecialAttack_C'",
+    "Outer": {
+      "ObjectName": "WidgetTree'WBP_SpecialAttack_Labeled_C:WidgetTree'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack_Labeled.24"
+    },
+    "Template": {
+      "ObjectName": "WBP_SpecialAttack_C'Default__WBP_SpecialAttack_C'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack.14"
+    },
+    "Properties": {
+      "Slot": {
+        "ObjectName": "StackBoxSlot'WBP_SpecialAttack_Labeled_C:WidgetTree.Layout.StackBoxSlot_1'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack_Labeled.16"
+      }
+    }
+  },
+  {
+    "Type": "WBP_SpecialAttack_Labeled_C",
+    "Name": "Default__WBP_SpecialAttack_Labeled_C",
+    "Flags": "RF_Public | RF_ClassDefaultObject | RF_ArchetypeObject | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "WidgetBlueprintGeneratedClass'/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack_Labeled.WBP_SpecialAttack_Labeled_C'",
+    "Package": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack_Labeled",
+    "Properties": {
+      "UberGraphFrame": {},
+      "Orientation": "EOrientation::Orient_Vertical",
+      "bHasScriptImplementedTick": false,
+      "bHasScriptImplementedPaint": false
+    }
+  },
+  {
+    "Type": "WidgetBlueprintGeneratedClass",
+    "Name": "WBP_SpecialAttack_Labeled_C",
+    "Flags": "RF_Public | RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'WidgetBlueprintGeneratedClass'",
+    "Package": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack_Labeled",
+    "Properties": {
+      "WidgetTree": {
+        "ObjectName": "WidgetTree'WBP_SpecialAttack_Labeled_C:WidgetTree'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack_Labeled.24"
+      },
+      "UberGraphFunction": {
+        "ObjectName": "Function'WBP_SpecialAttack_Labeled_C:ExecuteUbergraph_WBP_SpecialAttack_Labeled'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack_Labeled.2"
+      }
+    },
+    "SuperStruct": {
+      "ObjectName": "Class'UserWidget'",
+      "ObjectPath": "/Script/UMG"
+    },
+    "Children": [
+      {
+        "ObjectName": "Function'WBP_SpecialAttack_Labeled_C:Get Cooldown Duration Text'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack_Labeled.3"
+      },
+      {
+        "ObjectName": "Function'WBP_SpecialAttack_Labeled_C:PreConstruct'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack_Labeled.4"
+      },
+      {
+        "ObjectName": "Function'WBP_SpecialAttack_Labeled_C:Set Name '",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack_Labeled.5"
+      },
+      {
+        "ObjectName": "Function'WBP_SpecialAttack_Labeled_C:Update Name'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack_Labeled.7"
+      },
+      {
+        "ObjectName": "Function'WBP_SpecialAttack_Labeled_C:Update Special'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack_Labeled.8"
+      },
+      {
+        "ObjectName": "Function'WBP_SpecialAttack_Labeled_C:Update Cooldown'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack_Labeled.6"
+      },
+      {
+        "ObjectName": "Function'WBP_SpecialAttack_Labeled_C:ExecuteUbergraph_WBP_SpecialAttack_Labeled'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack_Labeled.2"
+      }
+    ],
+    "ChildProperties": [
+      {
+        "Type": "StructProperty",
+        "Name": "UberGraphFrame",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 16,
+        "PropertyFlags": "Transient | DuplicateTransient",
+        "Struct": {
+          "ObjectName": "Class'PointerToUberGraphFrame'",
+          "ObjectPath": "/Script/Engine"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CooldownLabel",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | ExportObject | BlueprintReadOnly | DisableEditOnInstance | InstancedReference | RepSkip | PersistentInstance",
+        "PropertyClass": {
+          "ObjectName": "BlueprintGeneratedClass'DWW_RichText_C'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/BaseWidgets/DWW_RichText.0"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "Layout",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | ExportObject | BlueprintReadOnly | DisableEditOnInstance | InstancedReference | RepSkip | PersistentInstance",
+        "PropertyClass": {
+          "ObjectName": "Class'StackBox'",
+          "ObjectPath": "/Script/UMG"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "NameLabel",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | ExportObject | BlueprintReadOnly | DisableEditOnInstance | InstancedReference | RepSkip | PersistentInstance",
+        "PropertyClass": {
+          "ObjectName": "BlueprintGeneratedClass'DWW_Text_C'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/BaseWidgets/DWW_Text.0"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "TextSizeBox",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | ExportObject | BlueprintReadOnly | DisableEditOnInstance | InstancedReference | RepSkip | PersistentInstance",
+        "PropertyClass": {
+          "ObjectName": "Class'SizeBox'",
+          "ObjectPath": "/Script/UMG"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "VerticalBox_0",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | ExportObject | BlueprintReadOnly | DisableEditOnInstance | InstancedReference | RepSkip | PersistentInstance",
+        "PropertyClass": {
+          "ObjectName": "Class'VerticalBox'",
+          "ObjectPath": "/Script/UMG"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "WBP_SpecialAttack",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | ExportObject | BlueprintReadOnly | DisableEditOnInstance | InstancedReference | RepSkip | PersistentInstance",
+        "PropertyClass": {
+          "ObjectName": "WidgetBlueprintGeneratedClass'WBP_SpecialAttack_C'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack.15"
+        }
+      },
+      {
+        "Type": "TextProperty",
+        "Name": "Label Text",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 16,
+        "PropertyFlags": "Edit | BlueprintVisible"
+      },
+      {
+        "Type": "ByteProperty",
+        "Name": "Orientation",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 1,
+        "PropertyFlags": "Edit | BlueprintVisible",
+        "Enum": {
+          "ObjectName": "Class'EOrientation'",
+          "ObjectPath": "/Script/SlateCore"
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "Collapsible",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 1,
+        "PropertyFlags": "Edit | BlueprintVisible",
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "Display Cooldown",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 1,
+        "PropertyFlags": "Edit | BlueprintVisible",
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "TruncateText",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 1,
+        "PropertyFlags": "Edit | BlueprintVisible",
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      }
+    ],
+    "FuncMap": {
+      "ExecuteUbergraph_WBP_SpecialAttack_Labeled": {
+        "ObjectName": "Function'WBP_SpecialAttack_Labeled_C:ExecuteUbergraph_WBP_SpecialAttack_Labeled'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack_Labeled.2"
+      },
+      "Update Cooldown": {
+        "ObjectName": "Function'WBP_SpecialAttack_Labeled_C:Update Cooldown'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack_Labeled.6"
+      },
+      "Update Special": {
+        "ObjectName": "Function'WBP_SpecialAttack_Labeled_C:Update Special'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack_Labeled.8"
+      },
+      "Update Name": {
+        "ObjectName": "Function'WBP_SpecialAttack_Labeled_C:Update Name'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack_Labeled.7"
+      },
+      "Set Name ": {
+        "ObjectName": "Function'WBP_SpecialAttack_Labeled_C:Set Name '",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack_Labeled.5"
+      },
+      "PreConstruct": {
+        "ObjectName": "Function'WBP_SpecialAttack_Labeled_C:PreConstruct'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack_Labeled.4"
+      },
+      "Get Cooldown Duration Text": {
+        "ObjectName": "Function'WBP_SpecialAttack_Labeled_C:Get Cooldown Duration Text'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack_Labeled.3"
+      }
+    },
+    "ClassFlags": "CLASS_ReplicationDataIsSetUp | CLASS_EditInlineNew | CLASS_CompiledFromBlueprint | CLASS_DefaultToInstanced | CLASS_HasInstancedReference",
+    "ClassWithin": {
+      "ObjectName": "Class'Object'",
+      "ObjectPath": "/Script/CoreUObject"
+    },
+    "ClassConfigName": "Engine",
+    "bCooked": true,
+    "ClassDefaultObject": {
+      "ObjectName": "WBP_SpecialAttack_Labeled_C'Default__WBP_SpecialAttack_Labeled_C'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack_Labeled.22"
+    },
+    "EditorTags": {
+      "BlueprintType": "BPTYPE_Normal"
+    }
+  },
+  {
+    "Type": "WidgetTree",
+    "Name": "WidgetTree",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'WidgetTree'",
+    "Outer": {
+      "ObjectName": "WidgetBlueprintGeneratedClass'WBP_SpecialAttack_Labeled_C'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack_Labeled.23"
+    },
+    "Properties": {
+      "RootWidget": {
+        "ObjectName": "SizeBox'WBP_SpecialAttack_Labeled_C:WidgetTree.SizeBox_0'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack_Labeled.9"
+      }
+    }
+  }
+]

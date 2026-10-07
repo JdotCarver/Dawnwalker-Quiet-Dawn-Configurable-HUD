@@ -1,0 +1,4406 @@
+[
+  {
+    "Type": "Border",
+    "Name": "Darken",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Border'",
+    "Outer": {
+      "ObjectName": "WidgetTree'WBP_AA_Quickslots_C:WidgetTree'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.92"
+    },
+    "Properties": {
+      "Padding": {
+        "Left": 0.0,
+        "Top": 0.0,
+        "Right": 0.0,
+        "Bottom": 0.0
+      },
+      "Background": {
+        "TintColor": {
+          "SpecifiedColor": {
+            "R": 1.0,
+            "G": 1.0,
+            "B": 1.0,
+            "A": 0.4,
+            "Hex": "66FFFFFF"
+          }
+        },
+        "ImageType": "ESlateBrushImageType::FullColor",
+        "ImageSize": {
+          "X": 128.0,
+          "Y": 128.0
+        },
+        "ResourceObject": {
+          "ObjectName": "Texture2D'T_Generic_Line_Background'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/SharedTextures/Backgrounds/T_Generic_Line_Background.0"
+        }
+      },
+      "BrushColor": {
+        "R": 0.0,
+        "G": 0.0,
+        "B": 0.0,
+        "A": 1.0,
+        "Hex": "000000"
+      },
+      "Slot": {
+        "ObjectName": "OverlaySlot'WBP_AA_Quickslots_C:WidgetTree.Overlay_32.OverlaySlot_3'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.79"
+      },
+      "RenderTransform": {
+        "Angle": 45.0
+      },
+      "Visibility": "ESlateVisibility::Collapsed",
+      "RenderOpacity": 0.0
+    }
+  },
+  {
+    "Type": "Border",
+    "Name": "Glow",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Border'",
+    "Outer": {
+      "ObjectName": "WidgetTree'WBP_AA_Quickslots_C:WidgetTree'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.92"
+    },
+    "Properties": {
+      "Padding": {
+        "Left": 0.0,
+        "Top": 0.0,
+        "Right": 0.0,
+        "Bottom": 0.0
+      },
+      "Background": {
+        "ImageType": "ESlateBrushImageType::FullColor",
+        "ImageSize": {
+          "X": 128.0,
+          "Y": 128.0
+        },
+        "ResourceObject": {
+          "ObjectName": "Texture2D'T_Generic_Line_Background'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/SharedTextures/Backgrounds/T_Generic_Line_Background.0"
+        }
+      },
+      "BrushColor": {
+        "R": 0.89757,
+        "G": 0.531616,
+        "B": 0.229067,
+        "A": 0.2,
+        "Hex": "33F4C184"
+      },
+      "Slot": {
+        "ObjectName": "OverlaySlot'WBP_AA_Quickslots_C:WidgetTree.Overlay_32.OverlaySlot_4'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.80"
+      },
+      "RenderTransform": {
+        "Angle": 45.0
+      },
+      "Visibility": "ESlateVisibility::Collapsed",
+      "RenderOpacity": 0.0
+    }
+  },
+  {
+    "Type": "Function",
+    "Name": "ExecuteUbergraph_WBP_AA_Quickslots",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "WidgetBlueprintGeneratedClass'WBP_AA_Quickslots_C'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.91"
+    },
+    "ChildProperties": [
+      {
+        "Type": "IntProperty",
+        "Name": "EntryPoint",
+        "Flags": "RF_Public",
+        "ElementSize": 4,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm"
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_PlayAnimationReverse_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'UMGSequencePlayer'",
+          "ObjectPath": "/Script/UMG"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_PlayAnimationForward_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'UMGSequencePlayer'",
+          "ObjectPath": "/Script/UMG"
+        }
+      },
+      {
+        "Type": "EnumProperty",
+        "Name": "K2Node_CustomEvent_Day_Phase",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "Enum": {
+          "ObjectName": "Class'EDayPhase'",
+          "ObjectPath": "/Script/DogwoodSystem"
+        },
+        "UnderlyingProp": {
+          "Type": "ByteProperty",
+          "Name": "UnderlyingType",
+          "Flags": "RF_Public",
+          "ElementSize": 1,
+          "Enum": null
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "K2Node_CustomEvent_Hub_Mode",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "StructProperty",
+        "Name": "K2Node_Event_MyGeometry",
+        "Flags": "RF_Public",
+        "ElementSize": 56,
+        "Struct": {
+          "ObjectName": "Class'Geometry'",
+          "ObjectPath": "/Script/SlateCore"
+        }
+      },
+      {
+        "Type": "FloatProperty",
+        "Name": "K2Node_Event_InDeltaTime",
+        "Flags": "RF_Public",
+        "ElementSize": 4
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "K2Node_CustomEvent_Showed",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "K2Node_CustomEvent_User_Input",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "IntProperty",
+        "Name": "CallFunc_Conv_BoolToInt_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 4
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_GetGameInstanceSubsystem_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'QuestSystemInterface'",
+          "ObjectPath": "/Script/Quest"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_GetWorldSubsystem_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'CharacterDevelopmentQuickslotSubsystem'",
+          "ObjectPath": "/Script/DogwoodCharacterDevelopment"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_GetFactsDB_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'FactsDB'",
+          "ObjectPath": "/Script/FactsDB"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_PlayAnimationReverse_ReturnValue_1",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'UMGSequencePlayer'",
+          "ObjectPath": "/Script/UMG"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_PlayAnimationForward_ReturnValue_1",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'UMGSequencePlayer'",
+          "ObjectPath": "/Script/UMG"
+        }
+      }
+    ],
+    "FunctionFlags": "FUNC_Final | FUNC_UbergraphFunction | FUNC_HasDefaults"
+  },
+  {
+    "Type": "Function",
+    "Name": "Init",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "WidgetBlueprintGeneratedClass'WBP_AA_Quickslots_C'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.91"
+    },
+    "ChildProperties": [
+      {
+        "Type": "EnumProperty",
+        "Name": "Day Phase",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "Enum": {
+          "ObjectName": "Class'EDayPhase'",
+          "ObjectPath": "/Script/DogwoodSystem"
+        },
+        "UnderlyingProp": {
+          "Type": "ByteProperty",
+          "Name": "UnderlyingType",
+          "Flags": "RF_Public",
+          "ElementSize": 1,
+          "Enum": null
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "Hub Mode",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      }
+    ],
+    "FunctionFlags": "FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "Set Collapsed",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "WidgetBlueprintGeneratedClass'WBP_AA_Quickslots_C'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.91"
+    },
+    "FunctionFlags": "FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "Set Expanded",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "WidgetBlueprintGeneratedClass'WBP_AA_Quickslots_C'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.91"
+    },
+    "FunctionFlags": "FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "Set Showed In HUD",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "WidgetBlueprintGeneratedClass'WBP_AA_Quickslots_C'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.91"
+    },
+    "ChildProperties": [
+      {
+        "Type": "BoolProperty",
+        "Name": "Showed",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "User Input",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      }
+    ],
+    "FunctionFlags": "FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "Tick",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "WidgetBlueprintGeneratedClass'WBP_AA_Quickslots_C'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.91"
+    },
+    "SuperStruct": {
+      "ObjectName": "Class'UserWidget:Tick'",
+      "ObjectPath": "/Script/UMG"
+    },
+    "ChildProperties": [
+      {
+        "Type": "StructProperty",
+        "Name": "MyGeometry",
+        "Flags": "RF_Public",
+        "ElementSize": 56,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "Struct": {
+          "ObjectName": "Class'Geometry'",
+          "ObjectPath": "/Script/SlateCore"
+        }
+      },
+      {
+        "Type": "FloatProperty",
+        "Name": "InDeltaTime",
+        "Flags": "RF_Public",
+        "ElementSize": 4,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm"
+      }
+    ],
+    "FunctionFlags": "FUNC_BlueprintCosmetic | FUNC_Event | FUNC_Public | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "Update Loadout Slots",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "WidgetBlueprintGeneratedClass'WBP_AA_Quickslots_C'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.91"
+    },
+    "FunctionFlags": "FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Image",
+    "Name": "Cross",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Image'",
+    "Outer": {
+      "ObjectName": "WidgetTree'WBP_AA_Quickslots_C:WidgetTree'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.92"
+    },
+    "Properties": {
+      "Brush": {
+        "ImageType": "ESlateBrushImageType::FullColor",
+        "ImageSize": {
+          "X": 232.0,
+          "Y": 232.0
+        },
+        "ResourceObject": {
+          "ObjectName": "PaperSprite'T_Quickslot_Cross'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/Quickslots/Atlas/Frames/T_Quickslot_Cross.1"
+        }
+      },
+      "Slot": {
+        "ObjectName": "OverlaySlot'WBP_AA_Quickslots_C:WidgetTree.Overlay_30.OverlaySlot_5'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.75"
+      },
+      "bIsVariable": false
+    }
+  },
+  {
+    "Type": "MovieScene",
+    "Name": "ShowInputs",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'MovieScene'",
+    "Outer": {
+      "ObjectName": "WidgetAnimation'WBP_AA_Quickslots_C:ShowInputs_INST'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.89"
+    },
+    "Properties": {
+      "Possessables": [
+        {
+          "Tags": [],
+          "Guid": "A9FAA397-48D685BB-E85C61AF-E3EA5EA1",
+          "Name": "WBP_AA_Quickslots_Bindings",
+          "ParentGuid": "00000000-00000000-00000000-00000000",
+          "SpawnableObjectBindingID": {
+            "Guid": "00000000-00000000-00000000-00000000",
+            "SequenceID": 0,
+            "ResolveParentIndex": -1
+          }
+        }
+      ],
+      "ObjectBindings": [
+        {
+          "ObjectGuid": "A9FAA397-48D685BB-E85C61AF-E3EA5EA1",
+          "BindingName": "WBP_AA_Quickslots_Bindings",
+          "Tracks": [
+            {
+              "ObjectName": "MovieSceneFloatTrack'WBP_AA_Quickslots_C:ShowInputs_INST.ShowInputs.MovieSceneFloatTrack_0'",
+              "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.66"
+            },
+            {
+              "ObjectName": "MovieScene2DTransformTrack'WBP_AA_Quickslots_C:ShowInputs_INST.ShowInputs.MovieScene2DTransformTrack_4'",
+              "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.18"
+            },
+            {
+              "ObjectName": "MovieSceneByteTrack'WBP_AA_Quickslots_C:ShowInputs_INST.ShowInputs.MovieSceneByteTrack_2'",
+              "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.56"
+            }
+          ]
+        }
+      ],
+      "PlaybackRange": {
+        "Value": {
+          "LowerBound": {
+            "Type": 1,
+            "Value": {
+              "Value": 0
+            }
+          },
+          "UpperBound": {
+            "Type": 0,
+            "Value": {
+              "Value": 30001
+            }
+          }
+        }
+      },
+      "DisplayRate": {
+        "Numerator": 20
+      },
+      "Signature": "1DE511EE-4BBCB635-DE1EA496-8A6D3874"
+    }
+  },
+  {
+    "Type": "MovieScene",
+    "Name": "Spread",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'MovieScene'",
+    "Outer": {
+      "ObjectName": "WidgetAnimation'WBP_AA_Quickslots_C:Spread_INST'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.90"
+    },
+    "Properties": {
+      "Possessables": [
+        {
+          "Tags": [],
+          "Guid": "2A858669-44E8C605-FBDF6193-7C841EAA",
+          "Name": "Bottom",
+          "ParentGuid": "00000000-00000000-00000000-00000000",
+          "SpawnableObjectBindingID": {
+            "Guid": "00000000-00000000-00000000-00000000",
+            "SequenceID": 0,
+            "ResolveParentIndex": -1
+          }
+        },
+        {
+          "Tags": [],
+          "Guid": "3E9E1CBD-4E4EC002-3FC3C388-C52A8904",
+          "Name": "Top",
+          "ParentGuid": "00000000-00000000-00000000-00000000",
+          "SpawnableObjectBindingID": {
+            "Guid": "00000000-00000000-00000000-00000000",
+            "SequenceID": 0,
+            "ResolveParentIndex": -1
+          }
+        },
+        {
+          "Tags": [],
+          "Guid": "7DE2CE6B-492CBFF8-DC41B58E-5DC169A0",
+          "Name": "Left",
+          "ParentGuid": "00000000-00000000-00000000-00000000",
+          "SpawnableObjectBindingID": {
+            "Guid": "00000000-00000000-00000000-00000000",
+            "SequenceID": 0,
+            "ResolveParentIndex": -1
+          }
+        },
+        {
+          "Tags": [],
+          "Guid": "818E248E-495CC24C-E057FC9A-E75F6FE5",
+          "Name": "Darken",
+          "ParentGuid": "00000000-00000000-00000000-00000000",
+          "SpawnableObjectBindingID": {
+            "Guid": "00000000-00000000-00000000-00000000",
+            "SequenceID": 0,
+            "ResolveParentIndex": -1
+          }
+        },
+        {
+          "Tags": [],
+          "Guid": "8329DAC8-4D43301A-4127948F-F646DB64",
+          "Name": "Glow",
+          "ParentGuid": "00000000-00000000-00000000-00000000",
+          "SpawnableObjectBindingID": {
+            "Guid": "00000000-00000000-00000000-00000000",
+            "SequenceID": 0,
+            "ResolveParentIndex": -1
+          }
+        },
+        {
+          "Tags": [],
+          "Guid": "A9FAA397-48D685BB-E85C61AF-E3EA5EA1",
+          "Name": "WBP_AA_Quickslots_Bindings",
+          "ParentGuid": "00000000-00000000-00000000-00000000",
+          "SpawnableObjectBindingID": {
+            "Guid": "00000000-00000000-00000000-00000000",
+            "SequenceID": 0,
+            "ResolveParentIndex": -1
+          }
+        },
+        {
+          "Tags": [],
+          "Guid": "BD15C8B5-4EC5A8B0-0F2A52BE-C71E825B",
+          "Name": "Right",
+          "ParentGuid": "00000000-00000000-00000000-00000000",
+          "SpawnableObjectBindingID": {
+            "Guid": "00000000-00000000-00000000-00000000",
+            "SequenceID": 0,
+            "ResolveParentIndex": -1
+          }
+        }
+      ],
+      "ObjectBindings": [
+        {
+          "ObjectGuid": "2A858669-44E8C605-FBDF6193-7C841EAA",
+          "BindingName": "Bottom",
+          "Tracks": [
+            {
+              "ObjectName": "MovieScene2DTransformTrack'WBP_AA_Quickslots_C:Spread_INST.Spread.MovieScene2DTransformTrack_0'",
+              "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.19"
+            }
+          ]
+        },
+        {
+          "ObjectGuid": "3E9E1CBD-4E4EC002-3FC3C388-C52A8904",
+          "BindingName": "Top",
+          "Tracks": [
+            {
+              "ObjectName": "MovieScene2DTransformTrack'WBP_AA_Quickslots_C:Spread_INST.Spread.MovieScene2DTransformTrack_2'",
+              "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.21"
+            }
+          ]
+        },
+        {
+          "ObjectGuid": "7DE2CE6B-492CBFF8-DC41B58E-5DC169A0",
+          "BindingName": "Left",
+          "Tracks": [
+            {
+              "ObjectName": "MovieScene2DTransformTrack'WBP_AA_Quickslots_C:Spread_INST.Spread.MovieScene2DTransformTrack_3'",
+              "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.22"
+            }
+          ]
+        },
+        {
+          "ObjectGuid": "818E248E-495CC24C-E057FC9A-E75F6FE5",
+          "BindingName": "Border_72",
+          "Tracks": [
+            {
+              "ObjectName": "MovieSceneFloatTrack'WBP_AA_Quickslots_C:Spread_INST.Spread.MovieSceneFloatTrack_3'",
+              "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.68"
+            },
+            {
+              "ObjectName": "MovieSceneByteTrack'WBP_AA_Quickslots_C:Spread_INST.Spread.MovieSceneByteTrack_0'",
+              "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.57"
+            }
+          ]
+        },
+        {
+          "ObjectGuid": "8329DAC8-4D43301A-4127948F-F646DB64",
+          "BindingName": "Glow",
+          "Tracks": [
+            {
+              "ObjectName": "MovieSceneByteTrack'WBP_AA_Quickslots_C:Spread_INST.Spread.MovieSceneByteTrack_1'",
+              "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.58"
+            },
+            {
+              "ObjectName": "MovieSceneFloatTrack'WBP_AA_Quickslots_C:Spread_INST.Spread.MovieSceneFloatTrack_4'",
+              "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.69"
+            }
+          ]
+        },
+        {
+          "ObjectGuid": "A9FAA397-48D685BB-E85C61AF-E3EA5EA1",
+          "BindingName": "WBP_AA_Quickslots_Bindings",
+          "Tracks": [
+            {
+              "ObjectName": "MovieSceneFloatTrack'WBP_AA_Quickslots_C:Spread_INST.Spread.MovieSceneFloatTrack_0'",
+              "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.67"
+            },
+            {
+              "ObjectName": "MovieScene2DTransformTrack'WBP_AA_Quickslots_C:Spread_INST.Spread.MovieScene2DTransformTrack_4'",
+              "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.23"
+            },
+            {
+              "ObjectName": "MovieSceneByteTrack'WBP_AA_Quickslots_C:Spread_INST.Spread.MovieSceneByteTrack_2'",
+              "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.59"
+            }
+          ]
+        },
+        {
+          "ObjectGuid": "BD15C8B5-4EC5A8B0-0F2A52BE-C71E825B",
+          "BindingName": "Right",
+          "Tracks": [
+            {
+              "ObjectName": "MovieScene2DTransformTrack'WBP_AA_Quickslots_C:Spread_INST.Spread.MovieScene2DTransformTrack_1'",
+              "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.20"
+            }
+          ]
+        }
+      ],
+      "PlaybackRange": {
+        "Value": {
+          "LowerBound": {
+            "Type": 1,
+            "Value": {
+              "Value": 0
+            }
+          },
+          "UpperBound": {
+            "Type": 0,
+            "Value": {
+              "Value": 30001
+            }
+          }
+        }
+      },
+      "DisplayRate": {
+        "Numerator": 20
+      },
+      "Signature": "B508EA32-41153F71-F3E0EAB1-E21D4E42"
+    }
+  },
+  {
+    "Type": "MovieScene2DTransformSection",
+    "Name": "MovieScene2DTransformSection_0",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'MovieScene2DTransformSection'",
+    "Outer": {
+      "ObjectName": "MovieScene2DTransformTrack'WBP_AA_Quickslots_C:ShowInputs_INST.ShowInputs.MovieScene2DTransformTrack_4'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.18"
+    },
+    "Properties": {
+      "Scale": {
+        "PreInfinityExtrap": "RCCE_Constant",
+        "PostInfinityExtrap": "RCCE_Constant",
+        "Times": [
+          {
+            "Value": 0
+          },
+          {
+            "Value": 30000
+          }
+        ],
+        "Values": [
+          {
+            "Value": 0.75,
+            "Tangent": {
+              "ArriveTangent": 0.0,
+              "LeaveTangent": 0.0,
+              "ArriveTangentWeight": 0.0,
+              "LeaveTangentWeight": 0.0,
+              "TangentWeightMode": 0
+            },
+            "InterpMode": 2,
+            "TangentMode": 0
+          },
+          {
+            "Value": 1.0,
+            "Tangent": {
+              "ArriveTangent": 0.0,
+              "LeaveTangent": 0.0,
+              "ArriveTangentWeight": 0.0,
+              "LeaveTangentWeight": 0.0,
+              "TangentWeightMode": 0
+            },
+            "InterpMode": 2,
+            "TangentMode": 0
+          }
+        ],
+        "DefaultValue": 0.0,
+        "bHasDefaultValue": false,
+        "TickResolution": {
+          "Numerator": 60000,
+          "Denominator": 1
+        },
+        "bShowCurve": false,
+        "StructFallback": null
+      },
+      "Scale[1]": {
+        "PreInfinityExtrap": "RCCE_Constant",
+        "PostInfinityExtrap": "RCCE_Constant",
+        "Times": [
+          {
+            "Value": 0
+          },
+          {
+            "Value": 30000
+          }
+        ],
+        "Values": [
+          {
+            "Value": 0.75,
+            "Tangent": {
+              "ArriveTangent": 0.0,
+              "LeaveTangent": 0.0,
+              "ArriveTangentWeight": 0.0,
+              "LeaveTangentWeight": 0.0,
+              "TangentWeightMode": 0
+            },
+            "InterpMode": 2,
+            "TangentMode": 0
+          },
+          {
+            "Value": 1.0,
+            "Tangent": {
+              "ArriveTangent": 0.0,
+              "LeaveTangent": 0.0,
+              "ArriveTangentWeight": 0.0,
+              "LeaveTangentWeight": 0.0,
+              "TangentWeightMode": 0
+            },
+            "InterpMode": 2,
+            "TangentMode": 0
+          }
+        ],
+        "DefaultValue": 0.0,
+        "bHasDefaultValue": false,
+        "TickResolution": {
+          "Numerator": 60000,
+          "Denominator": 1
+        },
+        "bShowCurve": false,
+        "StructFallback": null
+      },
+      "Easing": {
+        "EaseIn": {
+          "ObjectName": "MovieSceneBuiltInEasingFunction'WBP_AA_Quickslots_C:ShowInputs_INST.ShowInputs.MovieScene2DTransformTrack_4.MovieScene2DTransformSection_0.EaseInFunction'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.24"
+        },
+        "EaseOut": {
+          "ObjectName": "MovieSceneBuiltInEasingFunction'WBP_AA_Quickslots_C:ShowInputs_INST.ShowInputs.MovieScene2DTransformTrack_4.MovieScene2DTransformSection_0.EaseOutFunction'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.25"
+        }
+      },
+      "SectionRange": {
+        "Value": {
+          "LowerBound": {
+            "Type": 1,
+            "Value": {
+              "Value": 0
+            }
+          },
+          "UpperBound": {
+            "Type": 1,
+            "Value": {
+              "Value": 30000
+            }
+          }
+        }
+      },
+      "Signature": "070296A2-466A48E2-DFE1F892-68647C7C"
+    }
+  },
+  {
+    "Type": "MovieScene2DTransformSection",
+    "Name": "MovieScene2DTransformSection_0",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'MovieScene2DTransformSection'",
+    "Outer": {
+      "ObjectName": "MovieScene2DTransformTrack'WBP_AA_Quickslots_C:Spread_INST.Spread.MovieScene2DTransformTrack_0'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.19"
+    },
+    "Properties": {
+      "Translation": {
+        "PreInfinityExtrap": "RCCE_Constant",
+        "PostInfinityExtrap": "RCCE_Constant",
+        "Times": [
+          {
+            "Value": 0
+          }
+        ],
+        "Values": [
+          {
+            "Value": 0.0,
+            "Tangent": {
+              "ArriveTangent": 0.0,
+              "LeaveTangent": 0.0,
+              "ArriveTangentWeight": 0.1068211,
+              "LeaveTangentWeight": 0.1068211,
+              "TangentWeightMode": 3
+            },
+            "InterpMode": 2,
+            "TangentMode": 1
+          }
+        ],
+        "DefaultValue": 0.0,
+        "bHasDefaultValue": false,
+        "TickResolution": {
+          "Numerator": 60000,
+          "Denominator": 1
+        },
+        "bShowCurve": false,
+        "StructFallback": null
+      },
+      "Translation[1]": {
+        "PreInfinityExtrap": "RCCE_Constant",
+        "PostInfinityExtrap": "RCCE_Constant",
+        "Times": [
+          {
+            "Value": 0
+          },
+          {
+            "Value": 30000
+          }
+        ],
+        "Values": [
+          {
+            "Value": 0.0,
+            "Tangent": {
+              "ArriveTangent": 0.0,
+              "LeaveTangent": 0.0,
+              "ArriveTangentWeight": 0.19217867,
+              "LeaveTangentWeight": 0.19217867,
+              "TangentWeightMode": 3
+            },
+            "InterpMode": 2,
+            "TangentMode": 1
+          },
+          {
+            "Value": 50.0,
+            "Tangent": {
+              "ArriveTangent": 0.0,
+              "LeaveTangent": 0.0,
+              "ArriveTangentWeight": 0.0,
+              "LeaveTangentWeight": 0.0,
+              "TangentWeightMode": 0
+            },
+            "InterpMode": 2,
+            "TangentMode": 1
+          }
+        ],
+        "DefaultValue": 0.0,
+        "bHasDefaultValue": false,
+        "TickResolution": {
+          "Numerator": 60000,
+          "Denominator": 1
+        },
+        "bShowCurve": false,
+        "StructFallback": null
+      },
+      "Easing": {
+        "EaseIn": {
+          "ObjectName": "MovieSceneBuiltInEasingFunction'WBP_AA_Quickslots_C:Spread_INST.Spread.MovieScene2DTransformTrack_0.MovieScene2DTransformSection_0.EaseInFunction'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.30"
+        },
+        "EaseOut": {
+          "ObjectName": "MovieSceneBuiltInEasingFunction'WBP_AA_Quickslots_C:Spread_INST.Spread.MovieScene2DTransformTrack_0.MovieScene2DTransformSection_0.EaseOutFunction'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.31"
+        }
+      },
+      "SectionRange": {
+        "Value": {
+          "LowerBound": {
+            "Type": 1,
+            "Value": {
+              "Value": 0
+            }
+          },
+          "UpperBound": {
+            "Type": 1,
+            "Value": {
+              "Value": 30000
+            }
+          }
+        }
+      },
+      "Signature": "256722B5-4E36AA6E-B0D609A4-EB74BAE5"
+    }
+  },
+  {
+    "Type": "MovieScene2DTransformSection",
+    "Name": "MovieScene2DTransformSection_0",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'MovieScene2DTransformSection'",
+    "Outer": {
+      "ObjectName": "MovieScene2DTransformTrack'WBP_AA_Quickslots_C:Spread_INST.Spread.MovieScene2DTransformTrack_1'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.20"
+    },
+    "Properties": {
+      "Translation": {
+        "PreInfinityExtrap": "RCCE_Constant",
+        "PostInfinityExtrap": "RCCE_Constant",
+        "Times": [
+          {
+            "Value": 0
+          },
+          {
+            "Value": 30000
+          }
+        ],
+        "Values": [
+          {
+            "Value": 0.0,
+            "Tangent": {
+              "ArriveTangent": 0.0,
+              "LeaveTangent": 0.0,
+              "ArriveTangentWeight": 0.19217867,
+              "LeaveTangentWeight": 0.19217867,
+              "TangentWeightMode": 3
+            },
+            "InterpMode": 2,
+            "TangentMode": 1
+          },
+          {
+            "Value": 50.0,
+            "Tangent": {
+              "ArriveTangent": 7.267183E-10,
+              "LeaveTangent": 7.267183E-10,
+              "ArriveTangentWeight": 0.43930817,
+              "LeaveTangentWeight": 0.43930817,
+              "TangentWeightMode": 3
+            },
+            "InterpMode": 2,
+            "TangentMode": 1
+          }
+        ],
+        "DefaultValue": 0.0,
+        "bHasDefaultValue": false,
+        "TickResolution": {
+          "Numerator": 60000,
+          "Denominator": 1
+        },
+        "bShowCurve": false,
+        "StructFallback": null
+      },
+      "Translation[1]": {
+        "PreInfinityExtrap": "RCCE_Constant",
+        "PostInfinityExtrap": "RCCE_Constant",
+        "Times": [
+          {
+            "Value": 0
+          }
+        ],
+        "Values": [
+          {
+            "Value": 0.0,
+            "Tangent": {
+              "ArriveTangent": 0.0,
+              "LeaveTangent": 0.0,
+              "ArriveTangentWeight": 0.1068211,
+              "LeaveTangentWeight": 0.1068211,
+              "TangentWeightMode": 3
+            },
+            "InterpMode": 2,
+            "TangentMode": 1
+          }
+        ],
+        "DefaultValue": 0.0,
+        "bHasDefaultValue": false,
+        "TickResolution": {
+          "Numerator": 60000,
+          "Denominator": 1
+        },
+        "bShowCurve": false,
+        "StructFallback": null
+      },
+      "Easing": {
+        "EaseIn": {
+          "ObjectName": "MovieSceneBuiltInEasingFunction'WBP_AA_Quickslots_C:Spread_INST.Spread.MovieScene2DTransformTrack_1.MovieScene2DTransformSection_0.EaseInFunction'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.32"
+        },
+        "EaseOut": {
+          "ObjectName": "MovieSceneBuiltInEasingFunction'WBP_AA_Quickslots_C:Spread_INST.Spread.MovieScene2DTransformTrack_1.MovieScene2DTransformSection_0.EaseOutFunction'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.33"
+        }
+      },
+      "SectionRange": {
+        "Value": {
+          "LowerBound": {
+            "Type": 1,
+            "Value": {
+              "Value": 0
+            }
+          },
+          "UpperBound": {
+            "Type": 1,
+            "Value": {
+              "Value": 30000
+            }
+          }
+        }
+      },
+      "Signature": "9D575393-40FE34A2-AF172BAF-80A7B379"
+    }
+  },
+  {
+    "Type": "MovieScene2DTransformSection",
+    "Name": "MovieScene2DTransformSection_0",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'MovieScene2DTransformSection'",
+    "Outer": {
+      "ObjectName": "MovieScene2DTransformTrack'WBP_AA_Quickslots_C:Spread_INST.Spread.MovieScene2DTransformTrack_2'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.21"
+    },
+    "Properties": {
+      "Translation": {
+        "PreInfinityExtrap": "RCCE_Constant",
+        "PostInfinityExtrap": "RCCE_Constant",
+        "Times": [
+          {
+            "Value": 0
+          }
+        ],
+        "Values": [
+          {
+            "Value": 0.0,
+            "Tangent": {
+              "ArriveTangent": 0.0,
+              "LeaveTangent": 0.0,
+              "ArriveTangentWeight": 0.1068211,
+              "LeaveTangentWeight": 0.1068211,
+              "TangentWeightMode": 3
+            },
+            "InterpMode": 2,
+            "TangentMode": 1
+          }
+        ],
+        "DefaultValue": 0.0,
+        "bHasDefaultValue": false,
+        "TickResolution": {
+          "Numerator": 60000,
+          "Denominator": 1
+        },
+        "bShowCurve": false,
+        "StructFallback": null
+      },
+      "Translation[1]": {
+        "PreInfinityExtrap": "RCCE_Constant",
+        "PostInfinityExtrap": "RCCE_Constant",
+        "Times": [
+          {
+            "Value": 0
+          },
+          {
+            "Value": 30000
+          }
+        ],
+        "Values": [
+          {
+            "Value": 0.0,
+            "Tangent": {
+              "ArriveTangent": 0.0,
+              "LeaveTangent": 0.0,
+              "ArriveTangentWeight": 0.19217867,
+              "LeaveTangentWeight": 0.19217867,
+              "TangentWeightMode": 3
+            },
+            "InterpMode": 2,
+            "TangentMode": 1
+          },
+          {
+            "Value": -50.0,
+            "Tangent": {
+              "ArriveTangent": 7.267183E-10,
+              "LeaveTangent": 7.267183E-10,
+              "ArriveTangentWeight": 0.43930817,
+              "LeaveTangentWeight": 0.43930817,
+              "TangentWeightMode": 3
+            },
+            "InterpMode": 2,
+            "TangentMode": 1
+          }
+        ],
+        "DefaultValue": 0.0,
+        "bHasDefaultValue": false,
+        "TickResolution": {
+          "Numerator": 60000,
+          "Denominator": 1
+        },
+        "bShowCurve": false,
+        "StructFallback": null
+      },
+      "Easing": {
+        "EaseIn": {
+          "ObjectName": "MovieSceneBuiltInEasingFunction'WBP_AA_Quickslots_C:Spread_INST.Spread.MovieScene2DTransformTrack_2.MovieScene2DTransformSection_0.EaseInFunction'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.34"
+        },
+        "EaseOut": {
+          "ObjectName": "MovieSceneBuiltInEasingFunction'WBP_AA_Quickslots_C:Spread_INST.Spread.MovieScene2DTransformTrack_2.MovieScene2DTransformSection_0.EaseOutFunction'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.35"
+        }
+      },
+      "SectionRange": {
+        "Value": {
+          "LowerBound": {
+            "Type": 1,
+            "Value": {
+              "Value": 0
+            }
+          },
+          "UpperBound": {
+            "Type": 1,
+            "Value": {
+              "Value": 30000
+            }
+          }
+        }
+      },
+      "Signature": "1DD832F2-450A321F-6EA2689F-42501C26"
+    }
+  },
+  {
+    "Type": "MovieScene2DTransformSection",
+    "Name": "MovieScene2DTransformSection_0",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'MovieScene2DTransformSection'",
+    "Outer": {
+      "ObjectName": "MovieScene2DTransformTrack'WBP_AA_Quickslots_C:Spread_INST.Spread.MovieScene2DTransformTrack_3'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.22"
+    },
+    "Properties": {
+      "Translation": {
+        "PreInfinityExtrap": "RCCE_Constant",
+        "PostInfinityExtrap": "RCCE_Constant",
+        "Times": [
+          {
+            "Value": 0
+          },
+          {
+            "Value": 30000
+          }
+        ],
+        "Values": [
+          {
+            "Value": 0.0,
+            "Tangent": {
+              "ArriveTangent": 0.0,
+              "LeaveTangent": 0.0,
+              "ArriveTangentWeight": 0.19217867,
+              "LeaveTangentWeight": 0.19217867,
+              "TangentWeightMode": 3
+            },
+            "InterpMode": 2,
+            "TangentMode": 1
+          },
+          {
+            "Value": -50.0,
+            "Tangent": {
+              "ArriveTangent": 7.267183E-10,
+              "LeaveTangent": 7.267183E-10,
+              "ArriveTangentWeight": 0.43930817,
+              "LeaveTangentWeight": 0.43930817,
+              "TangentWeightMode": 3
+            },
+            "InterpMode": 2,
+            "TangentMode": 1
+          }
+        ],
+        "DefaultValue": 0.0,
+        "bHasDefaultValue": false,
+        "TickResolution": {
+          "Numerator": 60000,
+          "Denominator": 1
+        },
+        "bShowCurve": false,
+        "StructFallback": null
+      },
+      "Translation[1]": {
+        "PreInfinityExtrap": "RCCE_Constant",
+        "PostInfinityExtrap": "RCCE_Constant",
+        "Times": [
+          {
+            "Value": 0
+          }
+        ],
+        "Values": [
+          {
+            "Value": 0.0,
+            "Tangent": {
+              "ArriveTangent": 0.0,
+              "LeaveTangent": 0.0,
+              "ArriveTangentWeight": 0.1068211,
+              "LeaveTangentWeight": 0.1068211,
+              "TangentWeightMode": 3
+            },
+            "InterpMode": 2,
+            "TangentMode": 1
+          }
+        ],
+        "DefaultValue": 0.0,
+        "bHasDefaultValue": false,
+        "TickResolution": {
+          "Numerator": 60000,
+          "Denominator": 1
+        },
+        "bShowCurve": false,
+        "StructFallback": null
+      },
+      "Easing": {
+        "EaseIn": {
+          "ObjectName": "MovieSceneBuiltInEasingFunction'WBP_AA_Quickslots_C:Spread_INST.Spread.MovieScene2DTransformTrack_3.MovieScene2DTransformSection_0.EaseInFunction'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.36"
+        },
+        "EaseOut": {
+          "ObjectName": "MovieSceneBuiltInEasingFunction'WBP_AA_Quickslots_C:Spread_INST.Spread.MovieScene2DTransformTrack_3.MovieScene2DTransformSection_0.EaseOutFunction'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.37"
+        }
+      },
+      "SectionRange": {
+        "Value": {
+          "LowerBound": {
+            "Type": 1,
+            "Value": {
+              "Value": 0
+            }
+          },
+          "UpperBound": {
+            "Type": 1,
+            "Value": {
+              "Value": 30000
+            }
+          }
+        }
+      },
+      "Signature": "ABB79F9C-4A068376-9F5E478E-B4BADF0E"
+    }
+  },
+  {
+    "Type": "MovieScene2DTransformSection",
+    "Name": "MovieScene2DTransformSection_0",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'MovieScene2DTransformSection'",
+    "Outer": {
+      "ObjectName": "MovieScene2DTransformTrack'WBP_AA_Quickslots_C:Spread_INST.Spread.MovieScene2DTransformTrack_4'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.23"
+    },
+    "Properties": {
+      "Scale": {
+        "PreInfinityExtrap": "RCCE_Constant",
+        "PostInfinityExtrap": "RCCE_Constant",
+        "Times": [
+          {
+            "Value": 0
+          },
+          {
+            "Value": 30000
+          }
+        ],
+        "Values": [
+          {
+            "Value": 0.75,
+            "Tangent": {
+              "ArriveTangent": 0.0,
+              "LeaveTangent": 0.0,
+              "ArriveTangentWeight": 0.0,
+              "LeaveTangentWeight": 0.0,
+              "TangentWeightMode": 0
+            },
+            "InterpMode": 2,
+            "TangentMode": 0
+          },
+          {
+            "Value": 1.0,
+            "Tangent": {
+              "ArriveTangent": 0.0,
+              "LeaveTangent": 0.0,
+              "ArriveTangentWeight": 0.0,
+              "LeaveTangentWeight": 0.0,
+              "TangentWeightMode": 0
+            },
+            "InterpMode": 2,
+            "TangentMode": 0
+          }
+        ],
+        "DefaultValue": 0.0,
+        "bHasDefaultValue": false,
+        "TickResolution": {
+          "Numerator": 60000,
+          "Denominator": 1
+        },
+        "bShowCurve": false,
+        "StructFallback": null
+      },
+      "Scale[1]": {
+        "PreInfinityExtrap": "RCCE_Constant",
+        "PostInfinityExtrap": "RCCE_Constant",
+        "Times": [
+          {
+            "Value": 0
+          },
+          {
+            "Value": 30000
+          }
+        ],
+        "Values": [
+          {
+            "Value": 0.75,
+            "Tangent": {
+              "ArriveTangent": 0.0,
+              "LeaveTangent": 0.0,
+              "ArriveTangentWeight": 0.0,
+              "LeaveTangentWeight": 0.0,
+              "TangentWeightMode": 0
+            },
+            "InterpMode": 2,
+            "TangentMode": 0
+          },
+          {
+            "Value": 1.0,
+            "Tangent": {
+              "ArriveTangent": 0.0,
+              "LeaveTangent": 0.0,
+              "ArriveTangentWeight": 0.0,
+              "LeaveTangentWeight": 0.0,
+              "TangentWeightMode": 0
+            },
+            "InterpMode": 2,
+            "TangentMode": 0
+          }
+        ],
+        "DefaultValue": 0.0,
+        "bHasDefaultValue": false,
+        "TickResolution": {
+          "Numerator": 60000,
+          "Denominator": 1
+        },
+        "bShowCurve": false,
+        "StructFallback": null
+      },
+      "Easing": {
+        "EaseIn": {
+          "ObjectName": "MovieSceneBuiltInEasingFunction'WBP_AA_Quickslots_C:Spread_INST.Spread.MovieScene2DTransformTrack_4.MovieScene2DTransformSection_0.EaseInFunction'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.38"
+        },
+        "EaseOut": {
+          "ObjectName": "MovieSceneBuiltInEasingFunction'WBP_AA_Quickslots_C:Spread_INST.Spread.MovieScene2DTransformTrack_4.MovieScene2DTransformSection_0.EaseOutFunction'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.39"
+        }
+      },
+      "SectionRange": {
+        "Value": {
+          "LowerBound": {
+            "Type": 1,
+            "Value": {
+              "Value": 0
+            }
+          },
+          "UpperBound": {
+            "Type": 1,
+            "Value": {
+              "Value": 30000
+            }
+          }
+        }
+      },
+      "Signature": "070296A2-466A48E2-DFE1F892-68647C7C"
+    }
+  },
+  {
+    "Type": "MovieScene2DTransformTrack",
+    "Name": "MovieScene2DTransformTrack_4",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'MovieScene2DTransformTrack'",
+    "Outer": {
+      "ObjectName": "MovieScene'WBP_AA_Quickslots_C:ShowInputs_INST.ShowInputs'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.10"
+    },
+    "Properties": {
+      "PropertyBinding": {
+        "PropertyName": "RenderTransform",
+        "PropertyPath": "RenderTransform",
+        "bCanUseClassLookup": true
+      },
+      "Sections": [
+        {
+          "ObjectName": "MovieScene2DTransformSection'WBP_AA_Quickslots_C:ShowInputs_INST.ShowInputs.MovieScene2DTransformTrack_4.MovieScene2DTransformSection_0'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.12"
+        }
+      ],
+      "EvaluationFieldGuid": "9B548AD9-48427E20-0D5D2BB3-1C831084",
+      "EvaluationField": {
+        "Entries": [
+          {
+            "Section": {
+              "ObjectName": "MovieScene2DTransformSection'WBP_AA_Quickslots_C:ShowInputs_INST.ShowInputs.MovieScene2DTransformTrack_4.MovieScene2DTransformSection_0'",
+              "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.12"
+            },
+            "Range": {
+              "LowerBound": {
+                "Type": "ERangeBoundTypes::Inclusive",
+                "Value": {
+                  "Value": 0
+                }
+              },
+              "UpperBound": {
+                "Type": "ERangeBoundTypes::Inclusive",
+                "Value": {
+                  "Value": 30000
+                }
+              }
+            },
+            "ForcedTime": {
+              "Value": -2147483648
+            },
+            "Flags": "ESectionEvaluationFlags::None",
+            "LegacySortOrder": 0
+          }
+        ]
+      },
+      "Signature": "9B548AD9-48427E20-0D5D2BB3-1C831084"
+    }
+  },
+  {
+    "Type": "MovieScene2DTransformTrack",
+    "Name": "MovieScene2DTransformTrack_0",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'MovieScene2DTransformTrack'",
+    "Outer": {
+      "ObjectName": "MovieScene'WBP_AA_Quickslots_C:Spread_INST.Spread'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.11"
+    },
+    "Properties": {
+      "PropertyBinding": {
+        "PropertyName": "RenderTransform",
+        "PropertyPath": "RenderTransform",
+        "bCanUseClassLookup": true
+      },
+      "Sections": [
+        {
+          "ObjectName": "MovieScene2DTransformSection'WBP_AA_Quickslots_C:Spread_INST.Spread.MovieScene2DTransformTrack_0.MovieScene2DTransformSection_0'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.13"
+        }
+      ],
+      "EvaluationFieldGuid": "D8AFDA01-40D4359E-5F3A1BA5-864FF156",
+      "EvaluationField": {
+        "Entries": [
+          {
+            "Section": {
+              "ObjectName": "MovieScene2DTransformSection'WBP_AA_Quickslots_C:Spread_INST.Spread.MovieScene2DTransformTrack_0.MovieScene2DTransformSection_0'",
+              "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.13"
+            },
+            "Range": {
+              "LowerBound": {
+                "Type": "ERangeBoundTypes::Inclusive",
+                "Value": {
+                  "Value": 0
+                }
+              },
+              "UpperBound": {
+                "Type": "ERangeBoundTypes::Inclusive",
+                "Value": {
+                  "Value": 30000
+                }
+              }
+            },
+            "ForcedTime": {
+              "Value": -2147483648
+            },
+            "Flags": "ESectionEvaluationFlags::None",
+            "LegacySortOrder": 0
+          }
+        ]
+      },
+      "Signature": "D8AFDA01-40D4359E-5F3A1BA5-864FF156"
+    }
+  },
+  {
+    "Type": "MovieScene2DTransformTrack",
+    "Name": "MovieScene2DTransformTrack_1",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'MovieScene2DTransformTrack'",
+    "Outer": {
+      "ObjectName": "MovieScene'WBP_AA_Quickslots_C:Spread_INST.Spread'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.11"
+    },
+    "Properties": {
+      "PropertyBinding": {
+        "PropertyName": "RenderTransform",
+        "PropertyPath": "RenderTransform",
+        "bCanUseClassLookup": true
+      },
+      "Sections": [
+        {
+          "ObjectName": "MovieScene2DTransformSection'WBP_AA_Quickslots_C:Spread_INST.Spread.MovieScene2DTransformTrack_1.MovieScene2DTransformSection_0'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.14"
+        }
+      ],
+      "EvaluationFieldGuid": "3D4B0315-4A758EB1-8F4F5DBD-2AFBFF83",
+      "EvaluationField": {
+        "Entries": [
+          {
+            "Section": {
+              "ObjectName": "MovieScene2DTransformSection'WBP_AA_Quickslots_C:Spread_INST.Spread.MovieScene2DTransformTrack_1.MovieScene2DTransformSection_0'",
+              "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.14"
+            },
+            "Range": {
+              "LowerBound": {
+                "Type": "ERangeBoundTypes::Inclusive",
+                "Value": {
+                  "Value": 0
+                }
+              },
+              "UpperBound": {
+                "Type": "ERangeBoundTypes::Inclusive",
+                "Value": {
+                  "Value": 30000
+                }
+              }
+            },
+            "ForcedTime": {
+              "Value": -2147483648
+            },
+            "Flags": "ESectionEvaluationFlags::None",
+            "LegacySortOrder": 0
+          }
+        ]
+      },
+      "Signature": "3D4B0315-4A758EB1-8F4F5DBD-2AFBFF83"
+    }
+  },
+  {
+    "Type": "MovieScene2DTransformTrack",
+    "Name": "MovieScene2DTransformTrack_2",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'MovieScene2DTransformTrack'",
+    "Outer": {
+      "ObjectName": "MovieScene'WBP_AA_Quickslots_C:Spread_INST.Spread'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.11"
+    },
+    "Properties": {
+      "PropertyBinding": {
+        "PropertyName": "RenderTransform",
+        "PropertyPath": "RenderTransform",
+        "bCanUseClassLookup": true
+      },
+      "Sections": [
+        {
+          "ObjectName": "MovieScene2DTransformSection'WBP_AA_Quickslots_C:Spread_INST.Spread.MovieScene2DTransformTrack_2.MovieScene2DTransformSection_0'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.15"
+        }
+      ],
+      "EvaluationFieldGuid": "A1474D18-4E644B22-6ACC08B2-429C08EA",
+      "EvaluationField": {
+        "Entries": [
+          {
+            "Section": {
+              "ObjectName": "MovieScene2DTransformSection'WBP_AA_Quickslots_C:Spread_INST.Spread.MovieScene2DTransformTrack_2.MovieScene2DTransformSection_0'",
+              "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.15"
+            },
+            "Range": {
+              "LowerBound": {
+                "Type": "ERangeBoundTypes::Inclusive",
+                "Value": {
+                  "Value": 0
+                }
+              },
+              "UpperBound": {
+                "Type": "ERangeBoundTypes::Inclusive",
+                "Value": {
+                  "Value": 30000
+                }
+              }
+            },
+            "ForcedTime": {
+              "Value": -2147483648
+            },
+            "Flags": "ESectionEvaluationFlags::None",
+            "LegacySortOrder": 0
+          }
+        ]
+      },
+      "Signature": "A1474D18-4E644B22-6ACC08B2-429C08EA"
+    }
+  },
+  {
+    "Type": "MovieScene2DTransformTrack",
+    "Name": "MovieScene2DTransformTrack_3",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'MovieScene2DTransformTrack'",
+    "Outer": {
+      "ObjectName": "MovieScene'WBP_AA_Quickslots_C:Spread_INST.Spread'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.11"
+    },
+    "Properties": {
+      "PropertyBinding": {
+        "PropertyName": "RenderTransform",
+        "PropertyPath": "RenderTransform",
+        "bCanUseClassLookup": true
+      },
+      "Sections": [
+        {
+          "ObjectName": "MovieScene2DTransformSection'WBP_AA_Quickslots_C:Spread_INST.Spread.MovieScene2DTransformTrack_3.MovieScene2DTransformSection_0'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.16"
+        }
+      ],
+      "EvaluationFieldGuid": "4A965F08-4948D2AA-E4924AA1-086B8979",
+      "EvaluationField": {
+        "Entries": [
+          {
+            "Section": {
+              "ObjectName": "MovieScene2DTransformSection'WBP_AA_Quickslots_C:Spread_INST.Spread.MovieScene2DTransformTrack_3.MovieScene2DTransformSection_0'",
+              "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.16"
+            },
+            "Range": {
+              "LowerBound": {
+                "Type": "ERangeBoundTypes::Inclusive",
+                "Value": {
+                  "Value": 0
+                }
+              },
+              "UpperBound": {
+                "Type": "ERangeBoundTypes::Inclusive",
+                "Value": {
+                  "Value": 30000
+                }
+              }
+            },
+            "ForcedTime": {
+              "Value": -2147483648
+            },
+            "Flags": "ESectionEvaluationFlags::None",
+            "LegacySortOrder": 0
+          }
+        ]
+      },
+      "Signature": "4A965F08-4948D2AA-E4924AA1-086B8979"
+    }
+  },
+  {
+    "Type": "MovieScene2DTransformTrack",
+    "Name": "MovieScene2DTransformTrack_4",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'MovieScene2DTransformTrack'",
+    "Outer": {
+      "ObjectName": "MovieScene'WBP_AA_Quickslots_C:Spread_INST.Spread'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.11"
+    },
+    "Properties": {
+      "PropertyBinding": {
+        "PropertyName": "RenderTransform",
+        "PropertyPath": "RenderTransform",
+        "bCanUseClassLookup": true
+      },
+      "Sections": [
+        {
+          "ObjectName": "MovieScene2DTransformSection'WBP_AA_Quickslots_C:Spread_INST.Spread.MovieScene2DTransformTrack_4.MovieScene2DTransformSection_0'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.17"
+        }
+      ],
+      "bIsEvalDisabled": true,
+      "EvaluationFieldGuid": "95C9DE22-428FF5E4-340C94B0-2E771C65",
+      "EvaluationField": {
+        "Entries": [
+          {
+            "Section": {
+              "ObjectName": "MovieScene2DTransformSection'WBP_AA_Quickslots_C:Spread_INST.Spread.MovieScene2DTransformTrack_4.MovieScene2DTransformSection_0'",
+              "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.17"
+            },
+            "Range": {
+              "LowerBound": {
+                "Type": "ERangeBoundTypes::Inclusive",
+                "Value": {
+                  "Value": 0
+                }
+              },
+              "UpperBound": {
+                "Type": "ERangeBoundTypes::Inclusive",
+                "Value": {
+                  "Value": 30000
+                }
+              }
+            },
+            "ForcedTime": {
+              "Value": -2147483648
+            },
+            "Flags": "ESectionEvaluationFlags::None",
+            "LegacySortOrder": 0
+          }
+        ]
+      },
+      "Signature": "87E30DC3-40D6B42F-62C335A7-F8F23A8F"
+    }
+  },
+  {
+    "Type": "MovieSceneBuiltInEasingFunction",
+    "Name": "EaseInFunction",
+    "Flags": "RF_Public | RF_Transactional | RF_DefaultSubObject | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'MovieSceneBuiltInEasingFunction'",
+    "Outer": {
+      "ObjectName": "MovieScene2DTransformSection'WBP_AA_Quickslots_C:ShowInputs_INST.ShowInputs.MovieScene2DTransformTrack_4.MovieScene2DTransformSection_0'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.12"
+    }
+  },
+  {
+    "Type": "MovieSceneBuiltInEasingFunction",
+    "Name": "EaseOutFunction",
+    "Flags": "RF_Public | RF_Transactional | RF_DefaultSubObject | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'MovieSceneBuiltInEasingFunction'",
+    "Outer": {
+      "ObjectName": "MovieScene2DTransformSection'WBP_AA_Quickslots_C:ShowInputs_INST.ShowInputs.MovieScene2DTransformTrack_4.MovieScene2DTransformSection_0'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.12"
+    }
+  },
+  {
+    "Type": "MovieSceneBuiltInEasingFunction",
+    "Name": "EaseInFunction",
+    "Flags": "RF_Public | RF_Transactional | RF_DefaultSubObject | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'MovieSceneBuiltInEasingFunction'",
+    "Outer": {
+      "ObjectName": "MovieSceneByteSection'WBP_AA_Quickslots_C:ShowInputs_INST.ShowInputs.MovieSceneByteTrack_2.MovieSceneByteSection_0'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.52"
+    }
+  },
+  {
+    "Type": "MovieSceneBuiltInEasingFunction",
+    "Name": "EaseOutFunction",
+    "Flags": "RF_Public | RF_Transactional | RF_DefaultSubObject | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'MovieSceneBuiltInEasingFunction'",
+    "Outer": {
+      "ObjectName": "MovieSceneByteSection'WBP_AA_Quickslots_C:ShowInputs_INST.ShowInputs.MovieSceneByteTrack_2.MovieSceneByteSection_0'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.52"
+    }
+  },
+  {
+    "Type": "MovieSceneBuiltInEasingFunction",
+    "Name": "EaseInFunction",
+    "Flags": "RF_Public | RF_Transactional | RF_DefaultSubObject | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'MovieSceneBuiltInEasingFunction'",
+    "Outer": {
+      "ObjectName": "MovieSceneFloatSection'WBP_AA_Quickslots_C:ShowInputs_INST.ShowInputs.MovieSceneFloatTrack_0.MovieSceneFloatSection_0'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.62"
+    }
+  },
+  {
+    "Type": "MovieSceneBuiltInEasingFunction",
+    "Name": "EaseOutFunction",
+    "Flags": "RF_Public | RF_Transactional | RF_DefaultSubObject | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'MovieSceneBuiltInEasingFunction'",
+    "Outer": {
+      "ObjectName": "MovieSceneFloatSection'WBP_AA_Quickslots_C:ShowInputs_INST.ShowInputs.MovieSceneFloatTrack_0.MovieSceneFloatSection_0'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.62"
+    }
+  },
+  {
+    "Type": "MovieSceneBuiltInEasingFunction",
+    "Name": "EaseInFunction",
+    "Flags": "RF_Public | RF_Transactional | RF_DefaultSubObject | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'MovieSceneBuiltInEasingFunction'",
+    "Outer": {
+      "ObjectName": "MovieScene2DTransformSection'WBP_AA_Quickslots_C:Spread_INST.Spread.MovieScene2DTransformTrack_0.MovieScene2DTransformSection_0'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.13"
+    }
+  },
+  {
+    "Type": "MovieSceneBuiltInEasingFunction",
+    "Name": "EaseOutFunction",
+    "Flags": "RF_Public | RF_Transactional | RF_DefaultSubObject | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'MovieSceneBuiltInEasingFunction'",
+    "Outer": {
+      "ObjectName": "MovieScene2DTransformSection'WBP_AA_Quickslots_C:Spread_INST.Spread.MovieScene2DTransformTrack_0.MovieScene2DTransformSection_0'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.13"
+    }
+  },
+  {
+    "Type": "MovieSceneBuiltInEasingFunction",
+    "Name": "EaseInFunction",
+    "Flags": "RF_Public | RF_Transactional | RF_DefaultSubObject | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'MovieSceneBuiltInEasingFunction'",
+    "Outer": {
+      "ObjectName": "MovieScene2DTransformSection'WBP_AA_Quickslots_C:Spread_INST.Spread.MovieScene2DTransformTrack_1.MovieScene2DTransformSection_0'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.14"
+    }
+  },
+  {
+    "Type": "MovieSceneBuiltInEasingFunction",
+    "Name": "EaseOutFunction",
+    "Flags": "RF_Public | RF_Transactional | RF_DefaultSubObject | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'MovieSceneBuiltInEasingFunction'",
+    "Outer": {
+      "ObjectName": "MovieScene2DTransformSection'WBP_AA_Quickslots_C:Spread_INST.Spread.MovieScene2DTransformTrack_1.MovieScene2DTransformSection_0'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.14"
+    }
+  },
+  {
+    "Type": "MovieSceneBuiltInEasingFunction",
+    "Name": "EaseInFunction",
+    "Flags": "RF_Public | RF_Transactional | RF_DefaultSubObject | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'MovieSceneBuiltInEasingFunction'",
+    "Outer": {
+      "ObjectName": "MovieScene2DTransformSection'WBP_AA_Quickslots_C:Spread_INST.Spread.MovieScene2DTransformTrack_2.MovieScene2DTransformSection_0'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.15"
+    }
+  },
+  {
+    "Type": "MovieSceneBuiltInEasingFunction",
+    "Name": "EaseOutFunction",
+    "Flags": "RF_Public | RF_Transactional | RF_DefaultSubObject | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'MovieSceneBuiltInEasingFunction'",
+    "Outer": {
+      "ObjectName": "MovieScene2DTransformSection'WBP_AA_Quickslots_C:Spread_INST.Spread.MovieScene2DTransformTrack_2.MovieScene2DTransformSection_0'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.15"
+    }
+  },
+  {
+    "Type": "MovieSceneBuiltInEasingFunction",
+    "Name": "EaseInFunction",
+    "Flags": "RF_Public | RF_Transactional | RF_DefaultSubObject | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'MovieSceneBuiltInEasingFunction'",
+    "Outer": {
+      "ObjectName": "MovieScene2DTransformSection'WBP_AA_Quickslots_C:Spread_INST.Spread.MovieScene2DTransformTrack_3.MovieScene2DTransformSection_0'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.16"
+    }
+  },
+  {
+    "Type": "MovieSceneBuiltInEasingFunction",
+    "Name": "EaseOutFunction",
+    "Flags": "RF_Public | RF_Transactional | RF_DefaultSubObject | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'MovieSceneBuiltInEasingFunction'",
+    "Outer": {
+      "ObjectName": "MovieScene2DTransformSection'WBP_AA_Quickslots_C:Spread_INST.Spread.MovieScene2DTransformTrack_3.MovieScene2DTransformSection_0'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.16"
+    }
+  },
+  {
+    "Type": "MovieSceneBuiltInEasingFunction",
+    "Name": "EaseInFunction",
+    "Flags": "RF_Public | RF_Transactional | RF_DefaultSubObject | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'MovieSceneBuiltInEasingFunction'",
+    "Outer": {
+      "ObjectName": "MovieScene2DTransformSection'WBP_AA_Quickslots_C:Spread_INST.Spread.MovieScene2DTransformTrack_4.MovieScene2DTransformSection_0'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.17"
+    }
+  },
+  {
+    "Type": "MovieSceneBuiltInEasingFunction",
+    "Name": "EaseOutFunction",
+    "Flags": "RF_Public | RF_Transactional | RF_DefaultSubObject | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'MovieSceneBuiltInEasingFunction'",
+    "Outer": {
+      "ObjectName": "MovieScene2DTransformSection'WBP_AA_Quickslots_C:Spread_INST.Spread.MovieScene2DTransformTrack_4.MovieScene2DTransformSection_0'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.17"
+    }
+  },
+  {
+    "Type": "MovieSceneBuiltInEasingFunction",
+    "Name": "EaseInFunction",
+    "Flags": "RF_Public | RF_Transactional | RF_DefaultSubObject | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'MovieSceneBuiltInEasingFunction'",
+    "Outer": {
+      "ObjectName": "MovieSceneByteSection'WBP_AA_Quickslots_C:Spread_INST.Spread.MovieSceneByteTrack_0.MovieSceneByteSection_0'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.53"
+    }
+  },
+  {
+    "Type": "MovieSceneBuiltInEasingFunction",
+    "Name": "EaseOutFunction",
+    "Flags": "RF_Public | RF_Transactional | RF_DefaultSubObject | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'MovieSceneBuiltInEasingFunction'",
+    "Outer": {
+      "ObjectName": "MovieSceneByteSection'WBP_AA_Quickslots_C:Spread_INST.Spread.MovieSceneByteTrack_0.MovieSceneByteSection_0'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.53"
+    }
+  },
+  {
+    "Type": "MovieSceneBuiltInEasingFunction",
+    "Name": "EaseInFunction",
+    "Flags": "RF_Public | RF_Transactional | RF_DefaultSubObject | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'MovieSceneBuiltInEasingFunction'",
+    "Outer": {
+      "ObjectName": "MovieSceneByteSection'WBP_AA_Quickslots_C:Spread_INST.Spread.MovieSceneByteTrack_1.MovieSceneByteSection_0'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.54"
+    }
+  },
+  {
+    "Type": "MovieSceneBuiltInEasingFunction",
+    "Name": "EaseOutFunction",
+    "Flags": "RF_Public | RF_Transactional | RF_DefaultSubObject | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'MovieSceneBuiltInEasingFunction'",
+    "Outer": {
+      "ObjectName": "MovieSceneByteSection'WBP_AA_Quickslots_C:Spread_INST.Spread.MovieSceneByteTrack_1.MovieSceneByteSection_0'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.54"
+    }
+  },
+  {
+    "Type": "MovieSceneBuiltInEasingFunction",
+    "Name": "EaseInFunction",
+    "Flags": "RF_Public | RF_Transactional | RF_DefaultSubObject | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'MovieSceneBuiltInEasingFunction'",
+    "Outer": {
+      "ObjectName": "MovieSceneByteSection'WBP_AA_Quickslots_C:Spread_INST.Spread.MovieSceneByteTrack_2.MovieSceneByteSection_0'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.55"
+    }
+  },
+  {
+    "Type": "MovieSceneBuiltInEasingFunction",
+    "Name": "EaseOutFunction",
+    "Flags": "RF_Public | RF_Transactional | RF_DefaultSubObject | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'MovieSceneBuiltInEasingFunction'",
+    "Outer": {
+      "ObjectName": "MovieSceneByteSection'WBP_AA_Quickslots_C:Spread_INST.Spread.MovieSceneByteTrack_2.MovieSceneByteSection_0'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.55"
+    }
+  },
+  {
+    "Type": "MovieSceneBuiltInEasingFunction",
+    "Name": "EaseInFunction",
+    "Flags": "RF_Public | RF_Transactional | RF_DefaultSubObject | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'MovieSceneBuiltInEasingFunction'",
+    "Outer": {
+      "ObjectName": "MovieSceneFloatSection'WBP_AA_Quickslots_C:Spread_INST.Spread.MovieSceneFloatTrack_0.MovieSceneFloatSection_0'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.63"
+    }
+  },
+  {
+    "Type": "MovieSceneBuiltInEasingFunction",
+    "Name": "EaseOutFunction",
+    "Flags": "RF_Public | RF_Transactional | RF_DefaultSubObject | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'MovieSceneBuiltInEasingFunction'",
+    "Outer": {
+      "ObjectName": "MovieSceneFloatSection'WBP_AA_Quickslots_C:Spread_INST.Spread.MovieSceneFloatTrack_0.MovieSceneFloatSection_0'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.63"
+    }
+  },
+  {
+    "Type": "MovieSceneBuiltInEasingFunction",
+    "Name": "EaseInFunction",
+    "Flags": "RF_Public | RF_Transactional | RF_DefaultSubObject | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'MovieSceneBuiltInEasingFunction'",
+    "Outer": {
+      "ObjectName": "MovieSceneFloatSection'WBP_AA_Quickslots_C:Spread_INST.Spread.MovieSceneFloatTrack_3.MovieSceneFloatSection_0'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.64"
+    }
+  },
+  {
+    "Type": "MovieSceneBuiltInEasingFunction",
+    "Name": "EaseOutFunction",
+    "Flags": "RF_Public | RF_Transactional | RF_DefaultSubObject | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'MovieSceneBuiltInEasingFunction'",
+    "Outer": {
+      "ObjectName": "MovieSceneFloatSection'WBP_AA_Quickslots_C:Spread_INST.Spread.MovieSceneFloatTrack_3.MovieSceneFloatSection_0'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.64"
+    }
+  },
+  {
+    "Type": "MovieSceneBuiltInEasingFunction",
+    "Name": "EaseInFunction",
+    "Flags": "RF_Public | RF_Transactional | RF_DefaultSubObject | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'MovieSceneBuiltInEasingFunction'",
+    "Outer": {
+      "ObjectName": "MovieSceneFloatSection'WBP_AA_Quickslots_C:Spread_INST.Spread.MovieSceneFloatTrack_4.MovieSceneFloatSection_0'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.65"
+    }
+  },
+  {
+    "Type": "MovieSceneBuiltInEasingFunction",
+    "Name": "EaseOutFunction",
+    "Flags": "RF_Public | RF_Transactional | RF_DefaultSubObject | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'MovieSceneBuiltInEasingFunction'",
+    "Outer": {
+      "ObjectName": "MovieSceneFloatSection'WBP_AA_Quickslots_C:Spread_INST.Spread.MovieSceneFloatTrack_4.MovieSceneFloatSection_0'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.65"
+    }
+  },
+  {
+    "Type": "MovieSceneByteSection",
+    "Name": "MovieSceneByteSection_0",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'MovieSceneByteSection'",
+    "Outer": {
+      "ObjectName": "MovieSceneByteTrack'WBP_AA_Quickslots_C:ShowInputs_INST.ShowInputs.MovieSceneByteTrack_2'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.56"
+    },
+    "Properties": {
+      "ByteCurve": {
+        "Times": [
+          {
+            "Value": 0
+          },
+          {
+            "Value": 3000
+          },
+          {
+            "Value": 30000
+          }
+        ],
+        "Values": [
+          1,
+          4,
+          4
+        ],
+        "Enum": {
+          "ObjectName": "Class'ESlateVisibility'",
+          "ObjectPath": "/Script/UMG"
+        }
+      },
+      "Easing": {
+        "EaseIn": {
+          "ObjectName": "MovieSceneBuiltInEasingFunction'WBP_AA_Quickslots_C:ShowInputs_INST.ShowInputs.MovieSceneByteTrack_2.MovieSceneByteSection_0.EaseInFunction'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.26"
+        },
+        "EaseOut": {
+          "ObjectName": "MovieSceneBuiltInEasingFunction'WBP_AA_Quickslots_C:ShowInputs_INST.ShowInputs.MovieSceneByteTrack_2.MovieSceneByteSection_0.EaseOutFunction'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.27"
+        }
+      },
+      "SectionRange": {
+        "Value": {
+          "LowerBound": {
+            "Type": 1,
+            "Value": {
+              "Value": 0
+            }
+          },
+          "UpperBound": {
+            "Type": 1,
+            "Value": {
+              "Value": 30000
+            }
+          }
+        }
+      },
+      "Signature": "6168F1CA-41322C00-3E66669E-519A0476"
+    }
+  },
+  {
+    "Type": "MovieSceneByteSection",
+    "Name": "MovieSceneByteSection_0",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'MovieSceneByteSection'",
+    "Outer": {
+      "ObjectName": "MovieSceneByteTrack'WBP_AA_Quickslots_C:Spread_INST.Spread.MovieSceneByteTrack_0'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.57"
+    },
+    "Properties": {
+      "ByteCurve": {
+        "Times": [
+          {
+            "Value": 0
+          },
+          {
+            "Value": 3000
+          },
+          {
+            "Value": 30000
+          }
+        ],
+        "Values": [
+          1,
+          0,
+          0
+        ],
+        "Enum": {
+          "ObjectName": "Class'ESlateVisibility'",
+          "ObjectPath": "/Script/UMG"
+        }
+      },
+      "Easing": {
+        "EaseIn": {
+          "ObjectName": "MovieSceneBuiltInEasingFunction'WBP_AA_Quickslots_C:Spread_INST.Spread.MovieSceneByteTrack_0.MovieSceneByteSection_0.EaseInFunction'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.40"
+        },
+        "EaseOut": {
+          "ObjectName": "MovieSceneBuiltInEasingFunction'WBP_AA_Quickslots_C:Spread_INST.Spread.MovieSceneByteTrack_0.MovieSceneByteSection_0.EaseOutFunction'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.41"
+        }
+      },
+      "SectionRange": {
+        "Value": {
+          "LowerBound": {
+            "Type": 1,
+            "Value": {
+              "Value": 0
+            }
+          },
+          "UpperBound": {
+            "Type": 1,
+            "Value": {
+              "Value": 30000
+            }
+          }
+        }
+      },
+      "Signature": "80BFFFA5-4D980713-E717A69B-0FDD8536"
+    }
+  },
+  {
+    "Type": "MovieSceneByteSection",
+    "Name": "MovieSceneByteSection_0",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'MovieSceneByteSection'",
+    "Outer": {
+      "ObjectName": "MovieSceneByteTrack'WBP_AA_Quickslots_C:Spread_INST.Spread.MovieSceneByteTrack_1'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.58"
+    },
+    "Properties": {
+      "ByteCurve": {
+        "Times": [
+          {
+            "Value": 0
+          },
+          {
+            "Value": 3000
+          },
+          {
+            "Value": 30000
+          }
+        ],
+        "Values": [
+          1,
+          0,
+          0
+        ],
+        "Enum": {
+          "ObjectName": "Class'ESlateVisibility'",
+          "ObjectPath": "/Script/UMG"
+        }
+      },
+      "Easing": {
+        "EaseIn": {
+          "ObjectName": "MovieSceneBuiltInEasingFunction'WBP_AA_Quickslots_C:Spread_INST.Spread.MovieSceneByteTrack_1.MovieSceneByteSection_0.EaseInFunction'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.42"
+        },
+        "EaseOut": {
+          "ObjectName": "MovieSceneBuiltInEasingFunction'WBP_AA_Quickslots_C:Spread_INST.Spread.MovieSceneByteTrack_1.MovieSceneByteSection_0.EaseOutFunction'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.43"
+        }
+      },
+      "SectionRange": {
+        "Value": {
+          "LowerBound": {
+            "Type": 1,
+            "Value": {
+              "Value": 0
+            }
+          },
+          "UpperBound": {
+            "Type": 1,
+            "Value": {
+              "Value": 30000
+            }
+          }
+        }
+      },
+      "Signature": "2F9C6C8B-4026F802-22C0A9BC-88D1B420"
+    }
+  },
+  {
+    "Type": "MovieSceneByteSection",
+    "Name": "MovieSceneByteSection_0",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'MovieSceneByteSection'",
+    "Outer": {
+      "ObjectName": "MovieSceneByteTrack'WBP_AA_Quickslots_C:Spread_INST.Spread.MovieSceneByteTrack_2'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.59"
+    },
+    "Properties": {
+      "ByteCurve": {
+        "Times": [
+          {
+            "Value": 0
+          },
+          {
+            "Value": 3000
+          },
+          {
+            "Value": 30000
+          }
+        ],
+        "Values": [
+          1,
+          4,
+          4
+        ],
+        "Enum": {
+          "ObjectName": "Class'ESlateVisibility'",
+          "ObjectPath": "/Script/UMG"
+        }
+      },
+      "Easing": {
+        "EaseIn": {
+          "ObjectName": "MovieSceneBuiltInEasingFunction'WBP_AA_Quickslots_C:Spread_INST.Spread.MovieSceneByteTrack_2.MovieSceneByteSection_0.EaseInFunction'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.44"
+        },
+        "EaseOut": {
+          "ObjectName": "MovieSceneBuiltInEasingFunction'WBP_AA_Quickslots_C:Spread_INST.Spread.MovieSceneByteTrack_2.MovieSceneByteSection_0.EaseOutFunction'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.45"
+        }
+      },
+      "SectionRange": {
+        "Value": {
+          "LowerBound": {
+            "Type": 1,
+            "Value": {
+              "Value": 0
+            }
+          },
+          "UpperBound": {
+            "Type": 1,
+            "Value": {
+              "Value": 30000
+            }
+          }
+        }
+      },
+      "Signature": "6168F1CA-41322C00-3E66669E-519A0476"
+    }
+  },
+  {
+    "Type": "MovieSceneByteTrack",
+    "Name": "MovieSceneByteTrack_2",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'MovieSceneByteTrack'",
+    "Outer": {
+      "ObjectName": "MovieScene'WBP_AA_Quickslots_C:ShowInputs_INST.ShowInputs'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.10"
+    },
+    "Properties": {
+      "Enum": {
+        "ObjectName": "Class'ESlateVisibility'",
+        "ObjectPath": "/Script/UMG"
+      },
+      "PropertyBinding": {
+        "PropertyName": "Visibility",
+        "PropertyPath": "Visibility",
+        "bCanUseClassLookup": true
+      },
+      "Sections": [
+        {
+          "ObjectName": "MovieSceneByteSection'WBP_AA_Quickslots_C:ShowInputs_INST.ShowInputs.MovieSceneByteTrack_2.MovieSceneByteSection_0'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.52"
+        }
+      ],
+      "EvaluationFieldGuid": "D013CF4F-477BFD40-3EA093BB-DED7A05A",
+      "EvaluationField": {
+        "Entries": [
+          {
+            "Section": {
+              "ObjectName": "MovieSceneByteSection'WBP_AA_Quickslots_C:ShowInputs_INST.ShowInputs.MovieSceneByteTrack_2.MovieSceneByteSection_0'",
+              "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.52"
+            },
+            "Range": {
+              "LowerBound": {
+                "Type": "ERangeBoundTypes::Inclusive",
+                "Value": {
+                  "Value": 0
+                }
+              },
+              "UpperBound": {
+                "Type": "ERangeBoundTypes::Inclusive",
+                "Value": {
+                  "Value": 30000
+                }
+              }
+            },
+            "ForcedTime": {
+              "Value": -2147483648
+            },
+            "Flags": "ESectionEvaluationFlags::None",
+            "LegacySortOrder": 0
+          }
+        ]
+      },
+      "Signature": "D013CF4F-477BFD40-3EA093BB-DED7A05A"
+    }
+  },
+  {
+    "Type": "MovieSceneByteTrack",
+    "Name": "MovieSceneByteTrack_0",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'MovieSceneByteTrack'",
+    "Outer": {
+      "ObjectName": "MovieScene'WBP_AA_Quickslots_C:Spread_INST.Spread'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.11"
+    },
+    "Properties": {
+      "Enum": {
+        "ObjectName": "Class'ESlateVisibility'",
+        "ObjectPath": "/Script/UMG"
+      },
+      "PropertyBinding": {
+        "PropertyName": "Visibility",
+        "PropertyPath": "Visibility",
+        "bCanUseClassLookup": true
+      },
+      "Sections": [
+        {
+          "ObjectName": "MovieSceneByteSection'WBP_AA_Quickslots_C:Spread_INST.Spread.MovieSceneByteTrack_0.MovieSceneByteSection_0'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.53"
+        }
+      ],
+      "EvaluationFieldGuid": "0B5E537F-4E555D13-5D1B6796-181E19C1",
+      "EvaluationField": {
+        "Entries": [
+          {
+            "Section": {
+              "ObjectName": "MovieSceneByteSection'WBP_AA_Quickslots_C:Spread_INST.Spread.MovieSceneByteTrack_0.MovieSceneByteSection_0'",
+              "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.53"
+            },
+            "Range": {
+              "LowerBound": {
+                "Type": "ERangeBoundTypes::Inclusive",
+                "Value": {
+                  "Value": 0
+                }
+              },
+              "UpperBound": {
+                "Type": "ERangeBoundTypes::Inclusive",
+                "Value": {
+                  "Value": 30000
+                }
+              }
+            },
+            "ForcedTime": {
+              "Value": -2147483648
+            },
+            "Flags": "ESectionEvaluationFlags::None",
+            "LegacySortOrder": 0
+          }
+        ]
+      },
+      "Signature": "0B5E537F-4E555D13-5D1B6796-181E19C1"
+    }
+  },
+  {
+    "Type": "MovieSceneByteTrack",
+    "Name": "MovieSceneByteTrack_1",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'MovieSceneByteTrack'",
+    "Outer": {
+      "ObjectName": "MovieScene'WBP_AA_Quickslots_C:Spread_INST.Spread'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.11"
+    },
+    "Properties": {
+      "Enum": {
+        "ObjectName": "Class'ESlateVisibility'",
+        "ObjectPath": "/Script/UMG"
+      },
+      "PropertyBinding": {
+        "PropertyName": "Visibility",
+        "PropertyPath": "Visibility",
+        "bCanUseClassLookup": true
+      },
+      "Sections": [
+        {
+          "ObjectName": "MovieSceneByteSection'WBP_AA_Quickslots_C:Spread_INST.Spread.MovieSceneByteTrack_1.MovieSceneByteSection_0'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.54"
+        }
+      ],
+      "EvaluationFieldGuid": "22DF1698-42481085-D50F8190-8D52EF25",
+      "EvaluationField": {
+        "Entries": [
+          {
+            "Section": {
+              "ObjectName": "MovieSceneByteSection'WBP_AA_Quickslots_C:Spread_INST.Spread.MovieSceneByteTrack_1.MovieSceneByteSection_0'",
+              "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.54"
+            },
+            "Range": {
+              "LowerBound": {
+                "Type": "ERangeBoundTypes::Inclusive",
+                "Value": {
+                  "Value": 0
+                }
+              },
+              "UpperBound": {
+                "Type": "ERangeBoundTypes::Inclusive",
+                "Value": {
+                  "Value": 30000
+                }
+              }
+            },
+            "ForcedTime": {
+              "Value": -2147483648
+            },
+            "Flags": "ESectionEvaluationFlags::None",
+            "LegacySortOrder": 0
+          }
+        ]
+      },
+      "Signature": "22DF1698-42481085-D50F8190-8D52EF25"
+    }
+  },
+  {
+    "Type": "MovieSceneByteTrack",
+    "Name": "MovieSceneByteTrack_2",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'MovieSceneByteTrack'",
+    "Outer": {
+      "ObjectName": "MovieScene'WBP_AA_Quickslots_C:Spread_INST.Spread'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.11"
+    },
+    "Properties": {
+      "Enum": {
+        "ObjectName": "Class'ESlateVisibility'",
+        "ObjectPath": "/Script/UMG"
+      },
+      "PropertyBinding": {
+        "PropertyName": "Visibility",
+        "PropertyPath": "Visibility",
+        "bCanUseClassLookup": true
+      },
+      "Sections": [
+        {
+          "ObjectName": "MovieSceneByteSection'WBP_AA_Quickslots_C:Spread_INST.Spread.MovieSceneByteTrack_2.MovieSceneByteSection_0'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.55"
+        }
+      ],
+      "bIsEvalDisabled": true,
+      "EvaluationFieldGuid": "E5D959C6-4F109050-6CE820B3-B8D893B4",
+      "EvaluationField": {
+        "Entries": [
+          {
+            "Section": {
+              "ObjectName": "MovieSceneByteSection'WBP_AA_Quickslots_C:Spread_INST.Spread.MovieSceneByteTrack_2.MovieSceneByteSection_0'",
+              "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.55"
+            },
+            "Range": {
+              "LowerBound": {
+                "Type": "ERangeBoundTypes::Inclusive",
+                "Value": {
+                  "Value": 0
+                }
+              },
+              "UpperBound": {
+                "Type": "ERangeBoundTypes::Inclusive",
+                "Value": {
+                  "Value": 30000
+                }
+              }
+            },
+            "ForcedTime": {
+              "Value": -2147483648
+            },
+            "Flags": "ESectionEvaluationFlags::None",
+            "LegacySortOrder": 0
+          }
+        ]
+      },
+      "Signature": "17EB4AD8-45CF1E72-05007C88-9529D03E"
+    }
+  },
+  {
+    "Type": "MovieSceneCompiledData",
+    "Name": "CompiledData",
+    "Flags": "RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'MovieSceneCompiledData'",
+    "Outer": {
+      "ObjectName": "WidgetAnimation'WBP_AA_Quickslots_C:ShowInputs_INST'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.89"
+    },
+    "Properties": {
+      "EntityComponentField": {
+        "PersistentEntityTree": {
+          "SerializedData": {
+            "Data": {
+              "Entries": [
+                {
+                  "StartIndex": 0,
+                  "Size": 3,
+                  "Capacity": 3
+                }
+              ],
+              "Items": [
+                {
+                  "EntityIndex": 0,
+                  "MetaDataIndex": -1
+                },
+                {
+                  "EntityIndex": 1,
+                  "MetaDataIndex": -1
+                },
+                {
+                  "EntityIndex": 2,
+                  "MetaDataIndex": -1
+                }
+              ]
+            },
+            "RootNode": {
+              "Range": {
+                "LowerBound": {
+                  "Type": 2,
+                  "Value": {
+                    "Value": 0
+                  }
+                },
+                "UpperBound": {
+                  "Type": 2,
+                  "Value": {
+                    "Value": 0
+                  }
+                }
+              },
+              "Parent": {
+                "ChildrenHandle": {
+                  "EntryIndex": -1
+                },
+                "Index": -1
+              },
+              "ChildrenID": {
+                "EntryIndex": 0
+              },
+              "DataID": {
+                "EntryIndex": -1
+              }
+            },
+            "ChildNodes": {
+              "Entries": [
+                {
+                  "StartIndex": 0,
+                  "Size": 1,
+                  "Capacity": 1
+                }
+              ],
+              "Items": [
+                {
+                  "Range": {
+                    "LowerBound": {
+                      "Type": 1,
+                      "Value": {
+                        "Value": 0
+                      }
+                    },
+                    "UpperBound": {
+                      "Type": 1,
+                      "Value": {
+                        "Value": 30000
+                      }
+                    }
+                  },
+                  "Parent": {
+                    "ChildrenHandle": {
+                      "EntryIndex": -1
+                    },
+                    "Index": 0
+                  },
+                  "ChildrenID": {
+                    "EntryIndex": -1
+                  },
+                  "DataID": {
+                    "EntryIndex": 0
+                  }
+                }
+              ]
+            }
+          }
+        },
+        "Entities": [
+          {
+            "Key": {
+              "EntityOwner": {
+                "ObjectName": "MovieSceneFloatSection'WBP_AA_Quickslots_C:ShowInputs_INST.ShowInputs.MovieSceneFloatTrack_0.MovieSceneFloatSection_0'",
+                "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.62"
+              },
+              "EntityID": 0
+            },
+            "SharedMetaDataIndex": 0
+          },
+          {
+            "Key": {
+              "EntityOwner": {
+                "ObjectName": "MovieScene2DTransformSection'WBP_AA_Quickslots_C:ShowInputs_INST.ShowInputs.MovieScene2DTransformTrack_4.MovieScene2DTransformSection_0'",
+                "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.12"
+              },
+              "EntityID": 0
+            },
+            "SharedMetaDataIndex": 1
+          },
+          {
+            "Key": {
+              "EntityOwner": {
+                "ObjectName": "MovieSceneByteSection'WBP_AA_Quickslots_C:ShowInputs_INST.ShowInputs.MovieSceneByteTrack_2.MovieSceneByteSection_0'",
+                "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.52"
+              },
+              "EntityID": 0
+            },
+            "SharedMetaDataIndex": 2
+          }
+        ],
+        "SharedMetaData": [
+          {
+            "ObjectBindingID": "A9FAA397-48D685BB-E85C61AF-E3EA5EA1"
+          },
+          {
+            "ObjectBindingID": "A9FAA397-48D685BB-E85C61AF-E3EA5EA1"
+          },
+          {
+            "ObjectBindingID": "A9FAA397-48D685BB-E85C61AF-E3EA5EA1"
+          }
+        ]
+      },
+      "DeterminismFences": [
+        {
+          "FrameNumber": {
+            "Value": 30000
+          },
+          "bInclusive": false
+        }
+      ],
+      "CompiledSignature": "0CD6445E-48CFC726-199D64B0-02767245",
+      "CompilerVersion": "7D4B9809-2FAC4A6B-964ECF72-D8279EF8",
+      "AccumulatedMask": "EMovieSceneSequenceCompilerMask::EntityComponentField",
+      "AllocatedMask": "EMovieSceneSequenceCompilerMask::EntityComponentField"
+    }
+  },
+  {
+    "Type": "MovieSceneCompiledData",
+    "Name": "CompiledData",
+    "Flags": "RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'MovieSceneCompiledData'",
+    "Outer": {
+      "ObjectName": "WidgetAnimation'WBP_AA_Quickslots_C:Spread_INST'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.90"
+    },
+    "Properties": {
+      "EntityComponentField": {
+        "PersistentEntityTree": {
+          "SerializedData": {
+            "Data": {
+              "Entries": [
+                {
+                  "StartIndex": 0,
+                  "Size": 8,
+                  "Capacity": 8
+                }
+              ],
+              "Items": [
+                {
+                  "EntityIndex": 0,
+                  "MetaDataIndex": -1
+                },
+                {
+                  "EntityIndex": 1,
+                  "MetaDataIndex": -1
+                },
+                {
+                  "EntityIndex": 2,
+                  "MetaDataIndex": -1
+                },
+                {
+                  "EntityIndex": 3,
+                  "MetaDataIndex": -1
+                },
+                {
+                  "EntityIndex": 4,
+                  "MetaDataIndex": -1
+                },
+                {
+                  "EntityIndex": 5,
+                  "MetaDataIndex": -1
+                },
+                {
+                  "EntityIndex": 6,
+                  "MetaDataIndex": -1
+                },
+                {
+                  "EntityIndex": 7,
+                  "MetaDataIndex": -1
+                }
+              ]
+            },
+            "RootNode": {
+              "Range": {
+                "LowerBound": {
+                  "Type": 2,
+                  "Value": {
+                    "Value": 0
+                  }
+                },
+                "UpperBound": {
+                  "Type": 2,
+                  "Value": {
+                    "Value": 0
+                  }
+                }
+              },
+              "Parent": {
+                "ChildrenHandle": {
+                  "EntryIndex": -1
+                },
+                "Index": -1
+              },
+              "ChildrenID": {
+                "EntryIndex": 0
+              },
+              "DataID": {
+                "EntryIndex": -1
+              }
+            },
+            "ChildNodes": {
+              "Entries": [
+                {
+                  "StartIndex": 0,
+                  "Size": 1,
+                  "Capacity": 1
+                }
+              ],
+              "Items": [
+                {
+                  "Range": {
+                    "LowerBound": {
+                      "Type": 1,
+                      "Value": {
+                        "Value": 0
+                      }
+                    },
+                    "UpperBound": {
+                      "Type": 1,
+                      "Value": {
+                        "Value": 30000
+                      }
+                    }
+                  },
+                  "Parent": {
+                    "ChildrenHandle": {
+                      "EntryIndex": -1
+                    },
+                    "Index": 0
+                  },
+                  "ChildrenID": {
+                    "EntryIndex": -1
+                  },
+                  "DataID": {
+                    "EntryIndex": 0
+                  }
+                }
+              ]
+            }
+          }
+        },
+        "Entities": [
+          {
+            "Key": {
+              "EntityOwner": {
+                "ObjectName": "MovieScene2DTransformSection'WBP_AA_Quickslots_C:Spread_INST.Spread.MovieScene2DTransformTrack_0.MovieScene2DTransformSection_0'",
+                "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.13"
+              },
+              "EntityID": 0
+            },
+            "SharedMetaDataIndex": 0
+          },
+          {
+            "Key": {
+              "EntityOwner": {
+                "ObjectName": "MovieScene2DTransformSection'WBP_AA_Quickslots_C:Spread_INST.Spread.MovieScene2DTransformTrack_2.MovieScene2DTransformSection_0'",
+                "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.15"
+              },
+              "EntityID": 0
+            },
+            "SharedMetaDataIndex": 1
+          },
+          {
+            "Key": {
+              "EntityOwner": {
+                "ObjectName": "MovieScene2DTransformSection'WBP_AA_Quickslots_C:Spread_INST.Spread.MovieScene2DTransformTrack_3.MovieScene2DTransformSection_0'",
+                "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.16"
+              },
+              "EntityID": 0
+            },
+            "SharedMetaDataIndex": 2
+          },
+          {
+            "Key": {
+              "EntityOwner": {
+                "ObjectName": "MovieSceneFloatSection'WBP_AA_Quickslots_C:Spread_INST.Spread.MovieSceneFloatTrack_3.MovieSceneFloatSection_0'",
+                "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.64"
+              },
+              "EntityID": 0
+            },
+            "SharedMetaDataIndex": 3
+          },
+          {
+            "Key": {
+              "EntityOwner": {
+                "ObjectName": "MovieSceneByteSection'WBP_AA_Quickslots_C:Spread_INST.Spread.MovieSceneByteTrack_0.MovieSceneByteSection_0'",
+                "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.53"
+              },
+              "EntityID": 0
+            },
+            "SharedMetaDataIndex": 4
+          },
+          {
+            "Key": {
+              "EntityOwner": {
+                "ObjectName": "MovieSceneByteSection'WBP_AA_Quickslots_C:Spread_INST.Spread.MovieSceneByteTrack_1.MovieSceneByteSection_0'",
+                "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.54"
+              },
+              "EntityID": 0
+            },
+            "SharedMetaDataIndex": 5
+          },
+          {
+            "Key": {
+              "EntityOwner": {
+                "ObjectName": "MovieSceneFloatSection'WBP_AA_Quickslots_C:Spread_INST.Spread.MovieSceneFloatTrack_4.MovieSceneFloatSection_0'",
+                "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.65"
+              },
+              "EntityID": 0
+            },
+            "SharedMetaDataIndex": 6
+          },
+          {
+            "Key": {
+              "EntityOwner": {
+                "ObjectName": "MovieScene2DTransformSection'WBP_AA_Quickslots_C:Spread_INST.Spread.MovieScene2DTransformTrack_1.MovieScene2DTransformSection_0'",
+                "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.14"
+              },
+              "EntityID": 0
+            },
+            "SharedMetaDataIndex": 7
+          }
+        ],
+        "SharedMetaData": [
+          {
+            "ObjectBindingID": "2A858669-44E8C605-FBDF6193-7C841EAA"
+          },
+          {
+            "ObjectBindingID": "3E9E1CBD-4E4EC002-3FC3C388-C52A8904"
+          },
+          {
+            "ObjectBindingID": "7DE2CE6B-492CBFF8-DC41B58E-5DC169A0"
+          },
+          {
+            "ObjectBindingID": "818E248E-495CC24C-E057FC9A-E75F6FE5"
+          },
+          {
+            "ObjectBindingID": "818E248E-495CC24C-E057FC9A-E75F6FE5"
+          },
+          {
+            "ObjectBindingID": "8329DAC8-4D43301A-4127948F-F646DB64"
+          },
+          {
+            "ObjectBindingID": "8329DAC8-4D43301A-4127948F-F646DB64"
+          },
+          {
+            "ObjectBindingID": "BD15C8B5-4EC5A8B0-0F2A52BE-C71E825B"
+          }
+        ]
+      },
+      "DeterminismFences": [
+        {
+          "FrameNumber": {
+            "Value": 30000
+          },
+          "bInclusive": false
+        }
+      ],
+      "CompiledSignature": "162FB70C-49CFDC93-2B3C98A5-DB40B60E",
+      "CompilerVersion": "7D4B9809-2FAC4A6B-964ECF72-D8279EF8",
+      "AccumulatedMask": "EMovieSceneSequenceCompilerMask::EntityComponentField",
+      "AllocatedMask": "EMovieSceneSequenceCompilerMask::EntityComponentField"
+    }
+  },
+  {
+    "Type": "MovieSceneFloatSection",
+    "Name": "MovieSceneFloatSection_0",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'MovieSceneFloatSection'",
+    "Outer": {
+      "ObjectName": "MovieSceneFloatTrack'WBP_AA_Quickslots_C:ShowInputs_INST.ShowInputs.MovieSceneFloatTrack_0'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.66"
+    },
+    "Properties": {
+      "FloatCurve": {
+        "PreInfinityExtrap": "RCCE_Constant",
+        "PostInfinityExtrap": "RCCE_Constant",
+        "Times": [
+          {
+            "Value": 0
+          },
+          {
+            "Value": 9000
+          },
+          {
+            "Value": 30000
+          }
+        ],
+        "Values": [
+          {
+            "Value": 0.0,
+            "Tangent": {
+              "ArriveTangent": 0.0,
+              "LeaveTangent": 0.0,
+              "ArriveTangentWeight": 0.0,
+              "LeaveTangentWeight": 0.0,
+              "TangentWeightMode": 0
+            },
+            "InterpMode": 2,
+            "TangentMode": 0
+          },
+          {
+            "Value": 0.0,
+            "Tangent": {
+              "ArriveTangent": 0.0,
+              "LeaveTangent": 0.0,
+              "ArriveTangentWeight": 0.0,
+              "LeaveTangentWeight": 0.0,
+              "TangentWeightMode": 0
+            },
+            "InterpMode": 2,
+            "TangentMode": 0
+          },
+          {
+            "Value": 1.0,
+            "Tangent": {
+              "ArriveTangent": 0.0,
+              "LeaveTangent": 0.0,
+              "ArriveTangentWeight": 0.0,
+              "LeaveTangentWeight": 0.0,
+              "TangentWeightMode": 0
+            },
+            "InterpMode": 2,
+            "TangentMode": 0
+          }
+        ],
+        "DefaultValue": 0.0,
+        "bHasDefaultValue": false,
+        "TickResolution": {
+          "Numerator": 60000,
+          "Denominator": 1
+        },
+        "bShowCurve": false,
+        "StructFallback": null
+      },
+      "Easing": {
+        "EaseIn": {
+          "ObjectName": "MovieSceneBuiltInEasingFunction'WBP_AA_Quickslots_C:ShowInputs_INST.ShowInputs.MovieSceneFloatTrack_0.MovieSceneFloatSection_0.EaseInFunction'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.28"
+        },
+        "EaseOut": {
+          "ObjectName": "MovieSceneBuiltInEasingFunction'WBP_AA_Quickslots_C:ShowInputs_INST.ShowInputs.MovieSceneFloatTrack_0.MovieSceneFloatSection_0.EaseOutFunction'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.29"
+        }
+      },
+      "SectionRange": {
+        "Value": {
+          "LowerBound": {
+            "Type": 1,
+            "Value": {
+              "Value": 0
+            }
+          },
+          "UpperBound": {
+            "Type": 1,
+            "Value": {
+              "Value": 30000
+            }
+          }
+        }
+      },
+      "Signature": "E009F4EC-4FF5E997-923F6684-25353359"
+    }
+  },
+  {
+    "Type": "MovieSceneFloatSection",
+    "Name": "MovieSceneFloatSection_0",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'MovieSceneFloatSection'",
+    "Outer": {
+      "ObjectName": "MovieSceneFloatTrack'WBP_AA_Quickslots_C:Spread_INST.Spread.MovieSceneFloatTrack_0'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.67"
+    },
+    "Properties": {
+      "FloatCurve": {
+        "PreInfinityExtrap": "RCCE_Constant",
+        "PostInfinityExtrap": "RCCE_Constant",
+        "Times": [
+          {
+            "Value": 0
+          },
+          {
+            "Value": 9000
+          },
+          {
+            "Value": 30000
+          }
+        ],
+        "Values": [
+          {
+            "Value": 0.0,
+            "Tangent": {
+              "ArriveTangent": 0.0,
+              "LeaveTangent": 0.0,
+              "ArriveTangentWeight": 0.0,
+              "LeaveTangentWeight": 0.0,
+              "TangentWeightMode": 0
+            },
+            "InterpMode": 2,
+            "TangentMode": 0
+          },
+          {
+            "Value": 0.0,
+            "Tangent": {
+              "ArriveTangent": 0.0,
+              "LeaveTangent": 0.0,
+              "ArriveTangentWeight": 0.0,
+              "LeaveTangentWeight": 0.0,
+              "TangentWeightMode": 0
+            },
+            "InterpMode": 2,
+            "TangentMode": 0
+          },
+          {
+            "Value": 1.0,
+            "Tangent": {
+              "ArriveTangent": 0.0,
+              "LeaveTangent": 0.0,
+              "ArriveTangentWeight": 0.0,
+              "LeaveTangentWeight": 0.0,
+              "TangentWeightMode": 0
+            },
+            "InterpMode": 2,
+            "TangentMode": 0
+          }
+        ],
+        "DefaultValue": 0.0,
+        "bHasDefaultValue": false,
+        "TickResolution": {
+          "Numerator": 60000,
+          "Denominator": 1
+        },
+        "bShowCurve": false,
+        "StructFallback": null
+      },
+      "Easing": {
+        "EaseIn": {
+          "ObjectName": "MovieSceneBuiltInEasingFunction'WBP_AA_Quickslots_C:Spread_INST.Spread.MovieSceneFloatTrack_0.MovieSceneFloatSection_0.EaseInFunction'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.46"
+        },
+        "EaseOut": {
+          "ObjectName": "MovieSceneBuiltInEasingFunction'WBP_AA_Quickslots_C:Spread_INST.Spread.MovieSceneFloatTrack_0.MovieSceneFloatSection_0.EaseOutFunction'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.47"
+        }
+      },
+      "SectionRange": {
+        "Value": {
+          "LowerBound": {
+            "Type": 1,
+            "Value": {
+              "Value": 0
+            }
+          },
+          "UpperBound": {
+            "Type": 1,
+            "Value": {
+              "Value": 30000
+            }
+          }
+        }
+      },
+      "Signature": "E009F4EC-4FF5E997-923F6684-25353359"
+    }
+  },
+  {
+    "Type": "MovieSceneFloatSection",
+    "Name": "MovieSceneFloatSection_0",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'MovieSceneFloatSection'",
+    "Outer": {
+      "ObjectName": "MovieSceneFloatTrack'WBP_AA_Quickslots_C:Spread_INST.Spread.MovieSceneFloatTrack_3'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.68"
+    },
+    "Properties": {
+      "FloatCurve": {
+        "PreInfinityExtrap": "RCCE_Constant",
+        "PostInfinityExtrap": "RCCE_Constant",
+        "Times": [
+          {
+            "Value": 0
+          },
+          {
+            "Value": 3000
+          },
+          {
+            "Value": 30000
+          }
+        ],
+        "Values": [
+          {
+            "Value": 0.0,
+            "Tangent": {
+              "ArriveTangent": 0.0,
+              "LeaveTangent": 0.0,
+              "ArriveTangentWeight": 0.34253103,
+              "LeaveTangentWeight": 0.34253103,
+              "TangentWeightMode": 3
+            },
+            "InterpMode": 2,
+            "TangentMode": 1
+          },
+          {
+            "Value": 0.0,
+            "Tangent": {
+              "ArriveTangent": 4.1198546E-12,
+              "LeaveTangent": 5.8913723E-05,
+              "ArriveTangentWeight": 0.034625802,
+              "LeaveTangentWeight": 0.48850337,
+              "TangentWeightMode": 3
+            },
+            "InterpMode": 2,
+            "TangentMode": 2
+          },
+          {
+            "Value": 1.0,
+            "Tangent": {
+              "ArriveTangent": 0.0,
+              "LeaveTangent": 0.0,
+              "ArriveTangentWeight": 0.15,
+              "LeaveTangentWeight": 0.0,
+              "TangentWeightMode": 3
+            },
+            "InterpMode": 2,
+            "TangentMode": 1
+          }
+        ],
+        "DefaultValue": 0.0,
+        "bHasDefaultValue": false,
+        "TickResolution": {
+          "Numerator": 60000,
+          "Denominator": 1
+        },
+        "bShowCurve": false,
+        "StructFallback": null
+      },
+      "Easing": {
+        "EaseIn": {
+          "ObjectName": "MovieSceneBuiltInEasingFunction'WBP_AA_Quickslots_C:Spread_INST.Spread.MovieSceneFloatTrack_3.MovieSceneFloatSection_0.EaseInFunction'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.48"
+        },
+        "EaseOut": {
+          "ObjectName": "MovieSceneBuiltInEasingFunction'WBP_AA_Quickslots_C:Spread_INST.Spread.MovieSceneFloatTrack_3.MovieSceneFloatSection_0.EaseOutFunction'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.49"
+        }
+      },
+      "SectionRange": {
+        "Value": {
+          "LowerBound": {
+            "Type": 1,
+            "Value": {
+              "Value": 0
+            }
+          },
+          "UpperBound": {
+            "Type": 1,
+            "Value": {
+              "Value": 30000
+            }
+          }
+        }
+      },
+      "Signature": "4354E7D7-4266342C-341E12A0-12EA0008"
+    }
+  },
+  {
+    "Type": "MovieSceneFloatSection",
+    "Name": "MovieSceneFloatSection_0",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'MovieSceneFloatSection'",
+    "Outer": {
+      "ObjectName": "MovieSceneFloatTrack'WBP_AA_Quickslots_C:Spread_INST.Spread.MovieSceneFloatTrack_4'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.69"
+    },
+    "Properties": {
+      "FloatCurve": {
+        "PreInfinityExtrap": "RCCE_Constant",
+        "PostInfinityExtrap": "RCCE_Constant",
+        "Times": [
+          {
+            "Value": 0
+          },
+          {
+            "Value": 3000
+          },
+          {
+            "Value": 30000
+          }
+        ],
+        "Values": [
+          {
+            "Value": 0.0,
+            "Tangent": {
+              "ArriveTangent": 0.0,
+              "LeaveTangent": 0.0,
+              "ArriveTangentWeight": 0.0,
+              "LeaveTangentWeight": 0.0,
+              "TangentWeightMode": 0
+            },
+            "InterpMode": 2,
+            "TangentMode": 0
+          },
+          {
+            "Value": 0.0,
+            "Tangent": {
+              "ArriveTangent": 0.0,
+              "LeaveTangent": 0.0,
+              "ArriveTangentWeight": 0.0,
+              "LeaveTangentWeight": 0.0,
+              "TangentWeightMode": 0
+            },
+            "InterpMode": 2,
+            "TangentMode": 0
+          },
+          {
+            "Value": 1.0,
+            "Tangent": {
+              "ArriveTangent": 0.0,
+              "LeaveTangent": 0.0,
+              "ArriveTangentWeight": 0.0,
+              "LeaveTangentWeight": 0.0,
+              "TangentWeightMode": 0
+            },
+            "InterpMode": 2,
+            "TangentMode": 0
+          }
+        ],
+        "DefaultValue": 0.0,
+        "bHasDefaultValue": false,
+        "TickResolution": {
+          "Numerator": 60000,
+          "Denominator": 1
+        },
+        "bShowCurve": false,
+        "StructFallback": null
+      },
+      "Easing": {
+        "EaseIn": {
+          "ObjectName": "MovieSceneBuiltInEasingFunction'WBP_AA_Quickslots_C:Spread_INST.Spread.MovieSceneFloatTrack_4.MovieSceneFloatSection_0.EaseInFunction'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.50"
+        },
+        "EaseOut": {
+          "ObjectName": "MovieSceneBuiltInEasingFunction'WBP_AA_Quickslots_C:Spread_INST.Spread.MovieSceneFloatTrack_4.MovieSceneFloatSection_0.EaseOutFunction'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.51"
+        }
+      },
+      "SectionRange": {
+        "Value": {
+          "LowerBound": {
+            "Type": 1,
+            "Value": {
+              "Value": 0
+            }
+          },
+          "UpperBound": {
+            "Type": 1,
+            "Value": {
+              "Value": 30000
+            }
+          }
+        }
+      },
+      "Signature": "8DC86DEA-4DD37629-BBAEEB9A-35551242"
+    }
+  },
+  {
+    "Type": "MovieSceneFloatTrack",
+    "Name": "MovieSceneFloatTrack_0",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'MovieSceneFloatTrack'",
+    "Outer": {
+      "ObjectName": "MovieScene'WBP_AA_Quickslots_C:ShowInputs_INST.ShowInputs'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.10"
+    },
+    "Properties": {
+      "PropertyBinding": {
+        "PropertyName": "RenderOpacity",
+        "PropertyPath": "RenderOpacity",
+        "bCanUseClassLookup": true
+      },
+      "Sections": [
+        {
+          "ObjectName": "MovieSceneFloatSection'WBP_AA_Quickslots_C:ShowInputs_INST.ShowInputs.MovieSceneFloatTrack_0.MovieSceneFloatSection_0'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.62"
+        }
+      ],
+      "EvaluationFieldGuid": "D3126DAD-4DCF7D94-DBC69DB7-6198F502",
+      "EvaluationField": {
+        "Entries": [
+          {
+            "Section": {
+              "ObjectName": "MovieSceneFloatSection'WBP_AA_Quickslots_C:ShowInputs_INST.ShowInputs.MovieSceneFloatTrack_0.MovieSceneFloatSection_0'",
+              "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.62"
+            },
+            "Range": {
+              "LowerBound": {
+                "Type": "ERangeBoundTypes::Inclusive",
+                "Value": {
+                  "Value": 0
+                }
+              },
+              "UpperBound": {
+                "Type": "ERangeBoundTypes::Inclusive",
+                "Value": {
+                  "Value": 30000
+                }
+              }
+            },
+            "ForcedTime": {
+              "Value": -2147483648
+            },
+            "Flags": "ESectionEvaluationFlags::None",
+            "LegacySortOrder": 0
+          }
+        ]
+      },
+      "Signature": "D3126DAD-4DCF7D94-DBC69DB7-6198F502"
+    }
+  },
+  {
+    "Type": "MovieSceneFloatTrack",
+    "Name": "MovieSceneFloatTrack_0",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'MovieSceneFloatTrack'",
+    "Outer": {
+      "ObjectName": "MovieScene'WBP_AA_Quickslots_C:Spread_INST.Spread'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.11"
+    },
+    "Properties": {
+      "PropertyBinding": {
+        "PropertyName": "RenderOpacity",
+        "PropertyPath": "RenderOpacity",
+        "bCanUseClassLookup": true
+      },
+      "Sections": [
+        {
+          "ObjectName": "MovieSceneFloatSection'WBP_AA_Quickslots_C:Spread_INST.Spread.MovieSceneFloatTrack_0.MovieSceneFloatSection_0'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.63"
+        }
+      ],
+      "bIsEvalDisabled": true,
+      "EvaluationFieldGuid": "8703FF33-4B6064F5-3BF26C8E-8D7CB7FB",
+      "EvaluationField": {
+        "Entries": [
+          {
+            "Section": {
+              "ObjectName": "MovieSceneFloatSection'WBP_AA_Quickslots_C:Spread_INST.Spread.MovieSceneFloatTrack_0.MovieSceneFloatSection_0'",
+              "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.63"
+            },
+            "Range": {
+              "LowerBound": {
+                "Type": "ERangeBoundTypes::Inclusive",
+                "Value": {
+                  "Value": 0
+                }
+              },
+              "UpperBound": {
+                "Type": "ERangeBoundTypes::Inclusive",
+                "Value": {
+                  "Value": 30000
+                }
+              }
+            },
+            "ForcedTime": {
+              "Value": -2147483648
+            },
+            "Flags": "ESectionEvaluationFlags::None",
+            "LegacySortOrder": 0
+          }
+        ]
+      },
+      "Signature": "CB6E50D1-427EF778-B73A1E91-D959128C"
+    }
+  },
+  {
+    "Type": "MovieSceneFloatTrack",
+    "Name": "MovieSceneFloatTrack_3",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'MovieSceneFloatTrack'",
+    "Outer": {
+      "ObjectName": "MovieScene'WBP_AA_Quickslots_C:Spread_INST.Spread'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.11"
+    },
+    "Properties": {
+      "PropertyBinding": {
+        "PropertyName": "RenderOpacity",
+        "PropertyPath": "RenderOpacity",
+        "bCanUseClassLookup": true
+      },
+      "Sections": [
+        {
+          "ObjectName": "MovieSceneFloatSection'WBP_AA_Quickslots_C:Spread_INST.Spread.MovieSceneFloatTrack_3.MovieSceneFloatSection_0'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.64"
+        }
+      ],
+      "EvaluationFieldGuid": "DA98826F-4691AE1D-49C617BA-D60951AD",
+      "EvaluationField": {
+        "Entries": [
+          {
+            "Section": {
+              "ObjectName": "MovieSceneFloatSection'WBP_AA_Quickslots_C:Spread_INST.Spread.MovieSceneFloatTrack_3.MovieSceneFloatSection_0'",
+              "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.64"
+            },
+            "Range": {
+              "LowerBound": {
+                "Type": "ERangeBoundTypes::Inclusive",
+                "Value": {
+                  "Value": 0
+                }
+              },
+              "UpperBound": {
+                "Type": "ERangeBoundTypes::Inclusive",
+                "Value": {
+                  "Value": 30000
+                }
+              }
+            },
+            "ForcedTime": {
+              "Value": -2147483648
+            },
+            "Flags": "ESectionEvaluationFlags::None",
+            "LegacySortOrder": 0
+          }
+        ]
+      },
+      "Signature": "DA98826F-4691AE1D-49C617BA-D60951AD"
+    }
+  },
+  {
+    "Type": "MovieSceneFloatTrack",
+    "Name": "MovieSceneFloatTrack_4",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'MovieSceneFloatTrack'",
+    "Outer": {
+      "ObjectName": "MovieScene'WBP_AA_Quickslots_C:Spread_INST.Spread'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.11"
+    },
+    "Properties": {
+      "PropertyBinding": {
+        "PropertyName": "RenderOpacity",
+        "PropertyPath": "RenderOpacity",
+        "bCanUseClassLookup": true
+      },
+      "Sections": [
+        {
+          "ObjectName": "MovieSceneFloatSection'WBP_AA_Quickslots_C:Spread_INST.Spread.MovieSceneFloatTrack_4.MovieSceneFloatSection_0'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.65"
+        }
+      ],
+      "EvaluationFieldGuid": "F59BBEED-4FDB09EE-4E615A8D-B1C91D55",
+      "EvaluationField": {
+        "Entries": [
+          {
+            "Section": {
+              "ObjectName": "MovieSceneFloatSection'WBP_AA_Quickslots_C:Spread_INST.Spread.MovieSceneFloatTrack_4.MovieSceneFloatSection_0'",
+              "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.65"
+            },
+            "Range": {
+              "LowerBound": {
+                "Type": "ERangeBoundTypes::Inclusive",
+                "Value": {
+                  "Value": 0
+                }
+              },
+              "UpperBound": {
+                "Type": "ERangeBoundTypes::Inclusive",
+                "Value": {
+                  "Value": 30000
+                }
+              }
+            },
+            "ForcedTime": {
+              "Value": -2147483648
+            },
+            "Flags": "ESectionEvaluationFlags::None",
+            "LegacySortOrder": 0
+          }
+        ]
+      },
+      "Signature": "F59BBEED-4FDB09EE-4E615A8D-B1C91D55"
+    }
+  },
+  {
+    "Type": "Overlay",
+    "Name": "Overlay_30",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Overlay'",
+    "Outer": {
+      "ObjectName": "WidgetTree'WBP_AA_Quickslots_C:WidgetTree'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.92"
+    },
+    "Properties": {
+      "Slots": [
+        {
+          "ObjectName": "OverlaySlot'WBP_AA_Quickslots_C:WidgetTree.Overlay_30.OverlaySlot_5'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.75"
+        },
+        {
+          "ObjectName": "OverlaySlot'WBP_AA_Quickslots_C:WidgetTree.Overlay_30.OverlaySlot_4'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.74"
+        },
+        {
+          "ObjectName": "OverlaySlot'WBP_AA_Quickslots_C:WidgetTree.Overlay_30.OverlaySlot_6'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.76"
+        },
+        {
+          "ObjectName": "OverlaySlot'WBP_AA_Quickslots_C:WidgetTree.Overlay_30.OverlaySlot_0'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.72"
+        },
+        {
+          "ObjectName": "OverlaySlot'WBP_AA_Quickslots_C:WidgetTree.Overlay_30.OverlaySlot_7'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.77"
+        },
+        {
+          "ObjectName": "OverlaySlot'WBP_AA_Quickslots_C:WidgetTree.Overlay_30.OverlaySlot_1'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.73"
+        }
+      ],
+      "Slot": {
+        "ObjectName": "OverlaySlot'WBP_AA_Quickslots_C:WidgetTree.Overlay_32.OverlaySlot_0'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.78"
+      }
+    }
+  },
+  {
+    "Type": "Overlay",
+    "Name": "Overlay_32",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Overlay'",
+    "Outer": {
+      "ObjectName": "WidgetTree'WBP_AA_Quickslots_C:WidgetTree'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.92"
+    },
+    "Properties": {
+      "Slots": [
+        {
+          "ObjectName": "OverlaySlot'WBP_AA_Quickslots_C:WidgetTree.Overlay_32.OverlaySlot_3'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.79"
+        },
+        {
+          "ObjectName": "OverlaySlot'WBP_AA_Quickslots_C:WidgetTree.Overlay_32.OverlaySlot_4'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.80"
+        },
+        {
+          "ObjectName": "OverlaySlot'WBP_AA_Quickslots_C:WidgetTree.Overlay_32.OverlaySlot_0'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.78"
+        }
+      ],
+      "Slot": {
+        "ObjectName": "SizeBoxSlot'WBP_AA_Quickslots_C:WidgetTree.SizeBox_1.SizeBoxSlot_0'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.82"
+      }
+    }
+  },
+  {
+    "Type": "OverlaySlot",
+    "Name": "OverlaySlot_0",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'OverlaySlot'",
+    "Outer": {
+      "ObjectName": "Overlay'WBP_AA_Quickslots_C:WidgetTree.Overlay_30'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.70"
+    },
+    "Properties": {
+      "HorizontalAlignment": "EHorizontalAlignment::HAlign_Right",
+      "VerticalAlignment": "EVerticalAlignment::VAlign_Center",
+      "Parent": {
+        "ObjectName": "Overlay'WBP_AA_Quickslots_C:WidgetTree.Overlay_30'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.70"
+      },
+      "Content": {
+        "ObjectName": "WBP_AA_Quickslots_Button_C'WBP_AA_Quickslots_C:WidgetTree.Right'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.86"
+      }
+    }
+  },
+  {
+    "Type": "OverlaySlot",
+    "Name": "OverlaySlot_1",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'OverlaySlot'",
+    "Outer": {
+      "ObjectName": "Overlay'WBP_AA_Quickslots_C:WidgetTree.Overlay_30'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.70"
+    },
+    "Properties": {
+      "HorizontalAlignment": "EHorizontalAlignment::HAlign_Center",
+      "VerticalAlignment": "EVerticalAlignment::VAlign_Center",
+      "Parent": {
+        "ObjectName": "Overlay'WBP_AA_Quickslots_C:WidgetTree.Overlay_30'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.70"
+      },
+      "Content": {
+        "ObjectName": "WBP_AA_Quickslots_Bindings_C'WBP_AA_Quickslots_C:WidgetTree.WBP_AA_Quickslots_Bindings'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.83"
+      }
+    }
+  },
+  {
+    "Type": "OverlaySlot",
+    "Name": "OverlaySlot_4",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'OverlaySlot'",
+    "Outer": {
+      "ObjectName": "Overlay'WBP_AA_Quickslots_C:WidgetTree.Overlay_30'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.70"
+    },
+    "Properties": {
+      "VerticalAlignment": "EVerticalAlignment::VAlign_Center",
+      "Parent": {
+        "ObjectName": "Overlay'WBP_AA_Quickslots_C:WidgetTree.Overlay_30'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.70"
+      },
+      "Content": {
+        "ObjectName": "WBP_AA_Quickslots_Button_C'WBP_AA_Quickslots_C:WidgetTree.Left'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.85"
+      }
+    }
+  },
+  {
+    "Type": "OverlaySlot",
+    "Name": "OverlaySlot_5",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'OverlaySlot'",
+    "Outer": {
+      "ObjectName": "Overlay'WBP_AA_Quickslots_C:WidgetTree.Overlay_30'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.70"
+    },
+    "Properties": {
+      "HorizontalAlignment": "EHorizontalAlignment::HAlign_Center",
+      "VerticalAlignment": "EVerticalAlignment::VAlign_Center",
+      "Parent": {
+        "ObjectName": "Overlay'WBP_AA_Quickslots_C:WidgetTree.Overlay_30'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.70"
+      },
+      "Content": {
+        "ObjectName": "Image'WBP_AA_Quickslots_C:WidgetTree.Cross'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.9"
+      }
+    }
+  },
+  {
+    "Type": "OverlaySlot",
+    "Name": "OverlaySlot_6",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'OverlaySlot'",
+    "Outer": {
+      "ObjectName": "Overlay'WBP_AA_Quickslots_C:WidgetTree.Overlay_30'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.70"
+    },
+    "Properties": {
+      "HorizontalAlignment": "EHorizontalAlignment::HAlign_Center",
+      "Parent": {
+        "ObjectName": "Overlay'WBP_AA_Quickslots_C:WidgetTree.Overlay_30'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.70"
+      },
+      "Content": {
+        "ObjectName": "WBP_AA_Quickslots_Button_C'WBP_AA_Quickslots_C:WidgetTree.Top'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.87"
+      }
+    }
+  },
+  {
+    "Type": "OverlaySlot",
+    "Name": "OverlaySlot_7",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'OverlaySlot'",
+    "Outer": {
+      "ObjectName": "Overlay'WBP_AA_Quickslots_C:WidgetTree.Overlay_30'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.70"
+    },
+    "Properties": {
+      "HorizontalAlignment": "EHorizontalAlignment::HAlign_Center",
+      "VerticalAlignment": "EVerticalAlignment::VAlign_Bottom",
+      "Parent": {
+        "ObjectName": "Overlay'WBP_AA_Quickslots_C:WidgetTree.Overlay_30'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.70"
+      },
+      "Content": {
+        "ObjectName": "WBP_AA_Quickslots_Button_C'WBP_AA_Quickslots_C:WidgetTree.Bottom'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.84"
+      }
+    }
+  },
+  {
+    "Type": "OverlaySlot",
+    "Name": "OverlaySlot_0",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'OverlaySlot'",
+    "Outer": {
+      "ObjectName": "Overlay'WBP_AA_Quickslots_C:WidgetTree.Overlay_32'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.71"
+    },
+    "Properties": {
+      "HorizontalAlignment": "EHorizontalAlignment::HAlign_Fill",
+      "VerticalAlignment": "EVerticalAlignment::VAlign_Fill",
+      "Parent": {
+        "ObjectName": "Overlay'WBP_AA_Quickslots_C:WidgetTree.Overlay_32'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.71"
+      },
+      "Content": {
+        "ObjectName": "Overlay'WBP_AA_Quickslots_C:WidgetTree.Overlay_30'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.70"
+      }
+    }
+  },
+  {
+    "Type": "OverlaySlot",
+    "Name": "OverlaySlot_3",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'OverlaySlot'",
+    "Outer": {
+      "ObjectName": "Overlay'WBP_AA_Quickslots_C:WidgetTree.Overlay_32'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.71"
+    },
+    "Properties": {
+      "Padding": {
+        "Left": -2000.0,
+        "Top": -2000.0,
+        "Right": -2000.0,
+        "Bottom": -2000.0
+      },
+      "HorizontalAlignment": "EHorizontalAlignment::HAlign_Fill",
+      "VerticalAlignment": "EVerticalAlignment::VAlign_Fill",
+      "Parent": {
+        "ObjectName": "Overlay'WBP_AA_Quickslots_C:WidgetTree.Overlay_32'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.71"
+      },
+      "Content": {
+        "ObjectName": "Border'WBP_AA_Quickslots_C:WidgetTree.Darken'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.0"
+      }
+    }
+  },
+  {
+    "Type": "OverlaySlot",
+    "Name": "OverlaySlot_4",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'OverlaySlot'",
+    "Outer": {
+      "ObjectName": "Overlay'WBP_AA_Quickslots_C:WidgetTree.Overlay_32'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.71"
+    },
+    "Properties": {
+      "HorizontalAlignment": "EHorizontalAlignment::HAlign_Fill",
+      "VerticalAlignment": "EVerticalAlignment::VAlign_Fill",
+      "Parent": {
+        "ObjectName": "Overlay'WBP_AA_Quickslots_C:WidgetTree.Overlay_32'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.71"
+      },
+      "Content": {
+        "ObjectName": "Border'WBP_AA_Quickslots_C:WidgetTree.Glow'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.1"
+      }
+    }
+  },
+  {
+    "Type": "SizeBox",
+    "Name": "SizeBox_1",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'SizeBox'",
+    "Outer": {
+      "ObjectName": "WidgetTree'WBP_AA_Quickslots_C:WidgetTree'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.92"
+    },
+    "Properties": {
+      "WidthOverride": 385.0,
+      "HeightOverride": 385.0,
+      "bOverride_WidthOverride": true,
+      "bOverride_HeightOverride": true,
+      "bOverride_MinAspectRatio": true,
+      "bOverride_MaxAspectRatio": true,
+      "Slots": [
+        {
+          "ObjectName": "SizeBoxSlot'WBP_AA_Quickslots_C:WidgetTree.SizeBox_1.SizeBoxSlot_0'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.82"
+        }
+      ]
+    }
+  },
+  {
+    "Type": "SizeBoxSlot",
+    "Name": "SizeBoxSlot_0",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'SizeBoxSlot'",
+    "Outer": {
+      "ObjectName": "SizeBox'WBP_AA_Quickslots_C:WidgetTree.SizeBox_1'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.81"
+    },
+    "Properties": {
+      "Parent": {
+        "ObjectName": "SizeBox'WBP_AA_Quickslots_C:WidgetTree.SizeBox_1'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.81"
+      },
+      "Content": {
+        "ObjectName": "Overlay'WBP_AA_Quickslots_C:WidgetTree.Overlay_32'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.71"
+      }
+    }
+  },
+  {
+    "Type": "WBP_AA_Quickslots_Bindings_C",
+    "Name": "WBP_AA_Quickslots_Bindings",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "WidgetBlueprintGeneratedClass'/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Bindings.WBP_AA_Quickslots_Bindings_C'",
+    "Outer": {
+      "ObjectName": "WidgetTree'WBP_AA_Quickslots_C:WidgetTree'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.92"
+    },
+    "Template": {
+      "ObjectName": "WBP_AA_Quickslots_Bindings_C'Default__WBP_AA_Quickslots_Bindings_C'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Bindings.18"
+    },
+    "Properties": {
+      "Size": 160.0,
+      "Slot": {
+        "ObjectName": "OverlaySlot'WBP_AA_Quickslots_C:WidgetTree.Overlay_30.OverlaySlot_1'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.73"
+      }
+    }
+  },
+  {
+    "Type": "WBP_AA_Quickslots_Button_C",
+    "Name": "Bottom",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "WidgetBlueprintGeneratedClass'/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Button.WBP_AA_Quickslots_Button_C'",
+    "Outer": {
+      "ObjectName": "WidgetTree'WBP_AA_Quickslots_C:WidgetTree'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.92"
+    },
+    "Template": {
+      "ObjectName": "WBP_AA_Quickslots_Button_C'Default__WBP_AA_Quickslots_Button_C'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Button.17"
+    },
+    "Properties": {
+      "TargetQuickslot": "EQuickslot::Max",
+      "Hub Mode": false,
+      "TriggeringEnhancedInputAction": {
+        "ObjectName": "InputAction'IA_Quickslot_Bottom'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/Input/Actions/Quickslots/IA_Quickslot_Bottom.0"
+      },
+      "Slot": {
+        "ObjectName": "OverlaySlot'WBP_AA_Quickslots_C:WidgetTree.Overlay_30.OverlaySlot_7'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.77"
+      }
+    }
+  },
+  {
+    "Type": "WBP_AA_Quickslots_Button_C",
+    "Name": "Left",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "WidgetBlueprintGeneratedClass'/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Button.WBP_AA_Quickslots_Button_C'",
+    "Outer": {
+      "ObjectName": "WidgetTree'WBP_AA_Quickslots_C:WidgetTree'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.92"
+    },
+    "Template": {
+      "ObjectName": "WBP_AA_Quickslots_Button_C'Default__WBP_AA_Quickslots_Button_C'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Button.17"
+    },
+    "Properties": {
+      "Hub Mode": false,
+      "TriggeringEnhancedInputAction": {
+        "ObjectName": "InputAction'IA_Quickslot_Left'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/Input/Actions/Quickslots/IA_Quickslot_Left.0"
+      },
+      "Slot": {
+        "ObjectName": "OverlaySlot'WBP_AA_Quickslots_C:WidgetTree.Overlay_30.OverlaySlot_4'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.74"
+      }
+    }
+  },
+  {
+    "Type": "WBP_AA_Quickslots_Button_C",
+    "Name": "Right",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "WidgetBlueprintGeneratedClass'/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Button.WBP_AA_Quickslots_Button_C'",
+    "Outer": {
+      "ObjectName": "WidgetTree'WBP_AA_Quickslots_C:WidgetTree'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.92"
+    },
+    "Template": {
+      "ObjectName": "WBP_AA_Quickslots_Button_C'Default__WBP_AA_Quickslots_Button_C'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Button.17"
+    },
+    "Properties": {
+      "TargetQuickslot": "EQuickslot::Right",
+      "Hub Mode": false,
+      "TriggeringEnhancedInputAction": {
+        "ObjectName": "InputAction'IA_Quickslot_Right'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/Input/Actions/Quickslots/IA_Quickslot_Right.0"
+      },
+      "Slot": {
+        "ObjectName": "OverlaySlot'WBP_AA_Quickslots_C:WidgetTree.Overlay_30.OverlaySlot_0'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.72"
+      }
+    }
+  },
+  {
+    "Type": "WBP_AA_Quickslots_Button_C",
+    "Name": "Top",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "WidgetBlueprintGeneratedClass'/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Button.WBP_AA_Quickslots_Button_C'",
+    "Outer": {
+      "ObjectName": "WidgetTree'WBP_AA_Quickslots_C:WidgetTree'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.92"
+    },
+    "Template": {
+      "ObjectName": "WBP_AA_Quickslots_Button_C'Default__WBP_AA_Quickslots_Button_C'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Button.17"
+    },
+    "Properties": {
+      "TargetQuickslot": "EQuickslot::Top",
+      "Hub Mode": false,
+      "TriggeringEnhancedInputAction": {
+        "ObjectName": "InputAction'IA_Quickslot_Top'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/Input/Actions/Quickslots/IA_Quickslot_Top.0"
+      },
+      "Slot": {
+        "ObjectName": "OverlaySlot'WBP_AA_Quickslots_C:WidgetTree.Overlay_30.OverlaySlot_6'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.76"
+      }
+    }
+  },
+  {
+    "Type": "WBP_AA_Quickslots_C",
+    "Name": "Default__WBP_AA_Quickslots_C",
+    "Flags": "RF_Public | RF_ClassDefaultObject | RF_ArchetypeObject | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "WidgetBlueprintGeneratedClass'/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.WBP_AA_Quickslots_C'",
+    "Package": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots",
+    "Properties": {
+      "UberGraphFrame": {},
+      "bHasScriptImplementedPaint": false,
+      "Visibility": "ESlateVisibility::HitTestInvisible"
+    }
+  },
+  {
+    "Type": "WidgetAnimation",
+    "Name": "ShowInputs_INST",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'WidgetAnimation'",
+    "Outer": {
+      "ObjectName": "WidgetBlueprintGeneratedClass'WBP_AA_Quickslots_C'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.91"
+    },
+    "Properties": {
+      "MovieScene": {
+        "ObjectName": "MovieScene'WBP_AA_Quickslots_C:ShowInputs_INST.ShowInputs'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.10"
+      },
+      "AnimationBindings": [
+        {
+          "WidgetName": "WBP_AA_Quickslots_Bindings",
+          "SlotWidgetName": "None",
+          "AnimationGuid": "A9FAA397-48D685BB-E85C61AF-E3EA5EA1",
+          "bIsRootWidget": false,
+          "DynamicBinding": {
+            "Function": null,
+            "ResolveParamsProperty": {
+              "Path": [],
+              "ResolvedOwner": null
+            }
+          }
+        }
+      ],
+      "DisplayLabel": "ShowInputs",
+      "CompiledData": {
+        "ObjectName": "MovieSceneCompiledData'WBP_AA_Quickslots_C:ShowInputs_INST.CompiledData'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.60"
+      },
+      "Signature": "0CD6445E-48CFC726-199D64B0-02767245"
+    }
+  },
+  {
+    "Type": "WidgetAnimation",
+    "Name": "Spread_INST",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'WidgetAnimation'",
+    "Outer": {
+      "ObjectName": "WidgetBlueprintGeneratedClass'WBP_AA_Quickslots_C'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.91"
+    },
+    "Properties": {
+      "MovieScene": {
+        "ObjectName": "MovieScene'WBP_AA_Quickslots_C:Spread_INST.Spread'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.11"
+      },
+      "AnimationBindings": [
+        {
+          "WidgetName": "Bottom",
+          "SlotWidgetName": "None",
+          "AnimationGuid": "2A858669-44E8C605-FBDF6193-7C841EAA",
+          "bIsRootWidget": false,
+          "DynamicBinding": {
+            "Function": null,
+            "ResolveParamsProperty": {
+              "Path": [],
+              "ResolvedOwner": null
+            }
+          }
+        },
+        {
+          "WidgetName": "Right",
+          "SlotWidgetName": "None",
+          "AnimationGuid": "BD15C8B5-4EC5A8B0-0F2A52BE-C71E825B",
+          "bIsRootWidget": false,
+          "DynamicBinding": {
+            "Function": null,
+            "ResolveParamsProperty": {
+              "Path": [],
+              "ResolvedOwner": null
+            }
+          }
+        },
+        {
+          "WidgetName": "Top",
+          "SlotWidgetName": "None",
+          "AnimationGuid": "3E9E1CBD-4E4EC002-3FC3C388-C52A8904",
+          "bIsRootWidget": false,
+          "DynamicBinding": {
+            "Function": null,
+            "ResolveParamsProperty": {
+              "Path": [],
+              "ResolvedOwner": null
+            }
+          }
+        },
+        {
+          "WidgetName": "Left",
+          "SlotWidgetName": "None",
+          "AnimationGuid": "7DE2CE6B-492CBFF8-DC41B58E-5DC169A0",
+          "bIsRootWidget": false,
+          "DynamicBinding": {
+            "Function": null,
+            "ResolveParamsProperty": {
+              "Path": [],
+              "ResolvedOwner": null
+            }
+          }
+        },
+        {
+          "WidgetName": "Darken",
+          "SlotWidgetName": "None",
+          "AnimationGuid": "818E248E-495CC24C-E057FC9A-E75F6FE5",
+          "bIsRootWidget": false,
+          "DynamicBinding": {
+            "Function": null,
+            "ResolveParamsProperty": {
+              "Path": [],
+              "ResolvedOwner": null
+            }
+          }
+        },
+        {
+          "WidgetName": "Glow",
+          "SlotWidgetName": "None",
+          "AnimationGuid": "8329DAC8-4D43301A-4127948F-F646DB64",
+          "bIsRootWidget": false,
+          "DynamicBinding": {
+            "Function": null,
+            "ResolveParamsProperty": {
+              "Path": [],
+              "ResolvedOwner": null
+            }
+          }
+        },
+        {
+          "WidgetName": "WBP_AA_Quickslots_Bindings",
+          "SlotWidgetName": "None",
+          "AnimationGuid": "A9FAA397-48D685BB-E85C61AF-E3EA5EA1",
+          "bIsRootWidget": false,
+          "DynamicBinding": {
+            "Function": null,
+            "ResolveParamsProperty": {
+              "Path": [],
+              "ResolvedOwner": null
+            }
+          }
+        }
+      ],
+      "DisplayLabel": "Spread",
+      "CompiledData": {
+        "ObjectName": "MovieSceneCompiledData'WBP_AA_Quickslots_C:Spread_INST.CompiledData'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.61"
+      },
+      "Signature": "162FB70C-49CFDC93-2B3C98A5-DB40B60E"
+    }
+  },
+  {
+    "Type": "WidgetBlueprintGeneratedClass",
+    "Name": "WBP_AA_Quickslots_C",
+    "Flags": "RF_Public | RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'WidgetBlueprintGeneratedClass'",
+    "Package": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots",
+    "Properties": {
+      "WidgetTree": {
+        "ObjectName": "WidgetTree'WBP_AA_Quickslots_C:WidgetTree'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.92"
+      },
+      "Animations": [
+        {
+          "ObjectName": "WidgetAnimation'WBP_AA_Quickslots_C:Spread_INST'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.90"
+        },
+        {
+          "ObjectName": "WidgetAnimation'WBP_AA_Quickslots_C:ShowInputs_INST'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.89"
+        }
+      ],
+      "UberGraphFunction": {
+        "ObjectName": "Function'WBP_AA_Quickslots_C:ExecuteUbergraph_WBP_AA_Quickslots'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.2"
+      }
+    },
+    "SuperStruct": {
+      "ObjectName": "Class'UserWidget'",
+      "ObjectPath": "/Script/UMG"
+    },
+    "Children": [
+      {
+        "ObjectName": "Function'WBP_AA_Quickslots_C:Set Expanded'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.5"
+      },
+      {
+        "ObjectName": "Function'WBP_AA_Quickslots_C:Set Collapsed'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.4"
+      },
+      {
+        "ObjectName": "Function'WBP_AA_Quickslots_C:Update Loadout Slots'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.8"
+      },
+      {
+        "ObjectName": "Function'WBP_AA_Quickslots_C:Init'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.3"
+      },
+      {
+        "ObjectName": "Function'WBP_AA_Quickslots_C:Tick'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.7"
+      },
+      {
+        "ObjectName": "Function'WBP_AA_Quickslots_C:Set Showed In HUD'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.6"
+      },
+      {
+        "ObjectName": "Function'WBP_AA_Quickslots_C:ExecuteUbergraph_WBP_AA_Quickslots'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.2"
+      }
+    ],
+    "ChildProperties": [
+      {
+        "Type": "StructProperty",
+        "Name": "UberGraphFrame",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 16,
+        "PropertyFlags": "Transient | DuplicateTransient",
+        "Struct": {
+          "ObjectName": "Class'PointerToUberGraphFrame'",
+          "ObjectPath": "/Script/Engine"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "ShowInputs",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Transient | RepSkip",
+        "PropertyClass": {
+          "ObjectName": "Class'WidgetAnimation'",
+          "ObjectPath": "/Script/UMG"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "Spread",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Transient | RepSkip",
+        "PropertyClass": {
+          "ObjectName": "Class'WidgetAnimation'",
+          "ObjectPath": "/Script/UMG"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "Bottom",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | ExportObject | BlueprintReadOnly | DisableEditOnInstance | InstancedReference | RepSkip | PersistentInstance",
+        "PropertyClass": {
+          "ObjectName": "WidgetBlueprintGeneratedClass'WBP_AA_Quickslots_Button_C'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Button.19"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "Left",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | ExportObject | BlueprintReadOnly | DisableEditOnInstance | InstancedReference | RepSkip | PersistentInstance",
+        "PropertyClass": {
+          "ObjectName": "WidgetBlueprintGeneratedClass'WBP_AA_Quickslots_Button_C'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Button.19"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "Right",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | ExportObject | BlueprintReadOnly | DisableEditOnInstance | InstancedReference | RepSkip | PersistentInstance",
+        "PropertyClass": {
+          "ObjectName": "WidgetBlueprintGeneratedClass'WBP_AA_Quickslots_Button_C'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Button.19"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "Top",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | ExportObject | BlueprintReadOnly | DisableEditOnInstance | InstancedReference | RepSkip | PersistentInstance",
+        "PropertyClass": {
+          "ObjectName": "WidgetBlueprintGeneratedClass'WBP_AA_Quickslots_Button_C'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Button.19"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "WBP_AA_Quickslots_Bindings",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | ExportObject | BlueprintReadOnly | DisableEditOnInstance | InstancedReference | RepSkip | PersistentInstance",
+        "PropertyClass": {
+          "ObjectName": "WidgetBlueprintGeneratedClass'WBP_AA_Quickslots_Bindings_C'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Bindings.19"
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "Hub Mode",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 1,
+        "PropertyFlags": "Edit | BlueprintVisible",
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "EnumProperty",
+        "Name": "Day Phase",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 1,
+        "PropertyFlags": "Edit | BlueprintVisible | DisableEditOnInstance",
+        "Enum": {
+          "ObjectName": "Class'EDayPhase'",
+          "ObjectPath": "/Script/DogwoodSystem"
+        },
+        "UnderlyingProp": {
+          "Type": "ByteProperty",
+          "Name": "UnderlyingType",
+          "Flags": "RF_Public",
+          "ElementSize": 1,
+          "Enum": null
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "Expand",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 1,
+        "PropertyFlags": "Edit | BlueprintVisible | DisableEditOnInstance",
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      }
+    ],
+    "FuncMap": {
+      "ExecuteUbergraph_WBP_AA_Quickslots": {
+        "ObjectName": "Function'WBP_AA_Quickslots_C:ExecuteUbergraph_WBP_AA_Quickslots'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.2"
+      },
+      "Set Showed In HUD": {
+        "ObjectName": "Function'WBP_AA_Quickslots_C:Set Showed In HUD'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.6"
+      },
+      "Tick": {
+        "ObjectName": "Function'WBP_AA_Quickslots_C:Tick'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.7"
+      },
+      "Init": {
+        "ObjectName": "Function'WBP_AA_Quickslots_C:Init'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.3"
+      },
+      "Update Loadout Slots": {
+        "ObjectName": "Function'WBP_AA_Quickslots_C:Update Loadout Slots'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.8"
+      },
+      "Set Collapsed": {
+        "ObjectName": "Function'WBP_AA_Quickslots_C:Set Collapsed'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.4"
+      },
+      "Set Expanded": {
+        "ObjectName": "Function'WBP_AA_Quickslots_C:Set Expanded'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.5"
+      }
+    },
+    "ClassFlags": "CLASS_ReplicationDataIsSetUp | CLASS_EditInlineNew | CLASS_CompiledFromBlueprint | CLASS_DefaultToInstanced | CLASS_HasInstancedReference",
+    "ClassWithin": {
+      "ObjectName": "Class'Object'",
+      "ObjectPath": "/Script/CoreUObject"
+    },
+    "ClassConfigName": "Engine",
+    "bCooked": true,
+    "ClassDefaultObject": {
+      "ObjectName": "WBP_AA_Quickslots_C'Default__WBP_AA_Quickslots_C'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.88"
+    },
+    "EditorTags": {
+      "BlueprintType": "BPTYPE_Normal"
+    }
+  },
+  {
+    "Type": "WidgetTree",
+    "Name": "WidgetTree",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'WidgetTree'",
+    "Outer": {
+      "ObjectName": "WidgetBlueprintGeneratedClass'WBP_AA_Quickslots_C'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.91"
+    },
+    "Properties": {
+      "RootWidget": {
+        "ObjectName": "SizeBox'WBP_AA_Quickslots_C:WidgetTree.SizeBox_1'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.81"
+      }
+    }
+  }
+]

@@ -1,0 +1,1060 @@
+[
+  {
+    "Type": "DWW_RichText_C",
+    "Name": "ComboLabel",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "BlueprintGeneratedClass'/Game/_Dawnwalker/UI/_Unified/BaseWidgets/DWW_RichText.DWW_RichText_C'",
+    "Outer": {
+      "ObjectName": "WidgetTree'WBP_SpecialAttack_C:WidgetTree'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack.16"
+    },
+    "Template": {
+      "ObjectName": "DWW_RichText_C'Default__DWW_RichText_C'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/BaseWidgets/DWW_RichText.1"
+    },
+    "Properties": {
+      "DefaultTextStyleOverrideClass": {
+        "ObjectName": "BlueprintGeneratedClass'DWS_BaseTextStyle_C'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/Styles/DWS_BaseTextStyle.0"
+      },
+      "Text": {
+        "CultureInvariantString": "+<inputImg id=\"IA_Combat_LightAttack\"/>+<inputimg id=\"IA_Combat_Block\"/>"
+      },
+      "DecoratorClasses": [
+        {
+          "ObjectName": "BlueprintGeneratedClass'BP_RichTextBlockInputImageDecorator_C'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/Tutorial/BP_RichTextBlockInputImageDecorator.0"
+        }
+      ],
+      "DefaultTextStyleOverride": {
+        "Font": {
+          "FontObject": {
+            "ObjectName": "Font'Afacad'",
+            "ObjectPath": "/Game/_Dawnwalker/UI/Fonts/Afacad.0"
+          },
+          "TypefaceFontName": "Regular",
+          "Size": 33.0
+        },
+        "ColorAndOpacity": {
+          "SpecifiedColor": {
+            "R": 0.417885,
+            "G": 0.361307,
+            "B": 0.287441,
+            "A": 1.0,
+            "Hex": "ADA292"
+          }
+        },
+        "ShadowOffset": {
+          "X": 0.0,
+          "Y": 2.0
+        }
+      },
+      "Slot": {
+        "ObjectName": "HorizontalBoxSlot'WBP_SpecialAttack_C:WidgetTree.HorizontalBox_0.HorizontalBoxSlot_0'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack.11"
+      }
+    }
+  },
+  {
+    "Type": "Function",
+    "Name": "Construct",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "WidgetBlueprintGeneratedClass'WBP_SpecialAttack_C'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack.15"
+    },
+    "SuperStruct": {
+      "ObjectName": "Class'UserWidget:Construct'",
+      "ObjectPath": "/Script/UMG"
+    },
+    "FunctionFlags": "FUNC_BlueprintCosmetic | FUNC_Event | FUNC_Public | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "Destruct",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "WidgetBlueprintGeneratedClass'WBP_SpecialAttack_C'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack.15"
+    },
+    "SuperStruct": {
+      "ObjectName": "Class'UserWidget:Destruct'",
+      "ObjectPath": "/Script/UMG"
+    },
+    "FunctionFlags": "FUNC_BlueprintCosmetic | FUNC_Event | FUNC_Public | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "ExecuteUbergraph_WBP_SpecialAttack",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "WidgetBlueprintGeneratedClass'WBP_SpecialAttack_C'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack.15"
+    },
+    "ChildProperties": [
+      {
+        "Type": "IntProperty",
+        "Name": "EntryPoint",
+        "Flags": "RF_Public",
+        "ElementSize": 4,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm"
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_GetPlayerController_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'PlayerController'",
+          "ObjectPath": "/Script/Engine"
+        }
+      },
+      {
+        "Type": "DelegateProperty",
+        "Name": "K2Node_CreateDelegate_OutputDelegate",
+        "Flags": "RF_Public",
+        "ElementSize": 32,
+        "SignatureFunction": {
+          "ObjectName": "Class'InputMethodChangedDelegate__DelegateSignature'",
+          "ObjectPath": "/Script/CommonInput"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_GetLocalPlayerSubSystemFromPlayerController_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'CommonInputSubsystem'",
+          "ObjectPath": "/Script/CommonInput"
+        }
+      },
+      {
+        "Type": "EnumProperty",
+        "Name": "K2Node_CustomEvent_bNewInputType",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "Enum": {
+          "ObjectName": "Class'ECommonInputType'",
+          "ObjectPath": "/Script/CommonInput"
+        },
+        "UnderlyingProp": {
+          "Type": "ByteProperty",
+          "Name": "UnderlyingType",
+          "Flags": "RF_Public",
+          "ElementSize": 1,
+          "Enum": null
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "K2Node_Event_IsDesignTime",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_Get_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'RebelGameUserSettings'",
+          "ObjectPath": "/Script/RebelSettings"
+        }
+      },
+      {
+        "Type": "StructProperty",
+        "Name": "CallFunc_MakeVector2D_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 16,
+        "Struct": {
+          "ObjectName": "Class'Vector2D'",
+          "ObjectPath": "/Script/CoreUObject"
+        }
+      },
+      {
+        "Type": "DelegateProperty",
+        "Name": "K2Node_CreateDelegate_OutputDelegate_1",
+        "Flags": "RF_Public",
+        "ElementSize": 32,
+        "SignatureFunction": {
+          "ObjectName": "Class'RebelGameUserSettings:OnSettingChanged__DelegateSignature'",
+          "ObjectPath": "/Script/RebelSettings"
+        }
+      },
+      {
+        "Type": "EnumProperty",
+        "Name": "K2Node_CustomEvent_InSetting",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "Enum": {
+          "ObjectName": "Class'ERebelSetting'",
+          "ObjectPath": "/Script/RebelSettings"
+        },
+        "UnderlyingProp": {
+          "Type": "ByteProperty",
+          "Name": "UnderlyingType",
+          "Flags": "RF_Public",
+          "ElementSize": 1,
+          "Enum": null
+        }
+      },
+      {
+        "Type": "FloatProperty",
+        "Name": "K2Node_CustomEvent_InVal",
+        "Flags": "RF_Public",
+        "ElementSize": 4
+      },
+      {
+        "Type": "EnumProperty",
+        "Name": "K2Node_CustomEvent_InSettingChangeMode",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "Enum": {
+          "ObjectName": "Class'ERebelSettingChangeMode'",
+          "ObjectPath": "/Script/RebelSettings"
+        },
+        "UnderlyingProp": {
+          "Type": "ByteProperty",
+          "Name": "UnderlyingType",
+          "Flags": "RF_Public",
+          "ElementSize": 1,
+          "Enum": null
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_Get_ReturnValue_1",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'RebelGameUserSettings'",
+          "ObjectPath": "/Script/RebelSettings"
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "CallFunc_EqualEqual_ByteByte_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      }
+    ],
+    "FunctionFlags": "FUNC_Final | FUNC_UbergraphFunction"
+  },
+  {
+    "Type": "Function",
+    "Name": "Get Item Combo",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "WidgetBlueprintGeneratedClass'WBP_SpecialAttack_C'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack.15"
+    },
+    "ChildProperties": [
+      {
+        "Type": "ObjectProperty",
+        "Name": "In Item",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "PropertyClass": {
+          "ObjectName": "Class'ItemBaseDataAsset'",
+          "ObjectPath": "/Script/DogwoodInventory"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "Combo",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "Parm | OutParm",
+        "PropertyClass": {
+          "ObjectName": "Class'ItemComboDataAsset'",
+          "ObjectPath": "/Script/DogwoodInventory"
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "CallFunc_IsValid_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      }
+    ],
+    "FunctionFlags": "FUNC_Public | FUNC_HasOutParms | FUNC_BlueprintCallable | FUNC_BlueprintEvent | FUNC_BlueprintPure"
+  },
+  {
+    "Type": "Function",
+    "Name": "Has Item Combo",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "WidgetBlueprintGeneratedClass'WBP_SpecialAttack_C'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack.15"
+    },
+    "ChildProperties": [
+      {
+        "Type": "BoolProperty",
+        "Name": "ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "PropertyFlags": "Parm | OutParm | ReturnParm",
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_Get_Item_Combo_Combo",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'ItemComboDataAsset'",
+          "ObjectPath": "/Script/DogwoodInventory"
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "CallFunc_IsValid_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      }
+    ],
+    "FunctionFlags": "FUNC_Public | FUNC_HasOutParms | FUNC_BlueprintCallable | FUNC_BlueprintEvent | FUNC_BlueprintPure"
+  },
+  {
+    "Type": "Function",
+    "Name": "On Input Method Changed",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "WidgetBlueprintGeneratedClass'WBP_SpecialAttack_C'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack.15"
+    },
+    "ChildProperties": [
+      {
+        "Type": "EnumProperty",
+        "Name": "bNewInputType",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "Enum": {
+          "ObjectName": "Class'ECommonInputType'",
+          "ObjectPath": "/Script/CommonInput"
+        },
+        "UnderlyingProp": {
+          "Type": "ByteProperty",
+          "Name": "UnderlyingType",
+          "Flags": "RF_Public",
+          "ElementSize": 1,
+          "Enum": null
+        }
+      }
+    ],
+    "FunctionFlags": "FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "On Setting Changed",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "WidgetBlueprintGeneratedClass'WBP_SpecialAttack_C'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack.15"
+    },
+    "ChildProperties": [
+      {
+        "Type": "EnumProperty",
+        "Name": "InSetting",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "Enum": {
+          "ObjectName": "Class'ERebelSetting'",
+          "ObjectPath": "/Script/RebelSettings"
+        },
+        "UnderlyingProp": {
+          "Type": "ByteProperty",
+          "Name": "UnderlyingType",
+          "Flags": "RF_Public",
+          "ElementSize": 1,
+          "Enum": null
+        }
+      },
+      {
+        "Type": "FloatProperty",
+        "Name": "InVal",
+        "Flags": "RF_Public",
+        "ElementSize": 4,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm"
+      },
+      {
+        "Type": "EnumProperty",
+        "Name": "InSettingChangeMode",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "Enum": {
+          "ObjectName": "Class'ERebelSettingChangeMode'",
+          "ObjectPath": "/Script/RebelSettings"
+        },
+        "UnderlyingProp": {
+          "Type": "ByteProperty",
+          "Name": "UnderlyingType",
+          "Flags": "RF_Public",
+          "ElementSize": 1,
+          "Enum": null
+        }
+      }
+    ],
+    "FunctionFlags": "FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "PreConstruct",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "WidgetBlueprintGeneratedClass'WBP_SpecialAttack_C'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack.15"
+    },
+    "SuperStruct": {
+      "ObjectName": "Class'UserWidget:PreConstruct'",
+      "ObjectPath": "/Script/UMG"
+    },
+    "ChildProperties": [
+      {
+        "Type": "BoolProperty",
+        "Name": "IsDesignTime",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      }
+    ],
+    "FunctionFlags": "FUNC_BlueprintCosmetic | FUNC_Event | FUNC_Public | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "Update Special",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "WidgetBlueprintGeneratedClass'WBP_SpecialAttack_C'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack.15"
+    },
+    "ChildProperties": [
+      {
+        "Type": "ObjectProperty",
+        "Name": "Item",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "PropertyClass": {
+          "ObjectName": "Class'ItemBaseDataAsset'",
+          "ObjectPath": "/Script/DogwoodInventory"
+        }
+      },
+      {
+        "Type": "FloatProperty",
+        "Name": "Temp_real_Variable",
+        "Flags": "RF_Public",
+        "ElementSize": 4
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "Temp_bool_Variable",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "EnumProperty",
+        "Name": "Temp_byte_Variable",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "Enum": {
+          "ObjectName": "Class'ESlateVisibility'",
+          "ObjectPath": "/Script/UMG"
+        },
+        "UnderlyingProp": {
+          "Type": "ByteProperty",
+          "Name": "UnderlyingType",
+          "Flags": "RF_Public",
+          "ElementSize": 1,
+          "Enum": null
+        }
+      },
+      {
+        "Type": "EnumProperty",
+        "Name": "Temp_byte_Variable_1",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "Enum": {
+          "ObjectName": "Class'ESlateVisibility'",
+          "ObjectPath": "/Script/UMG"
+        },
+        "UnderlyingProp": {
+          "Type": "ByteProperty",
+          "Name": "UnderlyingType",
+          "Flags": "RF_Public",
+          "ElementSize": 1,
+          "Enum": null
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "Temp_bool_Variable_1",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "TextProperty",
+        "Name": "Temp_text_Variable",
+        "Flags": "RF_Public",
+        "ElementSize": 16
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "CallFunc_AreInstantCombosEnabled_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "TextProperty",
+        "Name": "CallFunc_SelectText_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 16
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "CallFunc_AreInstantCombosEnabled_ReturnValue_1",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "CallFunc_Not_PreBool_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "FloatProperty",
+        "Name": "Temp_real_Variable_1",
+        "Flags": "RF_Public",
+        "ElementSize": 4
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "Temp_bool_Variable_2",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_Get_Item_Combo_Combo",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'ItemComboDataAsset'",
+          "ObjectPath": "/Script/DogwoodInventory"
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "CallFunc_IsValid_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "CallFunc_IsValid_ReturnValue_1",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "CallFunc_Not_PreBool_ReturnValue_1",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "CallFunc_BooleanAND_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "CallFunc_Not_PreBool_ReturnValue_2",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "EnumProperty",
+        "Name": "CallFunc_ComboTagToAttackSwingDirection_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "Enum": {
+          "ObjectName": "Class'EWeaponSwingDirection'",
+          "ObjectPath": "/Script/DogwoodCombat"
+        },
+        "UnderlyingProp": {
+          "Type": "ByteProperty",
+          "Name": "UnderlyingType",
+          "Flags": "RF_Public",
+          "ElementSize": 1,
+          "Enum": null
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "CallFunc_IsValid_ReturnValue_2",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "FloatProperty",
+        "Name": "K2Node_Select_Default",
+        "Flags": "RF_Public",
+        "ElementSize": 4
+      },
+      {
+        "Type": "TextProperty",
+        "Name": "K2Node_Select_Default_1",
+        "Flags": "RF_Public",
+        "ElementSize": 16
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "CallFunc_BooleanAND_ReturnValue_1",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "EnumProperty",
+        "Name": "K2Node_Select_Default_2",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "Enum": {
+          "ObjectName": "Class'ESlateVisibility'",
+          "ObjectPath": "/Script/UMG"
+        },
+        "UnderlyingProp": {
+          "Type": "ByteProperty",
+          "Name": "UnderlyingType",
+          "Flags": "RF_Public",
+          "ElementSize": 1,
+          "Enum": null
+        }
+      }
+    ],
+    "FunctionFlags": "FUNC_Public | FUNC_HasDefaults | FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "HorizontalBox",
+    "Name": "HorizontalBox_0",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'HorizontalBox'",
+    "Outer": {
+      "ObjectName": "WidgetTree'WBP_SpecialAttack_C:WidgetTree'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack.16"
+    },
+    "Properties": {
+      "Slots": [
+        {
+          "ObjectName": "HorizontalBoxSlot'WBP_SpecialAttack_C:WidgetTree.HorizontalBox_0.HorizontalBoxSlot_1'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack.12"
+        },
+        {
+          "ObjectName": "HorizontalBoxSlot'WBP_SpecialAttack_C:WidgetTree.HorizontalBox_0.HorizontalBoxSlot_0'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack.11"
+        }
+      ]
+    }
+  },
+  {
+    "Type": "HorizontalBoxSlot",
+    "Name": "HorizontalBoxSlot_0",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'HorizontalBoxSlot'",
+    "Outer": {
+      "ObjectName": "HorizontalBox'WBP_SpecialAttack_C:WidgetTree.HorizontalBox_0'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack.10"
+    },
+    "Properties": {
+      "VerticalAlignment": "EVerticalAlignment::VAlign_Center",
+      "Parent": {
+        "ObjectName": "HorizontalBox'WBP_SpecialAttack_C:WidgetTree.HorizontalBox_0'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack.10"
+      },
+      "Content": {
+        "ObjectName": "DWW_RichText_C'WBP_SpecialAttack_C:WidgetTree.ComboLabel'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack.0"
+      }
+    }
+  },
+  {
+    "Type": "HorizontalBoxSlot",
+    "Name": "HorizontalBoxSlot_1",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'HorizontalBoxSlot'",
+    "Outer": {
+      "ObjectName": "HorizontalBox'WBP_SpecialAttack_C:WidgetTree.HorizontalBox_0'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack.10"
+    },
+    "Properties": {
+      "Padding": {
+        "Top": 5.0,
+        "Right": 5.0
+      },
+      "HorizontalAlignment": "EHorizontalAlignment::HAlign_Center",
+      "VerticalAlignment": "EVerticalAlignment::VAlign_Center",
+      "Parent": {
+        "ObjectName": "HorizontalBox'WBP_SpecialAttack_C:WidgetTree.HorizontalBox_0'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack.10"
+      },
+      "Content": {
+        "ObjectName": "WBP_ItemCombo_Arrow_C'WBP_SpecialAttack_C:WidgetTree.Arrow'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack.13"
+      }
+    }
+  },
+  {
+    "Type": "WBP_ItemCombo_Arrow_C",
+    "Name": "Arrow",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "WidgetBlueprintGeneratedClass'/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_ItemCombo_Arrow.WBP_ItemCombo_Arrow_C'",
+    "Outer": {
+      "ObjectName": "WidgetTree'WBP_SpecialAttack_C:WidgetTree'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack.16"
+    },
+    "Template": {
+      "ObjectName": "WBP_ItemCombo_Arrow_C'Default__WBP_ItemCombo_Arrow_C'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_ItemCombo_Arrow.5"
+    },
+    "Properties": {
+      "Slot": {
+        "ObjectName": "HorizontalBoxSlot'WBP_SpecialAttack_C:WidgetTree.HorizontalBox_0.HorizontalBoxSlot_1'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack.12"
+      }
+    }
+  },
+  {
+    "Type": "WBP_SpecialAttack_C",
+    "Name": "Default__WBP_SpecialAttack_C",
+    "Flags": "RF_Public | RF_ClassDefaultObject | RF_ArchetypeObject | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "WidgetBlueprintGeneratedClass'/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack.WBP_SpecialAttack_C'",
+    "Package": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack",
+    "Properties": {
+      "UberGraphFrame": {},
+      "Arrow Scale": 1.0,
+      "bHasScriptImplementedTick": false,
+      "bHasScriptImplementedPaint": false
+    }
+  },
+  {
+    "Type": "WidgetBlueprintGeneratedClass",
+    "Name": "WBP_SpecialAttack_C",
+    "Flags": "RF_Public | RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'WidgetBlueprintGeneratedClass'",
+    "Package": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack",
+    "Properties": {
+      "WidgetTree": {
+        "ObjectName": "WidgetTree'WBP_SpecialAttack_C:WidgetTree'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack.16"
+      },
+      "UberGraphFunction": {
+        "ObjectName": "Function'WBP_SpecialAttack_C:ExecuteUbergraph_WBP_SpecialAttack'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack.3"
+      }
+    },
+    "SuperStruct": {
+      "ObjectName": "Class'UserWidget'",
+      "ObjectPath": "/Script/UMG"
+    },
+    "Children": [
+      {
+        "ObjectName": "Function'WBP_SpecialAttack_C:Has Item Combo'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack.5"
+      },
+      {
+        "ObjectName": "Function'WBP_SpecialAttack_C:Update Special'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack.9"
+      },
+      {
+        "ObjectName": "Function'WBP_SpecialAttack_C:Get Item Combo'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack.4"
+      },
+      {
+        "ObjectName": "Function'WBP_SpecialAttack_C:Construct'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack.1"
+      },
+      {
+        "ObjectName": "Function'WBP_SpecialAttack_C:Destruct'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack.2"
+      },
+      {
+        "ObjectName": "Function'WBP_SpecialAttack_C:On Input Method Changed'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack.6"
+      },
+      {
+        "ObjectName": "Function'WBP_SpecialAttack_C:PreConstruct'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack.8"
+      },
+      {
+        "ObjectName": "Function'WBP_SpecialAttack_C:On Setting Changed'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack.7"
+      },
+      {
+        "ObjectName": "Function'WBP_SpecialAttack_C:ExecuteUbergraph_WBP_SpecialAttack'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack.3"
+      }
+    ],
+    "ChildProperties": [
+      {
+        "Type": "StructProperty",
+        "Name": "UberGraphFrame",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 16,
+        "PropertyFlags": "Transient | DuplicateTransient",
+        "Struct": {
+          "ObjectName": "Class'PointerToUberGraphFrame'",
+          "ObjectPath": "/Script/Engine"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "Arrow",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | ExportObject | BlueprintReadOnly | DisableEditOnInstance | InstancedReference | RepSkip | PersistentInstance",
+        "PropertyClass": {
+          "ObjectName": "WidgetBlueprintGeneratedClass'WBP_ItemCombo_Arrow_C'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_ItemCombo_Arrow.6"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "ComboLabel",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | ExportObject | BlueprintReadOnly | DisableEditOnInstance | InstancedReference | RepSkip | PersistentInstance",
+        "PropertyClass": {
+          "ObjectName": "BlueprintGeneratedClass'DWW_RichText_C'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/BaseWidgets/DWW_RichText.0"
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "Collapsible",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 1,
+        "PropertyFlags": "Edit | BlueprintVisible",
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "Shown Item",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 8,
+        "PropertyFlags": "Edit | BlueprintVisible | DisableEditOnInstance",
+        "PropertyClass": {
+          "ObjectName": "Class'ItemBaseDataAsset'",
+          "ObjectPath": "/Script/DogwoodInventory"
+        }
+      },
+      {
+        "Type": "DoubleProperty",
+        "Name": "Arrow Scale",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 8,
+        "PropertyFlags": "Edit | BlueprintVisible"
+      }
+    ],
+    "FuncMap": {
+      "ExecuteUbergraph_WBP_SpecialAttack": {
+        "ObjectName": "Function'WBP_SpecialAttack_C:ExecuteUbergraph_WBP_SpecialAttack'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack.3"
+      },
+      "On Setting Changed": {
+        "ObjectName": "Function'WBP_SpecialAttack_C:On Setting Changed'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack.7"
+      },
+      "PreConstruct": {
+        "ObjectName": "Function'WBP_SpecialAttack_C:PreConstruct'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack.8"
+      },
+      "On Input Method Changed": {
+        "ObjectName": "Function'WBP_SpecialAttack_C:On Input Method Changed'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack.6"
+      },
+      "Destruct": {
+        "ObjectName": "Function'WBP_SpecialAttack_C:Destruct'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack.2"
+      },
+      "Construct": {
+        "ObjectName": "Function'WBP_SpecialAttack_C:Construct'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack.1"
+      },
+      "Get Item Combo": {
+        "ObjectName": "Function'WBP_SpecialAttack_C:Get Item Combo'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack.4"
+      },
+      "Update Special": {
+        "ObjectName": "Function'WBP_SpecialAttack_C:Update Special'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack.9"
+      },
+      "Has Item Combo": {
+        "ObjectName": "Function'WBP_SpecialAttack_C:Has Item Combo'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack.5"
+      }
+    },
+    "ClassFlags": "CLASS_ReplicationDataIsSetUp | CLASS_EditInlineNew | CLASS_CompiledFromBlueprint | CLASS_DefaultToInstanced | CLASS_HasInstancedReference",
+    "ClassWithin": {
+      "ObjectName": "Class'Object'",
+      "ObjectPath": "/Script/CoreUObject"
+    },
+    "ClassConfigName": "Engine",
+    "bCooked": true,
+    "ClassDefaultObject": {
+      "ObjectName": "WBP_SpecialAttack_C'Default__WBP_SpecialAttack_C'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack.14"
+    },
+    "EditorTags": {
+      "BlueprintType": "BPTYPE_Normal"
+    }
+  },
+  {
+    "Type": "WidgetTree",
+    "Name": "WidgetTree",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'WidgetTree'",
+    "Outer": {
+      "ObjectName": "WidgetBlueprintGeneratedClass'WBP_SpecialAttack_C'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack.15"
+    },
+    "Properties": {
+      "RootWidget": {
+        "ObjectName": "HorizontalBox'WBP_SpecialAttack_C:WidgetTree.HorizontalBox_0'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/GameHub/Inventory/WeaponCombo/WBP_SpecialAttack.10"
+      }
+    }
+  }
+]

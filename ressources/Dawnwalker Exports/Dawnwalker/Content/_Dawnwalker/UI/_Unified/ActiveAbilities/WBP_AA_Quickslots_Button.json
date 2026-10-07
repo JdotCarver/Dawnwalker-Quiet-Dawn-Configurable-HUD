@@ -1,0 +1,1354 @@
+[
+  {
+    "Type": "Function",
+    "Name": "BP_OnClicked",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "WidgetBlueprintGeneratedClass'WBP_AA_Quickslots_Button_C'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Button.19"
+    },
+    "SuperStruct": {
+      "ObjectName": "Class'CommonButtonBase:BP_OnClicked'",
+      "ObjectPath": "/Script/CommonUI"
+    },
+    "FunctionFlags": "FUNC_Event | FUNC_Protected | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "BP_OnReleased",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "WidgetBlueprintGeneratedClass'WBP_AA_Quickslots_Button_C'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Button.19"
+    },
+    "SuperStruct": {
+      "ObjectName": "Class'CommonButtonBase:BP_OnReleased'",
+      "ObjectPath": "/Script/CommonUI"
+    },
+    "FunctionFlags": "FUNC_Event | FUNC_Protected | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "Construct",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "WidgetBlueprintGeneratedClass'WBP_AA_Quickslots_Button_C'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Button.19"
+    },
+    "SuperStruct": {
+      "ObjectName": "Class'UserWidget:Construct'",
+      "ObjectPath": "/Script/UMG"
+    },
+    "FunctionFlags": "FUNC_BlueprintCosmetic | FUNC_Event | FUNC_Public | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "Destruct",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "WidgetBlueprintGeneratedClass'WBP_AA_Quickslots_Button_C'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Button.19"
+    },
+    "SuperStruct": {
+      "ObjectName": "Class'UserWidget:Destruct'",
+      "ObjectPath": "/Script/UMG"
+    },
+    "FunctionFlags": "FUNC_BlueprintCosmetic | FUNC_Event | FUNC_Public | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "Event Trait Equipped Changed",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "WidgetBlueprintGeneratedClass'WBP_AA_Quickslots_Button_C'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Button.19"
+    },
+    "ChildProperties": [
+      {
+        "Type": "ObjectProperty",
+        "Name": "Trait",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "ConstParm | BlueprintVisible | BlueprintReadOnly | Parm",
+        "PropertyClass": {
+          "ObjectName": "Class'TraitAsset'",
+          "ObjectPath": "/Script/DogwoodCharacterDevelopment"
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "bEquipped",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "PropertyFlags": "ConstParm | BlueprintVisible | BlueprintReadOnly | Parm",
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "IntProperty",
+        "Name": "SlotId",
+        "Flags": "RF_Public",
+        "ElementSize": 4,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm"
+      }
+    ],
+    "FunctionFlags": "FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "ExecuteUbergraph_WBP_AA_Quickslots_Button",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "WidgetBlueprintGeneratedClass'WBP_AA_Quickslots_Button_C'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Button.19"
+    },
+    "ChildProperties": [
+      {
+        "Type": "IntProperty",
+        "Name": "EntryPoint",
+        "Flags": "RF_Public",
+        "ElementSize": 4,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm"
+      },
+      {
+        "Type": "StructProperty",
+        "Name": "K2Node_CustomEvent_Ability",
+        "Flags": "RF_Public",
+        "ElementSize": 2,
+        "Struct": {
+          "ObjectName": "Class'CharacterDevelopmentLoadoutSlotInfo'",
+          "ObjectPath": "/Script/DogwoodCharacterDevelopment"
+        }
+      },
+      {
+        "Type": "DelegateProperty",
+        "Name": "K2Node_CreateDelegate_OutputDelegate",
+        "Flags": "RF_Public",
+        "ElementSize": 32,
+        "SignatureFunction": {
+          "ObjectName": "Class'QuickslotUpdateDelegate__DelegateSignature'",
+          "ObjectPath": "/Script/DogwoodSystem"
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "K2Node_Event_IsDesignTime",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_GetGameInstanceSubsystem_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'CharacterDevelopmentSubsystem'",
+          "ObjectPath": "/Script/DogwoodCharacterDevelopment"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_GetWorldSubsystem_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'CharacterDevelopmentQuickslotSubsystem'",
+          "ObjectPath": "/Script/DogwoodCharacterDevelopment"
+        }
+      },
+      {
+        "Type": "EnumProperty",
+        "Name": "K2Node_CustomEvent_Day_Phase",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "Enum": {
+          "ObjectName": "Class'EDayPhase'",
+          "ObjectPath": "/Script/DogwoodSystem"
+        },
+        "UnderlyingProp": {
+          "Type": "ByteProperty",
+          "Name": "UnderlyingType",
+          "Flags": "RF_Public",
+          "ElementSize": 1,
+          "Enum": null
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "K2Node_CustomEvent_Hub_Mode",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_GetWorldSubsystem_ReturnValue_1",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'CharacterDevelopmentQuickslotSubsystem'",
+          "ObjectPath": "/Script/DogwoodCharacterDevelopment"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "K2Node_CustomEvent_Trait",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "ConstParm",
+        "PropertyClass": {
+          "ObjectName": "Class'TraitAsset'",
+          "ObjectPath": "/Script/DogwoodCharacterDevelopment"
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "K2Node_CustomEvent_bEquipped",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "PropertyFlags": "ConstParm",
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "IntProperty",
+        "Name": "K2Node_CustomEvent_SlotId",
+        "Flags": "RF_Public",
+        "ElementSize": 4
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_GetPlayerPawn_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'Pawn'",
+          "ObjectPath": "/Script/Engine"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_GetComponentByClass_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "InstancedReference",
+        "PropertyClass": {
+          "ObjectName": "Class'CombatFocusComponent'",
+          "ObjectPath": "/Script/DogwoodCombat"
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "CallFunc_TryPlanAbility_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "DelegateProperty",
+        "Name": "K2Node_CreateDelegate_OutputDelegate_1",
+        "Flags": "RF_Public",
+        "ElementSize": 32,
+        "SignatureFunction": {
+          "ObjectName": "Class'OnTraitEquippedChangeDelegate__DelegateSignature'",
+          "ObjectPath": "/Script/DogwoodCharacterDevelopment"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "K2Node_CustomEvent_In_Ability",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'FocusAbilityBase'",
+          "ObjectPath": "/Script/DogwoodFocus"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_Get_Ability_Data_AbilityWidget",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "InstancedReference",
+        "PropertyClass": {
+          "ObjectName": "WidgetBlueprintGeneratedClass'WBP_Combat_Focus_Ability_C'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/CombatFocus/WBP_Combat_Focus_Ability.175"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_Get_Ability_Data_ReturnValue2",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'FocusAbilityBase'",
+          "ObjectPath": "/Script/DogwoodFocus"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_Get_Ability_Data_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'Pawn'",
+          "ObjectPath": "/Script/Engine"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_Get_Ability_Data_ReturnValue3",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'Actor'",
+          "ObjectPath": "/Script/Engine"
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "CallFunc_Get_Ability_Data_Hub_Mode",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "ByteProperty",
+        "Name": "CallFunc_Get_Ability_Data_ReturnValue4",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "Enum": {
+          "ObjectName": "UserDefinedEnum'EActiveAbilityEntryType'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/CombatFocus/EActiveAbilityEntryType.0"
+        }
+      },
+      {
+        "Type": "EnumProperty",
+        "Name": "CallFunc_Get_Ability_Data_Slot_Ability_Type",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "Enum": {
+          "ObjectName": "Class'EFocusAbilityType'",
+          "ObjectPath": "/Script/DogwoodFocus"
+        },
+        "UnderlyingProp": {
+          "Type": "ByteProperty",
+          "Name": "UnderlyingType",
+          "Flags": "RF_Public",
+          "ElementSize": 1,
+          "Enum": null
+        }
+      },
+      {
+        "Type": "IntProperty",
+        "Name": "CallFunc_Get_Ability_Data_ReturnValue5",
+        "Flags": "RF_Public",
+        "ElementSize": 4
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_GetWorldSubsystem_ReturnValue_2",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'CharacterDevelopmentQuickslotSubsystem'",
+          "ObjectPath": "/Script/DogwoodCharacterDevelopment"
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "CallFunc_IsValid_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_GetAbilityInSlot_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'FocusAbilityBase'",
+          "ObjectPath": "/Script/DogwoodFocus"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_GetPlayerPawn_ReturnValue_1",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'Pawn'",
+          "ObjectPath": "/Script/Engine"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_Get_Ability_Target_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'Actor'",
+          "ObjectPath": "/Script/Engine"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_GetComponentByClass_ReturnValue_1",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "InstancedReference",
+        "PropertyClass": {
+          "ObjectName": "Class'CombatFocusComponent'",
+          "ObjectPath": "/Script/DogwoodCombat"
+        }
+      }
+    ],
+    "FunctionFlags": "FUNC_Final | FUNC_UbergraphFunction | FUNC_HasDefaults"
+  },
+  {
+    "Type": "Function",
+    "Name": "Get Ability Data",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "WidgetBlueprintGeneratedClass'WBP_AA_Quickslots_Button_C'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Button.19"
+    },
+    "ChildProperties": [
+      {
+        "Type": "ObjectProperty",
+        "Name": "Ability",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "PropertyClass": {
+          "ObjectName": "Class'FocusAbilityBase'",
+          "ObjectPath": "/Script/DogwoodFocus"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "AbilityWidget",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "Parm | OutParm | InstancedReference",
+        "PropertyClass": {
+          "ObjectName": "WidgetBlueprintGeneratedClass'WBP_Combat_Focus_Ability_C'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/CombatFocus/WBP_Combat_Focus_Ability.175"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "ReturnValue2",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "Parm | OutParm",
+        "PropertyClass": {
+          "ObjectName": "Class'FocusAbilityBase'",
+          "ObjectPath": "/Script/DogwoodFocus"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "Parm | OutParm | ReturnParm",
+        "PropertyClass": {
+          "ObjectName": "Class'Pawn'",
+          "ObjectPath": "/Script/Engine"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "ReturnValue3",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "Parm | OutParm",
+        "PropertyClass": {
+          "ObjectName": "Class'Actor'",
+          "ObjectPath": "/Script/Engine"
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "Hub Mode",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "PropertyFlags": "Parm | OutParm",
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "ByteProperty",
+        "Name": "ReturnValue4",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "PropertyFlags": "Parm | OutParm",
+        "Enum": {
+          "ObjectName": "UserDefinedEnum'EActiveAbilityEntryType'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/CombatFocus/EActiveAbilityEntryType.0"
+        }
+      },
+      {
+        "Type": "EnumProperty",
+        "Name": "Slot Ability Type",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "PropertyFlags": "Parm | OutParm",
+        "Enum": {
+          "ObjectName": "Class'EFocusAbilityType'",
+          "ObjectPath": "/Script/DogwoodFocus"
+        },
+        "UnderlyingProp": {
+          "Type": "ByteProperty",
+          "Name": "UnderlyingType",
+          "Flags": "RF_Public",
+          "ElementSize": 1,
+          "Enum": null
+        }
+      },
+      {
+        "Type": "IntProperty",
+        "Name": "ReturnValue5",
+        "Flags": "RF_Public",
+        "ElementSize": 4,
+        "PropertyFlags": "Parm | OutParm"
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "Temp_bool_Variable",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "CallFunc_Is_Ability_Allowed_Result",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "CallFunc_Is_Ability_Allowed_Result_1",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "Temp_object_Variable",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'FocusAbilityBase'",
+          "ObjectPath": "/Script/DogwoodFocus"
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "Temp_bool_Variable_1",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "K2Node_Select_Default",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'FocusAbilityBase'",
+          "ObjectPath": "/Script/DogwoodFocus"
+        }
+      },
+      {
+        "Type": "ByteProperty",
+        "Name": "Temp_byte_Variable",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "Enum": {
+          "ObjectName": "UserDefinedEnum'EActiveAbilityEntryType'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/CombatFocus/EActiveAbilityEntryType.0"
+        }
+      },
+      {
+        "Type": "ByteProperty",
+        "Name": "Temp_byte_Variable_1",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "Enum": {
+          "ObjectName": "UserDefinedEnum'EActiveAbilityEntryType'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/CombatFocus/EActiveAbilityEntryType.0"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_Get_Ability_Target_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'Actor'",
+          "ObjectPath": "/Script/Engine"
+        }
+      },
+      {
+        "Type": "ByteProperty",
+        "Name": "K2Node_Select_Default_1",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "Enum": {
+          "ObjectName": "UserDefinedEnum'EActiveAbilityEntryType'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/CombatFocus/EActiveAbilityEntryType.0"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_GetPlayerPawn_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'Pawn'",
+          "ObjectPath": "/Script/Engine"
+        }
+      },
+      {
+        "Type": "IntProperty",
+        "Name": "CallFunc_Conv_ByteToInt_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 4
+      }
+    ],
+    "FunctionFlags": "FUNC_Public | FUNC_HasOutParms | FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "Get Ability Target",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "WidgetBlueprintGeneratedClass'WBP_AA_Quickslots_Button_C'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Button.19"
+    },
+    "ChildProperties": [
+      {
+        "Type": "ObjectProperty",
+        "Name": "ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "Parm | OutParm | ReturnParm",
+        "PropertyClass": {
+          "ObjectName": "Class'Actor'",
+          "ObjectPath": "/Script/Engine"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_GetPlayerPawn_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'Pawn'",
+          "ObjectPath": "/Script/Engine"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_GetComponentByClass_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "InstancedReference",
+        "PropertyClass": {
+          "ObjectName": "Class'PlayerCombatComponent'",
+          "ObjectPath": "/Script/DogwoodCombat"
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "CallFunc_IsValid_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "CallFunc_IsValid_ReturnValue_1",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_GetTargetedEnemy_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "InstancedReference",
+        "PropertyClass": {
+          "ObjectName": "Class'CombatComponentBase'",
+          "ObjectPath": "/Script/DogwoodCombat"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_GetOwner_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'Actor'",
+          "ObjectPath": "/Script/Engine"
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "CallFunc_IsValid_ReturnValue_2",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      }
+    ],
+    "FunctionFlags": "FUNC_Public | FUNC_HasOutParms | FUNC_BlueprintCallable | FUNC_BlueprintEvent | FUNC_BlueprintPure"
+  },
+  {
+    "Type": "Function",
+    "Name": "Init",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "WidgetBlueprintGeneratedClass'WBP_AA_Quickslots_Button_C'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Button.19"
+    },
+    "ChildProperties": [
+      {
+        "Type": "EnumProperty",
+        "Name": "Day Phase",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "Enum": {
+          "ObjectName": "Class'EDayPhase'",
+          "ObjectPath": "/Script/DogwoodSystem"
+        },
+        "UnderlyingProp": {
+          "Type": "ByteProperty",
+          "Name": "UnderlyingType",
+          "Flags": "RF_Public",
+          "ElementSize": 1,
+          "Enum": null
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "Hub Mode",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      }
+    ],
+    "FunctionFlags": "FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "Is Ability Allowed",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "WidgetBlueprintGeneratedClass'WBP_AA_Quickslots_Button_C'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Button.19"
+    },
+    "ChildProperties": [
+      {
+        "Type": "ObjectProperty",
+        "Name": "Ability",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "PropertyClass": {
+          "ObjectName": "Class'FocusAbilityBase'",
+          "ObjectPath": "/Script/DogwoodFocus"
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "Result",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "PropertyFlags": "Parm | OutParm",
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "CallFunc_IsValid_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "CallFunc_IsAbilityPassive_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      }
+    ],
+    "FunctionFlags": "FUNC_Public | FUNC_HasOutParms | FUNC_BlueprintCallable | FUNC_BlueprintEvent | FUNC_BlueprintPure"
+  },
+  {
+    "Type": "Function",
+    "Name": "PreConstruct",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "WidgetBlueprintGeneratedClass'WBP_AA_Quickslots_Button_C'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Button.19"
+    },
+    "SuperStruct": {
+      "ObjectName": "Class'UserWidget:PreConstruct'",
+      "ObjectPath": "/Script/UMG"
+    },
+    "ChildProperties": [
+      {
+        "Type": "BoolProperty",
+        "Name": "IsDesignTime",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      }
+    ],
+    "FunctionFlags": "FUNC_BlueprintCosmetic | FUNC_Event | FUNC_Public | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "Quickslot Short Triggered__DelegateSignature",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "WidgetBlueprintGeneratedClass'WBP_AA_Quickslots_Button_C'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Button.19"
+    },
+    "FunctionFlags": "FUNC_Public | FUNC_Delegate | FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "Set Ability",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "WidgetBlueprintGeneratedClass'WBP_AA_Quickslots_Button_C'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Button.19"
+    },
+    "ChildProperties": [
+      {
+        "Type": "ObjectProperty",
+        "Name": "In Ability",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "PropertyClass": {
+          "ObjectName": "Class'FocusAbilityBase'",
+          "ObjectPath": "/Script/DogwoodFocus"
+        }
+      }
+    ],
+    "FunctionFlags": "FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "Set Loadout Slot",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "WidgetBlueprintGeneratedClass'WBP_AA_Quickslots_Button_C'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Button.19"
+    },
+    "ChildProperties": [
+      {
+        "Type": "StructProperty",
+        "Name": "Ability",
+        "Flags": "RF_Public",
+        "ElementSize": 2,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "Struct": {
+          "ObjectName": "Class'CharacterDevelopmentLoadoutSlotInfo'",
+          "ObjectPath": "/Script/DogwoodCharacterDevelopment"
+        }
+      }
+    ],
+    "FunctionFlags": "FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "Update Loadout Slot",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "WidgetBlueprintGeneratedClass'WBP_AA_Quickslots_Button_C'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Button.19"
+    },
+    "FunctionFlags": "FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Overlay",
+    "Name": "Overlay_41",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Overlay'",
+    "Outer": {
+      "ObjectName": "WidgetTree'WBP_AA_Quickslots_Button_C:WidgetTree'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Button.20"
+    },
+    "Properties": {
+      "Slots": [
+        {
+          "ObjectName": "OverlaySlot'WBP_AA_Quickslots_Button_C:WidgetTree.Overlay_41.OverlaySlot_0'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Button.16"
+        }
+      ]
+    }
+  },
+  {
+    "Type": "OverlaySlot",
+    "Name": "OverlaySlot_0",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'OverlaySlot'",
+    "Outer": {
+      "ObjectName": "Overlay'WBP_AA_Quickslots_Button_C:WidgetTree.Overlay_41'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Button.15"
+    },
+    "Properties": {
+      "Padding": {
+        "Top": 10.0,
+        "Bottom": -10.0
+      },
+      "HorizontalAlignment": "EHorizontalAlignment::HAlign_Center",
+      "VerticalAlignment": "EVerticalAlignment::VAlign_Center",
+      "Parent": {
+        "ObjectName": "Overlay'WBP_AA_Quickslots_Button_C:WidgetTree.Overlay_41'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Button.15"
+      },
+      "Content": {
+        "ObjectName": "WBP_Combat_Focus_Ability_C'WBP_AA_Quickslots_Button_C:WidgetTree.AbilityWidget'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Button.18"
+      }
+    }
+  },
+  {
+    "Type": "WBP_AA_Quickslots_Button_C",
+    "Name": "Default__WBP_AA_Quickslots_Button_C",
+    "Flags": "RF_Public | RF_ClassDefaultObject | RF_ArchetypeObject | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "WidgetBlueprintGeneratedClass'/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Button.WBP_AA_Quickslots_Button_C'",
+    "Package": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Button",
+    "Template": {
+      "ObjectName": "DWW_Button_Blank_C'Default__DWW_Button_Blank_C'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/BaseWidgets/DWW_Button_Blank.0"
+    },
+    "Properties": {
+      "UberGraphFrame": {},
+      "Quickslot Short Triggered": {
+        "InvocationList": []
+      },
+      "Hub Mode": true,
+      "Style": {
+        "ObjectName": "BlueprintGeneratedClass'DWS_Button_SingleMaterialButtonStyle_C'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/Styles/DWS_Button_SingleMaterialButtonStyle.0"
+      },
+      "Priority": 1000,
+      "bIsFocusable": false
+    }
+  },
+  {
+    "Type": "WBP_Combat_Focus_Ability_C",
+    "Name": "AbilityWidget",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "WidgetBlueprintGeneratedClass'/Game/_Dawnwalker/UI/_Unified/HUD/CombatFocus/WBP_Combat_Focus_Ability.WBP_Combat_Focus_Ability_C'",
+    "Outer": {
+      "ObjectName": "WidgetTree'WBP_AA_Quickslots_Button_C:WidgetTree'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Button.20"
+    },
+    "Template": {
+      "ObjectName": "WBP_Combat_Focus_Ability_C'Default__WBP_Combat_Focus_Ability_C'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/CombatFocus/WBP_Combat_Focus_Ability.167"
+    },
+    "Properties": {
+      "Display Cooldown Label": false,
+      "Slot": {
+        "ObjectName": "OverlaySlot'WBP_AA_Quickslots_Button_C:WidgetTree.Overlay_41.OverlaySlot_0'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Button.16"
+      }
+    }
+  },
+  {
+    "Type": "WidgetBlueprintGeneratedClass",
+    "Name": "WBP_AA_Quickslots_Button_C",
+    "Flags": "RF_Public | RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'WidgetBlueprintGeneratedClass'",
+    "Package": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Button",
+    "Super": {
+      "ObjectName": "WidgetBlueprintGeneratedClass'DWW_Button_Blank_C'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/BaseWidgets/DWW_Button_Blank.5"
+    },
+    "Properties": {
+      "WidgetTree": {
+        "ObjectName": "WidgetTree'WBP_AA_Quickslots_Button_C:WidgetTree'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Button.20"
+      },
+      "bClassRequiresNativeTick": true,
+      "NamedSlots": [
+        "ButtonContent"
+      ],
+      "UberGraphFunction": {
+        "ObjectName": "Function'WBP_AA_Quickslots_Button_C:ExecuteUbergraph_WBP_AA_Quickslots_Button'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Button.5"
+      }
+    },
+    "Children": [
+      {
+        "ObjectName": "Function'WBP_AA_Quickslots_Button_C:Get Ability Target'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Button.7"
+      },
+      {
+        "ObjectName": "Function'WBP_AA_Quickslots_Button_C:Get Ability Data'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Button.6"
+      },
+      {
+        "ObjectName": "Function'WBP_AA_Quickslots_Button_C:Is Ability Allowed'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Button.9"
+      },
+      {
+        "ObjectName": "Function'WBP_AA_Quickslots_Button_C:Set Loadout Slot'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Button.13"
+      },
+      {
+        "ObjectName": "Function'WBP_AA_Quickslots_Button_C:Construct'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Button.2"
+      },
+      {
+        "ObjectName": "Function'WBP_AA_Quickslots_Button_C:BP_OnClicked'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Button.0"
+      },
+      {
+        "ObjectName": "Function'WBP_AA_Quickslots_Button_C:Destruct'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Button.3"
+      },
+      {
+        "ObjectName": "Function'WBP_AA_Quickslots_Button_C:PreConstruct'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Button.10"
+      },
+      {
+        "ObjectName": "Function'WBP_AA_Quickslots_Button_C:Update Loadout Slot'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Button.14"
+      },
+      {
+        "ObjectName": "Function'WBP_AA_Quickslots_Button_C:Init'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Button.8"
+      },
+      {
+        "ObjectName": "Function'WBP_AA_Quickslots_Button_C:Event Trait Equipped Changed'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Button.4"
+      },
+      {
+        "ObjectName": "Function'WBP_AA_Quickslots_Button_C:Set Ability'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Button.12"
+      },
+      {
+        "ObjectName": "Function'WBP_AA_Quickslots_Button_C:BP_OnReleased'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Button.1"
+      },
+      {
+        "ObjectName": "Function'WBP_AA_Quickslots_Button_C:ExecuteUbergraph_WBP_AA_Quickslots_Button'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Button.5"
+      },
+      {
+        "ObjectName": "Function'WBP_AA_Quickslots_Button_C:Quickslot Short Triggered__DelegateSignature'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Button.11"
+      }
+    ],
+    "ChildProperties": [
+      {
+        "Type": "StructProperty",
+        "Name": "UberGraphFrame",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 16,
+        "PropertyFlags": "Transient | DuplicateTransient",
+        "Struct": {
+          "ObjectName": "Class'PointerToUberGraphFrame'",
+          "ObjectPath": "/Script/Engine"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "AbilityWidget",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | ExportObject | BlueprintReadOnly | DisableEditOnInstance | InstancedReference | RepSkip | PersistentInstance",
+        "PropertyClass": {
+          "ObjectName": "WidgetBlueprintGeneratedClass'WBP_Combat_Focus_Ability_C'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/HUD/CombatFocus/WBP_Combat_Focus_Ability.175"
+        }
+      },
+      {
+        "Type": "MulticastInlineDelegateProperty",
+        "Name": "Quickslot Short Triggered",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 24,
+        "PropertyFlags": "Edit | BlueprintVisible | DisableEditOnInstance | BlueprintAssignable | BlueprintCallable",
+        "SignatureFunction": {
+          "ObjectName": "Function'WBP_AA_Quickslots_Button_C:Quickslot Short Triggered__DelegateSignature'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Button.11"
+        }
+      },
+      {
+        "Type": "EnumProperty",
+        "Name": "TargetQuickslot",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 1,
+        "PropertyFlags": "Edit | BlueprintVisible",
+        "Enum": {
+          "ObjectName": "Class'EQuickslot'",
+          "ObjectPath": "/Script/DogwoodSystem"
+        },
+        "UnderlyingProp": {
+          "Type": "ByteProperty",
+          "Name": "UnderlyingType",
+          "Flags": "RF_Public",
+          "ElementSize": 1,
+          "Enum": null
+        }
+      },
+      {
+        "Type": "EnumProperty",
+        "Name": "Day Phase",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 1,
+        "PropertyFlags": "Edit | BlueprintVisible | DisableEditOnInstance",
+        "Enum": {
+          "ObjectName": "Class'EDayPhase'",
+          "ObjectPath": "/Script/DogwoodSystem"
+        },
+        "UnderlyingProp": {
+          "Type": "ByteProperty",
+          "Name": "UnderlyingType",
+          "Flags": "RF_Public",
+          "ElementSize": 1,
+          "Enum": null
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "Hub Mode",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 1,
+        "PropertyFlags": "Edit | BlueprintVisible | DisableEditOnInstance",
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      }
+    ],
+    "FuncMap": {
+      "Quickslot Short Triggered__DelegateSignature": {
+        "ObjectName": "Function'WBP_AA_Quickslots_Button_C:Quickslot Short Triggered__DelegateSignature'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Button.11"
+      },
+      "ExecuteUbergraph_WBP_AA_Quickslots_Button": {
+        "ObjectName": "Function'WBP_AA_Quickslots_Button_C:ExecuteUbergraph_WBP_AA_Quickslots_Button'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Button.5"
+      },
+      "BP_OnReleased": {
+        "ObjectName": "Function'WBP_AA_Quickslots_Button_C:BP_OnReleased'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Button.1"
+      },
+      "Set Ability": {
+        "ObjectName": "Function'WBP_AA_Quickslots_Button_C:Set Ability'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Button.12"
+      },
+      "Event Trait Equipped Changed": {
+        "ObjectName": "Function'WBP_AA_Quickslots_Button_C:Event Trait Equipped Changed'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Button.4"
+      },
+      "Init": {
+        "ObjectName": "Function'WBP_AA_Quickslots_Button_C:Init'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Button.8"
+      },
+      "Update Loadout Slot": {
+        "ObjectName": "Function'WBP_AA_Quickslots_Button_C:Update Loadout Slot'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Button.14"
+      },
+      "PreConstruct": {
+        "ObjectName": "Function'WBP_AA_Quickslots_Button_C:PreConstruct'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Button.10"
+      },
+      "Destruct": {
+        "ObjectName": "Function'WBP_AA_Quickslots_Button_C:Destruct'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Button.3"
+      },
+      "BP_OnClicked": {
+        "ObjectName": "Function'WBP_AA_Quickslots_Button_C:BP_OnClicked'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Button.0"
+      },
+      "Construct": {
+        "ObjectName": "Function'WBP_AA_Quickslots_Button_C:Construct'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Button.2"
+      },
+      "Set Loadout Slot": {
+        "ObjectName": "Function'WBP_AA_Quickslots_Button_C:Set Loadout Slot'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Button.13"
+      },
+      "Is Ability Allowed": {
+        "ObjectName": "Function'WBP_AA_Quickslots_Button_C:Is Ability Allowed'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Button.9"
+      },
+      "Get Ability Data": {
+        "ObjectName": "Function'WBP_AA_Quickslots_Button_C:Get Ability Data'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Button.6"
+      },
+      "Get Ability Target": {
+        "ObjectName": "Function'WBP_AA_Quickslots_Button_C:Get Ability Target'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Button.7"
+      }
+    },
+    "ClassFlags": "CLASS_ReplicationDataIsSetUp | CLASS_EditInlineNew | CLASS_CompiledFromBlueprint | CLASS_DefaultToInstanced | CLASS_HasInstancedReference",
+    "ClassWithin": {
+      "ObjectName": "Class'Object'",
+      "ObjectPath": "/Script/CoreUObject"
+    },
+    "ClassConfigName": "Engine",
+    "bCooked": true,
+    "ClassDefaultObject": {
+      "ObjectName": "WBP_AA_Quickslots_Button_C'Default__WBP_AA_Quickslots_Button_C'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Button.17"
+    },
+    "EditorTags": {
+      "BlueprintType": "BPTYPE_Normal"
+    }
+  },
+  {
+    "Type": "WidgetTree",
+    "Name": "WidgetTree",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'WidgetTree'",
+    "Outer": {
+      "ObjectName": "WidgetBlueprintGeneratedClass'WBP_AA_Quickslots_Button_C'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Button.19"
+    },
+    "Properties": {
+      "NamedSlotBindings": [
+        {
+          "Key": "ButtonContent",
+          "Value": {
+            "ObjectName": "Overlay'WBP_AA_Quickslots_Button_C:WidgetTree.Overlay_41'",
+            "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Button.15"
+          }
+        }
+      ]
+    }
+  }
+]

@@ -1,0 +1,886 @@
+[
+  {
+    "Type": "Function",
+    "Name": "Construct",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "WidgetBlueprintGeneratedClass'WBP_AA_Quickslots_Bindings_C'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Bindings.19"
+    },
+    "SuperStruct": {
+      "ObjectName": "Class'UserWidget:Construct'",
+      "ObjectPath": "/Script/UMG"
+    },
+    "FunctionFlags": "FUNC_BlueprintCosmetic | FUNC_Event | FUNC_Public | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "ExecuteUbergraph_WBP_AA_Quickslots_Bindings",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "WidgetBlueprintGeneratedClass'WBP_AA_Quickslots_Bindings_C'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Bindings.19"
+    },
+    "ChildProperties": [
+      {
+        "Type": "IntProperty",
+        "Name": "EntryPoint",
+        "Flags": "RF_Public",
+        "ElementSize": 4,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm"
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_GetLocalPlayerSubsystem_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'CommonInputSubsystem'",
+          "ObjectPath": "/Script/CommonInput"
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "Temp_bool_Variable",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "EnumProperty",
+        "Name": "Temp_byte_Variable",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "Enum": {
+          "ObjectName": "Class'ESlateVisibility'",
+          "ObjectPath": "/Script/UMG"
+        },
+        "UnderlyingProp": {
+          "Type": "ByteProperty",
+          "Name": "UnderlyingType",
+          "Flags": "RF_Public",
+          "ElementSize": 1,
+          "Enum": null
+        }
+      },
+      {
+        "Type": "EnumProperty",
+        "Name": "Temp_byte_Variable_1",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "Enum": {
+          "ObjectName": "Class'ESlateVisibility'",
+          "ObjectPath": "/Script/UMG"
+        },
+        "UnderlyingProp": {
+          "Type": "ByteProperty",
+          "Name": "UnderlyingType",
+          "Flags": "RF_Public",
+          "ElementSize": 1,
+          "Enum": null
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "Temp_bool_Variable_1",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "EnumProperty",
+        "Name": "Temp_byte_Variable_2",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "Enum": {
+          "ObjectName": "Class'ESlateVisibility'",
+          "ObjectPath": "/Script/UMG"
+        },
+        "UnderlyingProp": {
+          "Type": "ByteProperty",
+          "Name": "UnderlyingType",
+          "Flags": "RF_Public",
+          "ElementSize": 1,
+          "Enum": null
+        }
+      },
+      {
+        "Type": "EnumProperty",
+        "Name": "Temp_byte_Variable_3",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "Enum": {
+          "ObjectName": "Class'ESlateVisibility'",
+          "ObjectPath": "/Script/UMG"
+        },
+        "UnderlyingProp": {
+          "Type": "ByteProperty",
+          "Name": "UnderlyingType",
+          "Flags": "RF_Public",
+          "ElementSize": 1,
+          "Enum": null
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_GetLocalPlayerSubsystem_ReturnValue_1",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'CommonInputSubsystem'",
+          "ObjectPath": "/Script/CommonInput"
+        }
+      },
+      {
+        "Type": "EnumProperty",
+        "Name": "CallFunc_GetCurrentInputType_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "Enum": {
+          "ObjectName": "Class'ECommonInputType'",
+          "ObjectPath": "/Script/CommonInput"
+        },
+        "UnderlyingProp": {
+          "Type": "ByteProperty",
+          "Name": "UnderlyingType",
+          "Flags": "RF_Public",
+          "ElementSize": 1,
+          "Enum": null
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "K2Node_Event_IsDesignTime",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "EnumProperty",
+        "Name": "K2Node_CustomEvent_bNewInputType",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "Enum": {
+          "ObjectName": "Class'ECommonInputType'",
+          "ObjectPath": "/Script/CommonInput"
+        },
+        "UnderlyingProp": {
+          "Type": "ByteProperty",
+          "Name": "UnderlyingType",
+          "Flags": "RF_Public",
+          "ElementSize": 1,
+          "Enum": null
+        }
+      },
+      {
+        "Type": "DelegateProperty",
+        "Name": "K2Node_CreateDelegate_OutputDelegate",
+        "Flags": "RF_Public",
+        "ElementSize": 32,
+        "SignatureFunction": {
+          "ObjectName": "Class'InputMethodChangedDelegate__DelegateSignature'",
+          "ObjectPath": "/Script/CommonInput"
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "CallFunc_EqualEqual_ByteByte_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "EnumProperty",
+        "Name": "K2Node_Select_Default",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "Enum": {
+          "ObjectName": "Class'ESlateVisibility'",
+          "ObjectPath": "/Script/UMG"
+        },
+        "UnderlyingProp": {
+          "Type": "ByteProperty",
+          "Name": "UnderlyingType",
+          "Flags": "RF_Public",
+          "ElementSize": 1,
+          "Enum": null
+        }
+      },
+      {
+        "Type": "EnumProperty",
+        "Name": "K2Node_Select_Default_1",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "Enum": {
+          "ObjectName": "Class'ESlateVisibility'",
+          "ObjectPath": "/Script/UMG"
+        },
+        "UnderlyingProp": {
+          "Type": "ByteProperty",
+          "Name": "UnderlyingType",
+          "Flags": "RF_Public",
+          "ElementSize": 1,
+          "Enum": null
+        }
+      },
+      {
+        "Type": "StructProperty",
+        "Name": "CallFunc_GetKeyIcon_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 208,
+        "PropertyFlags": "ConstParm",
+        "Struct": {
+          "ObjectName": "Class'SlateBrush'",
+          "ObjectPath": "/Script/SlateCore"
+        }
+      },
+      {
+        "Type": "FloatProperty",
+        "Name": "CallFunc_SetWidthOverride_InWidthOverride_ImplicitCast",
+        "Flags": "RF_Public",
+        "ElementSize": 4
+      },
+      {
+        "Type": "FloatProperty",
+        "Name": "CallFunc_SetHeightOverride_InHeightOverride_ImplicitCast",
+        "Flags": "RF_Public",
+        "ElementSize": 4
+      }
+    ],
+    "FunctionFlags": "FUNC_Final | FUNC_UbergraphFunction | FUNC_HasDefaults"
+  },
+  {
+    "Type": "Function",
+    "Name": "On Input Changed",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "WidgetBlueprintGeneratedClass'WBP_AA_Quickslots_Bindings_C'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Bindings.19"
+    },
+    "ChildProperties": [
+      {
+        "Type": "EnumProperty",
+        "Name": "bNewInputType",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "Enum": {
+          "ObjectName": "Class'ECommonInputType'",
+          "ObjectPath": "/Script/CommonInput"
+        },
+        "UnderlyingProp": {
+          "Type": "ByteProperty",
+          "Name": "UnderlyingType",
+          "Flags": "RF_Public",
+          "ElementSize": 1,
+          "Enum": null
+        }
+      }
+    ],
+    "FunctionFlags": "FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "OnInitialized",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "WidgetBlueprintGeneratedClass'WBP_AA_Quickslots_Bindings_C'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Bindings.19"
+    },
+    "SuperStruct": {
+      "ObjectName": "Class'UserWidget:OnInitialized'",
+      "ObjectPath": "/Script/UMG"
+    },
+    "FunctionFlags": "FUNC_BlueprintCosmetic | FUNC_Event | FUNC_Public | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "PreConstruct",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "WidgetBlueprintGeneratedClass'WBP_AA_Quickslots_Bindings_C'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Bindings.19"
+    },
+    "SuperStruct": {
+      "ObjectName": "Class'UserWidget:PreConstruct'",
+      "ObjectPath": "/Script/UMG"
+    },
+    "ChildProperties": [
+      {
+        "Type": "BoolProperty",
+        "Name": "IsDesignTime",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      }
+    ],
+    "FunctionFlags": "FUNC_BlueprintCosmetic | FUNC_Event | FUNC_Public | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Image",
+    "Name": "Dpad",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Image'",
+    "Outer": {
+      "ObjectName": "WidgetTree'WBP_AA_Quickslots_Bindings_C:WidgetTree'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Bindings.20"
+    },
+    "Properties": {
+      "Slot": {
+        "ObjectName": "OverlaySlot'WBP_AA_Quickslots_Bindings_C:WidgetTree.Overlay_75.OverlaySlot_14'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Bindings.10"
+      },
+      "RenderTransform": {
+        "Scale": {
+          "X": 0.65,
+          "Y": 0.65
+        }
+      },
+      "Visibility": "ESlateVisibility::Collapsed"
+    }
+  },
+  {
+    "Type": "Overlay",
+    "Name": "Overlay_75",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Overlay'",
+    "Outer": {
+      "ObjectName": "WidgetTree'WBP_AA_Quickslots_Bindings_C:WidgetTree'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Bindings.20"
+    },
+    "Properties": {
+      "Slots": [
+        {
+          "ObjectName": "OverlaySlot'WBP_AA_Quickslots_Bindings_C:WidgetTree.Overlay_75.OverlaySlot_9'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Bindings.11"
+        },
+        {
+          "ObjectName": "OverlaySlot'WBP_AA_Quickslots_Bindings_C:WidgetTree.Overlay_75.OverlaySlot_10'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Bindings.7"
+        },
+        {
+          "ObjectName": "OverlaySlot'WBP_AA_Quickslots_Bindings_C:WidgetTree.Overlay_75.OverlaySlot_13'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Bindings.9"
+        },
+        {
+          "ObjectName": "OverlaySlot'WBP_AA_Quickslots_Bindings_C:WidgetTree.Overlay_75.OverlaySlot_12'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Bindings.8"
+        },
+        {
+          "ObjectName": "OverlaySlot'WBP_AA_Quickslots_Bindings_C:WidgetTree.Overlay_75.OverlaySlot_14'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Bindings.10"
+        }
+      ],
+      "Slot": {
+        "ObjectName": "SizeBoxSlot'WBP_AA_Quickslots_Bindings_C:WidgetTree.SizeBox.SizeBoxSlot_0'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Bindings.17"
+      }
+    }
+  },
+  {
+    "Type": "OverlaySlot",
+    "Name": "OverlaySlot_10",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'OverlaySlot'",
+    "Outer": {
+      "ObjectName": "Overlay'WBP_AA_Quickslots_Bindings_C:WidgetTree.Overlay_75'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Bindings.6"
+    },
+    "Properties": {
+      "HorizontalAlignment": "EHorizontalAlignment::HAlign_Right",
+      "VerticalAlignment": "EVerticalAlignment::VAlign_Center",
+      "Parent": {
+        "ObjectName": "Overlay'WBP_AA_Quickslots_Bindings_C:WidgetTree.Overlay_75'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Bindings.6"
+      },
+      "Content": {
+        "ObjectName": "RebelInputWidget'WBP_AA_Quickslots_Bindings_C:WidgetTree.Right'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Bindings.14"
+      }
+    }
+  },
+  {
+    "Type": "OverlaySlot",
+    "Name": "OverlaySlot_12",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'OverlaySlot'",
+    "Outer": {
+      "ObjectName": "Overlay'WBP_AA_Quickslots_Bindings_C:WidgetTree.Overlay_75'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Bindings.6"
+    },
+    "Properties": {
+      "HorizontalAlignment": "EHorizontalAlignment::HAlign_Center",
+      "VerticalAlignment": "EVerticalAlignment::VAlign_Bottom",
+      "Parent": {
+        "ObjectName": "Overlay'WBP_AA_Quickslots_Bindings_C:WidgetTree.Overlay_75'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Bindings.6"
+      },
+      "Content": {
+        "ObjectName": "RebelInputWidget'WBP_AA_Quickslots_Bindings_C:WidgetTree.Bottom'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Bindings.12"
+      }
+    }
+  },
+  {
+    "Type": "OverlaySlot",
+    "Name": "OverlaySlot_13",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'OverlaySlot'",
+    "Outer": {
+      "ObjectName": "Overlay'WBP_AA_Quickslots_Bindings_C:WidgetTree.Overlay_75'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Bindings.6"
+    },
+    "Properties": {
+      "HorizontalAlignment": "EHorizontalAlignment::HAlign_Center",
+      "Parent": {
+        "ObjectName": "Overlay'WBP_AA_Quickslots_Bindings_C:WidgetTree.Overlay_75'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Bindings.6"
+      },
+      "Content": {
+        "ObjectName": "RebelInputWidget'WBP_AA_Quickslots_Bindings_C:WidgetTree.Top'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Bindings.15"
+      }
+    }
+  },
+  {
+    "Type": "OverlaySlot",
+    "Name": "OverlaySlot_14",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'OverlaySlot'",
+    "Outer": {
+      "ObjectName": "Overlay'WBP_AA_Quickslots_Bindings_C:WidgetTree.Overlay_75'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Bindings.6"
+    },
+    "Properties": {
+      "HorizontalAlignment": "EHorizontalAlignment::HAlign_Center",
+      "VerticalAlignment": "EVerticalAlignment::VAlign_Center",
+      "Parent": {
+        "ObjectName": "Overlay'WBP_AA_Quickslots_Bindings_C:WidgetTree.Overlay_75'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Bindings.6"
+      },
+      "Content": {
+        "ObjectName": "Image'WBP_AA_Quickslots_Bindings_C:WidgetTree.Dpad'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Bindings.5"
+      }
+    }
+  },
+  {
+    "Type": "OverlaySlot",
+    "Name": "OverlaySlot_9",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'OverlaySlot'",
+    "Outer": {
+      "ObjectName": "Overlay'WBP_AA_Quickslots_Bindings_C:WidgetTree.Overlay_75'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Bindings.6"
+    },
+    "Properties": {
+      "VerticalAlignment": "EVerticalAlignment::VAlign_Center",
+      "Parent": {
+        "ObjectName": "Overlay'WBP_AA_Quickslots_Bindings_C:WidgetTree.Overlay_75'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Bindings.6"
+      },
+      "Content": {
+        "ObjectName": "RebelInputWidget'WBP_AA_Quickslots_Bindings_C:WidgetTree.Left'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Bindings.13"
+      }
+    }
+  },
+  {
+    "Type": "RebelInputWidget",
+    "Name": "Bottom",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'RebelInputWidget'",
+    "Outer": {
+      "ObjectName": "WidgetTree'WBP_AA_Quickslots_Bindings_C:WidgetTree'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Bindings.20"
+    },
+    "Properties": {
+      "ProgressMaterialBrush": {
+        "DrawAs": "ESlateBrushDrawType::NoDrawType"
+      },
+      "EnhancedInputAction": {
+        "ObjectName": "InputAction'IA_Quickslot_Bottom'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/Input/Actions/Quickslots/IA_Quickslot_Bottom.0"
+      },
+      "Slot": {
+        "ObjectName": "OverlaySlot'WBP_AA_Quickslots_Bindings_C:WidgetTree.Overlay_75.OverlaySlot_12'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Bindings.8"
+      },
+      "RenderTransform": {
+        "Scale": {
+          "X": 0.65,
+          "Y": 0.65
+        }
+      }
+    }
+  },
+  {
+    "Type": "RebelInputWidget",
+    "Name": "Left",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'RebelInputWidget'",
+    "Outer": {
+      "ObjectName": "WidgetTree'WBP_AA_Quickslots_Bindings_C:WidgetTree'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Bindings.20"
+    },
+    "Properties": {
+      "ProgressMaterialBrush": {
+        "DrawAs": "ESlateBrushDrawType::NoDrawType"
+      },
+      "EnhancedInputAction": {
+        "ObjectName": "InputAction'IA_Quickslot_Left'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/Input/Actions/Quickslots/IA_Quickslot_Left.0"
+      },
+      "Slot": {
+        "ObjectName": "OverlaySlot'WBP_AA_Quickslots_Bindings_C:WidgetTree.Overlay_75.OverlaySlot_9'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Bindings.11"
+      },
+      "RenderTransform": {
+        "Scale": {
+          "X": 0.65,
+          "Y": 0.65
+        }
+      }
+    }
+  },
+  {
+    "Type": "RebelInputWidget",
+    "Name": "Right",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'RebelInputWidget'",
+    "Outer": {
+      "ObjectName": "WidgetTree'WBP_AA_Quickslots_Bindings_C:WidgetTree'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Bindings.20"
+    },
+    "Properties": {
+      "ProgressMaterialBrush": {
+        "DrawAs": "ESlateBrushDrawType::NoDrawType"
+      },
+      "EnhancedInputAction": {
+        "ObjectName": "InputAction'IA_Quickslot_Right'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/Input/Actions/Quickslots/IA_Quickslot_Right.0"
+      },
+      "Slot": {
+        "ObjectName": "OverlaySlot'WBP_AA_Quickslots_Bindings_C:WidgetTree.Overlay_75.OverlaySlot_10'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Bindings.7"
+      },
+      "RenderTransform": {
+        "Scale": {
+          "X": 0.65,
+          "Y": 0.65
+        }
+      }
+    }
+  },
+  {
+    "Type": "RebelInputWidget",
+    "Name": "Top",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'RebelInputWidget'",
+    "Outer": {
+      "ObjectName": "WidgetTree'WBP_AA_Quickslots_Bindings_C:WidgetTree'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Bindings.20"
+    },
+    "Properties": {
+      "ProgressMaterialBrush": {
+        "DrawAs": "ESlateBrushDrawType::NoDrawType"
+      },
+      "EnhancedInputAction": {
+        "ObjectName": "InputAction'IA_Quickslot_Top'",
+        "ObjectPath": "/Game/_Dawnwalker/Player/Input/Actions/Quickslots/IA_Quickslot_Top.0"
+      },
+      "Slot": {
+        "ObjectName": "OverlaySlot'WBP_AA_Quickslots_Bindings_C:WidgetTree.Overlay_75.OverlaySlot_13'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Bindings.9"
+      },
+      "RenderTransform": {
+        "Scale": {
+          "X": 0.65,
+          "Y": 0.65
+        }
+      }
+    }
+  },
+  {
+    "Type": "SizeBox",
+    "Name": "SizeBox",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'SizeBox'",
+    "Outer": {
+      "ObjectName": "WidgetTree'WBP_AA_Quickslots_Bindings_C:WidgetTree'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Bindings.20"
+    },
+    "Properties": {
+      "WidthOverride": 150.0,
+      "HeightOverride": 150.0,
+      "bOverride_WidthOverride": true,
+      "bOverride_HeightOverride": true,
+      "Slots": [
+        {
+          "ObjectName": "SizeBoxSlot'WBP_AA_Quickslots_Bindings_C:WidgetTree.SizeBox.SizeBoxSlot_0'",
+          "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Bindings.17"
+        }
+      ],
+      "bIsVariable": true
+    }
+  },
+  {
+    "Type": "SizeBoxSlot",
+    "Name": "SizeBoxSlot_0",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'SizeBoxSlot'",
+    "Outer": {
+      "ObjectName": "SizeBox'WBP_AA_Quickslots_Bindings_C:WidgetTree.SizeBox'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Bindings.16"
+    },
+    "Properties": {
+      "Parent": {
+        "ObjectName": "SizeBox'WBP_AA_Quickslots_Bindings_C:WidgetTree.SizeBox'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Bindings.16"
+      },
+      "Content": {
+        "ObjectName": "Overlay'WBP_AA_Quickslots_Bindings_C:WidgetTree.Overlay_75'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Bindings.6"
+      }
+    }
+  },
+  {
+    "Type": "WBP_AA_Quickslots_Bindings_C",
+    "Name": "Default__WBP_AA_Quickslots_Bindings_C",
+    "Flags": "RF_Public | RF_ClassDefaultObject | RF_ArchetypeObject | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "WidgetBlueprintGeneratedClass'/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Bindings.WBP_AA_Quickslots_Bindings_C'",
+    "Package": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Bindings",
+    "Properties": {
+      "UberGraphFrame": {},
+      "Size": 150.0,
+      "dpadkey": {
+        "KeyName": "Gamepad_DPad_Up"
+      },
+      "bHasScriptImplementedTick": false,
+      "bHasScriptImplementedPaint": false
+    }
+  },
+  {
+    "Type": "WidgetBlueprintGeneratedClass",
+    "Name": "WBP_AA_Quickslots_Bindings_C",
+    "Flags": "RF_Public | RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'WidgetBlueprintGeneratedClass'",
+    "Package": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Bindings",
+    "Properties": {
+      "WidgetTree": {
+        "ObjectName": "WidgetTree'WBP_AA_Quickslots_Bindings_C:WidgetTree'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Bindings.20"
+      },
+      "UberGraphFunction": {
+        "ObjectName": "Function'WBP_AA_Quickslots_Bindings_C:ExecuteUbergraph_WBP_AA_Quickslots_Bindings'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Bindings.1"
+      }
+    },
+    "SuperStruct": {
+      "ObjectName": "Class'UserWidget'",
+      "ObjectPath": "/Script/UMG"
+    },
+    "Children": [
+      {
+        "ObjectName": "Function'WBP_AA_Quickslots_Bindings_C:PreConstruct'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Bindings.4"
+      },
+      {
+        "ObjectName": "Function'WBP_AA_Quickslots_Bindings_C:OnInitialized'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Bindings.3"
+      },
+      {
+        "ObjectName": "Function'WBP_AA_Quickslots_Bindings_C:On Input Changed'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Bindings.2"
+      },
+      {
+        "ObjectName": "Function'WBP_AA_Quickslots_Bindings_C:Construct'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Bindings.0"
+      },
+      {
+        "ObjectName": "Function'WBP_AA_Quickslots_Bindings_C:ExecuteUbergraph_WBP_AA_Quickslots_Bindings'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Bindings.1"
+      }
+    ],
+    "ChildProperties": [
+      {
+        "Type": "StructProperty",
+        "Name": "UberGraphFrame",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 16,
+        "PropertyFlags": "Transient | DuplicateTransient",
+        "Struct": {
+          "ObjectName": "Class'PointerToUberGraphFrame'",
+          "ObjectPath": "/Script/Engine"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "Bottom",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | ExportObject | BlueprintReadOnly | DisableEditOnInstance | InstancedReference | RepSkip | PersistentInstance",
+        "PropertyClass": {
+          "ObjectName": "Class'RebelInputWidget'",
+          "ObjectPath": "/Script/RebelInputDisplay"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "Dpad",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | ExportObject | BlueprintReadOnly | DisableEditOnInstance | InstancedReference | RepSkip | PersistentInstance",
+        "PropertyClass": {
+          "ObjectName": "Class'Image'",
+          "ObjectPath": "/Script/UMG"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "Left",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | ExportObject | BlueprintReadOnly | DisableEditOnInstance | InstancedReference | RepSkip | PersistentInstance",
+        "PropertyClass": {
+          "ObjectName": "Class'RebelInputWidget'",
+          "ObjectPath": "/Script/RebelInputDisplay"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "Right",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | ExportObject | BlueprintReadOnly | DisableEditOnInstance | InstancedReference | RepSkip | PersistentInstance",
+        "PropertyClass": {
+          "ObjectName": "Class'RebelInputWidget'",
+          "ObjectPath": "/Script/RebelInputDisplay"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "SizeBox",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | ExportObject | BlueprintReadOnly | DisableEditOnInstance | InstancedReference | RepSkip | PersistentInstance",
+        "PropertyClass": {
+          "ObjectName": "Class'SizeBox'",
+          "ObjectPath": "/Script/UMG"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "Top",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | ExportObject | BlueprintReadOnly | DisableEditOnInstance | InstancedReference | RepSkip | PersistentInstance",
+        "PropertyClass": {
+          "ObjectName": "Class'RebelInputWidget'",
+          "ObjectPath": "/Script/RebelInputDisplay"
+        }
+      },
+      {
+        "Type": "DoubleProperty",
+        "Name": "Size",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 8,
+        "PropertyFlags": "Edit | BlueprintVisible"
+      },
+      {
+        "Type": "StructProperty",
+        "Name": "dpadkey",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 32,
+        "PropertyFlags": "Edit | BlueprintVisible | DisableEditOnInstance",
+        "Struct": {
+          "ObjectName": "Class'Key'",
+          "ObjectPath": "/Script/InputCore"
+        }
+      }
+    ],
+    "FuncMap": {
+      "ExecuteUbergraph_WBP_AA_Quickslots_Bindings": {
+        "ObjectName": "Function'WBP_AA_Quickslots_Bindings_C:ExecuteUbergraph_WBP_AA_Quickslots_Bindings'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Bindings.1"
+      },
+      "Construct": {
+        "ObjectName": "Function'WBP_AA_Quickslots_Bindings_C:Construct'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Bindings.0"
+      },
+      "On Input Changed": {
+        "ObjectName": "Function'WBP_AA_Quickslots_Bindings_C:On Input Changed'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Bindings.2"
+      },
+      "OnInitialized": {
+        "ObjectName": "Function'WBP_AA_Quickslots_Bindings_C:OnInitialized'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Bindings.3"
+      },
+      "PreConstruct": {
+        "ObjectName": "Function'WBP_AA_Quickslots_Bindings_C:PreConstruct'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Bindings.4"
+      }
+    },
+    "ClassFlags": "CLASS_ReplicationDataIsSetUp | CLASS_EditInlineNew | CLASS_CompiledFromBlueprint | CLASS_DefaultToInstanced | CLASS_HasInstancedReference",
+    "ClassWithin": {
+      "ObjectName": "Class'Object'",
+      "ObjectPath": "/Script/CoreUObject"
+    },
+    "ClassConfigName": "Engine",
+    "bCooked": true,
+    "ClassDefaultObject": {
+      "ObjectName": "WBP_AA_Quickslots_Bindings_C'Default__WBP_AA_Quickslots_Bindings_C'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Bindings.18"
+    },
+    "EditorTags": {
+      "BlueprintType": "BPTYPE_Normal"
+    }
+  },
+  {
+    "Type": "WidgetTree",
+    "Name": "WidgetTree",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'WidgetTree'",
+    "Outer": {
+      "ObjectName": "WidgetBlueprintGeneratedClass'WBP_AA_Quickslots_Bindings_C'",
+      "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Bindings.19"
+    },
+    "Properties": {
+      "RootWidget": {
+        "ObjectName": "SizeBox'WBP_AA_Quickslots_Bindings_C:WidgetTree.SizeBox'",
+        "ObjectPath": "/Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots_Bindings.16"
+      }
+    }
+  }
+]
