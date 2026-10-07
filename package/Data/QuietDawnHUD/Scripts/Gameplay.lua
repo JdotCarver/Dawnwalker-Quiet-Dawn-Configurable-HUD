@@ -136,6 +136,13 @@ D.logInfo("active: managing %d panel(s), manual peek %s",#names,config.manualPee
 if D.debugLogging then D.event("config","healthThreshold=%.3f staminaThreshold=%.3f healthHold=%.3fs staminaHold=%.3fs panels=%d",config.healthThreshold,config.staminaThreshold,config.healthHoldSeconds,config.staminaHoldSeconds,#names) end
 local ROOT = "/Game/_Dawnwalker/UI/_Unified/HUD/WBP_GameHUD.WBP_GameHUD_C"
 local FOCUS_CHARGE_SLOT="/Game/_Dawnwalker/UI/_Unified/HUD/CombatFocus/WBP_HUD_FocusCharge_Slot.WBP_HUD_FocusCharge_Slot_C"
+-- The cooked Focus Charge Bar exports exactly one root-opacity animation.
+-- Its measured MovieScene duration is 12,000 / 60,000 = 0.2 seconds.
+local FOCUS_CHARGE_FADE_IN="WidgetAnimation /Game/_Dawnwalker/UI/_Unified/HUD/CombatFocus/WBP_HUD_FocusCharge_Bar.WBP_HUD_FocusCharge_Bar_C:FadeIn_INST"
+local FOCUS_CHARGE_STOCK_FADE_SECONDS=0.2
+-- EUMGSequencePlayMode::Reverse. The live proxy trace established this as
+-- argument 6 (argument 7 is PlaybackSpeed) for the shipped game build.
+local FOCUS_CHARGE_REVERSE_PLAY_MODE=1
 local hud, candidate, candidateSource, controller, world
 local hudAddress, controllerAddress
 local worker, dirty, stateReady = false, false, false
@@ -703,8 +710,8 @@ function runtime.focusChargePopTraceBarGraphEvent(context,entryParam)
 end
 -- The asset exports a FadeIn WidgetAnimation via
 -- CreatePlayAnimationProxyObject, whose Finished callback is the route that
--- calls Reset. This pre-hook only identifies the factory's actual parameter
--- positions/types for the owned bar; it does not modify them yet.
+-- calls Reset. This Debug pre-hook records the factory's live parameter order
+-- for the owned bar; the production hook below uses that verified order.
 function runtime.focusChargePopTraceAnimationProxyEvent(_, ...)
     local state=runtime.focusChargePopTrace
     if not state or not D.debugLogging then return end
@@ -736,6 +743,46 @@ function runtime.focusChargePopTraceAnimationProxyEvent(_, ...)
     if owned then
         D.logInfo("focusChargePopTrace phase=animationProxy args=%s",table.concat(values,";"))
     end
+end
+-- Live factory arguments are: WorldContextObject, Widget, Animation,
+-- StartAtTime, NumLoops, PlayMode, PlaybackSpeed. Only the exact reverse
+-- FadeIn call on the currently adopted local Focus Charge Bar may be retimed.
+-- Its existing Finished callback still runs and performs the stock Reset; a
+-- slower speed merely moves that already-owned teardown deadline.
+function runtime.mediateFocusChargeFadeOut(_,_,widgetParam,animationParam,_,_,playModeParam,playbackSpeedParam)
+    if not config.fadeTransitions or panelModes.WBP_HUD_FocusCharge_Bar~=Modes.VANILLA
+        or (config.debugFocusChargeLocator and D.debugLogging) then return end
+    local fadeOutSeconds=tonumber(config.fadeOutSeconds)
+    if not fadeOutSeconds or fadeOutSeconds<=0 then return end
+    local modeOK,playMode=pcall(unwrap,playModeParam)
+    if not modeOK or playMode~=FOCUS_CHARGE_REVERSE_PLAY_MODE then return end
+    if not valid(hud) then return end
+    local barOK,bar=pcall(function() return hud.WBP_HUD_FocusCharge_Bar end)
+    local widgetOK,widget=pcall(unwrap,widgetParam)
+    if not barOK or not widgetOK or not sameObject(widget,bar) then return end
+    local animationOK,animation=pcall(unwrap,animationParam)
+    if not animationOK then return end
+    local nameOK,animationName=pcall(function() return animation:GetFullName() end)
+    if not nameOK or animationName~=FOCUS_CHARGE_FADE_IN then return end
+    local rate=FOCUS_CHARGE_STOCK_FADE_SECONDS/fadeOutSeconds
+    local wrote,reason=pcall(function() playbackSpeedParam:set(rate) end)
+    if not wrote then
+        if not runtime.focusChargeFadeRateWarned then
+            runtime.focusChargeFadeRateWarned=true
+            D.logWarning("Activation Charges exit fade rate was not applied: %s",tostring(reason))
+        end
+        return
+    end
+    if D.debugLogging then
+        D.event("focusChargeFade","stockReverse=FadeIn playbackSpeed=%.4f duration=%.3f",rate,fadeOutSeconds)
+    end
+end
+-- Retain the bounded Debug trace before any production write, so the captured
+-- values always show the stock call. Fade-off returns before either unwrap or
+-- RemoteUnrealParam:set, leaving the game call entirely unchanged.
+function runtime.focusChargeAnimationProxyEvent(context,...)
+    runtime.focusChargePopTraceAnimationProxyEvent(context,...)
+    runtime.mediateFocusChargeFadeOut(context,...)
 end
 -- Entry 3348 precedes the Reset route 2867 by about 0.2 seconds, while the
 -- ordinary Delay nodes were absent. Blueprint Set Timer is the remaining
@@ -1960,6 +2007,11 @@ local specs = {
     {path="/Script/RebelSettings.RebelGameUserSettings:SetSettingAsBool", callback=refreshSettings, native=true},
 }
 local function noop() end
+-- This native factory bypasses UUserWidget:PlayAnimation. It stays registered
+-- so a live Fade/Vanilla-mode change is honored, but its pre-hook has a strict
+-- early return and writes nothing unless the exact owned reverse call qualifies.
+specs[#specs+1]={path="/Script/UMG.WidgetAnimationPlayCallbackProxy:CreatePlayAnimationProxyObject", native=true,
+    before=runtime.focusChargeAnimationProxyEvent, callback=noop, optional="focusChargeFade"}
 local knownSpecs={}
 for _,spec in ipairs(specs) do knownSpecs[spec.path]=true end
 local function ensureFeatureSpecs()
@@ -2045,8 +2097,6 @@ if D.debugLogging and config.fadeTransitions and panelModes.WBP_HUD_FocusCharge_
         callback=function(context) runtime.focusChargePopTraceEntryBoxEvent(context,"RemoveEntry") end, optional="probe"}
     specs[#specs+1]={path="/Script/UMG.UserWidget:PlayAnimation", native=true,
         callback=function(context,animation) runtime.focusChargePopTraceAnimationEvent(context,animation) end, optional="probe"}
-    specs[#specs+1]={path="/Script/UMG.WidgetAnimationPlayCallbackProxy:CreatePlayAnimationProxyObject", native=true,
-        before=runtime.focusChargePopTraceAnimationProxyEvent, callback=function() end, optional="probe"}
     specs[#specs+1]={path="/Script/Engine.KismetSystemLibrary:Delay", native=true,
         callback=function(_,worldContext,duration) runtime.focusChargePopTraceDelayEvent(worldContext,duration,"Delay") end, optional="probe"}
     specs[#specs+1]={path="/Script/Engine.KismetSystemLibrary:RetriggerableDelay", native=true,
@@ -2101,6 +2151,8 @@ local function registerOne()
                 D.logWarning("Time-change hook unavailable; time panel keeps its configured opacity.")
             elseif spec.optional=="probe" then
                 if D.debugLogging then D.event("focusChargeSlot","trace hook unavailable: %s",spec.path) end
+            elseif spec.optional=="focusChargeFade" then
+                D.logWarning("Activation Charges exit fade rate hook unavailable; stock teardown keeps its default timing.")
             elseif spec.optional=="panel" then
                 D.logWarning("Panel event unavailable; other HUD controls remain active: %s",spec.path)
             elseif spec.optional=="prompt" then
