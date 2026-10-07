@@ -623,9 +623,10 @@ function runtime.beginFocusChargePopTrace()
         or not config.fadeTransitions or config.debugFocusChargeLocator
         or panelModes.WBP_HUD_FocusCharge_Bar~=Modes.VANILLA then return end
     local box=runtime.focusChargeLocatorContainer()
-    if not valid(box) then return end
+    local bar=valid(hud) and hud.WBP_HUD_FocusCharge_Bar or nil
+    if not valid(box) or not valid(bar) then return end
     runtime.focusChargePopTraceRemaining=runtime.focusChargePopTraceRemaining-1
-    local state={known={},queue={},pending=5,captures=0}
+    local state={known={},queue={},pending=5,captures=0,barAddress=bar:GetAddress()}
     runtime.focusChargePopTrace=state
     runtime.captureFocusChargePopTrace("pre",false)
     for _,sample in ipairs({{16,"nextFrame"},{96,"after100ms"},{240,"after250ms"},{490,"after500ms"},{1490,"after1500ms"}}) do
@@ -659,6 +660,24 @@ function runtime.focusChargePopTraceEntryBoxEvent(context,method)
     local readable,address=pcall(function() return box:GetAddress() end)
     if not readable or address~=state.containerAddress then return end
     D.logInfo("focusChargePopTrace phase=entryBox method=%s node=%s",method,tostring(address))
+end
+-- Reset is the terminal clear, not the short presentation the player sees
+-- immediately before it. Record the exact UMG animation object played by the
+-- bar or one of its owned slots during this one Pop interval; that gives us a
+-- configurable stock presentation target before considering native deferral.
+function runtime.focusChargePopTraceAnimationEvent(context,animationParam)
+    local state=runtime.focusChargePopTrace
+    if not state or not D.debugLogging then return end
+    local widget=unwrap(context)
+    if not valid(widget) then return end
+    local readable,address=pcall(function() return widget:GetAddress() end)
+    if not readable or (address~=state.barAddress and not state.known[address]) then return end
+    local animation=unwrap(animationParam)
+    local animationName="unavailable"
+    local named,name=pcall(function() return animation:GetFullName() end)
+    if named and name then animationName=tostring(name) end
+    D.logInfo("focusChargePopTrace phase=animation target=%s node=%s animation=%s",
+        address==state.barAddress and "bar" or "entry",tostring(address),animationName)
 end
 Session.onClose(function()
     runtime.stopFocusChargeLocator("session close")
@@ -1944,6 +1963,8 @@ if D.debugLogging and config.fadeTransitions and panelModes.WBP_HUD_FocusCharge_
         callback=function(context) runtime.focusChargePopTraceEntryBoxEvent(context,"Reset") end, optional="probe"}
     specs[#specs+1]={path="/Script/UMG.DynamicEntryBox:RemoveEntry", native=true,
         callback=function(context) runtime.focusChargePopTraceEntryBoxEvent(context,"RemoveEntry") end, optional="probe"}
+    specs[#specs+1]={path="/Script/UMG.UserWidget:PlayAnimation", native=true,
+        callback=function(context,animation) runtime.focusChargePopTraceAnimationEvent(context,animation) end, optional="probe"}
 end
 if (config.switchRevealSeconds>0 and hasSwitchPanels()) or (manualPeekEnabled and config.peekOnFocusMode)
     or (D.debugLogging and config.fadeTransitions and (panelModes.WBP_AA_Quickslots==Modes.VANILLA
