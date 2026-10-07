@@ -826,6 +826,105 @@ local fade=require("QuietDawnFade").new(D,function()
     return frameClock:GetGameTimeInSeconds(controller)
 end)
 fade.configure(config.fadeTransitions,config.fadeInSeconds,config.fadeOutSeconds)
+-- The user-confirmed visible owner for the complete Activation Charges display
+-- is its DynamicEntryBox, not the outer Focus Charge user widget. Keep its
+-- vanilla mediation in a separate ledger: synthetic keys must never enter the
+-- normal managed-panel fade group, where panelStep would give them unrelated
+-- Quiet Dawn semantics.
+local focusChargeFade=require("QuietDawnFade").new(D,function()
+    if not valid(frameClock) or not valid(controller) then return nil end
+    return frameClock:GetGameTimeInSeconds(controller)
+end)
+focusChargeFade.configure(config.fadeTransitions,config.fadeInSeconds,config.fadeOutSeconds)
+runtime.focusChargeFadeKey="vanilla:FocusChargeDynamicEntryBox"
+runtime.focusChargeFadeEntry=nil
+runtime.focusChargeFadeVisible=nil
+function runtime.resetFocusChargeFade()
+    focusChargeFade.reset()
+    local entry=runtime.focusChargeFadeEntry
+    runtime.focusChargeFadeEntry=nil
+    runtime.focusChargeFadeVisible=nil
+    if entry and entry.lease then pcall(panelOpacity.restore,entry.lease) end
+end
+Session.onClose(runtime.resetFocusChargeFade)
+function runtime.focusChargeFadePending()
+    local pending=focusChargeFade.pending()
+    local entry=runtime.focusChargeFadeEntry
+    if not pending and entry and entry.inFlight then
+        -- Clock/world failure orphaned a transition; release the temporary
+        -- lease rather than leaving an intermediate opacity in Vanilla mode.
+        pcall(panelOpacity.restore,entry.lease)
+        runtime.focusChargeFadeEntry=nil
+    end
+    return pending
+end
+function runtime.beginFocusChargeFade(source)
+    local target=source=="PushHUDPreset" and 1 or source=="PopHUDPreset" and 0 or nil
+    if target==nil or not config.fadeTransitions
+        or (config.debugFocusChargeLocator and D.debugLogging)
+        or panelModes.WBP_HUD_FocusCharge_Bar~=Modes.VANILLA then return end
+    -- A repeated preset notification that retains the same stock decision must
+    -- not restart an already settled display transition.
+    if runtime.focusChargeFadeVisible==target and not focusChargeFade.active(runtime.focusChargeFadeKey) then return end
+    local box=runtime.focusChargeLocatorContainer()
+    if not valid(box) or not valid(controller) then return end
+    -- The box is resolved directly from the accepted active HUD's WidgetTree;
+    -- require that same world's UObject, but do not assume DynamicEntryBox
+    -- exposes a player accessor on every shipped UMG build.
+    local identityOK,boxWorld=pcall(function() return box:GetWorld() end)
+    if not identityOK or not sameObject(boxWorld,world) then return end
+    local entry=runtime.focusChargeFadeEntry
+    if not entry or not sameObject(entry.object,box) then
+        if entry and entry.lease then pcall(panelOpacity.restore,entry.lease) end
+        local leaseOK,lease=pcall(panelOpacity.bind,box)
+        if not leaseOK or not lease then return end
+        entry={object=box,lease=lease}
+        runtime.focusChargeFadeEntry=entry
+    end
+    local current=box:GetRenderOpacity()
+    -- Stock has already made the fresh DynamicEntryBox visible by post-Push.
+    -- Start the very first appearance at zero so Fade controls presentation
+    -- while Vanilla still alone decided that the display should appear.
+    if target==1 and runtime.focusChargeFadeVisible==nil and current>1e-5 then
+        pcall(panelOpacity.apply,entry.lease,0)
+        current=0
+    end
+    runtime.focusChargeFadeVisible=target
+    entry.target,entry.source=target,source
+    local value=focusChargeFade.step(runtime.focusChargeFadeKey,current,target)
+    pcall(panelOpacity.apply,entry.lease,value)
+    entry.inFlight=focusChargeFade.active(runtime.focusChargeFadeKey)
+    if not entry.inFlight and target==1 then
+        panelOpacity.commit(entry.lease,1)
+        runtime.focusChargeFadeEntry=nil
+    end
+    if D.debugLogging then
+        D.event("focusChargeFade","source=%s presentation=DynamicEntryBox from=%.3f target=%d",source,current,target)
+    end
+    if wake then wake("focusChargeFade") end
+end
+function runtime.stepFocusChargeFade()
+    local entry=runtime.focusChargeFadeEntry
+    if not entry or not valid(entry.object) then
+        focusChargeFade.forget(runtime.focusChargeFadeKey)
+        runtime.focusChargeFadeEntry=nil
+        return
+    end
+    local current=entry.object:GetRenderOpacity()
+    local value=focusChargeFade.step(runtime.focusChargeFadeKey,current,entry.target)
+    pcall(panelOpacity.apply,entry.lease,value)
+    if not focusChargeFade.active(runtime.focusChargeFadeKey) then
+        entry.inFlight=false
+        if entry.target==1 then
+            -- A settled visible container has returned to its stock value.
+            panelOpacity.commit(entry.lease,1)
+            runtime.focusChargeFadeEntry=nil
+        end
+        -- Keep a completed hide lease until the next Push or a settings/session
+        -- reset. That gives Fade-off a precise restoration to untouched Vanilla.
+        if D.debugLogging then D.event("focusChargeFade","source=%s settled=%.3f",entry.source,value) end
+    end
+end
 -- Focus has no dedicated UFunction. Resource and HUD events already wake the
 -- existing worker many times during normal play, so sample the pawn only while
 -- Focus is selected as the peek trigger; no permanent Focus polling loop is
@@ -1494,10 +1593,10 @@ local function signal(source)
     if D.debugLogging then D.count("presetEvents") end
     if timeWatcher then timeWatcher.resume() end
     source=source or "HUD preset"
-    -- Push/Pop are the confirmed combat presentation boundaries. Compare them
-    -- against the earlier weapon-state baseline before changing Vanilla
-    -- behavior: the observed Focus Charge root opacity was not its visible
-    -- presentation owner in the two-second Fade verification.
+    -- Push/Pop are the confirmed combat presentation boundaries. Debug still
+    -- compares their parent chains against the earlier weapon-state baseline;
+    -- production Activation Charges Fade below targets the separately confirmed
+    -- DynamicEntryBox, never the nonvisual outer Focus Charge root.
     if source=="PushHUDPreset" or source=="PopHUDPreset" then
         queueVanillaCombatParentProbe(source,nil)
     end
@@ -1506,6 +1605,10 @@ local function signal(source)
     elseif source=="PopHUDPreset" then
         runtime.stopFocusChargeLocator("PopHUDPreset")
     end
+    -- The confirmed DynamicEntryBox is the complete display's visual parent.
+    -- The explicit debug locator temporarily owns that same opacity, so leave
+    -- normal Fade mediation dormant while the user requested that locator.
+    runtime.beginFocusChargeFade(source)
     queueVanillaQuickslotProbe(source)
     refreshDirty=true
     wake()
@@ -1799,6 +1902,7 @@ local function accept(object)
     if valid(controller) and not sameObject(controller,pc) then return false, "controller mismatch" end
     if not sameObject(object,hud) or not sameObject(objectWorld,world) then
         runtime.stopFocusChargeLocator("HUD replacement")
+        runtime.resetFocusChargeFade()
         runtime.resetFocusChargeSlotProbe()
         hud, world, panels, absent = object, objectWorld, {}, {}
         -- A direct object notification and the GameHUD hook are preferred.
@@ -2283,6 +2387,7 @@ local function panelStep(name)
         end
     else
         runtime.stopFocusChargeLocator("HUD unavailable")
+        runtime.resetFocusChargeFade()
         runtime.resetFocusChargeSlotProbe()
         hud, world, panels = nil, nil, {}
         -- The panels these transitions referred to are gone with the world.
@@ -2376,6 +2481,10 @@ local function step()
         local version=runtime.focusChargeLocatorAdvanceVersion
         runtime.focusChargeLocatorAdvanceVersion=nil
         runtime.advanceFocusChargeLocator(version)
+        return false
+    end
+    if runtime.focusChargeFadeEntry and focusChargeFade.active(runtime.focusChargeFadeKey) then
+        runtime.stepFocusChargeFade()
         return false
     end
     if runtime.focusChargeSlotTreeProbe then
@@ -2743,7 +2852,8 @@ function runtime.workerDelay()
     -- still prevents a busy loop when rendering has stopped.
     if markerUrgent then return runtime.workerFadeMs end
     local ok,fading=pcall(fade.pending)
-    runtime.fadeInFlight=ok and fading or false
+    local focusOK,focusFading=pcall(runtime.focusChargeFadePending)
+    runtime.fadeInFlight=(ok and fading or false) or (focusOK and focusFading or false)
     if not runtime.fadeInFlight then runtime.fadePacing.reset() end
     return runtime.fadeInFlight and runtime.workerFadeMs or runtime.workerIdleMs
 end
@@ -2761,7 +2871,7 @@ wake = function(statsOnly)
         panelRetries={}
         settingsPending,settingsAttempts=true,0
     end
-    if statsOnly~="marker" and statsOnly~="settings" and statsOnly~="resource" and statsOnly~="enemyHealth" and statsOnly~="time" and statsOnly~="sprintPrompt" and statsOnly~="clawMarks" and statsOnly~="playerEffects" and statsOnly~="liveSettings" and statsOnly~="quickslotProbe" and statsOnly~="vanillaCombatProbe" and statsOnly~="focusChargeLocator" and statsOnly~="focusChargeSlotProbe" then dirty=true end
+    if statsOnly~="marker" and statsOnly~="settings" and statsOnly~="resource" and statsOnly~="enemyHealth" and statsOnly~="time" and statsOnly~="sprintPrompt" and statsOnly~="clawMarks" and statsOnly~="playerEffects" and statsOnly~="liveSettings" and statsOnly~="quickslotProbe" and statsOnly~="vanillaCombatProbe" and statsOnly~="focusChargeLocator" and statsOnly~="focusChargeSlotProbe" and statsOnly~="focusChargeFade" then dirty=true end
     if worker then if D.debugLogging then D.count("workerCoalesced") end; return end
     worker=true
     if D.debugLogging then D.count("workerStarts") end
@@ -2958,10 +3068,15 @@ applyLiveSettings=function(run)
     for key,value in pairs(updated) do if type(value)~='table' then config[key]=value end end
     if changed.fadeTransitions or changed.fadeInSeconds or changed.fadeOutSeconds then
         fade.configure(config.fadeTransitions,config.fadeInSeconds,config.fadeOutSeconds)
+        runtime.resetFocusChargeFade()
+        focusChargeFade.configure(config.fadeTransitions,config.fadeInSeconds,config.fadeOutSeconds)
         runtime.fadePacing.reset()
     end
     if changed.debugFocusChargeLocator or changed.logLevel or changed.mode_WBP_HUD_FocusCharge_Bar or changed.fadeTransitions then
         runtime.stopFocusChargeLocator("settings applied")
+        -- The opt-in locator owns the very same container. Release a retained
+        -- completed hide before either mode can leave it under a stale lease.
+        runtime.resetFocusChargeFade()
         runtime.resetFocusChargeSlotProbe()
         local traceEligible=valid(hud) and D.debugLogging and config.fadeTransitions
             and panelModes.WBP_HUD_FocusCharge_Bar==Modes.VANILLA
