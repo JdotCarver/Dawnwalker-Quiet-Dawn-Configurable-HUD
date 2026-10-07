@@ -111,8 +111,8 @@ return {
     {key="fadeTransitions", default=0, values={0,1}},
     -- A 0.01-step slider emits values such as 1.1300000000000001, which no
     -- discrete grid can match, so these are continuous clamped ranges.
-    {key="fadeInSeconds", default=0.22, min=0, max=2, integer=false},
-    {key="fadeOutSeconds", default=0.45, min=0, max=2, integer=false},
+    {key="fadeInSeconds", default=0.35, min=0, max=2, integer=false},
+    {key="fadeOutSeconds", default=1.30, min=0, max=2, integer=false},
     {key="compassOpacity", default=0, min=0, max=100, integer=false},
     -- Replaced the former `debugLogging` on/off toggle. See QuietDawnLogLevels.
     {key="logLevel", default=LogLevels.DEFAULT, values=LogLevels.ordered},

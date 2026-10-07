@@ -176,6 +176,7 @@ def main():
     check("the visual-locator strict predecessor parses the prior settings.ini", values is not None, f"error={error!r}")
     settings_model_source = (SCRIPTS / "SettingsModel.lua").read_text()
     check("SettingsModel adds the visual locator through a dedicated default-off upgrade", "FOCUS_CHARGE_LOCATOR_KEY" in settings_model_source and "'focus-charge-locator'" in settings_model_source)
+    check("older upgrade schemas remain locator-free until that dedicated transaction", "for _,row in ipairs(preFocusChargeLocatorSchema) do" in settings_model_source and "Store,Store.path(directory),newestSchema," in settings_model_source)
 
     # A stale debugLogging line left behind by the migration must be ignored.
     values, error = parse(
@@ -380,7 +381,7 @@ def main():
     # defaults, so an existing settings.ini that gains them does not suddenly
     # start animating.
     rows = {row["key"]: row for row in schema.values()}
-    for key, default in (("fadeTransitions", 0), ("fadeInSeconds", 0.22), ("fadeOutSeconds", 0.45)):
+    for key, default in (("fadeTransitions", 0), ("fadeInSeconds", 0.35), ("fadeOutSeconds", 1.30)):
         row = rows.get(key)
         check(f"{key} is declared in the schema", row is not None)
         if row is not None:

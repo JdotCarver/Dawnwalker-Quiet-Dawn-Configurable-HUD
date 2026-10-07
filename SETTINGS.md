@@ -109,8 +109,8 @@ Missing existing settings, duplicate or invalid settings stop configuration load
 | --- | --- | --- |
 | General | Enabled | Off, On |
 | General | Fade elements in and out | Off (default), On |
-| General | Fade in duration | 0 to 2 seconds (default 0.22); shown only when fading is on |
-| General | Fade out duration | 0 to 2 seconds (default 0.45); shown only when fading is on |
+| General | Fade in duration | 0 to 2 seconds (default 0.35); shown only when fading is on |
+| General | Fade out duration | 0 to 2 seconds (default 1.30); shown only when fading is on |
 | Player status: Active buffs | Hide player combat effects | Off, On (default Off) |
 | Player status: Active buffs | Hide player effect icons | Off, On (default Off) |
 | Player status: Active buffs | Active buffs mode | Vanilla, Quiet Dawn (default), Fixed Opacity, Always Hidden |
@@ -188,7 +188,7 @@ When upgrading an older Quiet Dawn package, back up `Scripts/QuietDawnConfig.lua
 
 **Logging** accepts `0` (Off), `1` (Error), `2` (Warning), `3` (Info) or `4` (Debug). Each level also includes the ones above it, and everything is written to `Dawnwalker/Binaries/Win64/ue4ss/UE4SS.log`. Warning is the default and suits normal play: it reports failures and features that could not start, without per-event noise. Debug is the troubleshooting level and the only one with a measurable cost. Logging replaced the earlier `debugLogging` toggle; on first run the old value is carried over, with On becoming Debug and Off becoming Warning, and the retired key is then ignored. Slash-effect diagnostics include preparation, retention and restoration counts, bounded failures and `clawMarks` worker timings. Cached panel updates also report aggregate `visibility` timings and peek/resource/refresh commit counts. These timings overlap the main worker timing.
 
-**Find visible Activation Charges widget** appears only while Logging is Debug. Turn it On, Apply, then enter combat once with Activation Charges in Vanilla mode. After a short settle delay the locator asks the owned Focus Charge `DynamicEntryBox` for its runtime entries, hides each entry for two seconds, restores it, and leaves one visible second before testing the next. The log identifies each candidate by ordinal, class and native address. The cycle runs once per HUD session; Apply Off then On to arm it again. It performs no global widget search, does not run during ordinary gameplay, restores entries after every test and at session close, and never changes the normal Fade contract.
+**Find visible Activation Charges widget** appears only while Logging is Debug. Turn it On, Apply, then enter combat once with Activation Charges in Vanilla mode. After a short settle delay the locator asks the owned Focus Charge `DynamicEntryBox` for its runtime entries, hides each of the game's up-to-four charge slots for two seconds, restores it, and leaves one visible second before testing the next. The log identifies each candidate by ordinal, class and native address. The cycle runs once per HUD session; Apply Off then On to arm it again. It performs no global widget search, does not run during ordinary gameplay, restores entries after every test and at session close, and never changes the normal Fade contract.
 
 With Logging On, marker diagnostics also report unavailable ownership and skipped marker updates. Readiness retries stop after eight attempts and resume on a later marker event; these messages remain quiet with Logging Off.
 
@@ -236,8 +236,8 @@ All entries below belong under `[Settings]`. Defaults apply to a fresh install w
 | Stamina hold duration | `staminaHoldSeconds` | `1.5` | 0 to 10, step 0.5 |
 | Show HUD duration | `manualPeekSeconds` | `3` | 0 to 10, step 0.5 |
 | Fade elements in and out | `fadeTransitions` | `0` | 0 = Off, 1 = On |
-| Fade in duration | `fadeInSeconds` | `0.22` | 0 to 2 seconds, step 0.01 |
-| Fade out duration | `fadeOutSeconds` | `0.45` | 0 to 2 seconds, step 0.01 |
+| Fade in duration | `fadeInSeconds` | `0.35` | 0 to 2 seconds, step 0.01 |
+| Fade out duration | `fadeOutSeconds` | `1.30` | 0 to 2 seconds, step 0.01 |
 | Show HUD trigger | `manualPeek` | `1` | 0 = Off, 1 = Hold controls legend, 2 = Focus mode |
 | Hide sprint/haste prompt | `hideSprintPrompt` | `1` | 0 = Off, 1 = On |
 | Time of day mode | `mode_WBP_HudTimer` | `1` | 0 = Vanilla, 1 = Quiet Dawn, 2 = Fixed Opacity, 3 = Always Hidden |

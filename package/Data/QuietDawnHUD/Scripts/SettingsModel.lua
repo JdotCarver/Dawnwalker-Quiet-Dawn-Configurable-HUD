@@ -24,11 +24,12 @@ end
 -- would write that key back into an already-current file.
 local SHOW_HUD_PREFIX = "showHUD_"
 local FIXED_PEEK_PREFIX = "fixedPeek_"
--- Fixed-panel Show HUD behavior is the newest generation. Keep a strict
--- predecessor so an existing current settings.ini can receive its explicit
--- default-off choices without changing its former fixed-opacity behavior.
+-- Fixed-panel Show HUD behavior predates the locator. Start every historical
+-- schema chain from the locator-free predecessor: otherwise one of their
+-- existing migrations would encounter the new key before its dedicated,
+-- default-off transaction below.
 local preFixedPeekSchema = {}
-for _,row in ipairs(newestSchema) do
+for _,row in ipairs(preFocusChargeLocatorSchema) do
     if not row.key:match("^"..FIXED_PEEK_PREFIX) then preFixedPeekSchema[#preFixedPeekSchema+1]=row end
 end
 local preShowHUDSchema = {}

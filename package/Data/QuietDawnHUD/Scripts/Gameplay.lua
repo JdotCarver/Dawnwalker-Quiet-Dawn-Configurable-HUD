@@ -385,6 +385,7 @@ end
 runtime.focusChargeLocatorDelayMs=350
 runtime.focusChargeLocatorHideMs=2000
 runtime.focusChargeLocatorGapMs=1000
+runtime.focusChargeLocatorMaxEntries=4
 function runtime.stopFocusChargeLocator(reason)
     runtime.focusChargeLocatorVersion=(runtime.focusChargeLocatorVersion or 0)+1
     runtime.focusChargeLocatorStartVersion=nil
@@ -410,6 +411,10 @@ function runtime.collectFocusChargeLocatorEntries()
     if not entriesOK or entries==nil then return nil,"DynamicEntryBox GetAllEntries unavailable" end
     local collected,seen={},{}
     local function add(object)
+        -- The game presents at most four charge slots. DynamicEntryBox can
+        -- retain extra pooled entries, which are not candidates for the HUD
+        -- the player just saw; do not turn this diagnostic into a pool scan.
+        if #collected>=runtime.focusChargeLocatorMaxEntries then return end
         local readable,live=pcall(valid,object)
         if not readable or not live then return end
         local address=object:GetAddress()
@@ -427,7 +432,7 @@ function runtime.collectFocusChargeLocatorEntries()
         local countOK,count=pcall(function() return entries:GetArrayNum() end)
         if countOK and type(count)=="number" then
             enumerated=true
-            for index=0,math.min(count,16)-1 do
+            for index=0,math.min(count,runtime.focusChargeLocatorMaxEntries)-1 do
                 local entryOK,entry=pcall(function() return entries[index] end)
                 if entryOK then add(entry) end
             end
