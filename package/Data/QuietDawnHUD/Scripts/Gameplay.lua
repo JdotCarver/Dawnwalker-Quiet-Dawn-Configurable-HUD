@@ -679,11 +679,11 @@ function runtime.focusChargePopTraceAnimationEvent(context,animationParam)
     D.logInfo("focusChargePopTrace phase=animation target=%s node=%s animation=%s",
         address==state.barAddress and "bar" or "entry",tostring(address),animationName)
 end
--- No owned UUserWidget PlayAnimation call accompanied the terminal Reset. The
--- likely simpler stock presentation is therefore a Blueprint latent delay or
--- an inline graph path. Identify both exact candidates before touching Reset:
--- if the bar schedules a 0.2-second Delay, its duration is the natural Fade
--- parameter rather than something Quiet Dawn needs to recreate.
+-- No owned UUserWidget PlayAnimation ProcessEvent accompanied the terminal
+-- Reset. The exported bar asset shows that Blueprint uses its callback-proxy
+-- factory instead, while its FadeIn MovieScene lasts exactly 0.2 seconds.
+-- Keep the older scheduler observations bounded, then read this proxy's actual
+-- reflected argument order before altering its playback rate.
 function runtime.focusChargePopTraceDelayEvent(worldParam,durationParam,kind)
     local state=runtime.focusChargePopTrace
     if not state or not D.debugLogging then return end
@@ -700,6 +700,42 @@ function runtime.focusChargePopTraceBarGraphEvent(context,entryParam)
     if not valid(bar) or bar:GetAddress()~=state.barAddress then return end
     D.logInfo("focusChargePopTrace phase=barGraph node=%s entry=%s",
         tostring(state.barAddress),tostring(unwrap(entryParam)))
+end
+-- The asset exports a FadeIn WidgetAnimation via
+-- CreatePlayAnimationProxyObject, whose Finished callback is the route that
+-- calls Reset. This pre-hook only identifies the factory's actual parameter
+-- positions/types for the owned bar; it does not modify them yet.
+function runtime.focusChargePopTraceAnimationProxyEvent(_, ...)
+    local state=runtime.focusChargePopTrace
+    if not state or not D.debugLogging then return end
+    local values,owned={},false
+    for index=1,select("#",...) do
+        local parameter=select(index,...)
+        local readable,value=pcall(unwrap,parameter)
+        local detail="unavailable"
+        if readable then
+            if type(value)=="number" then
+                detail=string.format("number:%.3f",value)
+            elseif type(value)=="boolean" or type(value)=="string" then
+                detail=type(value)..":"..tostring(value)
+            else
+                local live=false
+                local liveOK=pcall(function() live=valid(value) end)
+                if liveOK and live then
+                    local address=value:GetAddress()
+                    if address==state.barAddress then owned=true end
+                    local nameOK,name=pcall(function() return value:GetFullName() end)
+                    detail="object:"..(nameOK and tostring(name) or tostring(address))
+                elseif value~=nil then
+                    detail=type(value)..":"..tostring(value)
+                end
+            end
+        end
+        values[#values+1]=string.format("%d=%s",index,detail)
+    end
+    if owned then
+        D.logInfo("focusChargePopTrace phase=animationProxy args=%s",table.concat(values,";"))
+    end
 end
 -- Entry 3348 precedes the Reset route 2867 by about 0.2 seconds, while the
 -- ordinary Delay nodes were absent. Blueprint Set Timer is the remaining
@@ -2009,6 +2045,8 @@ if D.debugLogging and config.fadeTransitions and panelModes.WBP_HUD_FocusCharge_
         callback=function(context) runtime.focusChargePopTraceEntryBoxEvent(context,"RemoveEntry") end, optional="probe"}
     specs[#specs+1]={path="/Script/UMG.UserWidget:PlayAnimation", native=true,
         callback=function(context,animation) runtime.focusChargePopTraceAnimationEvent(context,animation) end, optional="probe"}
+    specs[#specs+1]={path="/Script/UMG.WidgetAnimationPlayCallbackProxy:CreatePlayAnimationProxyObject", native=true,
+        before=runtime.focusChargePopTraceAnimationProxyEvent, callback=function() end, optional="probe"}
     specs[#specs+1]={path="/Script/Engine.KismetSystemLibrary:Delay", native=true,
         callback=function(_,worldContext,duration) runtime.focusChargePopTraceDelayEvent(worldContext,duration,"Delay") end, optional="probe"}
     specs[#specs+1]={path="/Script/Engine.KismetSystemLibrary:RetriggerableDelay", native=true,
