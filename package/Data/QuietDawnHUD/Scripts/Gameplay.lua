@@ -741,6 +741,160 @@ function runtime.stepFocusChargeFade()
         -- reset. That gives Fade-off a precise restoration to untouched Vanilla.
     end
 end
+do
+-- FModel maps the HVP presets onto these exact GameHUD NamedToggleableContainer
+-- owners. HVP_Combat brings the combat HUD policy forward; Pop restores
+-- HVP_Default's HideAllExcept policy. The two user-facing panels are separate
+-- containers, but those stock preset edges are their shared presentation route.
+local presetContainerFade=require("QuietDawnFade").new(D,function()
+    if not valid(frameClock) or not valid(controller) then return nil end
+    return frameClock:GetGameTimeInSeconds(controller)
+end)
+presetContainerFade.configure(config.fadeTransitions,config.fadeInSeconds,config.fadeOutSeconds)
+function runtime.configurePresetContainerFade()
+    presetContainerFade.configure(config.fadeTransitions,config.fadeInSeconds,config.fadeOutSeconds)
+end
+local PRESET_FADE_CONTAINERS={
+    {key="vanilla:QuickslotContainer",field="QuickslotContainer",mode="WBP_AA_Quickslots"},
+    {key="vanilla:AbilitiesCooldownContainer",field="AbilitiesCooldownContainer",mode="WBP_HUD_SpecialAttackCooldown"},
+}
+runtime.presetContainerFadeEntries={}
+runtime.presetContainerVisible={}
+local function presetContainerObject(definition)
+    if not valid(hud) or not valid(controller) then return nil end
+    local ownerOK,object=pcall(function() return hud[definition.field] end)
+    if not ownerOK or not valid(object) then return nil end
+    local worldOK,objectWorld=pcall(function() return object:GetWorld() end)
+    if not worldOK or not sameObject(objectWorld,world) then return nil end
+    return object
+end
+local function presetContainerVisibility(object)
+    local readable,value=pcall(function() return object:GetVisibility() end)
+    return readable and value or nil
+end
+local function resetPresetContainerEntry(definition,entry)
+    presetContainerFade.forget(definition.key)
+    if entry and valid(entry.object) then
+        -- A Fade-off/settings/HUD boundary must land on the stock hidden state,
+        -- not leave an exit transition's temporary visible owner on screen.
+        if entry.hiddenVisibility~=nil then pcall(function() entry.object:SetVisibility(entry.hiddenVisibility) end) end
+        if entry.lease then pcall(panelOpacity.restore,entry.lease) end
+    end
+    runtime.presetContainerFadeEntries[definition.key]=nil
+end
+function runtime.resetPresetContainerFade()
+    for _,definition in ipairs(PRESET_FADE_CONTAINERS) do
+        resetPresetContainerEntry(definition,runtime.presetContainerFadeEntries[definition.key])
+    end
+    presetContainerFade.reset()
+    runtime.presetContainerVisible={}
+end
+Session.onClose(runtime.resetPresetContainerFade)
+local function beginPresetContainerFade(definition,source)
+    if not config.fadeTransitions or panelModes[definition.mode]~=Modes.VANILLA then return end
+    local object=presetContainerObject(definition)
+    if not object then return end
+    local currentVisibility=presetContainerVisibility(object)
+    if currentVisibility==nil then return end
+    local existing=runtime.presetContainerFadeEntries[definition.key]
+    if existing then resetPresetContainerEntry(definition,existing) end
+    if source=="PushHUDPreset" then
+        local previous=runtime.presetContainerVisible[definition.key]
+        -- A Push that did not make this particular stock container visible is
+        -- not its combat-show edge (and must remain untouched).
+        if previous and previous.hiddenVisibility~=nil and currentVisibility==previous.hiddenVisibility then return end
+        local leaseOK,lease=pcall(panelOpacity.bind,object)
+        local opacityOK,stockOpacity=pcall(function() return object:GetRenderOpacity() end)
+        if not leaseOK or not lease or not opacityOK or type(stockOpacity)~="number" then return end
+        runtime.presetContainerVisible[definition.key]={visibility=currentVisibility,opacity=stockOpacity}
+        local entry={object=object,lease=lease,target=stockOpacity,visibleVisibility=currentVisibility}
+        runtime.presetContainerFadeEntries[definition.key]=entry
+        pcall(panelOpacity.apply,lease,0)
+        local value=presetContainerFade.step(definition.key,0,stockOpacity)
+        pcall(panelOpacity.apply,lease,value)
+        entry.inFlight=presetContainerFade.active(definition.key)
+        if not entry.inFlight then
+            pcall(panelOpacity.commit,lease,stockOpacity)
+            runtime.presetContainerFadeEntries[definition.key]=nil
+        end
+    elseif source=="PopHUDPreset" then
+        local previous=runtime.presetContainerVisible[definition.key]
+        -- The live HVP_Default policy has already hidden the container by this
+        -- post-Pop point. Re-present that exact visible state for Fade out,
+        -- then restore the stock hidden visibility after the configured time.
+        if not previous or currentVisibility==previous.visibility then return end
+        local hiddenVisibility=currentVisibility
+        previous.hiddenVisibility=hiddenVisibility
+        local visibleOK=pcall(function() object:SetVisibility(previous.visibility) end)
+        if not visibleOK then return end
+        local leaseOK,lease=pcall(panelOpacity.bind,object)
+        if not leaseOK or not lease then
+            pcall(function() object:SetVisibility(hiddenVisibility) end)
+            return
+        end
+        pcall(panelOpacity.apply,lease,previous.opacity)
+        local entry={object=object,lease=lease,target=0,hiddenVisibility=hiddenVisibility,
+            visibleVisibility=previous.visibility}
+        runtime.presetContainerFadeEntries[definition.key]=entry
+        local value=presetContainerFade.step(definition.key,previous.opacity,0)
+        pcall(panelOpacity.apply,lease,value)
+        entry.inFlight=presetContainerFade.active(definition.key)
+        if not entry.inFlight then
+            pcall(function() object:SetVisibility(hiddenVisibility) end)
+            pcall(panelOpacity.restore,lease)
+            runtime.presetContainerFadeEntries[definition.key]=nil
+        end
+    end
+end
+function runtime.beginPresetContainerFade(source)
+    if source~="PushHUDPreset" and source~="PopHUDPreset" then return end
+    local seconds=tonumber(source=="PushHUDPreset" and config.fadeInSeconds or config.fadeOutSeconds)
+    -- A zero-duration Fade is a no-op: leave the already-completed stock preset
+    -- decision alone rather than taking a transient opacity/visibility lease.
+    if not seconds or seconds<=0 then return end
+    for _,definition in ipairs(PRESET_FADE_CONTAINERS) do beginPresetContainerFade(definition,source) end
+    if runtime.presetContainerFadePending() and wake then wake("presetContainerFade") end
+end
+function runtime.stepPresetContainerFade()
+    for _,definition in ipairs(PRESET_FADE_CONTAINERS) do
+        local entry=runtime.presetContainerFadeEntries[definition.key]
+        if entry then
+            if not valid(entry.object) then
+                resetPresetContainerEntry(definition,entry)
+            else
+                local opacityOK,current=pcall(function() return entry.object:GetRenderOpacity() end)
+                if not opacityOK or type(current)~="number" then
+                    resetPresetContainerEntry(definition,entry)
+                else
+                    local value=presetContainerFade.step(definition.key,current,entry.target)
+                    local wrote=pcall(panelOpacity.apply,entry.lease,value)
+                    if not wrote then
+                        resetPresetContainerEntry(definition,entry)
+                    elseif not presetContainerFade.active(definition.key) then
+                        if entry.target==0 and entry.hiddenVisibility~=nil then
+                            pcall(function() entry.object:SetVisibility(entry.hiddenVisibility) end)
+                            pcall(panelOpacity.restore,entry.lease)
+                        else
+                            pcall(panelOpacity.commit,entry.lease,entry.target)
+                        end
+                        runtime.presetContainerFadeEntries[definition.key]=nil
+                    end
+                end
+            end
+        end
+    end
+end
+function runtime.presetContainerFadePending()
+    local pending=presetContainerFade.pending()
+    if pending then return true end
+    -- An expired/missing game clock cannot leave a temporary container visible.
+    for _,definition in ipairs(PRESET_FADE_CONTAINERS) do
+        local entry=runtime.presetContainerFadeEntries[definition.key]
+        if entry then resetPresetContainerEntry(definition,entry) end
+    end
+    return false
+end
+end
 -- Focus has no dedicated UFunction. Resource and HUD events already wake the
 -- existing worker many times during normal play, so sample the pawn only while
 -- Focus is selected as the peek trigger; no permanent Focus polling loop is
@@ -1234,10 +1388,11 @@ local function signal(source)
     elseif source=="PopHUDPreset" then
         runtime.stopFocusChargeLocator("PopHUDPreset")
     end
-    -- Vanilla owns the presentation boundary. Activation Charges is the only
-    -- confirmed proxy route so far; the three other combat panels remain
-    -- read-only until their compact factory trace identifies theirs.
+    -- Vanilla owns the preset boundary. Activation Charges has its confirmed
+    -- proxy route; FModel maps Quickslot Abilities and Weapon Arts to the two
+    -- exact preset-owned containers mediated immediately below.
     runtime.beginFocusChargeFade(source)
+    runtime.beginPresetContainerFade(source)
     refreshDirty=true
     wake()
 end
@@ -1460,6 +1615,7 @@ local function accept(object)
     if not sameObject(object,hud) or not sameObject(objectWorld,world) then
         runtime.stopFocusChargeLocator("HUD replacement")
         runtime.resetFocusChargeFade()
+        runtime.resetPresetContainerFade()
         hud, world, panels, absent = object, objectWorld, {}, {}
         runtime.resetCombatHudAnimationTrace()
         -- A direct object notification and the GameHUD hook are preferred.
@@ -2026,10 +2182,11 @@ local function step()
         runtime.advanceFocusChargeLocator(version)
         return false
     end
-    if runtime.focusChargeFadeEntry and focusChargeFade.active(runtime.focusChargeFadeKey) then
-        runtime.stepFocusChargeFade()
-        return false
-    end
+    local presetFading=runtime.presetContainerFadePending()
+    local focusFading=runtime.focusChargeFadeEntry and focusChargeFade.active(runtime.focusChargeFadeKey)
+    if presetFading then runtime.stepPresetContainerFade() end
+    if focusFading then runtime.stepFocusChargeFade() end
+    if presetFading or focusFading then return false end
     if runtime.startupBarrier and runtime.startupBarrier.releasePending then
         runtime.flushStartupBarrier()
         return false
@@ -2340,7 +2497,9 @@ function runtime.workerDelay()
     if markerUrgent then return runtime.workerFadeMs end
     local ok,fading=pcall(fade.pending)
     local focusOK,focusFading=pcall(runtime.focusChargeFadePending)
+    local presetOK,presetFading=pcall(runtime.presetContainerFadePending)
     runtime.fadeInFlight=(ok and fading or false) or (focusOK and focusFading or false)
+        or (presetOK and presetFading or false)
     if not runtime.fadeInFlight then runtime.fadePacing.reset() end
     return runtime.fadeInFlight and runtime.workerFadeMs or runtime.workerIdleMs
 end
@@ -2556,7 +2715,9 @@ applyLiveSettings=function(run)
     if changed.fadeTransitions or changed.fadeInSeconds or changed.fadeOutSeconds then
         fade.configure(config.fadeTransitions,config.fadeInSeconds,config.fadeOutSeconds)
         runtime.resetFocusChargeFade()
+        runtime.resetPresetContainerFade()
         focusChargeFade.configure(config.fadeTransitions,config.fadeInSeconds,config.fadeOutSeconds)
+        runtime.configurePresetContainerFade()
         runtime.fadePacing.reset()
     end
     if changed.debugFocusChargeLocator or changed.logLevel or changed.fadeTransitions
@@ -2566,6 +2727,7 @@ applyLiveSettings=function(run)
         -- The opt-in locator owns the Activation Charges container. Release
         -- its retained lease before a settings change can alter Fade behavior.
         runtime.resetFocusChargeFade()
+        runtime.resetPresetContainerFade()
         runtime.resetCombatHudAnimationTrace()
         runtime.focusChargeLocatorArmed=config.debugFocusChargeLocator and D.debugLogging
             and panelModes.WBP_HUD_FocusCharge_Bar==Modes.VANILLA
