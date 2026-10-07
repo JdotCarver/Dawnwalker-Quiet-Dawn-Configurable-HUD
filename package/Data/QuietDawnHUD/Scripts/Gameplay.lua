@@ -446,16 +446,20 @@ local COMBAT_HUD_FADE_PANELS={
     "WBP_HUD_Quickslots_ChangePrompt",
     "WBP_HUD_SpecialAttackCooldown",
 }
-function runtime.resetCombatHudAnimationTrace()
+function runtime.resetCombatHudAnimationTrace(closing)
     runtime.combatHudAnimationTraceSeen={}
     runtime.combatHudAnimationTraceRemaining=0
-    if not D.debugLogging or not config.fadeTransitions or not valid(hud) then return end
+    runtime.combatHudAnimationTrace3515Logged=false
+    if closing or not D.debugLogging or not config.fadeTransitions or not valid(hud) then return end
+    local eligible={}
     for _,name in ipairs(COMBAT_HUD_FADE_PANELS) do
-        if panelModes[name]==Modes.VANILLA then
-            -- At most forward/reverse observations for a few named animations.
-            runtime.combatHudAnimationTraceRemaining=12
-            return
-        end
+        if panelModes[name]==Modes.VANILLA then eligible[#eligible+1]=name end
+    end
+    if #eligible>0 then
+        -- At most forward/reverse observations for a few named animations.
+        runtime.combatHudAnimationTraceRemaining=12
+        D.logInfo("combatHudAnimationTrace armed panels=%s maxDistinct=%d",
+            table.concat(eligible,","),runtime.combatHudAnimationTraceRemaining)
     end
 end
 local function combatHudProxyValue(param)
@@ -464,25 +468,76 @@ local function combatHudProxyValue(param)
     if type(value)=="number" then return string.format("%.3f",value) end
     return tostring(value)
 end
+local function combatHudTracePanelFor(candidate)
+    if not valid(candidate) then return nil end
+    -- Prefer exact active-HUD fields. The direct owner is the only identity a
+    -- future production playback-rate write may use.
+    for _,name in ipairs(COMBAT_HUD_FADE_PANELS) do
+        if panelModes[name]==Modes.VANILLA then
+            local ownerOK,owner=pcall(function() return hud[name] end)
+            local sameOK,same=false,false
+            if ownerOK then sameOK,same=pcall(sameObject,candidate,owner) end
+            if sameOK and same then return name,"exact" end
+        end
+    end
+    -- The previous exact-only trace was too narrow: a Blueprint can launch an
+    -- animation from a nested UUserWidget. Class names identify such a child
+    -- for diagnosis only; they never authorize a production parameter write.
+    local named,className=pcall(function() return candidate:GetClass():GetFullName() end)
+    if not named or not className then return nil end
+    className=tostring(className)
+    for _,name in ipairs(COMBAT_HUD_FADE_PANELS) do
+        if panelModes[name]==Modes.VANILLA and className:find(name,1,true) then
+            return name,"class"
+        end
+    end
+    if panelModes.WBP_HUD_Quickslots_ChangePrompt==Modes.VANILLA
+        and className:find("Quickslots_ChangePrompt",1,true) then
+        return "WBP_HUD_Quickslots_ChangePrompt","childClass"
+    end
+    if panelModes.WBP_AA_Quickslots==Modes.VANILLA and className:find("Quickslot",1,true) then
+        return "WBP_AA_Quickslots","quickslotChild"
+    end
+    if panelModes.WBP_HUD_SpecialAttackCooldown==Modes.VANILLA
+        and className:find("SpecialAttack",1,true) then
+        return "WBP_HUD_SpecialAttackCooldown","weaponArtsChild"
+    end
+    return nil
+end
+local function combatHudTraceOwner(widget)
+    -- Parent and Outer are each a fixed eight-object ancestry check of the
+    -- factory's own widget argument, not a widget-tree/global-object search.
+    local current=widget
+    for depth=0,8 do
+        local panel,kind=combatHudTracePanelFor(current)
+        if panel then return panel,kind..":parent"..depth end
+        local parentOK,parent=pcall(function() return current:GetParent() end)
+        if not parentOK or not valid(parent) then break end
+        current=parent
+    end
+    current=widget
+    for depth=0,8 do
+        local panel,kind=combatHudTracePanelFor(current)
+        if panel then return panel,kind..":outer"..depth end
+        local outerOK,outer=pcall(function() return current:GetOuter() end)
+        if not outerOK or not valid(outer) then break end
+        current=outer
+    end
+    return nil
+end
 function runtime.traceCombatHudAnimationProxy(_,_,widgetParam,animationParam,startParam,loopsParam,playModeParam,playbackSpeedParam)
     local remaining=runtime.combatHudAnimationTraceRemaining or 0
     if remaining<=0 or not D.debugLogging or not config.fadeTransitions or not valid(hud) then return end
     local widgetOK,widget=pcall(unwrap,widgetParam)
     if not widgetOK or not valid(widget) then return end
-    local panel=nil
-    for _,name in ipairs(COMBAT_HUD_FADE_PANELS) do
-        if panelModes[name]==Modes.VANILLA then
-            local ownerOK,owner=pcall(function() return hud[name] end)
-            if ownerOK and sameObject(widget,owner) then panel=name;break end
-        end
-    end
+    local panel,owner=combatHudTraceOwner(widget)
     if not panel then return end
     local animationOK,animation=pcall(unwrap,animationParam)
     if not animationOK or not valid(animation) then return end
     local named,animationName=pcall(function() return animation:GetFullName() end)
     if not named or not animationName then return end
     local playMode=combatHudProxyValue(playModeParam)
-    local signature=panel.."|"..tostring(animationName).."|"..playMode
+    local signature=panel.."|"..owner.."|"..tostring(animationName).."|"..playMode
     local seen=runtime.combatHudAnimationTraceSeen or {}
     runtime.combatHudAnimationTraceSeen=seen
     if seen[signature] then return end
@@ -491,8 +546,8 @@ function runtime.traceCombatHudAnimationProxy(_,_,widgetParam,animationParam,sta
     local duration="unavailable"
     local durationOK,endTime=pcall(function() return animation:GetEndTime() end)
     if durationOK and type(endTime)=="number" then duration=string.format("%.3f",endTime) end
-    D.logInfo("combatHudAnimationTrace panel=%s animation=%s duration=%s start=%s loops=%s playMode=%s playbackSpeed=%s remaining=%d",
-        panel,tostring(animationName),duration,combatHudProxyValue(startParam),combatHudProxyValue(loopsParam),playMode,
+    D.logInfo("combatHudAnimationTrace panel=%s owner=%s animation=%s duration=%s start=%s loops=%s playMode=%s playbackSpeed=%s remaining=%d",
+        panel,owner,tostring(animationName),duration,combatHudProxyValue(startParam),combatHudProxyValue(loopsParam),playMode,
         combatHudProxyValue(playbackSpeedParam),runtime.combatHudAnimationTraceRemaining)
 end
 -- Live factory arguments are: WorldContextObject, Widget, Animation,
@@ -533,7 +588,7 @@ function runtime.focusChargeAnimationProxyEvent(context,...)
 end
 Session.onClose(function()
     runtime.stopFocusChargeLocator("session close")
-    runtime.resetCombatHudAnimationTrace()
+    runtime.resetCombatHudAnimationTrace(true)
 end)
 -- Fading resolves a show or hide target into a per frame opacity. It owns no
 -- timer: the panel worker already ticks while work remains, and keeps itself
@@ -1180,6 +1235,12 @@ end
 local function switchedQuickslots(context,entryParam)
     noteUbergraphEntry("WBP_GameHUD",entryParam)
     local entry=tonumber(unwrap(entryParam))
+    if entry==3515 and D.debugLogging and (runtime.combatHudAnimationTraceRemaining or 0)>0
+        and not runtime.combatHudAnimationTrace3515Logged and currentPanelEvent(context) then
+        runtime.combatHudAnimationTrace3515Logged=true
+        D.logInfo("combatHudAnimationTrace source=GameHUD entry=3515 action=weapon-state remaining=%d",
+            runtime.combatHudAnimationTraceRemaining)
+    end
     -- 4026 is a confirmed Focus-release graph entry. It does not decide the
     -- reveal itself: it only wakes the normal pawn snapshot, which reads the
     -- authoritative bIsInFocusMode transition and starts the hold if needed.
@@ -1280,8 +1341,12 @@ if seen.WBP_HUD_SpecialAttackCooldown and panelModes.WBP_HUD_SpecialAttackCooldo
     specs[#specs+1]={path=SPECIAL..":SetupCooldownEffect", callback=cooldownEvent, optional="panel"}
     specs[#specs+1]={path=SPECIAL..":OnCooldownFinished", callback=cooldownEvent, optional="panel"}
 end
-if (config.switchRevealSeconds>0 and hasSwitchPanels()) or (manualPeekEnabled and config.peekOnFocusMode) then
-    -- The same graph provides quickslot switching and the Focus-release wake.
+if (config.switchRevealSeconds>0 and hasSwitchPanels()) or (manualPeekEnabled and config.peekOnFocusMode)
+    or (D.debugLogging and config.fadeTransitions and (panelModes.WBP_AA_Quickslots==Modes.VANILLA
+        or panelModes.WBP_HUD_Quickslots_ChangePrompt==Modes.VANILLA
+        or panelModes.WBP_HUD_SpecialAttackCooldown==Modes.VANILLA)) then
+    -- The same graph provides quickslot switching, the Focus-release wake and
+    -- one concise weapon-state edge for the compact proxy trace.
     specs[#specs+1]={path=ROOT..":ExecuteUbergraph_WBP_GameHUD", callback=switchedQuickslots, optional="panel"}
 end
     local last=#specs
