@@ -1,0 +1,64 @@
+{
+  "schemaVersion": 1,
+  "packages": {
+    "main": {
+      "id": "QuietDawnHUD",
+      "name": "Quiet Dawn - Configurable HUD",
+      "archive": "Quiet-Dawn-Configurable-HUD.zip",
+      "packageFormat": 1,
+      "baseline": {
+        "kind": "nexus",
+        "version": "1.1.3",
+        "normalizedVersion": "1.1.3",
+        "sourceCommit": "c31c49c01098e939b30889256ab8cec44d98b49b",
+        "sourceTag": "v1.1.3",
+        "archiveSha256": "439f6273c713eb90131efcaaac52317822cf653c42044b188d33e441265a69db",
+        "verifiedAt": "2026-10-07T12:13:17.1213696Z",
+        "nexus": {
+          "game": "thebloodofdawnwalker",
+          "pageId": "452",
+          "modId": "41742787150276",
+          "fileChainId": "7953870",
+          "versionId": "41742787152924",
+          "siteFileId": "3100"
+        }
+      },
+      "bindings": [
+        {
+          "path": "native/main.cpp",
+          "pattern": "ModVersion\\s*=\\s*(?:STR\\(|L)?\"(?P<version>[^\"]+)\"",
+          "count": 1,
+          "members": []
+        },
+        {
+          "path": "package/Data/QuietDawnHUD/mod_settings.ini",
+          "pattern": "^Version\\s*=\\s*(?P<version>[^\\r\\n]+)",
+          "count": 1,
+          "members": [
+            "Data/QuietDawnHUD/mod_settings.ini"
+          ]
+        },
+        {
+          "path": "package/mod.manifest",
+          "pattern": "<version>(?P<version>[^<]+)</version>",
+          "count": 1,
+          "members": [
+            "mod.manifest"
+          ]
+        }
+      ],
+      "excludePaths": [
+        "Optional",
+        "Compatibility",
+        "VortexExtension"
+      ],
+      "pending": {
+        "impact": "minor",
+        "rationale": "Add synchronized fades, Always Hidden panels, Focus peeks, panel inclusion, combat-effect controls and logging levels with preserving preference migration.",
+        "majorOverride": false,
+        "reviewedInputs": "e50fcd6080df39ace4a969e67cdc537c369e2d520cb09df75d01809e6e2f693e",
+        "divergenceReviewed": false
+      }
+    }
+  }
+}
