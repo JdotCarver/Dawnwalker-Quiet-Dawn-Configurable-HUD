@@ -543,6 +543,7 @@ function runtime.resetFocusChargeSlotProbe()
     runtime.focusChargeSlotTreeVersion=0
     runtime.focusChargeSlotTreeBaselineReady=false
     runtime.focusChargeSlotTreeBaselinePending=false
+    runtime.focusChargeSlotProbeMembers={}
     runtime.focusChargeSlotProbeOwned,runtime.focusChargeSlotProbeRejected={},{}
     runtime.focusChargeSlotProbeRemaining=0
     runtime.focusChargeSlotWriteProbeRemaining=0
@@ -584,8 +585,9 @@ end
 function runtime.captureFocusChargeSlotProbe(probe)
     local object=probe.object
     local address=probe.address
-    if not D.debugLogging or not valid(object) or not address
-        or not (runtime.focusChargeSlotProbeOwned or {})[address] then return end
+    if not D.debugLogging or not valid(object) or not address then return end
+    local members=runtime.focusChargeSlotProbeMembers or {}
+    if not (runtime.focusChargeSlotProbeOwned or {})[address] and not members[address] then return end
     local versionField=probe.versionField or "focusChargeSlotProbeVersions"
     if probe.version and (runtime[versionField] or {})[address]~=probe.version then return end
     local className="unavailable"
@@ -619,6 +621,8 @@ function runtime.captureFocusChargeSlotTreeProbe(probe)
         local addressOK,address=pcall(function() return node:GetAddress() end)
         if not addressOK or seen[address] then return end
         seen[address]=true
+        runtime.focusChargeSlotProbeMembers=runtime.focusChargeSlotProbeMembers or {}
+        runtime.focusChargeSlotProbeMembers[address]=true
         nodes=nodes+1
         local className="unavailable"
         local visibility="unavailable"
@@ -629,12 +633,33 @@ function runtime.captureFocusChargeSlotTreeProbe(probe)
         if readable and value~=nil then visibility=tostring(value) end
         readable,value=pcall(function() return node:GetRenderOpacity() end)
         if readable and type(value)=="number" then opacityValue=string.format("%.3f",value) end
-        local state=path.."|"..className.."|"..visibility.."|"..opacityValue
+        -- A charge fill can be a brush/material or tint change with unchanged
+        -- widget visibility and opacity. Record those Image presentation inputs
+        -- alongside the ordinary state without guessing their meaning.
+        local visual="not-image"
+        if className:find("/Script/UMG.Image",1,true) then
+            local resource="none"
+            local resourceOK,resourceValue=pcall(function() return node.Brush.ResourceObject end)
+            if resourceOK and resourceValue~=nil then
+                local nameOK,name=pcall(function() return resourceValue:GetFullName() end)
+                resource=nameOK and tostring(name) or tostring(resourceValue)
+            end
+            local colour="unavailable"
+            local colourOK,colourValue=pcall(function() return node:GetColorAndOpacity() end)
+            if colourOK and colourValue~=nil then
+                local rgbaOK,rgba=pcall(function()
+                    return string.format("%.3f,%.3f,%.3f,%.3f",colourValue.R,colourValue.G,colourValue.B,colourValue.A)
+                end)
+                colour=rgbaOK and rgba or tostring(colourValue)
+            end
+            visual="brush="..resource.." tint="..colour
+        end
+        local state=path.."|"..className.."|"..visibility.."|"..opacityValue.."|"..visual
         treeState[address]=state
         if prior[address]~=state then
             changed=changed+1
-            D.logInfo("focusChargeSlotTree source=%s entry=%s phase=%s slot=%d node=%s path=%s class=%s visibility=%s opacity=%s",
-                probe.source,tostring(probe.entry),probe.phase,slot,tostring(address),path,className,visibility,opacityValue)
+            D.logInfo("focusChargeSlotTree source=%s entry=%s phase=%s slot=%d node=%s path=%s class=%s visibility=%s opacity=%s visual=%s",
+                probe.source,tostring(probe.entry),probe.phase,slot,tostring(address),path,className,visibility,opacityValue,visual)
         end
         local treeOK,tree=pcall(function() return node.WidgetTree end)
         if treeOK and valid(tree) then
@@ -1324,15 +1349,23 @@ function runtime.queueFocusChargeSlotTreeBaseline(source)
     if not D.debugLogging or not config.fadeTransitions
         or panelModes.WBP_HUD_FocusCharge_Bar~=Modes.VANILLA
         or runtime.focusChargeSlotTreeBaselineReady or runtime.focusChargeSlotTreeBaselinePending then return end
-    local slots,reason=runtime.collectFocusChargeLocatorEntries()
-    if not slots then
-        if D.debugLogging then D.event("focusChargeSlotTree","source=%s phase=unavailable reason=%s",source,tostring(reason)) end
-        return
-    end
+    -- Entry construction calls the slot's setter before every runtime entry is
+    -- exposed by DynamicEntryBox. Let that finite construction burst settle so
+    -- the baseline includes all four supported slot positions, not only slot 1.
     runtime.focusChargeSlotTreeVersion=(runtime.focusChargeSlotTreeVersion or 0)+1
     runtime.focusChargeSlotTreeBaselinePending=true
-    runtime.enqueueFocusChargeSlotTreeProbe({source=source,phase="baseline",slots=slots,
-        version=runtime.focusChargeSlotTreeVersion})
+    local version,ownedHUD=runtime.focusChargeSlotTreeVersion,hudAddress
+    local scheduled=pcall(ExecuteInGameThreadWithDelay,runtime.focusChargeLocatorDelayMs,function()
+        if version~=runtime.focusChargeSlotTreeVersion or ownedHUD~=hudAddress then return end
+        local slots,reason=runtime.collectFocusChargeLocatorEntries()
+        if not slots then
+            runtime.focusChargeSlotTreeBaselinePending=false
+            if D.debugLogging then D.event("focusChargeSlotTree","source=%s phase=unavailable reason=%s",source,tostring(reason)) end
+            return
+        end
+        runtime.enqueueFocusChargeSlotTreeProbe({source=source,phase="baseline",slots=slots,version=version})
+    end)
+    if not scheduled then runtime.focusChargeSlotTreeBaselinePending=false end
 end
 function runtime.queueFocusChargeSlotTreeProbe(source,entry)
     if not D.debugLogging or not config.fadeTransitions or entry~=573
@@ -1497,7 +1530,9 @@ function runtime.focusChargeSlotWriteEvent(context,source)
     local object=unwrap(context)
     if not valid(object) then return end
     local readable,address=pcall(function() return object:GetAddress() end)
-    if not readable or not address or not runtime.focusChargeSlotAddressIsOwned(object,address) then return end
+    if not readable or not address then return end
+    local members=runtime.focusChargeSlotProbeMembers or {}
+    if not members[address] and not runtime.focusChargeSlotAddressIsOwned(object,address) then return end
     runtime.queueFocusChargeSlotTreeBaseline("slot direct-write baseline")
     runtime.focusChargeSlotWriteProbeRemaining=remaining-1
     runtime.focusChargeSlotWriteProbeVersions=runtime.focusChargeSlotWriteProbeVersions or {}
@@ -1673,6 +1708,10 @@ if D.debugLogging and config.fadeTransitions and panelModes.WBP_HUD_FocusCharge_
         callback=function(context) runtime.focusChargeSlotWriteEvent(context,"SetVisibility") end, optional="probe"}
     specs[#specs+1]={path="/Script/UMG.Widget:SetRenderOpacity", native=true,
         callback=function(context) runtime.focusChargeSlotWriteEvent(context,"SetRenderOpacity") end, optional="probe"}
+    specs[#specs+1]={path="/Script/UMG.Image:SetBrush", native=true,
+        callback=function(context) runtime.focusChargeSlotWriteEvent(context,"SetBrush") end, optional="probe"}
+    specs[#specs+1]={path="/Script/UMG.Image:SetColorAndOpacity", native=true,
+        callback=function(context) runtime.focusChargeSlotWriteEvent(context,"SetColorAndOpacity") end, optional="probe"}
 end
 if (config.switchRevealSeconds>0 and hasSwitchPanels()) or (manualPeekEnabled and config.peekOnFocusMode)
     or (D.debugLogging and config.fadeTransitions and (panelModes.WBP_AA_Quickslots==Modes.VANILLA
