@@ -2733,6 +2733,8 @@ applyLiveSettings=function(run)
     if changed.debugFocusChargeLocator or changed.logLevel or changed.mode_WBP_HUD_FocusCharge_Bar or changed.fadeTransitions then
         runtime.stopFocusChargeLocator("settings applied")
         runtime.resetFocusChargeSlotProbe()
+        runtime.focusChargeSlotProbeRemaining=valid(hud) and D.debugLogging and config.fadeTransitions
+            and panelModes.WBP_HUD_FocusCharge_Bar==Modes.VANILLA and 12 or 0
         runtime.focusChargeLocatorArmed=config.debugFocusChargeLocator and D.debugLogging
             and panelModes.WBP_HUD_FocusCharge_Bar==Modes.VANILLA
     end
