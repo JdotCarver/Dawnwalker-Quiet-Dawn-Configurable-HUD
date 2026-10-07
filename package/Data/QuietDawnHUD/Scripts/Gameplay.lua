@@ -524,9 +524,6 @@ function runtime.mediateFocusChargeFadeOut(_,_,widgetParam,animationParam,_,_,pl
         end
         return
     end
-    if D.debugLogging then
-        D.event("focusChargeFade","stockReverse=FadeIn playbackSpeed=%.4f duration=%.3f",rate,fadeOutSeconds)
-    end
 end
 -- The compact, finite trace is intentionally read-only and runs before the
 -- one confirmed production write. Fade off returns before any proxy unwrap.
@@ -624,9 +621,6 @@ function runtime.beginFocusChargeFade(source)
         panelOpacity.commit(entry.lease,1)
         runtime.focusChargeFadeEntry=nil
     end
-    if D.debugLogging then
-        D.event("focusChargeFade","source=%s presentation=DynamicEntryBox from=%.3f target=%d",source,current,target)
-    end
     if wake then wake("focusChargeFade") end
 end
 function runtime.stepFocusChargeFade()
@@ -648,7 +642,6 @@ function runtime.stepFocusChargeFade()
         end
         -- Keep a completed hide lease until the next Push or a settings/session
         -- reset. That gives Fade-off a precise restoration to untouched Vanilla.
-        if D.debugLogging then D.event("focusChargeFade","source=%s settled=%.3f",entry.source,value) end
     end
 end
 -- Focus has no dedicated UFunction. Resource and HUD events already wake the
