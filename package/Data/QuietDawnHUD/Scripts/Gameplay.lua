@@ -437,10 +437,10 @@ function runtime.queueFocusChargeLocator(source)
         wake("focusChargeLocator")
     end)
 end
--- FModel confirms the exact whole-display routes for both Quick Slots
--- panels. Activation Charges retains its separate confirmed proxy route.
--- Weapon Arts is deliberately left diagnostic-only until its display path is
--- equally specific; no generic widget/property interception remains.
+-- Activation Charges and the Quick Slots Switch Prompt have confirmed whole-
+-- display routes. FModel shows two in-panel Quickslot Abilities animations,
+-- but the live combat lifecycle does not invoke them; it remains untouched.
+-- Weapon Arts is diagnostic-only until its display route is equally specific.
 local COMBAT_HUD_FADE_PANELS={
     "WBP_AA_Quickslots",
     "WBP_HUD_Quickslots_ChangePrompt",
@@ -451,15 +451,6 @@ runtime.quickslotsPromptAnimations={
     ["WidgetAnimation /Game/_Dawnwalker/UI/_Unified/HUD/Quickslots/WBP_HUD_Quickslots_ChangePrompt.WBP_HUD_Quickslots_ChangePrompt_C:ShowAnim_INST"]=true,
 }
 runtime.quickslotsPromptStockSeconds=0.25
--- FModel export: both animations have a 30,000-tick range at the package's
--- 60,000 Hz tick resolution, i.e. 0.5 seconds. Spread owns the radial ability
--- buttons/glow; ShowInputs owns the input binding presentation. The blueprint
--- calls both through PlayAnimationForward/Reverse, not PlayAnimation.
-runtime.quickslotsAbilitiesAnimations={
-    ["WidgetAnimation /Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.WBP_AA_Quickslots_C:ShowInputs_INST"]=true,
-    ["WidgetAnimation /Game/_Dawnwalker/UI/_Unified/ActiveAbilities/WBP_AA_Quickslots.WBP_AA_Quickslots_C:Spread_INST"]=true,
-}
-runtime.quickslotsAbilitiesStockSeconds=0.5
 function runtime.resetCombatHudAnimationTrace(closing)
     runtime.combatHudAnimationTraceSeen={}
     runtime.combatHudAnimationTraceRemaining=0
@@ -595,39 +586,14 @@ function runtime.traceCombatHudDirectAnimation(context,animationParam,startParam
     runtime.recordCombatHudAnimation("direct",widget,animationParam,startParam,loopsParam,playModeParam,playbackSpeedParam)
     runtime.mediateQuickslotsPromptAnimation(context,animationParam,startParam,loopsParam,playModeParam,playbackSpeedParam)
 end
--- FModel proves these calls use (Animation, PlaybackSpeed, RestoreState).
--- Their direction is implicit in the native entry point, unlike PlayAnimation.
-function runtime.mediateQuickslotsAbilitiesAnimation(context,animationParam,playbackSpeedParam,forward)
-    if not config.fadeTransitions or panelModes.WBP_AA_Quickslots~=Modes.VANILLA then return end
-    local seconds=tonumber(forward and config.fadeInSeconds or config.fadeOutSeconds)
-    if not seconds or seconds<=0 or not valid(hud) then return end
-    local widgetOK,widget=pcall(unwrap,context)
-    local ownerOK,owner=pcall(function() return hud.WBP_AA_Quickslots end)
-    if not widgetOK or not ownerOK or not sameObject(widget,owner) then return end
-    local animationOK,animation=pcall(unwrap,animationParam)
-    if not animationOK or not valid(animation) then return end
-    local nameOK,animationName=pcall(function() return animation:GetFullName() end)
-    if not nameOK or not runtime.quickslotsAbilitiesAnimations[animationName] then return end
-    local rate=runtime.quickslotsAbilitiesStockSeconds/seconds
-    local wrote,reason=pcall(function() playbackSpeedParam:set(rate) end)
-    if not wrote and not runtime.quickslotsAbilitiesRateWarned then
-        runtime.quickslotsAbilitiesRateWarned=true
-        D.logWarning("Quickslot Abilities fade rate was not applied: %s",tostring(reason))
-    end
-end
-function runtime.traceQuickslotsAbilitiesForward(context,animationParam,playbackSpeedParam)
-    local widgetOK,widget=pcall(unwrap,context)
-    if widgetOK then runtime.recordCombatHudAnimation("directForward",widget,animationParam,0,1,0,playbackSpeedParam) end
-    runtime.mediateQuickslotsAbilitiesAnimation(context,animationParam,playbackSpeedParam,true)
-end
-function runtime.traceQuickslotsAbilitiesReverse(context,animationParam,playbackSpeedParam)
-    local widgetOK,widget=pcall(unwrap,context)
-    if widgetOK then runtime.recordCombatHudAnimation("directReverse",widget,animationParam,0,1,1,playbackSpeedParam) end
-    runtime.mediateQuickslotsAbilitiesAnimation(context,animationParam,playbackSpeedParam,false)
-end
--- The export identifies exact combat boundary functions but no owned whole-
--- display animation. One Debug-only post-state sample per stock boundary keeps
--- that unresolved route observable without a property hook, timer or write.
+-- FModel shows WBP_AA_Quickslots has ShowInputs/Spread in-panel animations,
+-- but the live weapon-draw/combat-exit path never invoked those functions.
+-- Do not retime them: they may serve a distinct manual expand/collapse state.
+-- Its shared combat dismissal must be identified from the GameHUD/preset owner.
+--
+-- The Weapon Arts export identifies these base-class virtual events. Its derived
+-- Blueprint paths did not observe in-game, so probe the exact native superclass
+-- boundary instead. The snapshots are read-only and only run at Debug.
 local function combatHudWidgetState(widget)
     if not valid(widget) then return "invalid" end
     local visibility="unavailable"
@@ -638,7 +604,7 @@ local function combatHudWidgetState(widget)
     if opacityOK and type(value)=="number" then opacity=string.format("%.3f",value) end
     return "visibility="..visibility.." opacity="..opacity
 end
-function runtime.traceWeaponArtsCombatBoundary(context,event)
+function runtime.traceWeaponArtsCombatBoundary(context,event,phase)
     if not D.debugLogging or not config.fadeTransitions or panelModes.WBP_HUD_SpecialAttackCooldown~=Modes.VANILLA
         or not valid(hud) then return end
     local widgetOK,widget=pcall(unwrap,context)
@@ -646,7 +612,7 @@ function runtime.traceWeaponArtsCombatBoundary(context,event)
     if not widgetOK or not ownerOK or not sameObject(widget,owner) then return end
     local specialOK,special=pcall(function() return owner.WBP_SpecialAttack end)
     local cooldownOK,cooldown=pcall(function() return owner.WBP_CooldownDisplay end)
-    D.logInfo("weaponArtsTrace source=FModel event=%s owner=%s special=%s cooldown=%s",event,
+    D.logInfo("weaponArtsTrace source=FModel event=%s phase=%s owner=%s special=%s cooldown=%s",event,phase,
         combatHudWidgetState(owner),specialOK and combatHudWidgetState(special) or "unavailable",
         cooldownOK and combatHudWidgetState(cooldown) or "unavailable")
 end
@@ -1390,10 +1356,6 @@ specs[#specs+1]={path="/Script/UMG.WidgetAnimationPlayCallbackProxy:CreatePlayAn
     before=runtime.focusChargeAnimationProxyEvent, callback=noop, optional="focusChargeFade"}
 specs[#specs+1]={path="/Script/UMG.UserWidget:PlayAnimation", native=true,
     before=runtime.traceCombatHudDirectAnimation, callback=noop, optional="combatHudTrace"}
-specs[#specs+1]={path="/Script/UMG.UserWidget:PlayAnimationForward", native=true,
-    before=runtime.traceQuickslotsAbilitiesForward, callback=noop, optional="quickslotsAbilitiesFade"}
-specs[#specs+1]={path="/Script/UMG.UserWidget:PlayAnimationReverse", native=true,
-    before=runtime.traceQuickslotsAbilitiesReverse, callback=noop, optional="quickslotsAbilitiesFade"}
 local knownSpecs={}
 for _,spec in ipairs(specs) do knownSpecs[spec.path]=true end
 local function ensureFeatureSpecs()
@@ -1448,12 +1410,13 @@ if seen.WBP_HUD_SpecialAttackCooldown and panelModes.WBP_HUD_SpecialAttackCooldo
     specs[#specs+1]={path=SPECIAL..":OnCooldownFinished", callback=cooldownEvent, optional="panel"}
 end
 if D.debugLogging and config.fadeTransitions and panelModes.WBP_HUD_SpecialAttackCooldown==Modes.VANILLA then
-    specs[#specs+1]={path=SPECIAL..":OnCombatStarted", callback=function(context)
-        runtime.traceWeaponArtsCombatBoundary(context,"OnCombatStarted")
-    end, optional="weaponArtsTrace"}
-    specs[#specs+1]={path=SPECIAL..":OnCombatEnded", callback=function(context)
-        runtime.traceWeaponArtsCombatBoundary(context,"OnCombatEnded")
-    end, optional="weaponArtsTrace"}
+    for _,event in ipairs({"OnCombatStarted","OnCombatEnded"}) do
+        local eventName=event -- each hook must retain its own boundary label
+        specs[#specs+1]={path="/Script/DogwoodUI.SpecialAttackHUDWidget:"..eventName, native=true,
+            before=function(context) runtime.traceWeaponArtsCombatBoundary(context,eventName,"pre") end,
+            callback=function(context) runtime.traceWeaponArtsCombatBoundary(context,eventName,"post") end,
+            optional="weaponArtsTrace"}
+    end
 end
 if (config.switchRevealSeconds>0 and hasSwitchPanels()) or (manualPeekEnabled and config.peekOnFocusMode)
     or (D.debugLogging and config.fadeTransitions and (panelModes.WBP_AA_Quickslots==Modes.VANILLA
@@ -1500,8 +1463,6 @@ local function registerOne()
                 D.logWarning("Activation Charges exit fade rate hook unavailable; stock teardown keeps its default timing.")
             elseif spec.optional=="combatHudTrace" then
                 if D.debugLogging then D.logInfo("combatHudAnimationTrace direct PlayAnimation hook unavailable.") end
-            elseif spec.optional=="quickslotsAbilitiesFade" then
-                D.logWarning("Quickslot Abilities fade hook unavailable; its stock timing remains unchanged.")
             elseif spec.optional=="weaponArtsTrace" then
                 if D.debugLogging then D.logInfo("weaponArtsTrace combat-boundary hook unavailable.") end
             elseif spec.optional=="panel" then
