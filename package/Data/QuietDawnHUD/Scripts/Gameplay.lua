@@ -446,9 +446,17 @@ local COMBAT_HUD_FADE_PANELS={
     "WBP_HUD_Quickslots_ChangePrompt",
     "WBP_HUD_SpecialAttackCooldown",
 }
+runtime.combatHudPresentationPanels={WBP_AA_Quickslots=true,WBP_HUD_SpecialAttackCooldown=true}
+runtime.quickslotsPromptAnimations={
+    ["WidgetAnimation /Game/_Dawnwalker/UI/_Unified/HUD/Quickslots/WBP_HUD_Quickslots_ChangePrompt.WBP_HUD_Quickslots_ChangePrompt_C:AAQuickslotsActiveAnim_INST"]=true,
+    ["WidgetAnimation /Game/_Dawnwalker/UI/_Unified/HUD/Quickslots/WBP_HUD_Quickslots_ChangePrompt.WBP_HUD_Quickslots_ChangePrompt_C:ShowAnim_INST"]=true,
+}
+runtime.quickslotsPromptStockSeconds=0.25
 function runtime.resetCombatHudAnimationTrace(closing)
     runtime.combatHudAnimationTraceSeen={}
     runtime.combatHudAnimationTraceRemaining=0
+    runtime.combatHudPresentationTraceSeen={}
+    runtime.combatHudPresentationTraceRemaining=0
     runtime.combatHudAnimationTrace3515Logged=false
     if closing or not D.debugLogging or not config.fadeTransitions or not valid(hud) then return end
     local eligible={}
@@ -458,8 +466,11 @@ function runtime.resetCombatHudAnimationTrace(closing)
     if #eligible>0 then
         -- At most forward/reverse observations for a few named animations.
         runtime.combatHudAnimationTraceRemaining=12
+        runtime.combatHudPresentationTraceRemaining=12
         D.logInfo("combatHudAnimationTrace armed panels=%s maxDistinct=%d",
             table.concat(eligible,","),runtime.combatHudAnimationTraceRemaining)
+        D.logInfo("combatHudPresentationTrace armed panels=WBP_AA_Quickslots,WBP_HUD_SpecialAttackCooldown maxDistinct=%d",
+            runtime.combatHudPresentationTraceRemaining)
     end
 end
 local function combatHudProxyValue(param)
@@ -551,6 +562,30 @@ end
 -- Factory calls include a WorldContextObject before the target widget. Focus
 -- Charge proved the proxy executes UUserWidget::PlayAnimation directly, while
 -- another Blueprint may invoke that native method through ProcessEvent instead.
+-- The live trace proves the full Quick Slots Switch Prompt appears and
+-- leaves through these two 0.25-second direct animations on its exact owner.
+-- Retiming only their confirmed Forward/Reverse calls keeps the widget's own
+-- state and all unrelated prompt/cooldown animations under Vanilla control.
+function runtime.mediateQuickslotsPromptAnimation(context,animationParam,_,_,playModeParam,playbackSpeedParam)
+    if not config.fadeTransitions or panelModes.WBP_HUD_Quickslots_ChangePrompt~=Modes.VANILLA then return end
+    local widgetOK,widget=pcall(unwrap,context)
+    if not widgetOK or not valid(hud) then return end
+    local ownerOK,owner=pcall(function() return hud.WBP_HUD_Quickslots_ChangePrompt end)
+    if not ownerOK or not sameObject(widget,owner) then return end
+    local animationOK,animation=pcall(unwrap,animationParam)
+    if not animationOK or not valid(animation) then return end
+    local nameOK,animationName=pcall(function() return animation:GetFullName() end)
+    if not nameOK or not runtime.quickslotsPromptAnimations[animationName] then return end
+    local modeOK,playMode=pcall(unwrap,playModeParam)
+    local seconds=playMode==0 and tonumber(config.fadeInSeconds) or playMode==1 and tonumber(config.fadeOutSeconds) or nil
+    if not modeOK or not seconds or seconds<=0 then return end
+    local rate=runtime.quickslotsPromptStockSeconds/seconds
+    local wrote,reason=pcall(function() playbackSpeedParam:set(rate) end)
+    if not wrote and not runtime.quickslotsPromptRateWarned then
+        runtime.quickslotsPromptRateWarned=true
+        D.logWarning("Quick Slots Switch Prompt fade rate was not applied: %s",tostring(reason))
+    end
+end
 function runtime.traceCombatHudAnimationProxy(_,_,widgetParam,animationParam,startParam,loopsParam,playModeParam,playbackSpeedParam)
     local widgetOK,widget=pcall(unwrap,widgetParam)
     if not widgetOK then return end
@@ -560,6 +595,54 @@ function runtime.traceCombatHudDirectAnimation(context,animationParam,startParam
     local widgetOK,widget=pcall(unwrap,context)
     if not widgetOK then return end
     runtime.recordCombatHudAnimation("direct",widget,animationParam,startParam,loopsParam,playModeParam,playbackSpeedParam)
+    runtime.mediateQuickslotsPromptAnimation(context,animationParam,startParam,loopsParam,playModeParam,playbackSpeedParam)
+end
+local function combatHudPresentationOwner(object)
+    if not valid(object) or not valid(hud) then return nil end
+    for name in pairs(runtime.combatHudPresentationPanels) do
+        if panelModes[name]==Modes.VANILLA then
+            local ownerOK,owner=pcall(function() return hud[name] end)
+            if ownerOK and sameObject(object,owner) then return name,"exact" end
+            -- WidgetSwitcher can be an ancestor of the named root. The inner
+            -- Weapon Arts content's parent is its confirmed visual container.
+            local candidates={owner}
+            if name=="WBP_HUD_SpecialAttackCooldown" and valid(owner) then
+                local contentOK,content=pcall(function() return owner.WBP_SpecialAttack end)
+                local parentOK,parent=false,nil
+                if contentOK and valid(content) then parentOK,parent=pcall(function() return content:GetParent() end) end
+                if parentOK then candidates[#candidates+1]=parent end
+            end
+            for _,candidate in ipairs(candidates) do
+                local current=candidate
+                for depth=0,4 do
+                    if valid(current) and sameObject(object,current) then return name,"ownerParent"..depth end
+                    local parentOK,parent=pcall(function() return current:GetParent() end)
+                    if not parentOK or not valid(parent) then break end
+                    current=parent
+                end
+            end
+        end
+    end
+    local panel,owner=combatHudTraceOwner(object)
+    if panel and runtime.combatHudPresentationPanels[panel] then return panel,owner end
+    return nil
+end
+function runtime.traceCombatHudPresentation(context,valueParam,method)
+    local remaining=runtime.combatHudPresentationTraceRemaining or 0
+    if remaining<=0 or not D.debugLogging or not config.fadeTransitions then return end
+    local objectOK,object=pcall(unwrap,context)
+    if not objectOK or not valid(object) then return end
+    local panel,owner=combatHudPresentationOwner(object)
+    if not panel then return end
+    local value=combatHudProxyValue(valueParam)
+    local signature=panel.."|"..owner.."|"..method.."|"..value
+    local seen=runtime.combatHudPresentationTraceSeen or {}
+    runtime.combatHudPresentationTraceSeen=seen
+    if seen[signature] then return end
+    seen[signature]=true
+    runtime.combatHudPresentationTraceRemaining=remaining-1
+    D.logInfo("combatHudPresentationTrace panel=%s owner=%s method=%s value=%s remaining=%d",
+        panel,owner,method,value,runtime.combatHudPresentationTraceRemaining)
 end
 -- Live factory arguments are: WorldContextObject, Widget, Animation,
 -- StartAtTime, NumLoops, PlayMode, PlaybackSpeed. Only the exact reverse
@@ -1301,6 +1384,12 @@ specs[#specs+1]={path="/Script/UMG.WidgetAnimationPlayCallbackProxy:CreatePlayAn
     before=runtime.focusChargeAnimationProxyEvent, callback=noop, optional="focusChargeFade"}
 specs[#specs+1]={path="/Script/UMG.UserWidget:PlayAnimation", native=true,
     before=runtime.traceCombatHudDirectAnimation, callback=noop, optional="combatHudTrace"}
+specs[#specs+1]={path="/Script/UMG.Widget:SetVisibility", native=true,
+    before=function(context,value) runtime.traceCombatHudPresentation(context,value,"SetVisibility") end, callback=noop, optional="combatHudTrace"}
+specs[#specs+1]={path="/Script/UMG.Widget:SetRenderOpacity", native=true,
+    before=function(context,value) runtime.traceCombatHudPresentation(context,value,"SetRenderOpacity") end, callback=noop, optional="combatHudTrace"}
+specs[#specs+1]={path="/Script/UMG.WidgetSwitcher:SetActiveWidgetIndex", native=true,
+    before=function(context,value) runtime.traceCombatHudPresentation(context,value,"SetActiveWidgetIndex") end, callback=noop, optional="combatHudTrace"}
 local knownSpecs={}
 for _,spec in ipairs(specs) do knownSpecs[spec.path]=true end
 local function ensureFeatureSpecs()
