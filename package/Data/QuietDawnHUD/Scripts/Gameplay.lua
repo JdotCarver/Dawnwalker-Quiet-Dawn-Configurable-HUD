@@ -135,6 +135,7 @@ end
 D.logInfo("active: managing %d panel(s), manual peek %s",#names,config.manualPeek and "on" or "off")
 if D.debugLogging then D.event("config","healthThreshold=%.3f staminaThreshold=%.3f healthHold=%.3fs staminaHold=%.3fs panels=%d",config.healthThreshold,config.staminaThreshold,config.healthHoldSeconds,config.staminaHoldSeconds,#names) end
 local ROOT = "/Game/_Dawnwalker/UI/_Unified/HUD/WBP_GameHUD.WBP_GameHUD_C"
+local FOCUS_CHARGE_SLOT="/Game/_Dawnwalker/UI/_Unified/HUD/CombatFocus/WBP_HUD_FocusCharge_Slot.WBP_HUD_FocusCharge_Slot_C"
 local hud, candidate, candidateSource, controller, world
 local hudAddress, controllerAddress
 local worker, dirty, stateReady = false, false, false
@@ -533,7 +534,50 @@ function runtime.queueFocusChargeLocator(source)
         wake("focusChargeLocator")
     end)
 end
-Session.onClose(function() runtime.stopFocusChargeLocator("session close") end)
+function runtime.resetFocusChargeSlotProbe()
+    runtime.focusChargeSlotProbe,runtime.focusChargeSlotProbeQueue=nil,{}
+    runtime.focusChargeSlotProbeVersions={}
+    runtime.focusChargeSlotProbeOwned,runtime.focusChargeSlotProbeRejected={},{}
+    runtime.focusChargeSlotProbeRemaining=0
+end
+Session.onClose(function()
+    runtime.stopFocusChargeLocator("session close")
+    runtime.resetFocusChargeSlotProbe()
+end)
+-- The locator established the user-visible slot class. Its individual
+-- enable/disable timing is still owned by the game, so observe a small,
+-- latest-event-only timeline for the exact slot graph before fading it.
+function runtime.focusChargeSlotIsOwned(object)
+    local owned=false
+    local ok=pcall(function()
+        if not valid(object) or not valid(hud) or not valid(controller)
+            or not sameObject(object:GetOwningPlayer(),controller)
+            or not sameObject(object:GetWorld(),world) then return end
+        local candidates=runtime.collectFocusChargeLocatorEntries()
+        for _,candidate in ipairs(candidates or {}) do
+            if sameObject(candidate.object,object) then owned=true;return end
+        end
+    end)
+    return ok and owned
+end
+function runtime.captureFocusChargeSlotProbe(probe)
+    local object=probe.object
+    local address=probe.address
+    if not D.debugLogging or not valid(object) or not address
+        or not (runtime.focusChargeSlotProbeOwned or {})[address] then return end
+    if probe.version and (runtime.focusChargeSlotProbeVersions or {})[address]~=probe.version then return end
+    local className="unavailable"
+    local visibility="unavailable"
+    local opacityValue="unavailable"
+    local readable,value=pcall(function() return object:GetClass():GetFullName() end)
+    if readable and value then className=tostring(value) end
+    readable,value=pcall(function() return object:GetVisibility() end)
+    if readable and value~=nil then visibility=tostring(value) end
+    readable,value=pcall(function() return object:GetRenderOpacity() end)
+    if readable and type(value)=="number" then opacityValue=string.format("%.3f",value) end
+    D.logInfo("focusChargeSlot source=%s entry=%s phase=%s address=%s class=%s visibility=%s opacity=%s",
+        probe.source,tostring(probe.entry),probe.phase,tostring(address),className,visibility,opacityValue)
+end
 -- 3515 is a weapon-state callback, not a Quickslot presentation callback.
 -- The next bounded probe therefore compares the three combat-only Vanilla
 -- panels around every distinct GameHUD graph entry during one test. It reads
@@ -1153,6 +1197,15 @@ function runtime.enqueueVanillaCombatProbe(probe)
     end
     if wake then wake("vanillaCombatProbe") end
 end
+function runtime.enqueueFocusChargeSlotProbe(probe)
+    runtime.focusChargeSlotProbeQueue=runtime.focusChargeSlotProbeQueue or {}
+    if runtime.focusChargeSlotProbe then
+        runtime.focusChargeSlotProbeQueue[#runtime.focusChargeSlotProbeQueue+1]=probe
+    else
+        runtime.focusChargeSlotProbe=probe
+    end
+    if wake then wake("focusChargeSlotProbe") end
+end
 local function queueVanillaCombatProbe(entry)
     if not D.debugLogging or not config.fadeTransitions then return end
     local targets={"WBP_AA_Quickslots","WBP_HUD_FocusCharge_Bar","WBP_HUD_SpecialAttackCooldown"}
@@ -1255,6 +1308,47 @@ local function signal(source)
     queueVanillaQuickslotProbe(source)
     refreshDirty=true
     wake()
+end
+function runtime.focusChargeSlotEvent(context,entryParam)
+    if not D.debugLogging or not config.fadeTransitions
+        or panelModes.WBP_HUD_FocusCharge_Bar~=Modes.VANILLA then return end
+    -- Once the finite graph-entry budget is spent, return before any
+    -- DynamicEntryBox lookup. Normal gameplay then has no probe work at all.
+    local remaining=runtime.focusChargeSlotProbeRemaining or 0
+    if remaining<=0 then return end
+    local object=unwrap(context)
+    if not valid(object) then return end
+    local readable,address=pcall(function() return object:GetAddress() end)
+    if not readable or not address then return end
+    runtime.focusChargeSlotProbeOwned=runtime.focusChargeSlotProbeOwned or {}
+    runtime.focusChargeSlotProbeRejected=runtime.focusChargeSlotProbeRejected or {}
+    if runtime.focusChargeSlotProbeRejected[address] then return end
+    if not runtime.focusChargeSlotProbeOwned[address] then
+        if not runtime.focusChargeSlotIsOwned(object) then
+            runtime.focusChargeSlotProbeRejected[address]=true
+            return
+        end
+        runtime.focusChargeSlotProbeOwned[address]=true
+    end
+    noteUbergraphEntry("WBP_HUD_FocusCharge_Slot",entryParam)
+    local entry=tonumber(unwrap(entryParam))
+    -- Every accepted callback spends one of twelve samples. A new event for
+    -- this slot replaces its older delayed samples through the address version,
+    -- so the log represents the stock graph's latest state, never a backlog.
+    runtime.focusChargeSlotProbeRemaining=remaining-1
+    runtime.focusChargeSlotProbeVersions=runtime.focusChargeSlotProbeVersions or {}
+    local version=(runtime.focusChargeSlotProbeVersions[address] or 0)+1
+    runtime.focusChargeSlotProbeVersions[address]=version
+    local source="Focus Charge Slot graph"
+    runtime.enqueueFocusChargeSlotProbe({source=source,entry=entry,phase="post",object=object,address=address,version=version})
+    for _,sample in ipairs({{16,"nextFrame"},{96,"after100ms"},{240,"after250ms"}}) do
+        local delay,phase=sample[1],sample[2]
+        pcall(ExecuteInGameThreadWithDelay,delay,function()
+            if D.debugLogging and runtime.focusChargeSlotProbeVersions[address]==version then
+                runtime.enqueueFocusChargeSlotProbe({source=source,entry=entry,phase=phase,object=object,address=address,version=version})
+            end
+        end)
+    end
 end
 local function capture(context)
     sprintSource.recover()
@@ -1406,6 +1500,14 @@ if seen.WBP_HUD_SpecialAttackCooldown and panelModes.WBP_HUD_SpecialAttackCooldo
     specs[#specs+1]={path=SPECIAL..":SetupCooldownEffect", callback=cooldownEvent, optional="panel"}
     specs[#specs+1]={path=SPECIAL..":OnCooldownFinished", callback=cooldownEvent, optional="panel"}
 end
+if D.debugLogging and config.fadeTransitions and panelModes.WBP_HUD_FocusCharge_Bar==Modes.VANILLA then
+    -- The visible charges are DynamicEntryBox-generated slot widgets. Trace
+    -- their own graph for a finite twelve accepted events, keeping only each
+    -- slot's latest samples; this does not write opacity or replace Vanilla
+    -- visibility decisions.
+    specs[#specs+1]={path=FOCUS_CHARGE_SLOT..":ExecuteUbergraph_WBP_HUD_FocusCharge_Slot",
+        callback=runtime.focusChargeSlotEvent, optional="panel"}
+end
 if (config.switchRevealSeconds>0 and hasSwitchPanels()) or (manualPeekEnabled and config.peekOnFocusMode)
     or (D.debugLogging and config.fadeTransitions and (panelModes.WBP_AA_Quickslots==Modes.VANILLA
         or panelModes.WBP_HUD_FocusCharge_Bar==Modes.VANILLA
@@ -1476,6 +1578,7 @@ local function accept(object)
     if valid(controller) and not sameObject(controller,pc) then return false, "controller mismatch" end
     if not sameObject(object,hud) or not sameObject(objectWorld,world) then
         runtime.stopFocusChargeLocator("HUD replacement")
+        runtime.resetFocusChargeSlotProbe()
         hud, world, panels, absent = object, objectWorld, {}, {}
         -- A direct object notification and the GameHUD hook are preferred.
         -- Keep the fallback named too: a future lifecycle route must not turn
@@ -1491,6 +1594,8 @@ local function accept(object)
         runtime.vanillaCombatParentProbeSeen,runtime.vanillaCombatParentStates={},{}
         runtime.vanillaCombatParentProbeRemaining=3
         runtime.focusChargeProbeTrees={}
+        runtime.resetFocusChargeSlotProbe()
+        runtime.focusChargeSlotProbeRemaining=12
         runtime.focusChargeLocatorArmed=config.debugFocusChargeLocator and D.debugLogging
             and panelModes.WBP_HUD_FocusCharge_Bar==Modes.VANILLA
         panelRetries={}
@@ -1955,6 +2060,7 @@ local function panelStep(name)
         end
     else
         runtime.stopFocusChargeLocator("HUD unavailable")
+        runtime.resetFocusChargeSlotProbe()
         hud, world, panels = nil, nil, {}
         -- The panels these transitions referred to are gone with the world.
         fade.reset()
@@ -2047,6 +2153,13 @@ local function step()
         local version=runtime.focusChargeLocatorAdvanceVersion
         runtime.focusChargeLocatorAdvanceVersion=nil
         runtime.advanceFocusChargeLocator(version)
+        return false
+    end
+    if runtime.focusChargeSlotProbe then
+        local probe=runtime.focusChargeSlotProbe
+        local queue=runtime.focusChargeSlotProbeQueue or {}
+        runtime.focusChargeSlotProbe=table.remove(queue,1)
+        runtime.captureFocusChargeSlotProbe(probe)
         return false
     end
     if runtime.vanillaCombatProbe then
@@ -2418,7 +2531,7 @@ wake = function(statsOnly)
         panelRetries={}
         settingsPending,settingsAttempts=true,0
     end
-    if statsOnly~="marker" and statsOnly~="settings" and statsOnly~="resource" and statsOnly~="enemyHealth" and statsOnly~="time" and statsOnly~="sprintPrompt" and statsOnly~="clawMarks" and statsOnly~="playerEffects" and statsOnly~="liveSettings" and statsOnly~="quickslotProbe" and statsOnly~="vanillaCombatProbe" and statsOnly~="focusChargeLocator" then dirty=true end
+    if statsOnly~="marker" and statsOnly~="settings" and statsOnly~="resource" and statsOnly~="enemyHealth" and statsOnly~="time" and statsOnly~="sprintPrompt" and statsOnly~="clawMarks" and statsOnly~="playerEffects" and statsOnly~="liveSettings" and statsOnly~="quickslotProbe" and statsOnly~="vanillaCombatProbe" and statsOnly~="focusChargeLocator" and statsOnly~="focusChargeSlotProbe" then dirty=true end
     if worker then if D.debugLogging then D.count("workerCoalesced") end; return end
     worker=true
     if D.debugLogging then D.count("workerStarts") end
@@ -2617,8 +2730,9 @@ applyLiveSettings=function(run)
         fade.configure(config.fadeTransitions,config.fadeInSeconds,config.fadeOutSeconds)
         runtime.fadePacing.reset()
     end
-    if changed.debugFocusChargeLocator or changed.logLevel or changed.mode_WBP_HUD_FocusCharge_Bar then
+    if changed.debugFocusChargeLocator or changed.logLevel or changed.mode_WBP_HUD_FocusCharge_Bar or changed.fadeTransitions then
         runtime.stopFocusChargeLocator("settings applied")
+        runtime.resetFocusChargeSlotProbe()
         runtime.focusChargeLocatorArmed=config.debugFocusChargeLocator and D.debugLogging
             and panelModes.WBP_HUD_FocusCharge_Bar==Modes.VANILLA
     end
