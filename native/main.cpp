@@ -70,7 +70,12 @@ constexpr std::array specs{
     Spec{L"/Game/_Dawnwalker/UI/_Unified/HUD/Timer/WBP_HudTimer.WBP_HudTimer_C:Update Time Display"},
     // Both running forms refresh these child widgets even when native HUD
     // dispatch bypasses OnSetInputPromptEnabled. Capture context only.
-    Spec{L"/Game/_Dawnwalker/UI/_Unified/Gameplay/InputPrompt/WBP_InputPrompt.WBP_InputPrompt_C:UpdateWidget"}
+    Spec{L"/Game/_Dawnwalker/UI/_Unified/Gameplay/InputPrompt/WBP_InputPrompt.WBP_InputPrompt_C:UpdateWidget"},
+    // Append only: existing IDs are part of the Lua bridge contract.
+    Spec{MARKER L"ExecuteUbergraph_WBP_CombatTargetIndicator",Kind::Entry,1370},
+    Spec{L"/Game/_Dawnwalker/UI/_Unified/HUD/CombatFocus/WBP_OpenFocusPrompt.WBP_OpenFocusPrompt_C:ExecuteUbergraph_WBP_OpenFocusPrompt"},
+    Spec{HUD L"OnSetCrosshairTextEnabled"},
+    Spec{HUD L"Set AA Quickslots Showed"}
 };
 struct Scalar { int offset{}, bytes{}; };
 struct Binding { UFunction* node{}; QuietDawn::ObjectIdentity identity; std::array<Scalar,2> params{}; };
@@ -175,7 +180,10 @@ void capture(const std::shared_ptr<State>& state, UObject* object, FFrame& stack
             const auto locals=stack.Locals(); if (!locals) return;
             if (kind==Kind::Entry) {
                 int entry; std::memcpy(&entry,locals+binding.params[0].offset,4);
-                if (entry!=specs[id-1].entry) return;
+                // GameHUD also dispatches Focus transitions through this same
+                // UFunction. Keep one binding and forward only the known entries.
+                if (entry!=specs[id-1].entry && !(id==23 &&
+                    (entry==2442 || entry==2657 || entry==4026))) return;
                 event.value=entry;
             } else {
                 event.resource=true;

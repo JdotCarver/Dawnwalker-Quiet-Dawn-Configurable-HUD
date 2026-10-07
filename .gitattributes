@@ -10,4 +10,5 @@ Compatibility/Framecore/UE4SS-settings.ini -text -whitespace
 # Keep the native build inputs reproducible across Windows checkouts.
 native/* text eol=lf
 **/dlls/*.dll binary
+**/assets/*.png binary
 **/dmm_api.lua -text

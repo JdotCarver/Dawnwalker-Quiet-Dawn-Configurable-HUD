@@ -100,6 +100,15 @@ function M.new(D, session, wake)
         if not matches(class,'BlueprintGeneratedClass '..entry.classPath) then return nil end
         return class:GetCDO()
     end
+    -- Aggregate phase timings are enabled only at Debug.
+    apply = D.wrap('clawApply', apply)
+    prepare = D.wrap('clawPrepare', prepare)
+    local function findDefault(entry)
+        local object = StaticFindObject(entry.path)
+        if D.debugLogging then D.count('clawMarkLookups') end
+        return object
+    end
+    findDefault = D.wrap('clawLookup', findDefault)
     local function applyInstance(entry,object)
         if not valid(object) then return true end
         local class=object:GetClass()
@@ -195,16 +204,14 @@ function M.new(D, session, wake)
                 local ok,done=pcall(function()
                     if entry.restorePending then return restore(entry,entry.record) end
                     local object=entry.object or (entry.record and entry.record.object)
-                    if not valid(object) then
-                        object=StaticFindObject(entry.path)
-                        if D.debugLogging then D.count('clawMarkLookups') end
-                    end
+                    if not valid(object) then object=findDefault(entry) end
                     entry.object=object
                     if apply(entry,object) then return true end
                     if not entry.preloaded then
                         entry.preloaded=true;entry.preparing=true
                         local loaded,result=pcall(prepare,entry);entry.preparing=false
                         if not loaded then error(result) end
+                        -- Retain the loaded asset before leaving this preparation slice.
                         if valid(result) then entry.object=result;return apply(entry,result) end
                         if not valid(object) then
                             report(entry,'asset unavailable; waiting for lifecycle/Apply')

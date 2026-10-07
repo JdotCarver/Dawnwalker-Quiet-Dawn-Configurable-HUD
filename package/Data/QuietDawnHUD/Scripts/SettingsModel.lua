@@ -1,12 +1,43 @@
+-- SettingsModel.lua
 -- Shared startup snapshot for gameplay and diagnostics. MIT.
 local directory = assert(debug.getinfo(1,'S').source:sub(2):match('^(.*[/\\])'))
 local Store = dofile(directory .. 'SettingsStore.lua')
 local schema = dofile(directory .. 'SettingsSchema.lua')
 local Timers = dofile(directory .. 'QuietDawnTimers.lua')
+local Modes = dofile(directory .. 'QuietDawnPanelModes.lua')
+local LogLevels = dofile(directory .. 'QuietDawnLogLevels.lua')
 local effectDefaults={hideEnemyEffectIcons=0,hidePlayerEffectIcons=0}
 local newestSchema = Timers.compatibleSchema(schema)
-local playerEffectsSchema = {}
+-- Each schema below describes one older generation of settings.ini, so the
+-- upgrades further down can run in the order the keys were introduced.
+--
+-- They must stay STRICT SUBSETS of the newest schema. `ensure` adds every key
+-- its schema declares but the file lacks, so a schema naming a retired key
+-- would write that key back into an already-current file.
+local SHOW_HUD_PREFIX = "showHUD_"
+local FIXED_PEEK_PREFIX = "fixedPeek_"
+-- Fixed-panel Show HUD behavior is the newest generation. Keep a strict
+-- predecessor so an existing current settings.ini can receive its explicit
+-- default-off choices without changing its former fixed-opacity behavior.
+local preFixedPeekSchema = {}
 for _,row in ipairs(newestSchema) do
+    if not row.key:match("^"..FIXED_PEEK_PREFIX) then preFixedPeekSchema[#preFixedPeekSchema+1]=row end
+end
+local preShowHUDSchema = {}
+for _,row in ipairs(preFixedPeekSchema) do
+    if not row.key:match("^"..SHOW_HUD_PREFIX) then preShowHUDSchema[#preShowHUDSchema+1]=row end
+end
+local FADE_KEYS = {fadeTransitions=true, fadeInSeconds=true, fadeOutSeconds=true}
+local preFadeSchema = {}
+for _,row in ipairs(preShowHUDSchema) do
+    if not FADE_KEYS[row.key] then preFadeSchema[#preFadeSchema+1]=row end
+end
+local preLogLevelSchema = {}
+for _,row in ipairs(preFadeSchema) do
+    if row.key~="logLevel" then preLogLevelSchema[#preLogLevelSchema+1]=row end
+end
+local playerEffectsSchema = {}
+for _,row in ipairs(preLogLevelSchema) do
     if row.key~='hideVampireClawHitMarks' then playerEffectsSchema[#playerEffectsSchema+1]=row end
 end
 local fullCompatibleSchema = {}
@@ -24,6 +55,25 @@ end
 local panels = {"HumanStats","VampireStats","WBP_Compass","WBP_HUD_QuestInfo","WBP_HUD_Quickslots","Crosshair","WBP_AA_Quickslots","WBP_OpenFocusPrompt","WBP_HUD_Quickslots_ChangePrompt","WBP_ControlsLegend","WBP_BuffContainer","WBP_HUD_AbilityCooldownsContainer","CombatFocusPanel","WBP_HUD_FocusCharge_Bar","WBP_HUD_SpecialAttackCooldown","XPBar","WBP_HudTimer"}
 local M={}
 function M.load()
+local originalText=Store.read(Store.path(directory))
+-- Validate all present current keys before any historical upgrade may write.
+-- Missing keys are handled by their own preserving generation below.
+if originalText then
+    local levels=Store.parse(originalText,{{key='logLevel',values=LogLevels.ordered,default=LogLevels.DEFAULT}})
+    if not levels then
+        local _,legacyError=Store.parse(originalText,{{key='debugLogging',values={0,1},default=0}})
+        if legacyError and not legacyError:match('^Missing setting:') then
+            error('Quiet Dawn settings rejected: '..legacyError)
+        end
+    end
+    for _,row in ipairs(newestSchema) do
+        local _,problem=Store.parse(originalText,{row})
+        if problem and not problem:match('^Missing setting:') then
+            error('Quiet Dawn settings rejected: '..problem)
+        end
+    end
+end
+local upgradeHidden=originalText and not originalText:match('[\r\n]%s*fixedPeek_[%w_]+%s*=')
 local values, err = Store.load(directory, newestSchema, function()
     local legacyPath = directory .. 'QuietDawnConfig.lua'
     local legacy, le, lc = Store.read(legacyPath)
@@ -82,17 +132,28 @@ local values, err = Store.load(directory, newestSchema, function()
             end
         end
     end
-    result.debugLogging=canonical or legacy or 0
+    -- The personal QuietDawnHUD.ini predates levels and only had an on/off
+    -- switch, so translate it rather than dropping the player's choice.
+    result.logLevel=LogLevels.fromLegacyToggle(canonical or legacy or 0)
     Timers.normalize(result)
     for key,value in pairs(effectDefaults) do result[key]=value end
     return result, nil, sources
 end)
+-- Fork and upstream settings can lack different generations. Try strict
+-- predecessor schemas in order, without relying on which missing key appears
+-- first. Per-key preflight above prevents partial corrupt files from writing.
+if not values and err and err:match('^Missing setting:') then
+    local text=Store.read(Store.path(directory))
+    if text then
+        for _,older in ipairs({preFixedPeekSchema,preShowHUDSchema,preFadeSchema,preLogLevelSchema,playerEffectsSchema}) do
+            values,err=Store.parse(text,older)
+            if values or not err:match('^Missing setting:') then break end
+        end
+    end
+end
 -- Validate any saved effect choices before older migrations can write. Missing
 -- keys are added only after the prior schema has passed its own upgrade rules.
-if not values and err=='Missing setting: hideVampireClawHitMarks' then
-    local text=Store.read(Store.path(directory))
-    if text then values,err=Store.parse(text,playerEffectsSchema) end
-end
+
 if not values and err=='Missing setting: hidePlayerCombatEffects' then
     local text=Store.read(Store.path(directory))
     if text then values,err=Store.parse(text,fullCompatibleSchema) end
@@ -181,15 +242,70 @@ if values then
         Store, Store.path(directory), playerEffectsSchema, {hidePlayerCombatEffects=0}, 'player-combat-effects')
 end
 if values then
+    values,err=dofile(directory..'UE4SSCommonSettingsUpgrade.lua').ensure(
+        Store,Store.path(directory),preLogLevelSchema,{hideVampireClawHitMarks=values.hideClawSlashMarks},'vampire-claw-hit-marks')
+end
+if values then
+    -- logLevel replaced the debugLogging toggle. Read the retired key straight
+    -- from the file so a player who had logging On stays verbose instead of
+    -- silently dropping to the default. The stale line is then ignored:
+    -- Store.parse skips keys the current schema does not declare.
+    local saved=Store.read(Store.path(directory))
+    local legacyLogging,legacyError
+    if saved and not Store.parse(saved,{{key='logLevel',values=LogLevels.ordered}}) then
+        legacyLogging,legacyError=Store.parse(saved,{{key='debugLogging',values={0,1}}})
+        if legacyError and not legacyError:match('^Missing setting:') then
+            error('Quiet Dawn settings rejected: '..legacyError)
+        end
+    end
     values, err = dofile(directory..'UE4SSCommonSettingsUpgrade.lua').ensure(
-        Store, Store.path(directory), newestSchema, {hideVampireClawHitMarks=values.hideClawSlashMarks}, 'vampire-claw-hit-marks')
+        Store, Store.path(directory), preFadeSchema,
+        {logLevel=LogLevels.fromLegacyToggle(legacyLogging and legacyLogging.debugLogging or 0)},
+        'log-levels')
+end
+if values then
+    -- Fading added three keys. Their schema defaults already preserve existing
+    -- behaviour (fading off), so no overrides are needed; this step exists to
+    -- give the addition its own tag, so a file already stamped 'log-levels'
+    -- still gains the new keys.
+    -- `ensure` fills a missing key from the table passed here and NEVER from
+    -- the schema: given no entry it reports "Missing setting: <key>" and the
+    -- whole load fails. Derive the table from the schema so the two cannot
+    -- drift apart as keys are added.
+    local fadeDefaults = {}
+    for _,row in ipairs(newestSchema) do
+        if FADE_KEYS[row.key] then fadeDefaults[row.key]=row.default end
+    end
+    values, err = dofile(directory..'UE4SSCommonSettingsUpgrade.lua').ensure(
+        Store, Store.path(directory), preShowHUDSchema, fadeDefaults, 'fade-transitions')
 end
 if values then
     local needsUpgrade=false
     for _, key in ipairs({'healthHoldSeconds','staminaHoldSeconds','manualPeekSeconds','timeHoldSeconds','switchRevealSeconds'}) do
         if values[key]>10 or values[key]*2%1~=0 then needsUpgrade=true;break end
     end
-    if needsUpgrade then values,err=Timers.ensure(Store,Store.path(directory),schema) end
+    if needsUpgrade then values,err=Timers.ensure(Store,Store.path(directory),preShowHUDSchema) end
+end
+if values then
+    local defaults={}
+    for _,row in ipairs(newestSchema) do
+        if row.key:match("^"..SHOW_HUD_PREFIX) then defaults[row.key]=row.default end
+    end
+    values,err=dofile(directory..'UE4SSCommonSettingsUpgrade.lua').ensure(
+        Store,Store.path(directory),preFixedPeekSchema,defaults,'show-hud-inclusions')
+end
+if values and upgradeHidden then
+    -- Upgrade only pre-feature files. Later deliberate Fixed 0% choices stay
+    -- Fixed, including when the player explicitly enables their peek override.
+    values,err=Modes.ensure(Store,Store.path(directory),preFixedPeekSchema)
+end
+if values then
+    local defaults={}
+    for _,row in ipairs(newestSchema) do
+        if row.key:match("^"..FIXED_PEEK_PREFIX) then defaults[row.key]=row.default end
+    end
+    values,err=dofile(directory..'UE4SSCommonSettingsUpgrade.lua').ensure(
+        Store,Store.path(directory),newestSchema,defaults,'fixed-hud-peek')
 end
 if not values then error('Quiet Dawn settings rejected: '..tostring(err)) end
 return values
@@ -198,7 +314,16 @@ end
 function M.convert(numeric)
 local values={}
 for key,value in pairs(numeric) do values[key]=value end
-values.enabled=values.enabled==1;values.manualPeek=values.manualPeek==1;values.debugLogging=values.debugLogging==1
+values.enabled=values.enabled==1
+-- The HUD peek trigger is one setting with three meanings, so the model turns
+-- it into named intent and the gameplay code never compares magic numbers.
+values.peekOnLegendHold=values.manualPeek==1
+values.peekOnFocusMode=values.manualPeek==2
+values.manualPeek=values.manualPeek~=0
+values.fadeTransitions=values.fadeTransitions==1
+-- `debugLogging` survives as the hot per-event guard read across the gameplay
+-- scripts and handed to the native bridge. It now means "the level is Debug".
+values.debugLogging=values.logLevel>=LogLevels.DEBUG
 values.hideEnemyHealthBars=values.hideEnemyHealthBars==1
 values.hideEnemyEffectIcons=values.hideEnemyEffectIcons==1
 values.hidePlayerEffectIcons=values.hidePlayerEffectIcons==1
@@ -215,26 +340,33 @@ values.showLockIcon=values.showLockIcon==1
 values.hideSprintPrompt=values.hideSprintPrompt==1
 -- Menu percentages become fractions only at the gameplay boundary.
 for _, key in ipairs({'healthThreshold','staminaThreshold','compassOpacity'}) do values[key]=values[key]/100 end
--- Modes own opacity separately from size. Fixed zero means hidden; Quiet
+-- Modes own opacity separately from size. Always Hidden forces zero; Quiet
 -- Dawn ignores the saved fixed value and retains contextual reveals. Vanilla
 -- releases our opacity override while the game keeps its contextual rules.
 values.panels=panels
 values.panelModes={}
 values.panelOpacities={}
 values.panelScales={}
+values.showHUDPanels={}
+values.fixedPeekPanels={}
 for _, p in ipairs(panels) do
     values.panelScales[p]=values['scale_'..p]/100
     values.panelModes[p]=values['mode_'..p]
-    values.panelOpacities[p]=values.panelModes[p]==1 and 0
+    values.panelOpacities[p]=(values.panelModes[p]==Modes.QUIET_DAWN
+        or values.panelModes[p]==Modes.ALWAYS_HIDDEN) and 0
         or (p=='WBP_Compass' and values.compassOpacity or values['opacity_'..p]/100)
+    local include=values['showHUD_'..p]
+    if include~=nil then values.showHUDPanels[p]=include==1 end
+    local raise=values['fixedPeek_'..p]
+    if raise~=nil then values.fixedPeekPanels[p]=raise==1 end
 end
 -- Override only the runtime panel policy. Saved mode/opacity/size remain intact
 -- and resume when the player-effect toggle is turned off.
 if values.hidePlayerEffectIcons then
-    values.panelModes.WBP_BuffContainer=2
+    values.panelModes.WBP_BuffContainer=Modes.ALWAYS_HIDDEN
     values.panelOpacities.WBP_BuffContainer=0
 end
-values.dynamicPanels={HumanStats=values.mode_HumanStats==1,VampireStats=values.mode_VampireStats==1}
+values.dynamicPanels={HumanStats=values.mode_HumanStats==Modes.QUIET_DAWN,VampireStats=values.mode_VampireStats==Modes.QUIET_DAWN}
 values.path=Store.path(directory)
 return values
 

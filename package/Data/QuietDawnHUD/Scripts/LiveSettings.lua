@@ -1,3 +1,4 @@
+-- LiveSettings.lua
 -- MIT. Persistent menu subscription; no work is performed when this module loads.
 local M={}
 function M.new(directory, report)
@@ -81,7 +82,36 @@ function M.new(directory, report)
         ["scale_WBP_ControlsLegend"]="scale_WBP_ControlsLegend",
         ["manualPeek"]="manualPeek",
         ["manualPeekSeconds"]="manualPeekSeconds",
-        ["debugLogging"]="debugLogging"
+        ["showHUD_HumanStats"]="showHUD_HumanStats",
+        ["showHUD_VampireStats"]="showHUD_VampireStats",
+        ["showHUD_WBP_Compass"]="showHUD_WBP_Compass",
+        ["showHUD_WBP_HUD_QuestInfo"]="showHUD_WBP_HUD_QuestInfo",
+        ["showHUD_WBP_HUD_Quickslots"]="showHUD_WBP_HUD_Quickslots",
+        ["showHUD_Crosshair"]="showHUD_Crosshair",
+        ["showHUD_WBP_AA_Quickslots"]="showHUD_WBP_AA_Quickslots",
+        ["showHUD_WBP_ControlsLegend"]="showHUD_WBP_ControlsLegend",
+        ["showHUD_WBP_BuffContainer"]="showHUD_WBP_BuffContainer",
+        ["showHUD_WBP_HUD_AbilityCooldownsContainer"]="showHUD_WBP_HUD_AbilityCooldownsContainer",
+        ["showHUD_WBP_HUD_FocusCharge_Bar"]="showHUD_WBP_HUD_FocusCharge_Bar",
+        ["showHUD_XPBar"]="showHUD_XPBar",
+        ["showHUD_WBP_HudTimer"]="showHUD_WBP_HudTimer",
+        ["fixedPeek_HumanStats"]="fixedPeek_HumanStats",
+        ["fixedPeek_VampireStats"]="fixedPeek_VampireStats",
+        ["fixedPeek_WBP_Compass"]="fixedPeek_WBP_Compass",
+        ["fixedPeek_WBP_HUD_QuestInfo"]="fixedPeek_WBP_HUD_QuestInfo",
+        ["fixedPeek_WBP_HUD_Quickslots"]="fixedPeek_WBP_HUD_Quickslots",
+        ["fixedPeek_Crosshair"]="fixedPeek_Crosshair",
+        ["fixedPeek_WBP_AA_Quickslots"]="fixedPeek_WBP_AA_Quickslots",
+        ["fixedPeek_WBP_ControlsLegend"]="fixedPeek_WBP_ControlsLegend",
+        ["fixedPeek_WBP_BuffContainer"]="fixedPeek_WBP_BuffContainer",
+        ["fixedPeek_WBP_HUD_AbilityCooldownsContainer"]="fixedPeek_WBP_HUD_AbilityCooldownsContainer",
+        ["fixedPeek_WBP_HUD_FocusCharge_Bar"]="fixedPeek_WBP_HUD_FocusCharge_Bar",
+        ["fixedPeek_XPBar"]="fixedPeek_XPBar",
+        ["fixedPeek_WBP_HudTimer"]="fixedPeek_WBP_HudTimer",
+        ["fadeTransitions"]="fadeTransitions",
+        ["fadeInSeconds"]="fadeInSeconds",
+        ["fadeOutSeconds"]="fadeOutSeconds",
+        ["logLevel"]="logLevel"
         }})
     live.start(function(id,callback)
         return dofile(directory..'dmm_api.lua').subscribe(id,callback)
