@@ -1,118 +1,115 @@
 [size=5][b][color=#E8C88A]Quiet Dawn - Configurable HUD[/color][/b][/size]
-
-Keep the world in view, with health and stamina returning when needed. Choose Vanilla, Quiet Dawn, Fixed Opacity or Always Hidden for each player panel, and toggle enemy information separately.
-
-[size=4][b][color=#E8C88A]Why use Quiet Dawn instead of other HUD mods?[/color][/b][/size]
-
-[list]
-[*][b][color=#A8D5C2]Warnings without constant clutter:[/color][/b] Health/blood and stamina return for resource alerts and stay visible below your chosen thresholds.
-[*][b][color=#A8D5C2]A quick check on demand:[/color][/b] Hold Controls Legend for a HUD peek, or keep included panels visible throughout Focus and for the chosen duration afterwards. Switching items/abilities or advancing time briefly reveals the relevant panel.
-[*][b][color=#A8D5C2]Keep the help you want:[/color][/b] Adjust 17 panel opacities and sizes, and choose which counterattack, unblockable, parry and lock-on cues to show.
-[/list][b][color=#A8D5C2]How the HUD refreshes:[/color][/b] Quiet Dawn uses game events and temporary timers, with no continuous HUD polling. Dynamic HUD 1.3 and HUD tweaks 5 combine event hooks with repeating checks. It doesn't mean one mod is inherently more performant than the others, but the implementation is different. Try one if you're not satisfied with the other.
-
-[b][color=#A8D5C2]Compared with [url=https://www.nexusmods.com/thebloodofdawnwalker/mods/344]Dynamic HUD[/url]:[/color][/b] Choose Quiet Dawn to keep your chosen HUD setup during exploration and combat. Quiet Dawn can also reveal selected panels during Focus; its general HUD stays quiet when drawing a weapon.
-
-[b][color=#A8D5C2]Compared with [url=https://www.nexusmods.com/thebloodofdawnwalker/mods/132]HUD tweaks[/url]:[/color][/b] Choose Quiet Dawn for an in-game menu to control visibility, alerts and combat indicators. Choose HUD tweaks if you want to move HUD elements.
-
-[size=4][b][color=#E8C88A]Features[/color][/b][/size]
-
-[list]
-[*][b][color=#A8D5C2]17 panel modes:[/color][/b] Choose Vanilla, Quiet Dawn, Fixed Opacity or Always Hidden. Fixed Opacity uses a 0–100% slider in 5% steps and can opt in to full-opacity HUD peek. Always Hidden stays hidden during every reveal. Size remains independent.
-[*][b][color=#A8D5C2]17 panel size controls:[/color][/b] Adjust each player panel from 25% to 200% in 5% steps, defaulting to 100%. Edge panels grow inward and centered panels stay centered. Size works independently of opacity; large sizes can overlap nearby elements.
-[*][b][color=#A8D5C2]Health and stamina alerts:[/color][/b] In their default Quiet Dawn mode, both stat panels appear after damage, meaningful healing or stamina use. They remain visible while health/blood is strictly below 50% or stamina is strictly below 20%. Human health follows HP; vampire health follows the blood bar.
-[*][b][color=#A8D5C2]Adjustable hide delays:[/color][/b] Health alerts last 4 seconds and stamina alerts 1.5 seconds by default. Damage, stamina use and health/blood gains of at least 0.2% of the bar refresh their corresponding timers. Repeated qualifying regeneration gains keep health visible until its timer expires after the last gain. Smaller gains stay quiet; reaching full after a deficit of at least 0.2% briefly reveals health.
-[*][b][color=#A8D5C2]Manual HUD peek:[/color][/b] Hold Controls Legend for a timed peek, or reveal included panels throughout Focus and for the configured duration after exiting. Thirteen panels have individual inclusion choices. Fixed Opacity panels can opt in to full-opacity peek. Vanilla and Always Hidden do not participate. Resource alerts and the four special panels keep their independent rules.
-[*][b][color=#A8D5C2]Contextual panels:[/color][/b] In Quiet Dawn mode, item and ability quickslots appear for 3 seconds after switching. The time panel in Quiet Dawn mode appears for 4 seconds after an activity advances time, including shrine restoration. If the activity hides the HUD, the reveal waits for it to return. In Quiet Dawn mode, the special-attack panel appears only during its cooldown. Timed reveals range from 0 to 10 seconds in 0.5-second steps; zero disables that timed reveal.
-[*][b][color=#A8D5C2]Claw marks:[/color][/b] Hide Shredded Touch marks and Hide vampire claw hit marks are separate, default-On controls under Combat: Enemies. Other blood effects, damage and bleeding keep game behavior.
-[*][b][color=#A8D5C2]Enemy information:[/color][/b] Enemy health bars, names and difficulty icons are hidden by default, with three independent toggles to restore them. Turn off Hide enemy health bars to restore ordinary enemy and boss health bars, end caps and boss health-phase indicators; turn off Hide enemy names to restore name labels (boss names). Enemy stamina retains game behavior; effect icons have their own toggle.
-[*][b][color=#A8D5C2]Five combat indicator toggles:[/color][/b] Independently enable counterattack directions, unblockable warnings, directional parry cues, the enemy dot/diamond and the lock icon. All default to Off. Parry cues show the incoming direction and highlight its parry window; counterattack cues show weak-spot directions during openings. Cue size ranges from 10% to 200%, default 100%. Show enemy dot/diamond also controls the red secondary-enemy attack dot beside the health bar, independently of health-bar visibility. Off hides it; On follows the game. The target marker remains independent of Show lock icon; when both are enabled, a locked target shows the padlock. Directions and unblockable warnings take priority. Enabled unblockable warnings retain their skull when soft-lock or hard-lock targets change.
-[*][b][color=#A8D5C2]Quieter prompts:[/color][/b] Hide Sprint/Haste prompts in human and vampire form regardless of display language, the quickslot switch hint and the Focus Toggle abilities hint. Restore running prompts with Hide sprint/haste prompt, or restore the Focus and quickslot switch hints with Vanilla or a positive Fixed opacity. Ability switching, interaction prompts, dialogue, subtitles, notifications and menus retain game behavior.
-[*][b][color=#A8D5C2]Crimson Rush effect:[/color][/b] Hide Crimson Rush effect, under Player status: Combat effects, hides the bright red arm effect in either form. Off by default. Buff strength, duration and sound stay unchanged.
-[*][b][color=#A8D5C2]Effect icons:[/color][/b] Hide enemy effect icons removes status icons and timers, including bleeding, from ordinary enemies and bosses. Hide player effect icons hides the player's buff/debuff icons and timers, even during Show HUD. It overrides Active buffs mode while On; Off resumes the saved panel settings. Both toggles default to Off and only change the HUD. They are separate from both claw-mark settings.
-[/list][b]Panel fades and HUD peek:[/b] Enable synchronized fades with separate in/out durations (0.35/1.30 seconds by default). Quiet Dawn panels can opt out of peek; Fixed Opacity panels can opt in to full-opacity peek. Always Hidden stays hidden. Player effect-icon hiding overrides every peek choice. Logging offers Off, Error, Warning, Info and Debug, with Warning as the default.
-
-[size=4][b][color=#E8C88A]Installation[/color][/b][/size]
-
-[list]
-[*][b][color=#A8D5C2]Vortex:[/color][/b] Install Quiet-Dawn-Configurable-HUD.zip through Vortex, enable it and deploy.
-[*][b][color=#A8D5C2]Manual:[/color][/b] Copy the archive's Data/QuietDawnHUD folder into ...\steamapps\common\The Blood of Dawnwalker\Dawnwalker\Binaries\Win64\ue4ss\Mods\, preserving the folder structure.
-[/list]
-
-[size=4][b][color=#E8C88A]Reporting Bugs and other issues[/color][/b][/size]
-
-If you encounter an issue, set [b]Logging[/b] to [b]Debug[/b] in this mod’s Mod Setting Menu settings, apply the change, reproduce the issue. Then start either a bug report in the Bugs tab on Nexus (preferred method for me to track things), or at least start a new thread in comments and send me [b]Dawnwalker/Binaries/Win64/ue4ss/UE4SS.log[/b] from your game folder. Do not report unrelated bugs in other people's threads, please, this makes it impossible for me to track issues.
-
-[size=4][b][color=#E8C88A]Configuration[/color][/b][/size]
-
-Open Mod Settings > All Mods, select Quiet Dawn, choose each panel mode and adjust the opacity slider shown for Fixed opacity and press Apply to save and update the active game. Restore discards unapplied changes; Reset selects the defaults.
-
-The menu groups Player status, Combat, Exploration and Controls alphabetically, with General first and Diagnostics last. Each panel keeps its mode, conditional opacity and size together and its related thresholds or durations together.
-
-For manual configuration, launch the game once to generate the settings file. Close the game, back up that file and edit its existing [Settings] entries:
-
-[code]Dawnwalker/Binaries/Win64/ue4ss/Mods/QuietDawnHUD/settings.ini[/code]Use 1 for On, 0 for Off, whole percentages such as 50, and decimal seconds such as 1.5. Save, restart the game and load a save. Edit the generated settings.ini; mod_settings.ini defines the settings menu.
-
-For example, change these existing lines to show the compass at half opacity, restore enemy health bars and names, and enable directional parry cues:
-
-[code]mode_WBP_Compass = 2
-compassOpacity = 50
-hideEnemyHealthBars = 0
-hideEnemyNames = 0
-showDirectionalParry = 1[/code]
-Fresh settings enable the mod with all 17 panels in Quiet Dawn mode, fixed opacity values at 0% and sizes at 100%, enemy health bars/names/difficulty icons, claw slash marks and running prompts hidden, all five combat indicators Off, and Logging Off. Existing saved or supported imported preferences take precedence. All defaults, panel keys and ranges are listed in the included SETTINGS.md and the [url=https://github.com/my-mods/Dawnwalker-Quiet-Dawn-Configurable-HUD/blob/main/SETTINGS.md]settings reference[/url].
-
-[b][color=#A8D5C2]Logging:[/color][/b] The final menu option uses Off, Error, Warning, Info and Debug. Warning is the default; Debug adds event counts and timings. Set logLevel from 0 to 4 in settings.ini, or use the menu. Logs are in Dawnwalker/Binaries/Win64/ue4ss/UE4SS.log.
-
-[size=4][b][color=#E8C88A]Credits and source[/color][/b][/size]
-
-[url=https://github.com/my-mods/Dawnwalker-Quiet-Dawn-Configurable-HUD]Source code and documentation[/url] — MIT licensed.
-
-[size=5][b][color=#E8C88A]My Dawnwalker mods[/color][/b][/size]
-
-[size=4][b][color=#E8C88A]Combat your way[/color][/b][/size]
-
-[b][color=#A8D5C2][url=https://www.nexusmods.com/thebloodofdawnwalker/mods/161]Easier Parry and Dodge While Blocking[/url][/color][/b]
-Make parry and perfect-dodge windows longer or shorter to suit your timing.
-[b]Highlights:[/b] Consistent same-side or opposite-side ripostes; dodge while blocking; adjustable dodge invulnerability duration.
-
-[b][color=#A8D5C2][url=https://www.nexusmods.com/thebloodofdawnwalker/mods/480]Combat Camera - Configurable[/url][/color][/b]
-Choose how your camera follows enemies and how you select your targets.
-[b]Highlights:[/b] Free, smooth or native tracking; camera-directed or fixed targets; automatic lock on hit; optional center dot.
-
-[b][color=#A8D5C2][url=https://www.nexusmods.com/thebloodofdawnwalker/mods/284]Fair Duelist - Customizable Difficulty[/url][/color][/b]
-Build your own difficulty with precise control over combat balance.
-[b]Highlights:[/b] Enemy health and damage; stamina costs; normal, low-health and ranged attack delays; coordinated enemy attacks.
-
-[b][color=#A8D5C2][url=https://www.nexusmods.com/thebloodofdawnwalker/mods/448]Health Regen - Configurable[/url][/color][/b]
-Set separate health regeneration rates for your human and vampire forms.
-[b]Highlights:[/b] Optional healing during combat; optional recovery of lost vampire segments; healing stops at the selected limit.
-
-[size=4][b][color=#E8C88A]Controls and exploration[/color][/b][/size]
-
-[b][color=#A8D5C2][url=https://www.nexusmods.com/thebloodofdawnwalker/mods/203]Controller Tweaks and Remap[/url][/color][/b]
-Tailor your controller layout and make walking and menu access more comfortable.
-[b]Highlights:[/b] 31 controller settings; wider walking range; short press for Map, long press for Game Hub; controller stutter fixes.
-
-[b][color=#A8D5C2][url=https://www.nexusmods.com/thebloodofdawnwalker/mods/449]Press to Gather - Configurable[/url][/color][/b]
-Gather nearby harvestable resources with one keyboard press or controller hold.
-[b]Highlights:[/b] Adjustable 10–200 m range; 14 controller button choices; support for 17 additional wild plant types.
-
-[b][color=#A8D5C2][url=https://www.nexusmods.com/thebloodofdawnwalker/mods/711]Less Wildlife[/url][/color][/b]
-Make ordinary boar herds and wolf packs smaller—or larger.
-[b]Highlights:[/b] Population from 10% to 200%; separate boar and wolf switches; quest and named animals keep their normal values.
-
-[size=4][b][color=#E8C88A]Your view, your style[/color][/b][/size]
-
-[b][color=#A8D5C2][url=https://www.nexusmods.com/thebloodofdawnwalker/mods/452]Quiet Dawn - Configurable HUD[/url][/color][/b]
-Clear the screen while keeping health and stamina alerts when you need them.
-[b]Highlights:[/b] 17 panels with independent opacity and size; hold-to-peek; configurable combat cues, enemy information and effect icons.
-
-[b][color=#A8D5C2][url=https://www.nexusmods.com/thebloodofdawnwalker/mods/721]Style Without Sacrifice - Your Transmogrification Wardrobe[/url][/color][/b]
-Choose your equipment's appearance while keeping its stats.
-[b]Highlights:[/b] Separate day and night outfits; three saved presets; character preview; hide selected equipment; collected or all looks.
-
-[b][color=#A8D5C2][url=https://www.nexusmods.com/thebloodofdawnwalker/mods/694]Night Vision - Configurable[/url][/color][/b]
-See in the dark as a vampire with natural colours or your preferred monochrome blend.
-[b]Highlights:[/b] Independent brightness and colour controls; keyboard or controller toggle; stays enabled through save loading and camera changes.
-
-[b]Fork contributions:[/b] HUD fades, Focus peek, Always Hidden, per-panel peek choices, logging levels and menu artwork by [url=https://github.com/JdotCarver/Dawnwalker-Quiet-Dawn-Configurable-HUD]JdotCarver[/url], integrated with the current combat controls and additional fixes.
+<br />
+<br />Keep the world in view, with health and stamina returning when needed. Choose Vanilla, Quiet Dawn, Fixed opacity or Always Hidden for each player panel, and toggle enemy information separately.
+<br />
+<br />[size=4][b][color=#E8C88A]Why use Quiet Dawn instead of other HUD mods?[/color][/b][/size]
+<br />
+<br />[list]
+<br />[*][b][color=#A8D5C2]Warnings without constant clutter:[/color][/b] Health/blood and stamina return for resource alerts and stay visible below your chosen thresholds.[/*]
+<br />[*][b][color=#A8D5C2]A quick check on demand:[/color][/b] Hold Controls Legend for a HUD peek. Switching items/abilities or advancing time briefly reveals the relevant panel.[/*]
+<br />[*][b][color=#A8D5C2]Keep the help you want:[/color][/b] Adjust 17 panel opacities and sizes, and choose which counterattack, unblockable, parry and lock-on cues to show.[/*]
+<br />[/list][b][color=#A8D5C2]How the HUD refreshes:[/color][/b] Quiet Dawn uses game events and temporary timers, with no continuous HUD polling. Dynamic HUD 1.3 and HUD tweaks 5 combine event hooks with repeating checks. It doesn't mean one mod is inherently more performant than the others, but the implementation is different. Try one if you're not satisfied with the other.
+<br />
+<br />[b][color=#A8D5C2]Compared with [url=https://www.nexusmods.com/thebloodofdawnwalker/mods/344]Dynamic HUD[/url]:[/color][/b] Choose Quiet Dawn to keep your chosen HUD setup during exploration and combat. Quiet Dawn also offers Focus-triggered HUD peeks with configurable panel participation.
+<br />
+<br />[b][color=#A8D5C2]Compared with [url=https://www.nexusmods.com/thebloodofdawnwalker/mods/132]HUD tweaks[/url]:[/color][/b] Choose Quiet Dawn for an in-game menu to control visibility, alerts and combat indicators. Choose HUD tweaks if you want to move HUD elements.
+<br />
+<br />[size=4][b][color=#E8C88A]Features[/color][/b][/size]
+<br />
+<br />[list]
+<br />[*][b][color=#A8D5C2]17 panel opacity controls:[/color][/b] Choose Vanilla to follow the game, Quiet Dawn for automatic hiding and contextual reveals, Fixed opacity to show a 0%–100% slider in 5% steps, or Always Hidden to suppress the panel even during peeks. Fixed 0% keeps the panel hidden, including during cooldowns and HUD peek. Fixed values are not overridden by reveals; size remains independent.[/*]
+<br />[*][b][color=#A8D5C2]17 panel size controls:[/color][/b] Adjust each player panel from 25% to 200% in 5% steps, defaulting to 100%. Edge panels grow inward and centered panels stay centered. Size works independently of opacity; large sizes can overlap nearby elements.[/*]
+<br />[*][b][color=#A8D5C2]Health and stamina alerts:[/color][/b] In their default Quiet Dawn mode, both stat panels appear after damage, meaningful healing or stamina use. They remain visible while health/blood is strictly below 50% or stamina is strictly below 20%. Human health follows HP; vampire health follows the blood bar.[/*]
+<br />[*][b][color=#A8D5C2]Adjustable hide delays:[/color][/b] Health alerts last 4 seconds and stamina alerts 1.5 seconds by default. Damage, stamina use and health/blood gains of at least 0.2% of the bar refresh their corresponding timers. Repeated qualifying regeneration gains keep health visible until its timer expires after the last gain. Smaller gains stay quiet; reaching full after a deficit of at least 0.2% briefly reveals health.[/*]
+<br />[*][b][color=#A8D5C2]Manual HUD peek:[/color][/b] Hold Controls Legend (Menu on Xbox, Options on PlayStation, or L on keyboard by default), or use Focus mode as a peek trigger. Choose which panels participate and whether Fixed opacity panels rise to full opacity. Always Hidden panels remain hidden; player effect-icon hiding overrides peeks.[/*]
+<br />[*][b][color=#A8D5C2]Contextual panels:[/color][/b] In Quiet Dawn mode, item and ability quickslots appear for 3 seconds after switching. The time panel in Quiet Dawn mode appears for 4 seconds after an activity advances time, including shrine restoration. If the activity hides the HUD, the reveal waits for it to return. In Quiet Dawn mode, the special-attack panel appears only during its cooldown. Timed reveals range from 0 to 10 seconds in 0.5-second steps; zero disables that timed reveal.[/*]
+<br />[*][b][color=#A8D5C2]Combat effects:[/color][/b] Hide Shredded Touch slash marks, ordinary vampire claw hit effects and the Crimson Rush arm effect independently. Damage, bleeding and ordinary blood effects retain game behavior.[/*]
+<br />[*][b][color=#A8D5C2]Enemy information:[/color][/b] Enemy health bars, names and difficulty icons are hidden by default, with three independent toggles to restore them. Turn off Hide enemy health bars to restore ordinary enemy and boss health bars, end caps and boss health-phase indicators; turn off Hide enemy names to restore name labels (boss names). Enemy stamina retains game behavior; effect icons have their own toggle.[/*]
+<br />[*][b][color=#A8D5C2]Five combat indicator toggles:[/color][/b] Independently enable counterattack directions, unblockable warnings, directional parry cues, the enemy dot/diamond and the lock icon. All default to Off. Parry cues show the incoming direction and highlight its parry window; counterattack cues show weak-spot directions during openings. Cue size ranges from 10% to 200%, default 100%. Show enemy dot/diamond restores the red marker independently of Show lock icon; when both are enabled, a locked target shows the padlock. Directions and unblockable warnings take priority. Enabled unblockable warnings retain their skull when soft-lock or hard-lock targets change.[/*]
+<br />[*][b][color=#A8D5C2]Quieter prompts:[/color][/b] Hide Sprint/Haste prompts in human and vampire form regardless of display language, the quickslot switch hint and the Focus Toggle abilities hint. Restore running prompts with Hide sprint/haste prompt, or restore the Focus and quickslot switch hints with Vanilla or a positive Fixed opacity. Ability switching, interaction prompts, dialogue, subtitles, notifications and menus retain game behavior.[/*]
+<br />[*][b][color=#A8D5C2]Effect icons:[/color][/b] Hide enemy effect icons removes status icons and timers, including bleeding, from ordinary enemies and bosses. Hide player effect icons hides the player's buff/debuff icons and timers, even during Show HUD. It overrides Active buffs mode while On; Off resumes the saved panel settings. Both toggles default to Off and only change the HUD. They are separate from Hide claw slash marks.[/*]
+<br />[/list][size=4][b][color=#E8C88A]Installation[/color][/b][/size]
+<br />
+<br />[list]
+<br />[*][b][color=#A8D5C2]Vortex:[/color][/b] Install Quiet-Dawn-Configurable-HUD.zip through Vortex, enable it and deploy.[/*]
+<br />[*][b][color=#A8D5C2]Manual:[/color][/b] Copy the archive's Data/QuietDawnHUD folder into ...&#92;steamapps&#92;common&#92;The Blood of Dawnwalker&#92;Dawnwalker&#92;Binaries&#92;Win64&#92;ue4ss&#92;Mods&#92;, preserving the folder structure.[/*]
+<br />[/list]
+<br />[size=4][b][color=#E8C88A]Reporting Bugs and other issues[/color][/b][/size]
+<br />
+<br />If you encounter an issue, set [b]Logging[/b] to [b]Debug[/b] in this mod’s Mod Setting Menu settings, apply the change, reproduce the issue. Then start either a bug report in the Bugs tab on Nexus (preferred method for me to track things), or at least start a new thread in comments and send me [b]Dawnwalker/Binaries/Win64/ue4ss/UE4SS.log[/b] from your game folder. Do not report unrelated bugs in other people's threads, please, this makes it impossible for me to track issues.
+<br />
+<br />
+<br />Synchronized fades: Enable coordinated HUD fades and choose separate fade-in and fade-out durations.
+<br />
+<br />[size=4][b][color=#E8C88A]Configuration[/color][/b][/size]
+<br />
+<br />Open Mod Settings &gt; All Mods, select Quiet Dawn, choose each panel mode and adjust the opacity slider shown for Fixed opacity and press Apply to save and update the active game. Restore discards unapplied changes; Reset selects the defaults.
+<br />
+<br />The menu groups Player status, Combat, Exploration and Controls alphabetically, with General first and Diagnostics last. Each panel keeps its mode, conditional opacity and size together and its related thresholds or durations together.
+<br />
+<br />For manual configuration, launch the game once to generate the settings file. Close the game, back up that file and edit its existing [Settings] entries:
+<br />
+<br />[code]Dawnwalker/Binaries/Win64/ue4ss/Mods/QuietDawnHUD/settings.ini[/code]Use 1 for On, 0 for Off, whole percentages such as 50, and decimal seconds such as 1.5. Save, restart the game and load a save. Edit the generated settings.ini; mod_settings.ini defines the settings menu.
+<br />
+<br />For example, change these existing lines to show the compass at half opacity, restore enemy health bars and names, and enable directional parry cues:
+<br />
+<br />[code]mode_WBP_Compass = 2
+<br />compassOpacity = 50
+<br />hideEnemyHealthBars = 0
+<br />hideEnemyNames = 0
+<br />showDirectionalParry = 1[/code]Fresh settings enable the mod with all 17 panels in Quiet Dawn mode, fixed opacity values at 0% and sizes at 100%, enemy health bars/names/difficulty icons, claw slash marks and running prompts hidden, all five combat indicators Off, and Logging at Warning. Existing saved or supported imported preferences take precedence. All defaults, panel keys and ranges are listed in the included SETTINGS.md and the [url=https://github.com/my-mods/Dawnwalker-Quiet-Dawn-Configurable-HUD/blob/main/SETTINGS.md]settings reference[/url].
+<br />
+<br />[b][color=#A8D5C2]Logging:[/color][/b] Choose Off, Error, Warning, Info or Debug. Warning is the default; Off is silent. Debug records detailed troubleshooting information in Dawnwalker/Binaries/Win64/ue4ss/UE4SS.log.
+<br />
+<br />[size=4][b][color=#E8C88A]Credits and source[/color][/b][/size]
+<br />
+<br />[url=https://github.com/my-mods/Dawnwalker-Quiet-Dawn-Configurable-HUD]Source code and documentation[/url] — MIT licensed.
+<br />
+<br />[size=5][b][color=#E8C88A]My Dawnwalker mods[/color][/b][/size]
+<br />
+<br />[size=4][b][color=#E8C88A]Combat your way[/color][/b][/size]
+<br />
+<br />[b][color=#A8D5C2][url=https://www.nexusmods.com/thebloodofdawnwalker/mods/161]Easier Parry and Dodge While Blocking[/url][/color][/b]
+<br />Make parry and perfect-dodge windows longer or shorter to suit your timing.
+<br />[b]Highlights:[/b] Consistent same-side or opposite-side ripostes; dodge while blocking; adjustable dodge invulnerability duration.
+<br />
+<br />[b][color=#A8D5C2][url=https://www.nexusmods.com/thebloodofdawnwalker/mods/480]Combat Camera - Configurable[/url][/color][/b]
+<br />Choose how your camera follows enemies and how you select your targets.
+<br />[b]Highlights:[/b] Free, smooth or native tracking; camera-directed or fixed targets; automatic lock on hit; optional center dot.
+<br />
+<br />[b][color=#A8D5C2][url=https://www.nexusmods.com/thebloodofdawnwalker/mods/284]Fair Duelist - Customizable Difficulty[/url][/color][/b]
+<br />Build your own difficulty with precise control over combat balance.
+<br />[b]Highlights:[/b] Enemy health and damage; stamina costs; normal, low-health and ranged attack delays; coordinated enemy attacks.
+<br />
+<br />[b][color=#A8D5C2][url=https://www.nexusmods.com/thebloodofdawnwalker/mods/448]Health Regen - Configurable[/url][/color][/b]
+<br />Set separate health regeneration rates for your human and vampire forms.
+<br />[b]Highlights:[/b] Optional healing during combat; optional recovery of lost vampire segments; healing stops at the selected limit.
+<br />
+<br />[size=4][b][color=#E8C88A]Controls and exploration[/color][/b][/size]
+<br />
+<br />[b][color=#A8D5C2][url=https://www.nexusmods.com/thebloodofdawnwalker/mods/203]Controller Tweaks and Remap[/url][/color][/b]
+<br />Tailor your controller layout and make walking and menu access more comfortable.
+<br />[b]Highlights:[/b] 31 controller settings; wider walking range; short press for Map, long press for Game Hub; controller stutter fixes.
+<br />
+<br />[b][color=#A8D5C2][url=https://www.nexusmods.com/thebloodofdawnwalker/mods/449]Press to Gather - Configurable[/url][/color][/b]
+<br />Gather nearby harvestable resources with one keyboard press or controller hold.
+<br />[b]Highlights:[/b] Adjustable 10–200 m range; 14 controller button choices; support for 17 additional wild plant types.
+<br />
+<br />[b][color=#A8D5C2][url=https://www.nexusmods.com/thebloodofdawnwalker/mods/711]Less Wildlife[/url][/color][/b]
+<br />Make ordinary boar herds and wolf packs smaller—or larger.
+<br />[b]Highlights:[/b] Population from 10% to 200%; separate boar and wolf switches; quest and named animals keep their normal values.
+<br />
+<br />[size=4][b][color=#E8C88A]Your view, your style[/color][/b][/size]
+<br />
+<br />[b][color=#A8D5C2][url=https://www.nexusmods.com/thebloodofdawnwalker/mods/452]Quiet Dawn - Configurable HUD[/url][/color][/b]
+<br />Clear the screen while keeping health and stamina alerts when you need them.
+<br />[b]Highlights:[/b] 17 panels with independent opacity and size; hold-to-peek; configurable combat cues, enemy information and effect icons.
+<br />
+<br />[b][color=#A8D5C2][url=https://www.nexusmods.com/thebloodofdawnwalker/mods/721]Style Without Sacrifice - Your Transmogrification Wardrobe[/url][/color][/b]
+<br />Choose your equipment's appearance while keeping its stats.
+<br />[b]Highlights:[/b] Separate day and night outfits; three saved presets; character preview; hide selected equipment; collected or all looks.
+<br />
+<br />[b][color=#A8D5C2][url=https://www.nexusmods.com/thebloodofdawnwalker/mods/694]Night Vision - Configurable[/url][/color][/b]
+<br />See in the dark as a vampire with natural colours or your preferred monochrome blend.
+<br />[b]Highlights:[/b] Independent brightness and colour controls; keyboard or controller toggle; stays enabled through save loading and camera changes.
+<br />

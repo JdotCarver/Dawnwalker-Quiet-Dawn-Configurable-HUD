@@ -54,9 +54,9 @@
       ],
       "pending": {
         "impact": "minor",
-        "rationale": "Add synchronized fades, Always Hidden panels, Focus peeks, panel inclusion, combat-effect controls and logging levels with preserving preference migration.",
+        "rationale": "Add synchronized fades, Always Hidden panels, Focus peeks, panel inclusion, combat-effect controls and logging levels with preserving preference migration. Release preparation: verified unchanged live Nexus baseline on 2026-10-08; consolidated complete player changelog and preserved published page formatting/history.",
         "majorOverride": false,
-        "reviewedInputs": "a30d4da99f7c7e34f880d2b0dc2e4cb2adec3fdea6a5925e3095ab6ac3184471",
+        "reviewedInputs": "2e0188651558fa2f5d6bd754b90b93342263687aa17941676ce9f0d2448f1974",
         "divergenceReviewed": false
       }
     }

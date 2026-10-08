@@ -1,0 +1,1 @@
+Control 17 HUD panels with independent visibility, opacity and size, synchronized fades, Focus or button HUD peeks, and separate combat indicators and effects.
