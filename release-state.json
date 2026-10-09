@@ -8,20 +8,21 @@
       "packageFormat": 1,
       "baseline": {
         "kind": "nexus",
-        "version": "1.2.0",
-        "normalizedVersion": "1.2.0",
-        "sourceCommit": "5c0141a9bc3c68f210e31e8e742a7ba93c2e0de5",
-        "archiveSha256": "33e26c5aa0fd9a4da007c60b0e9e28b007dfe5ed8598b7f0cd6359e555690661",
-        "verifiedAt": "2026-10-09T10:48:54.482500+00:00",
+        "version": "1.2.1",
+        "normalizedVersion": "1.2.1",
+        "sourceCommit": "a857ca7b1a8e8b1d76be5102d63b9b7a7ec8593e",
+        "sourceTag": "v1.2.1",
+        "archiveSha256": "b0990f7c5f62a88c7e79da722aa699af2bec13f51643985f657dbfbf3e2f3207",
+        "verifiedAt": "2026-10-09T11:54:22.3408408Z",
         "nexus": {
           "game": "thebloodofdawnwalker",
-          "pageId": "452",
-          "modId": "41742787150276",
           "fileChainId": "7953870",
-          "versionId": "41742787153001",
-          "siteFileId": "3177"
+          "pageId": "452",
+          "siteFileId": "3199",
+          "modId": "41742787150276",
+          "versionId": "41742787153023"
         },
-        "sourceFingerprint": "2e0188651558fa2f5d6bd754b90b93342263687aa17941676ce9f0d2448f1974"
+        "sourceFingerprint": "51fc169c625b335f5123f3832872a64ec107231b4b491e3c835ffdb9663b8b5d"
       },
       "bindings": [
         {
@@ -53,11 +54,31 @@
         "VortexExtension"
       ],
       "pending": {
-        "impact": "patch",
-        "rationale": "Fix combat marker disappearance after hidden unblockable attacks and suppress hidden warning flashes using one synchronous icon policy, valid cooked sprite dimensions and bounded native ownership. Preserve enabled warnings replacing the lock, settings, dependencies and deferred fallback.",
+        "impact": "none",
+        "rationale": "Matches the verified Nexus release.",
         "majorOverride": false,
         "reviewedInputs": "51fc169c625b335f5123f3832872a64ec107231b4b491e3c835ffdb9663b8b5d",
         "divergenceReviewed": false
+      },
+      "publication": {
+        "nexus": {
+          "destination": "nexus",
+          "verified": true,
+          "verifiedAt": "2026-10-09T11:54:22.3408408Z",
+          "version": "1.2.1",
+          "sourceCommit": "a857ca7b1a8e8b1d76be5102d63b9b7a7ec8593e",
+          "tag": "v1.2.1",
+          "archiveSha256": "b0990f7c5f62a88c7e79da722aa699af2bec13f51643985f657dbfbf3e2f3207",
+          "nexus": {
+            "game": "thebloodofdawnwalker",
+            "fileChainId": "7953870",
+            "pageId": "452",
+            "siteFileId": "3199",
+            "modId": "41742787150276",
+            "versionId": "41742787153023"
+          },
+          "url": "https://www.nexusmods.com/thebloodofdawnwalker/mods/452?tab=files"
+        }
       }
     }
   }
