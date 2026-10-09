@@ -661,16 +661,18 @@ local function probeCombatCue(entry, object, job, icon, before, target, wrote)
         -- a stock animation overwrite without turning combat cues into a tick.
         if not D.debugLogging or entry.cueProbeVersion~=version or not valid(object)
             or object:GetAddress()~=address then return end
-        local ok,root,reticle,far,nowIcon,nowHardLock=pcall(function()
+        local ok,root,reticle,far,nowIcon,nowHardLock,reticleX,reticleY=pcall(function()
             local reticleWidget,farWidget=object.Reticle,object.FarAwayReticle
             return object:GetRenderOpacity(),
                 valid(reticleWidget) and tostring(reticleWidget:GetVisibility()) or "unavailable",
                 valid(farWidget) and tostring(farWidget:GetVisibility()) or "unavailable",
-                tonumber(object["Currently Displayed Icon Type"]),object.bHardLockEnabled==true
+                tonumber(object["Currently Displayed Icon Type"]),object.bHardLockEnabled==true,
+                valid(reticleWidget) and reticleWidget.Brush.ImageSize.X or nil,
+                valid(reticleWidget) and reticleWidget.Brush.ImageSize.Y or nil
         end)
         if ok then
-            D.logInfo("combatCue verify event=%s icon=%s hardLock=%s rootOpacity=%.3f reticleVisibility=%s farVisibility=%s",
-                source,tostring(nowIcon),tostring(nowHardLock),root,reticle,far)
+            D.logInfo("combatCue verify id=%s event=%s icon=%s hardLock=%s rootOpacity=%.3f reticleVisibility=%s farVisibility=%s reticleSize=%sx%s",
+                tostring(address),source,tostring(nowIcon),tostring(nowHardLock),root,reticle,far,tostring(reticleX),tostring(reticleY))
         else
             D.event("combatCueProbe","verification unavailable: %s",tostring(root))
         end

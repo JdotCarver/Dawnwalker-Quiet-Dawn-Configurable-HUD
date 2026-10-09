@@ -39,6 +39,40 @@ function M.new(config, diagnostics, session)
             return ok and same==true
         end
     end
+    local function atlasBrush(image,sprite)
+        -- Lua's interface parameter bridge can supply the UObject without its
+        -- native interface pointer. MatchSize then writes a zero-sized brush
+        -- when the resource changes (e.g. skull -> padlock). Use the cooked
+        -- sprite dimensions explicitly and never request interface sizing.
+        local ok,applied=pcall(function()
+            local x,y=sprite.BakedSourceDimension.X,sprite.BakedSourceDimension.Y
+            if type(x)~='number' or type(y)~='number' or x~=x or y~=y
+                or x<=0 or y<=0 or x==math.huge or y==math.huge then return false end
+            local function equal(a,b)
+                return type(a)=='number' and math.abs(a-b)<=1e-5*math.max(1,math.abs(b))
+            end
+            local oldX,oldY=image.Brush.ImageSize.X,image.Brush.ImageSize.Y
+            local resized=not equal(oldX,x) or not equal(oldY,y)
+            local invalidate=resized and method(image,'InvalidateLayoutAndVolatility')
+            if resized and not invalidate then return false end
+            image:SetBrushFromAtlasInterface(sprite,false)
+            if resized then
+                image.Brush.ImageSize={X=x,Y=y}
+                if not pcall(invalidate,image) then
+                    image.Brush.ImageSize={X=oldX,Y=oldY}
+                    return false
+                end
+                local actual=image.Brush.ImageSize
+                if not equal(actual.X,x) or not equal(actual.Y,y) then return false end
+                if diagnostics.debugLogging then
+                    diagnostics.count('cueBrushSizeRepairs')
+                    diagnostics.event('combatCueBrush','id=%s size=%sx%s',tostring(image:GetAddress()),tostring(x),tostring(y))
+                end
+            end
+            return true
+        end)
+        return ok and applied==true
+    end
     local function visibility(entry, name, o, value)
         local current=o:GetVisibility()
         local saved=entry.cueVisibility[name]
@@ -141,7 +175,7 @@ function M.new(config, diagnostics, session)
                         sprite=StaticFindObject(path)
                     end
                     local set=method(far,'SetBrushFromAtlasInterface')
-                    if valid(sprite) and set then set(far,sprite,true) end
+                    if valid(sprite) and set then atlasBrush(far,sprite) end
                 end
             end)
             entry.cueCleanup=true
@@ -199,10 +233,10 @@ function M.new(config, diagnostics, session)
             -- without changing icon 9. Reassert the skull from the current
             -- state; never call a hooked renderer or restart its animation.
             local sprite=unblockable and skull or lock and padlock or diamond
-            children.Reticle:SetBrushFromAtlasInterface(sprite,true)
+            if not atlasBrush(children.Reticle,sprite) then return false end
             children.Reticle:SetColorAndOpacity({R=1,G=1,B=1,A=1})
             if lock or marker then
-                children.FarAwayReticle:SetBrushFromAtlasInterface(sprite,true)
+                if not atlasBrush(children.FarAwayReticle,sprite) then return false end
                 entry.farStyledAddress=children.FarAwayReticle:GetAddress()
             end
         end
