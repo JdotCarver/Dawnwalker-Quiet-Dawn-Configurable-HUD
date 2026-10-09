@@ -8,20 +8,21 @@
       "packageFormat": 1,
       "baseline": {
         "kind": "nexus",
-        "version": "1.1.3",
-        "normalizedVersion": "1.1.3",
-        "sourceCommit": "c31c49c01098e939b30889256ab8cec44d98b49b",
-        "sourceTag": "v1.1.3",
-        "archiveSha256": "439f6273c713eb90131efcaaac52317822cf653c42044b188d33e441265a69db",
-        "verifiedAt": "2026-10-07T12:13:17.1213696Z",
+        "version": "1.2.1",
+        "normalizedVersion": "1.2.1",
+        "sourceCommit": "a857ca7b1a8e8b1d76be5102d63b9b7a7ec8593e",
+        "sourceTag": "v1.2.1",
+        "archiveSha256": "b0990f7c5f62a88c7e79da722aa699af2bec13f51643985f657dbfbf3e2f3207",
+        "verifiedAt": "2026-10-09T11:54:22.3408408Z",
         "nexus": {
           "game": "thebloodofdawnwalker",
-          "pageId": "452",
-          "modId": "41742787150276",
           "fileChainId": "7953870",
-          "versionId": "41742787152924",
-          "siteFileId": "3100"
-        }
+          "pageId": "452",
+          "siteFileId": "3199",
+          "modId": "41742787150276",
+          "versionId": "41742787153023"
+        },
+        "sourceFingerprint": "51fc169c625b335f5123f3832872a64ec107231b4b491e3c835ffdb9663b8b5d"
       },
       "bindings": [
         {
@@ -53,11 +54,31 @@
         "VortexExtension"
       ],
       "pending": {
-        "impact": "minor",
-        "rationale": "Add synchronized fades, Always Hidden panels, Focus peeks, panel inclusion, combat-effect controls and logging levels with preserving preference migration. Release preparation: verified unchanged live Nexus baseline on 2026-10-08; consolidated complete player changelog and preserved published page formatting/history.",
+        "impact": "none",
+        "rationale": "Matches the verified Nexus release.",
         "majorOverride": false,
-        "reviewedInputs": "2e0188651558fa2f5d6bd754b90b93342263687aa17941676ce9f0d2448f1974",
+        "reviewedInputs": "51fc169c625b335f5123f3832872a64ec107231b4b491e3c835ffdb9663b8b5d",
         "divergenceReviewed": false
+      },
+      "publication": {
+        "nexus": {
+          "destination": "nexus",
+          "verified": true,
+          "verifiedAt": "2026-10-09T11:54:22.3408408Z",
+          "version": "1.2.1",
+          "sourceCommit": "a857ca7b1a8e8b1d76be5102d63b9b7a7ec8593e",
+          "tag": "v1.2.1",
+          "archiveSha256": "b0990f7c5f62a88c7e79da722aa699af2bec13f51643985f657dbfbf3e2f3207",
+          "nexus": {
+            "game": "thebloodofdawnwalker",
+            "fileChainId": "7953870",
+            "pageId": "452",
+            "siteFileId": "3199",
+            "modId": "41742787150276",
+            "versionId": "41742787153023"
+          },
+          "url": "https://www.nexusmods.com/thebloodofdawnwalker/mods/452?tab=files"
+        }
       }
     }
   }

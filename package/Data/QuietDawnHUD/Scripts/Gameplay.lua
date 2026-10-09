@@ -73,6 +73,7 @@ Session.onSettings(function(values)
 end)
 if not config.enabled then return end
 local applyCombatCue=require("QuietDawnCombatCues").new(config,D,Session)
+local combatGuard=require("QuietDawnCombatGuard").new(config,D,Session)
 if QuietDawnNative then QuietDawnNative.begin(config.debugLogging) end
 local sessionRegisterHook=RegisterHook
 local function RegisterHook(path,...)
@@ -661,16 +662,18 @@ local function probeCombatCue(entry, object, job, icon, before, target, wrote)
         -- a stock animation overwrite without turning combat cues into a tick.
         if not D.debugLogging or entry.cueProbeVersion~=version or not valid(object)
             or object:GetAddress()~=address then return end
-        local ok,root,reticle,far,nowIcon,nowHardLock=pcall(function()
+        local ok,root,reticle,far,nowIcon,nowHardLock,reticleX,reticleY=pcall(function()
             local reticleWidget,farWidget=object.Reticle,object.FarAwayReticle
             return object:GetRenderOpacity(),
                 valid(reticleWidget) and tostring(reticleWidget:GetVisibility()) or "unavailable",
                 valid(farWidget) and tostring(farWidget:GetVisibility()) or "unavailable",
-                tonumber(object["Currently Displayed Icon Type"]),object.bHardLockEnabled==true
+                tonumber(object["Currently Displayed Icon Type"]),object.bHardLockEnabled==true,
+                valid(reticleWidget) and reticleWidget.Brush.ImageSize.X or nil,
+                valid(reticleWidget) and reticleWidget.Brush.ImageSize.Y or nil
         end)
         if ok then
-            D.logInfo("combatCue verify event=%s icon=%s hardLock=%s rootOpacity=%.3f reticleVisibility=%s farVisibility=%s",
-                source,tostring(nowIcon),tostring(nowHardLock),root,reticle,far)
+            D.logInfo("combatCue verify id=%s event=%s icon=%s hardLock=%s rootOpacity=%.3f reticleVisibility=%s farVisibility=%s reticleSize=%sx%s",
+                tostring(address),source,tostring(nowIcon),tostring(nowHardLock),root,reticle,far,tostring(reticleX),tostring(reticleY))
         else
             D.event("combatCueProbe","verification unavailable: %s",tostring(root))
         end
@@ -704,6 +707,7 @@ local function markerStep()
     end
     if not sameObject(controller:GetWorld(),world) then return end
     if not sameObject(markerCacheWorld,world) or not sameObject(markerCacheController,controller) then
+        combatGuard.reset()
         markerCache,markerSlots,markerCount,markerPrune={}, {}, 0, 1
         markerCacheWorld,markerCacheController=world,controller
     end
@@ -728,6 +732,19 @@ local function markerStep()
         markerCache[job.address]=entry
         for slot=1,64 do if not markerSlots[slot] then markerSlots[slot]=entry;break end end
         markerCount=markerCount+1
+    end
+    local guarded,guardShown=combatGuard.apply(object,entry)
+    if guarded then
+        -- The native drawing post callback owns presentation and its cleanup.
+        -- Lua retains bounded scale discovery and diagnostics, without making
+        -- the guard's own opacity writes look like new stock baselines.
+        entry.lastOpacity=nil
+        if not combatCueRequested() then return end
+        local readable,icon=pcall(function()return tonumber(object['Currently Displayed Icon Type'])end)
+        local applied=applyCombatCue(object,entry,readable and icon or nil,true)
+        if not applied and job.retries<8 then queueMarker(object,job.retries+1,job.sources) end
+        probeCombatCue(entry,object,job,icon,current,guardShown and 1 or 0,false)
+        return
     end
     -- With every combat cue disabled, the only remaining responsibility is
     -- correcting a stock root-opacity write. Avoid child-widget reads,
@@ -2141,6 +2158,8 @@ applyLiveSettings=function(run)
         end
     end
     for key,value in pairs(updated) do if type(value)~='table' then config[key]=value end end
+    if changed.showCounterattackDirection or changed.showUnblockableWarning or changed.showDirectionalParry
+        or changed.showEnemyMarker or changed.showLockIcon or changed.logLevel then combatGuard.configure() end
     if changed.fadeTransitions or changed.fadeInSeconds or changed.fadeOutSeconds then
         fade.configure(config.fadeTransitions,config.fadeInSeconds,config.fadeOutSeconds)
         runtime.fadePacing.reset()

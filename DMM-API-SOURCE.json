@@ -14,12 +14,12 @@
   },
   "runtimeSources": {
     "package/Data/QuietDawnHUD/Scripts/dmm_api.lua": "6bb667bffc543d1c5c1b36ab6da66c621d6c81c9ee46f94f0f6339cae9cc884c",
-    "package/Data/QuietDawnHUD/Scripts/Gameplay.lua": "64d2e95dd3c352c0bd5ae5a4a748929ac8b374673d50781f637cf5a97e287e49",
+    "package/Data/QuietDawnHUD/Scripts/Gameplay.lua": "2d1c461efdc595f36b10d461f4e9fe7ce74046336ee4e5c3ce6762fb6f26c9da",
     "package/Data/QuietDawnHUD/Scripts/LiveSettings.lua": "891868adfaaa61e5c6b807b0f594d878a2d0eb8d1d680c0810523ed901e26299",
     "package/Data/QuietDawnHUD/Scripts/main.lua": "cc44c57caf08a177530469ad7a05db97c2e7e72cc9fd769c9f1e4f121920b2a8",
     "package/Data/QuietDawnHUD/Scripts/MenuSettings.lua": "faa3a2ef87e021e77156f8b837711ff96108d6423571d5f0640d3bc951b12c2f",
     "package/Data/QuietDawnHUD/Scripts/QuietDawnClawMarks.lua": "555031cee50f46a34bc704397491acaa7954f3bb31dfbf1323f42b57f21fef44",
-    "package/Data/QuietDawnHUD/Scripts/QuietDawnCombatCues.lua": "69630db423f867160282133b3f7cf220c66cc470cab092c9caf4b74c35011a8e",
+    "package/Data/QuietDawnHUD/Scripts/QuietDawnCombatCues.lua": "f30bc21f14e5504eb8e5ae13bddfda9e4241422fc4661ab00848067e920740d6",
     "package/Data/QuietDawnHUD/Scripts/QuietDawnDefaults.lua": "8c7a3715b394e9c782fbb8c8e680333498a54e922ee073287c8c303650e9ed5d",
     "package/Data/QuietDawnHUD/Scripts/QuietDawnDiagnostics.lua": "abb0ef8eb5b321144a272a37d3170b5ad83fd086a91825840c0551c4176d5999",
     "package/Data/QuietDawnHUD/Scripts/QuietDawnNative.lua": "a3afdcfc07c7658930ca1fe631118de000a7a4ff344830f907d09de7b9117073",
@@ -47,24 +47,28 @@
     "package/Data/QuietDawnHUD/Scripts/QuietDawnFocusPeek.lua": "d822cb22c3619ca6a9fe0f1e632cf044a04e34567967d2d1b3eabc05a6f429a0",
     "package/Data/QuietDawnHUD/Scripts/QuietDawnLogLevels.lua": "b512c613006e19415581dc6c5e5e33458a5cf15bf7bb4fa9caad6421eeb64bfa",
     "package/Data/QuietDawnHUD/Scripts/QuietDawnPanelModes.lua": "87e6e1c2ff5d337dbfbd27c91c67bea05f78cecd96f0b3f050b267c82664b286",
-    "package/Data/QuietDawnHUD/Scripts/QuietDawnStartupBarrier.lua": "7d2a91be76ecbe1e817548481ae977dbf5aa77c1c32fbc23e62a69992283e03a"
+    "package/Data/QuietDawnHUD/Scripts/QuietDawnStartupBarrier.lua": "7d2a91be76ecbe1e817548481ae977dbf5aa77c1c32fbc23e62a69992283e03a",
+    "package/Data/QuietDawnHUD/Scripts/QuietDawnCombatGuard.lua": "0250273fc1f1ad9d47bedce8eea0908fbf3ac5d308a095e199823fb7d5fe8bc5"
   },
   "nativeSources": {
-    "native/BUILD.md": "86fb8c1ab2a7438643757b841c2a46a7c74b52b38b71e833fe8f22ccc5b69dfb",
+    "native/BUILD.md": "ebe239d5286059527bee00d70dd805a6311da2a6115ec424088f0097b0e3a834",
     "native/ClawAssets.cpp": "65cd254d5ff67338b91ef0f5b7966d868bd722f6db98bf1bb7b8325078605cf5",
     "native/ClawAssets.hpp": "2af082cea1ca16df0a112ae15e3bcc2995669500393564eebfe64406cd09ea63",
-    "native/CMakeLists.txt": "432644c88bc801b813ff2cab2074ce04860e7e11e4fadc83eccb66c62bb151c3",
+    "native/CMakeLists.txt": "35fcd862f518fdb07568beb326c51200ca2a7b9c0ab1a1ef22f9a2aefe3b7385",
     "native/EventQueue.hpp": "ff301f3b15d6c360478a673a1c43aeef08a88dccbc55e1edf56d6a64e88579ed",
-    "native/Framecore2b.def": "2026baaedb80d6809e460a20a67dc9be7aec50ad0d7d0d6e8808789d64b81863",
+    "native/Framecore2b.def": "9bc4cce17290791805f6aada8f815dabe5cf1ffe047dc0a14541207279a6ca39",
     "native/LuaOwner.hpp": "1d991a6edba4d2eaec73a8e6389cc703a22af5d01f5e3c95b2c56c904c074352",
-    "native/main.cpp": "1fabfe15c5b9f4a3f18031884b834dd288278b3127e1e49f4b9a26946ae7dbb5",
+    "native/main.cpp": "a241aae225ee9157c9dba3a26b654e925d78b6b3b77042ac71c4d9b2b4ffe629",
     "native/ObjectIdentity.hpp": "18b21a331f9bfb0e6ddd70e4ce68177d2d82dde2faff0839c03f3c37e038b0ad",
     "native/SprintPrompts.cpp": "eb7f45308fff2313ad403bc045178efb702b37b49377427447bbf489e0060555",
-    "native/SprintPrompts.hpp": "ad55e7eadadd85daf87464addcdfa5dd3fde64330c8dbc74517d906c66977de1"
+    "native/SprintPrompts.hpp": "ad55e7eadadd85daf87464addcdfa5dd3fde64330c8dbc74517d906c66977de1",
+    "native/CombatIcons.cpp": "c7febf91fd479bd73247ad535fca531f59e451b02b5dba03ce67467b5d45bd34",
+    "native/CombatIcons.hpp": "cde0355ace671b9c71afeeed849cf45e63e1bedc5a693f0c55c6740169003671",
+    "native/CombatIconPolicy.hpp": "30b4e2899eee935c10209ea789c07227a2c327f27cfd7fdda357df39b6526011"
   },
   "nativeDll": {
     "path": "package/Data/QuietDawnHUD/dlls/main.dll",
-    "sha256": "effc2c6fe137f76223ec4a408cd198e9d0c579f383fdd96f069729fee7cd8e4a"
+    "sha256": "56bad23d642e4c133f402a4a6daa4bbe976641442e43fb1a0d562bcf5da7d374"
   },
   "forkIntegration": {
     "url": "https://github.com/JdotCarver/Dawnwalker-Quiet-Dawn-Configurable-HUD",

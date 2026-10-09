@@ -39,6 +39,40 @@ function M.new(config, diagnostics, session)
             return ok and same==true
         end
     end
+    local function atlasBrush(image,sprite)
+        -- Lua's interface parameter bridge can supply the UObject without its
+        -- native interface pointer. MatchSize then writes a zero-sized brush
+        -- when the resource changes (e.g. skull -> padlock). Use the cooked
+        -- sprite dimensions explicitly and never request interface sizing.
+        local ok,applied=pcall(function()
+            local x,y=sprite.BakedSourceDimension.X,sprite.BakedSourceDimension.Y
+            if type(x)~='number' or type(y)~='number' or x~=x or y~=y
+                or x<=0 or y<=0 or x==math.huge or y==math.huge then return false end
+            local function equal(a,b)
+                return type(a)=='number' and math.abs(a-b)<=1e-5*math.max(1,math.abs(b))
+            end
+            local oldX,oldY=image.Brush.ImageSize.X,image.Brush.ImageSize.Y
+            local resized=not equal(oldX,x) or not equal(oldY,y)
+            local invalidate=resized and method(image,'InvalidateLayoutAndVolatility')
+            if resized and not invalidate then return false end
+            image:SetBrushFromAtlasInterface(sprite,false)
+            if resized then
+                image.Brush.ImageSize={X=x,Y=y}
+                if not pcall(invalidate,image) then
+                    image.Brush.ImageSize={X=oldX,Y=oldY}
+                    return false
+                end
+                local actual=image.Brush.ImageSize
+                if not equal(actual.X,x) or not equal(actual.Y,y) then return false end
+                if diagnostics.debugLogging then
+                    diagnostics.count('cueBrushSizeRepairs')
+                    diagnostics.event('combatCueBrush','id=%s size=%sx%s',tostring(image:GetAddress()),tostring(x),tostring(y))
+                end
+            end
+            return true
+        end)
+        return ok and applied==true
+    end
     local function visibility(entry, name, o, value)
         local current=o:GetVisibility()
         local saved=entry.cueVisibility[name]
@@ -141,15 +175,19 @@ function M.new(config, diagnostics, session)
                         sprite=StaticFindObject(path)
                     end
                     local set=method(far,'SetBrushFromAtlasInterface')
-                    if valid(sprite) and set then set(far,sprite,true) end
+                    if valid(sprite) and set then atlasBrush(far,sprite) end
                 end
             end)
             entry.cueCleanup=true
         end
         return children
     end
-    return function(object,entry,icon)
-        local children=attach(object,entry)
+    return function(object,entry,icon,guarded)
+        local children
+        if guarded then
+            children={Indicator=object.Indicator,FarAwayReticle=object.FarAwayReticle}
+            if not valid(children.Indicator) or not valid(children.FarAwayReticle) then return false end
+        else children=attach(object,entry) end
         if not children then return false end
         local known=type(icon)=='number' and icon>=0 and icon<=13 and icon%1==0
         if not known then return false end
@@ -161,51 +199,53 @@ function M.new(config, diagnostics, session)
         local hideDirections=diagnostics.debugLogging and object['Hide Directions']==true or false
         local lock=config.showLockIcon and hardLock and not arrow and not unblockable
         local marker=config.showEnemyMarker==true and not arrow and not unblockable and not lock
-        if unblockable and not valid(skull) then
-            skull=StaticFindObject('/Game/_Dawnwalker/UI/_Unified/Combat/Atlas/Frames/T_Combat_Icon_SkullRed.T_Combat_Icon_SkullRed')
-            if not valid(skull) then
-                if diagnostics.debugLogging and not entry.cueSkullMissing then
-                    diagnostics.event('combatCueSprite','unblockable skull asset unavailable; id=%s',tostring(object:GetAddress()))
-                    entry.cueSkullMissing=true
+        if not guarded then
+            if unblockable and not valid(skull) then
+                skull=StaticFindObject('/Game/_Dawnwalker/UI/_Unified/Combat/Atlas/Frames/T_Combat_Icon_SkullRed.T_Combat_Icon_SkullRed')
+                if not valid(skull) then
+                    if diagnostics.debugLogging and not entry.cueSkullMissing then
+                        diagnostics.event('combatCueSprite','unblockable skull asset unavailable; id=%s',tostring(object:GetAddress()))
+                        entry.cueSkullMissing=true
+                    end
+                    return false
                 end
-                return false
+                entry.cueSkullMissing=nil
             end
-            entry.cueSkullMissing=nil
-        end
-        if marker and not valid(diamond) then
-            diamond=StaticFindObject('/Game/_Dawnwalker/UI/_Unified/Combat/Atlas/Frames/T_Combat_Icon_Diamond.T_Combat_Icon_Diamond')
-            if not valid(diamond) then return false end
-        end
-        if lock and not valid(padlock) then
-            padlock=StaticFindObject('/Game/_Dawnwalker/UI/_Unified/SharedTextures/General/Frames/T_Icon_Padlock.T_Icon_Padlock')
-            if not valid(padlock) then return false end
-        end
-        -- Hide the center through visibility: its own opacity animations must
-        -- not bring the dot/lock back during a directional cue.
-        visibility(entry,"Reticle",children.Reticle,(unblockable or lock or marker) and 4 or 1)
-        visibility(entry,"FarAwayReticle",children.FarAwayReticle,(lock or marker) and 4 or 1)
-        visibility(entry,"HardLockTarget",children.HardLockTarget,1)
-        visibility(entry,"HardLockTarget_Outline",children.HardLockTarget_Outline,1)
-        for _,name in ipairs({'LeftArrow','RightArrow','TopArrow','BottomArrow'}) do
-            visibility(entry,name,children[name],name==arrow and 4 or 1)
-        end
-        if arrow and attack[icon] then
-            -- This unhooked styling helper sets only the selected image. The
-            -- two hooked display helpers must never be called while active.
-            object['Apply Attack Style To Arrow'](object,children[arrow])
-            if icon>=5 then children[arrow]:SetColorAndOpacity(object['Parry Window Color']) end
-        elseif unblockable or lock or marker then
-            -- EnableHardLock can replace the near brush with a diamond/padlock
-            -- without changing icon 9. Reassert the skull from the current
-            -- state; never call a hooked renderer or restart its animation.
-            local sprite=unblockable and skull or lock and padlock or diamond
-            children.Reticle:SetBrushFromAtlasInterface(sprite,true)
-            children.Reticle:SetColorAndOpacity({R=1,G=1,B=1,A=1})
-            if lock or marker then
-                children.FarAwayReticle:SetBrushFromAtlasInterface(sprite,true)
-                entry.farStyledAddress=children.FarAwayReticle:GetAddress()
+            if marker and not valid(diamond) then
+                diamond=StaticFindObject('/Game/_Dawnwalker/UI/_Unified/Combat/Atlas/Frames/T_Combat_Icon_Diamond.T_Combat_Icon_Diamond')
+                if not valid(diamond) then return false end
             end
-        end
+            if lock and not valid(padlock) then
+                padlock=StaticFindObject('/Game/_Dawnwalker/UI/_Unified/SharedTextures/General/Frames/T_Icon_Padlock.T_Icon_Padlock')
+                if not valid(padlock) then return false end
+            end
+            -- Hide the center through visibility: its own opacity animations must
+            -- not bring the dot/lock back during a directional cue.
+            visibility(entry,"Reticle",children.Reticle,(unblockable or lock or marker) and 4 or 1)
+            visibility(entry,"FarAwayReticle",children.FarAwayReticle,(lock or marker) and 4 or 1)
+            visibility(entry,"HardLockTarget",children.HardLockTarget,1)
+            visibility(entry,"HardLockTarget_Outline",children.HardLockTarget_Outline,1)
+            for _,name in ipairs({'LeftArrow','RightArrow','TopArrow','BottomArrow'}) do
+                visibility(entry,name,children[name],name==arrow and 4 or 1)
+            end
+            if arrow and attack[icon] then
+                -- This unhooked styling helper sets only the selected image. The
+                -- two hooked display helpers must never be called while active.
+                object['Apply Attack Style To Arrow'](object,children[arrow])
+                if icon>=5 then children[arrow]:SetColorAndOpacity(object['Parry Window Color']) end
+            elseif unblockable or lock or marker then
+                -- EnableHardLock can replace the near brush with a diamond/padlock
+                -- without changing icon 9. Reassert the skull from the current
+                -- state; never call a hooked renderer or restart its animation.
+                local sprite=unblockable and skull or lock and padlock or diamond
+                if not atlasBrush(children.Reticle,sprite) then return false end
+                children.Reticle:SetColorAndOpacity({R=1,G=1,B=1,A=1})
+                if lock or marker then
+                    if not atlasBrush(children.FarAwayReticle,sprite) then return false end
+                    entry.farStyledAddress=children.FarAwayReticle:GetAddress()
+                end
+            end
+        end -- Native guard owns brushes, colors and visibility when available.
         local factor=(config.combatCueSize or 100)/100
         entry.cueScale=scale(children.Indicator,factor,entry.cueScale)
         entry.farCueScale=scale(children.FarAwayReticle,factor,entry.farCueScale)
