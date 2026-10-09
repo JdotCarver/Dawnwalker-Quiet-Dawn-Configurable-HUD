@@ -20,6 +20,7 @@
 #include "SprintPrompts.hpp"
 #include "ClawAssets.hpp"
 #include "LuaOwner.hpp"
+#include "CombatIcons.hpp"
 
 // Public exported declaration in LuaType/LuaUObject.hpp. Keep its heavy
 // template implementation out of this translation unit; conversion belongs
@@ -259,6 +260,7 @@ public:
         if (name!=STR("QuietDawnHUD")) return;
         QuietDawn::SprintPrompts::registerLua(lua);
         QuietDawn::ClawAssets::registerLua(lua);
+        QuietDawn::CombatIcons::registerLua(lua);
         if (UnrealInitializer::StaticStorage::GlobalConfig.bHookProcessLocalScriptFunction) return;
         auto owner=get_mod_ref(lua);
         if(!QuietDawn::matchesLuaOwner(owner,main,async,hook)) {
@@ -345,12 +347,14 @@ public:
     void on_lua_stop(StringViewType name,Lua&,Lua&,Lua&,Lua*) override {
         if (name!=STR("QuietDawnHUD")) return;
         QuietDawn::SprintPrompts::stop();
+        QuietDawn::CombatIcons::stop();
         std::lock_guard lock(state->mutex); state->active=false; state->mod=nullptr;
         state->actionRef=LUA_NOREF; state->queue.clear(); state->pending=false;
     }
     ~QuietDawnMod() override {
         QuietDawn::SprintPrompts::shutdown();
         QuietDawn::ClawAssets::shutdown();
+        QuietDawn::CombatIcons::shutdown();
         state->active=false;
         if(state->hook!=Hook::ERROR_ID) Hook::UnregisterCallback(state->hook);
         state->detach();

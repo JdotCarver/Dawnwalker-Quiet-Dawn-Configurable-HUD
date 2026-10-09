@@ -6,5 +6,5 @@
 - Keep held Focus peeks steady and preserve unfinished fades during long pauses.
 - Add separate controls for Shredded Touch slash marks, ordinary vampire claw hit effects and the Crimson Rush arm effect.
 - Improve startup hiding and recovery of enemy indicators, effect icons and Sprint/Haste prompts.
-- Fix the lock icon or enemy dot disappearing after a hidden unblockable warning, without needing to unlock and re-lock the target.
+- Fix hidden unblockable warnings briefly flashing or leaving the lock icon or enemy dot missing afterward.
 - Choose Off, Error, Warning, Info or Debug logging; Warning is the default.

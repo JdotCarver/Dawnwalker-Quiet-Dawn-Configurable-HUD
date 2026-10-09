@@ -54,9 +54,9 @@
       ],
       "pending": {
         "impact": "minor",
-        "rationale": "Add synchronized fades, Always Hidden panels, Focus peeks, panel inclusion, separate combat-effect controls and logging levels with preserving preference migration. Fix combat marker recovery by preserving valid sprite brush dimensions across hidden unblockable warnings; retain single-icon cue priority. No breaking settings or integration changes.",
+        "rationale": "Add synchronized fades, Always Hidden panels, Focus peeks, panel inclusion, separate combat-effect controls and logging levels with preserving preference migration. Fix combat marker recovery and hidden-warning flashes with a synchronous single-icon policy, valid cooked sprite dimensions and bounded native ownership; preserve enabled warning replacement and deferred compatibility fallback. No breaking settings or integration changes.",
         "majorOverride": false,
-        "reviewedInputs": "a7abd38dcd935aed3807d5c6fecf097041bf70270e20498a5129cf5f958a8e7d",
+        "reviewedInputs": "0ce90d65c5ff7d6aed74713259d8fd9cac46a390904d41a16e1cc2305ab84eba",
         "divergenceReviewed": false
       }
     }
